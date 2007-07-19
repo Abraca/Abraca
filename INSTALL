@@ -1,0 +1,11 @@
+You'll need the following applications and libraries to build and run Abraca:
+
+    o xmms2 (obviously)
+    o Gtk2
+    o libglade
+    o libnotify (optional)
+    o python (the build system depends on this)
+
+Execute the following commands to compile and install Abraca:
+
+    `./waf configure && ./waf && ./waf install'

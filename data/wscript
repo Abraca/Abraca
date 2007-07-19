@@ -1,0 +1,4 @@
+#!/usr/bin/env python
+
+def build (bld):
+    install_files ('PACKAGE_DATA_DIR', '.', 'abraca.glade')
