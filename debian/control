@@ -1,0 +1,14 @@
+Source: abraca
+Section: sound
+Priority: extra
+Maintainer: Thomas Jollans <thomas@jollans.com>
+Build-Depends: debhelper (>= 5), libxmmsclient-glib-dev, libglade2-dev, python, docbook-xsl, xsltproc
+Standards-Version: 3.7.2
+
+Package: abraca
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: A simple and powerful graphical client for XMMS2
+ Abraca is a GTK2 client for the XMMS2 music player. It is designed with
+ collections in mind, which makes managing your music a breeze.
+
