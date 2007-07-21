@@ -42,7 +42,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp configure-stamp
 	rm -f abraca.1
-	-./waf distclean
+	./waf distclean
 	dh_clean 
 
 install: build
@@ -52,7 +52,6 @@ install: build
 	dh_installdirs
 	./waf install --destdir=$(CURDIR)/debian/abraca install
 	dh_install debian/abraca.desktop usr/share/applications
-	dh_installman abraca.1
 
 
 # Build architecture-independent files here.
@@ -63,26 +62,14 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs 
 	dh_installdocs
-#	dh_install
+	dh_installchangelogs
 	dh_installmenu
-#	dh_installdebconf	
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_python
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
-	dh_installman
-	dh_link
+	dh_desktop
+	dh_installman abraca.1
 	dh_strip
 	dh_compress
 	dh_fixperms
-#	dh_perl
-#	dh_makeshlibs
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol
