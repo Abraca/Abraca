@@ -3,11 +3,11 @@ Mon, 09 Jul 2007 21:34:22 +0200.
 
 It was downloaded from http://nooms.de/media/abraca/abraca-0.2.tar.bz2
 
-Upstream Author: 
+Upstream Author:
 
     Sebastian Sereyko <smoon@nooms.de>
 
-Copyright: 
+Copyright:
 
     Copyright (c) 2007 Sebastian Sareyko
     Copyright (c) 2007 Martin Salzer
@@ -29,7 +29,7 @@ License:
     OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
     SUCH DAMAGE.
 
-On Debian systems, the complete text of the BSD License can be 
+On Debian systems, the complete text of the BSD License can be
 found in `/usr/share/common-licenses/BSD'.
 
 
