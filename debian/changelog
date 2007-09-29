@@ -1,3 +1,9 @@
+abraca (0.2-2) unstable; urgency=low
+
+  * Use temporary WAF_HOME directory for cache. (Closes: #439567) 
+
+ -- Thomas Jollans <thomas@jollans.com>  Sat, 29 Sep 2007 22:21:03 +0200
+
 abraca (0.2-1) unstable; urgency=low
 
   * Initial release (Closes: #430729)

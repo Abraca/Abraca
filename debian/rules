@@ -13,7 +13,10 @@ export NOCOLOR=1
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	./waf configure --prefix=/usr
+	# set special waf build-specific home directory for cache (musn't write in
+	# $HOME)
+	mkdir $(CURDIR)/.waf-build-home
+	WAF_HOME=$(CURDIR)/.waf-build-home ./waf configure --prefix=/usr
 	touch configure-stamp
 
 build: build-stamp
@@ -30,6 +33,7 @@ clean:
 	rm -f build-stamp configure-stamp
 	rm -f abraca.1
 	./waf distclean
+	rm -rf .waf-build-home
 	dh_clean
 
 install: build
