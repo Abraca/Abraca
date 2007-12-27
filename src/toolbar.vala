@@ -22,6 +22,7 @@ namespace Abraca {
 
 		private void create_playback_button(weak string s) {
 			Gtk.Button button = new Gtk.Button();
+			button.relief = Gtk.ReliefStyle.NONE;
 			button.image = Gtk.Image.from_stock(s, IconSize.SMALL_TOOLBAR);
 			pack_start(button, false, false, 0);
 		}
