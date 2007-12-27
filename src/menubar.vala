@@ -82,7 +82,7 @@ namespace Abraca {
 			Gtk.Menu sub = new Gtk.Menu();
 
 			item = Gtk.ImageMenuItem.from_stock("gtk-about", null);
-			//item.activate += on_help_about();
+			item.activate += on_help_about;
 			sub.append(item);
 
 			ret.submenu = sub;
@@ -99,6 +99,25 @@ namespace Abraca {
 
 		private void on_music_quit(Gtk.MenuItem item) {
 			MainWindow.instance().quit();
+		}
+
+		private void on_help_about(Gtk.MenuItem item) {
+			Gtk.AboutDialog d = new Gtk.AboutDialog();
+
+			d.name = Environment.get_application_name();
+			d.comments = "A client for the XMMS2 music player";
+
+			d.authors = new string[] {
+				"Sebastian Sareyko <smoon@nooms.de>",
+				"Martin Salzer <stoky@gmx.net>",
+				null
+			};
+
+			d.copyright = "Copyright © 2007 Sebastian Sareyko";
+			d.website = "http://nooms.de/projects/abraca/";
+
+			d.run();
+			d.hide();
 		}
 	}
 }
