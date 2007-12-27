@@ -1,3 +1,6 @@
+DESTDIR =
+PREFIX ?= /usr/local
+
 SOURCES = \
 	src/abraca.vala \
 	src/collections_tree.vala \
@@ -15,6 +18,10 @@ build/abraca: $(SOURCES)
 		mkdir build; \
 	fi
 	valac -d build --pkg gtk+-2.0 $^ -o abraca
+
+install: build/abraca
+	install -m 755 -D build/abraca $(DESTDIR)$(PREFIX)/bin/abraca
+	install -m 644 -D data/abraca.desktop $(DESTDIR)$(PREFIX)/share/applications/abraca.desktop
 
 clean:
 	rm -f build/abraca
