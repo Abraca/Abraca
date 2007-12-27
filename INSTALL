@@ -1,0 +1,10 @@
+You'll need the following applications and libraries to build and run Abraca:
+
+    o xmms2 (obviously)
+    o Gtk2
+    o pkg-config
+
+Execute the following commands to compile and install Abraca:
+
+	make
+	make install
