@@ -5,8 +5,6 @@ using GLib;
 
 namespace Abraca {
 	public class MainWindow : Gtk.Window {
-		static MainWindow _instance;
-
 		private MenuBar menubar;
 		private ToolBar toolbar;
 		private MainHPaned main_hpaned;
@@ -18,18 +16,6 @@ namespace Abraca {
 			height_request = 600;
 
 			destroy += on_quit;
-		}
-
-		public static MainWindow instance() {
-			if (_instance == null)
-				_instance = new MainWindow();
-
-			return _instance;
-		}
-
-		public void quit() {
-			// configuration.save();
-			Gtk.main_quit();
 		}
 
 		private void create_widgets() {
@@ -50,7 +36,7 @@ namespace Abraca {
 		}
 
 		private void on_quit(Gtk.Widget w) {
-			quit();
+			Abraca.instance().quit();
 		}
 	}
 }

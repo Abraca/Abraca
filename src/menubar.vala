@@ -97,7 +97,7 @@ namespace Abraca {
 		}
 
 		private void on_music_quit(Gtk.MenuItem item) {
-			MainWindow.instance().quit();
+			Abraca.instance().quit();
 		}
 
 		private void on_help_about(Gtk.MenuItem item) {
