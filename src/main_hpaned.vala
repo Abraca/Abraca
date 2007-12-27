@@ -18,6 +18,8 @@ namespace Abraca {
 				null, null
 			);
 
+			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
+			                    Gtk.PolicyType.AUTOMATIC);
 			scrolled.add_with_viewport(new CollectionsTree());
 
 			pack1(scrolled, false, true);

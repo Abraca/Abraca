@@ -35,6 +35,8 @@ namespace Abraca {
 				null, null
 			);
 
+			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
+			                    Gtk.PolicyType.AUTOMATIC);
 			scrolled.add_with_viewport(new FilterTree());
 			box.pack_start(scrolled, true, true, 0);
 
@@ -51,6 +53,8 @@ namespace Abraca {
 				null, null
 			);
 
+			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
+			                    Gtk.PolicyType.AUTOMATIC);
 			scrolled.add_with_viewport(new PlaylistTree());
 			box.pack_start(scrolled, true, true, 0);
 
