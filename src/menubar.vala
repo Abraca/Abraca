@@ -2,7 +2,6 @@
  * vim:noexpandtab:sw=4:sts=0:ts=4:syn=cs
  */
 using GLib;
-using Gtk;
 
 namespace Abraca {
 	public class MenuBar : Gtk.MenuBar {
@@ -21,13 +20,13 @@ namespace Abraca {
 			item.activate += on_music_add;
 			sub.append(item);
 
-			sub.append(new SeparatorMenuItem());
+			sub.append(new Gtk.SeparatorMenuItem());
 
 			item = Gtk.ImageMenuItem.from_stock("gtk-save", null);
 			item.activate += on_music_save;
 			sub.append(item);
 
-			sub.append(new SeparatorMenuItem());
+			sub.append(new Gtk.SeparatorMenuItem());
 
 			item = Gtk.ImageMenuItem.from_stock("gtk-quit", null);
 			item.activate += on_music_quit;
@@ -51,7 +50,7 @@ namespace Abraca {
 			//item.activate += on_playlist_new_from_filter();
 			sub.append(item);
 
-			sub.append(new SeparatorMenuItem());
+			sub.append(new Gtk.SeparatorMenuItem());
 
 			item = Gtk.ImageMenuItem.with_mnemonic("_Add filter results");
 			//item.activate += on_playlist_add_filter_results();
@@ -61,7 +60,7 @@ namespace Abraca {
 			//item.activate += on_playlist_replace_with_filter_results();
 			sub.append(item);
 
-			sub.append(new SeparatorMenuItem());
+			sub.append(new Gtk.SeparatorMenuItem());
 
 			item = Gtk.ImageMenuItem.from_stock("gtk-clear", null);
 			//item.activate += on_playlist_clear();

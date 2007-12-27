@@ -2,7 +2,6 @@
  * vim:noexpandtab:sw=4:sts=0:ts=4:syn=cs
  */
 using GLib;
-using Gtk;
 
 namespace Abraca {
 	public class ToolBar : Gtk.HBox {
@@ -23,7 +22,7 @@ namespace Abraca {
 		private void create_playback_button(weak string s) {
 			Gtk.Button button = new Gtk.Button();
 			button.relief = Gtk.ReliefStyle.NONE;
-			button.image = Gtk.Image.from_stock(s, IconSize.SMALL_TOOLBAR);
+			button.image = Gtk.Image.from_stock(s, Gtk.IconSize.SMALL_TOOLBAR);
 			pack_start(button, false, false, 0);
 		}
 
