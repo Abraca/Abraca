@@ -19,7 +19,7 @@ build/abraca: $(SOURCES)
 	@if [ ! -d build ]; then \
 		mkdir build; \
 	fi
-	valac -d build $(PACKAGES) $^ -o abraca
+	valac --save-temps -d build $(PACKAGES) $^ -o abraca
 
 install: build/abraca
 	install -m 755 -D build/abraca $(DESTDIR)$(PREFIX)/bin/abraca
