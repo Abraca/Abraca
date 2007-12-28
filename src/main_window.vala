@@ -7,7 +7,13 @@ namespace Abraca {
 	public class MainWindow : Gtk.Window {
 		private MenuBar menubar;
 		private ToolBar toolbar;
-		private MainHPaned main_hpaned;
+		private MainHPaned _main_hpaned;
+
+		public MainHPaned main_hpaned {
+			get {
+				return _main_hpaned;
+			}
+		}
 
 		construct {
 			create_widgets();
@@ -40,7 +46,7 @@ namespace Abraca {
 			move(x, y);
 
 			/* other widgets */
-			main_hpaned.eval_config();
+			_main_hpaned.eval_config();
 		}
 
 		private void create_widgets() {
@@ -54,8 +60,8 @@ namespace Abraca {
 
 			vbox6.pack_start(new Gtk.HSeparator(), false, true, 0);
 
-			main_hpaned = new MainHPaned();
-			vbox6.pack_start(main_hpaned, true, true, 0);
+			_main_hpaned = new MainHPaned();
+			vbox6.pack_start(_main_hpaned, true, true, 0);
 
 			add(vbox6);
 		}

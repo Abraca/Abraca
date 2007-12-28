@@ -53,6 +53,9 @@ namespace Abraca {
 		public void try_connect() {
 			_xmms.connect(Environment.get_variable("XMMS_PATH"));
 			Xmms.MainLoop.GMain.init(_xmms);
+
+			_main_window.main_hpaned.collections_tree.
+				query_collections();
 		}
 
 		public static int main(string[] args) {

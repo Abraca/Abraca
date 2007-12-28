@@ -5,7 +5,14 @@ using GLib;
 
 namespace Abraca {
 	public class MainHPaned : Gtk.HPaned {
+		private CollectionsTree _coll_tree;
 		private RightHPaned right_hpaned;
+
+		public CollectionsTree collections_tree {
+			get {
+				return _coll_tree;
+			}
+		}
 
 		construct {
 			position = 120;
@@ -30,7 +37,9 @@ namespace Abraca {
 
 			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
 			                    Gtk.PolicyType.AUTOMATIC);
-			scrolled.add_with_viewport(new CollectionsTree());
+
+			_coll_tree = new CollectionsTree();
+			scrolled.add_with_viewport(_coll_tree);
 
 			pack1(scrolled, false, true);
 

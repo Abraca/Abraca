@@ -28,6 +28,63 @@ namespace Abraca {
 			model = create_model();
 		}
 
+		public void query_collections() {
+			Xmms.Client xmms = Abraca.instance().xmms;
+
+			xmms.coll_list("Collections").notifier_set(
+				on_coll_list_collections, this
+			);
+
+			xmms.coll_list("Playlists").notifier_set(
+				on_coll_list_playlists, this
+			);
+		}
+
+		[InstanceLast]
+		private void on_coll_list_collections(Xmms.Result res) {
+			on_coll_list(res, CollectionType.Collection);
+		}
+
+		[InstanceLast]
+		private void on_coll_list_playlists(Xmms.Result res) {
+			on_coll_list(res, CollectionType.Playlist);
+		}
+
+		private void on_coll_list(Xmms.Result res, CollectionType type) {
+			Gtk.TreeIter parent;
+
+			if (type == CollectionType.Collection)
+				model.get_iter_first(out parent);
+			else
+				model.get_iter_from_string(out parent, "1");
+
+			int pos = model.iter_n_children(out parent);
+
+			Gtk.TreeStore store = (Gtk.TreeStore) model;
+
+			for (res.list_first(); res.list_valid(); res.list_next()) {
+				Gtk.TreeIter iter;
+				weak string s;
+
+				if (!res.get_string (out s))
+					continue;
+
+				/* ignore playlists that are for internal use only */
+				if (type == CollectionType.Playlist && s[0] == '_')
+					continue;
+
+				store.insert_with_values(
+					ref iter, ref parent, pos++,
+					CollColumn.Type, type,
+					CollColumn.Icon, null,
+					CollColumn.Name, s,
+					-1
+				);
+			}
+
+			expand_all();
+		}
+
 		private void create_columns() {
  			insert_column_with_attributes(
 				-1, null, new Gtk.CellRendererPixbuf(),
@@ -57,8 +114,6 @@ namespace Abraca {
 				-1
 			);
 
-			store.set_data("collections_parent", store.get_path(ref iter));
-
 			store.insert_with_values(
 				ref iter, null, pos++,
 				CollColumn.Type, CollectionType.Invalid,
@@ -66,8 +121,6 @@ namespace Abraca {
 				CollColumn.Name, "<b>Playlists</b>",
 				-1
 			);
-
-			store.set_data("playlists_parent", store.get_path(ref iter));
 
 			return store;
 		}
