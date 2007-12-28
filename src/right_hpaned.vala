@@ -12,6 +12,12 @@ namespace Abraca {
 			create_widgets();
 		}
 
+		public void eval_config() {
+			int pos = Abraca.instance().config.panes_pos1;
+
+			position = pos.clamp(433, 800);
+		}
+
 		private void create_widgets() {
 			pack1(create_left_box(), false, true);
 			pack2(create_right_box(), true, true);

@@ -7,18 +7,24 @@ namespace Abraca {
 	public class Abraca : Object {
 		static Abraca _instance;
 		private MainWindow _main_window;
-		private Config config;
+		private Config _config;
 
 		construct {
 			_main_window = new MainWindow();
 
-			config = new Config();
-			config.load();
+			_config = new Config();
+			_config.load();
 		}
 
 		public MainWindow main_window {
 			get {
 				return _main_window;
+			}
+		}
+
+		public Config config {
+			get {
+				return _config;
 			}
 		}
 
@@ -30,13 +36,15 @@ namespace Abraca {
 		}
 
 		public void quit() {
-			config.save();
+			_config.save();
+
 			Gtk.main_quit();
 		}
 
 		public static int main(string[] args) {
 			Gtk.init(out args);
 			Environment.set_application_name("Abraca");
+			Abraca.instance().main_window.eval_config();
 			Abraca.instance().main_window.show_all();
 			Gtk.main();
 

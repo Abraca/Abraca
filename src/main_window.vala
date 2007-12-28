@@ -18,6 +18,31 @@ namespace Abraca {
 			destroy += on_quit;
 		}
 
+		public void eval_config() {
+			/* window size */
+			int w = Abraca.instance().config.main_window_width;
+			int h = Abraca.instance().config.main_window_height;
+
+			if (w > 0 && h > 0)
+				resize(w, h);
+
+			/* maximized state */
+			if (Abraca.instance().config.main_window_maximized)
+				maximize();
+
+			/* gravity */
+			gravity = Abraca.instance().config.main_window_gravity;
+
+			/* window position */
+			int x = Abraca.instance().config.main_window_x;
+			int y = Abraca.instance().config.main_window_y;
+
+			move(x, y);
+
+			/* other widgets */
+			main_hpaned.eval_config();
+		}
+
 		private void create_widgets() {
 			Gtk.VBox vbox6 = new Gtk.VBox(false, 0);
 
