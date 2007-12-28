@@ -13,7 +13,7 @@ SOURCES = \
 	src/right_hpaned.vala \
 	src/toolbar.vala \
 
-PACKAGES = $(addprefix --pkg ,gtk+-2.0 xmms2-client xmms2-client-glib)
+PACKAGES = $(addprefix --pkg ,gtk+-2.0 xmms2-client-glib)
 
 build/abraca: $(SOURCES)
 	@if [ ! -d build ]; then \
