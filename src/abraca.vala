@@ -7,9 +7,13 @@ namespace Abraca {
 	public class Abraca : Object {
 		static Abraca _instance;
 		private MainWindow _main_window;
+		private Config config;
 
 		construct {
 			_main_window = new MainWindow();
+
+			config = new Config();
+			config.load();
 		}
 
 		public MainWindow main_window {
@@ -26,7 +30,7 @@ namespace Abraca {
 		}
 
 		public void quit() {
-			// configuration.save();
+			config.save();
 			Gtk.main_quit();
 		}
 
