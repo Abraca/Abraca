@@ -9,35 +9,35 @@ namespace Abraca {
 			get; set;
 		}
 
-		private int main_window_x {
+		public int main_window_x {
 			get; set;
 		}
 
-		private int main_window_y {
+		public int main_window_y {
 			get; set;
 		}
 
-		private int main_window_width {
+		public int main_window_width {
 			get; set;
 		}
 
-		private int main_window_height {
+		public int main_window_height {
 			get; set;
 		}
 
-		private bool main_window_maximized {
+		public bool main_window_maximized {
 			get; set;
 		}
 
-		private int panes_pos1 {
+		public int panes_pos1 {
 			get; set;
 		}
 
-		private int panes_pos2 {
+		public int panes_pos2 {
 			get; set;
 		}
 
-		private bool playlist_expanded {
+		public bool playlist_expanded {
 			get; set;
 		}
 
