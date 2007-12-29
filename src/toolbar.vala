@@ -9,10 +9,10 @@ namespace Abraca {
 			homogeneous = false;
 			spacing = 0;
 
-			create_playback_button("gtk-media-play");
-			create_playback_button("gtk-media-stop");
-			create_playback_button("gtk-media-previous");
-			create_playback_button("gtk-media-next");
+			create_playback_button(Gtk.STOCK_MEDIA_PLAY);
+			create_playback_button(Gtk.STOCK_MEDIA_STOP);
+			create_playback_button(Gtk.STOCK_MEDIA_PREVIOUS);
+			create_playback_button(Gtk.STOCK_MEDIA_NEXT);
 
 			create_seekbar();
 			create_cover_image();

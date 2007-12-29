@@ -16,19 +16,19 @@ namespace Abraca {
 			Gtk.MenuItem item;
 			Gtk.Menu sub = new Gtk.Menu();
 
-			item = Gtk.ImageMenuItem.from_stock("gtk-add", null);
+			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
 			item.activate += on_music_add;
 			sub.append(item);
 
 			sub.append(new Gtk.SeparatorMenuItem());
 
-			item = Gtk.ImageMenuItem.from_stock("gtk-save", null);
+			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_SAVE, null);
 			item.activate += on_music_save;
 			sub.append(item);
 
 			sub.append(new Gtk.SeparatorMenuItem());
 
-			item = Gtk.ImageMenuItem.from_stock("gtk-quit", null);
+			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_QUIT, null);
 			item.activate += on_music_quit;
 			sub.append(item);
 
@@ -42,7 +42,7 @@ namespace Abraca {
 			Gtk.MenuItem item;
 			Gtk.Menu sub = new Gtk.Menu();
 
-			item = Gtk.ImageMenuItem.from_stock("gtk-new", null);
+			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_NEW, null);
 			//item.activate += on_playlist_new();
 			sub.append(item);
 
@@ -62,7 +62,7 @@ namespace Abraca {
 
 			sub.append(new Gtk.SeparatorMenuItem());
 
-			item = Gtk.ImageMenuItem.from_stock("gtk-clear", null);
+			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_CLEAR, null);
 			//item.activate += on_playlist_clear();
 			sub.append(item);
 
@@ -80,7 +80,7 @@ namespace Abraca {
 			Gtk.MenuItem item;
 			Gtk.Menu sub = new Gtk.Menu();
 
-			item = Gtk.ImageMenuItem.from_stock("gtk-about", null);
+			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ABOUT, null);
 			item.activate += on_help_about;
 			sub.append(item);
 

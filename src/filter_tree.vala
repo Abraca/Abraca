@@ -166,7 +166,7 @@ namespace Abraca {
 
 			filter_menu = new Gtk.Menu();
 
-			item = Gtk.ImageMenuItem.from_stock("gtk-add", null);
+			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
 			item.activate += on_menu_add;
 			filter_menu.append(item);
 
