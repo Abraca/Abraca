@@ -21,6 +21,9 @@ namespace Abraca {
 			show_expanders = true;
 
 			create_columns ();
+
+			get_selection().set_mode(Gtk.SelectionMode.MULTIPLE);
+
 			model = new Gtk.ListStore(
 				FilterColumn.Total,
 				typeof(uint), typeof(string), typeof(string),
