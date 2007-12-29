@@ -21,9 +21,8 @@ namespace Abraca {
 			create_columns ();
 			model = new Gtk.ListStore(
 				FilterColumn.Total,
-				typeof(string), typeof(string), typeof(string),
-				typeof(string), typeof(string), typeof(string),
-				typeof(string)
+				typeof(uint), typeof(string), typeof(string),
+				typeof(string), typeof(string), typeof(string)
 			);
 		}
 
