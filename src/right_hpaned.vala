@@ -5,6 +5,7 @@ using GLib;
 
 namespace Abraca {
 	public class RightHPaned : Gtk.HPaned {
+		private Gtk.Entry _filter_entry;
 		private FilterTree _filter_tree;
 
 		public FilterTree filter_tree {
@@ -18,12 +19,26 @@ namespace Abraca {
 			position_set = false;
 
 			create_widgets();
+
+			_filter_entry.activate += on_filter_entry_activate;
 		}
 
 		public void eval_config() {
 			int pos = Abraca.instance().config.panes_pos1;
 
 			position = pos.clamp(433, 800);
+		}
+
+		private void on_filter_entry_activate(Gtk.Entry entry) {
+			Xmms.Collection coll;
+			weak string pattern;
+
+			pattern = _filter_entry.get_text();
+
+			Xmms.Collection.parse(pattern, out coll);
+
+			if (coll != null)
+				_filter_tree.query_collection(coll);
 		}
 
 		private void create_widgets() {
@@ -39,8 +54,8 @@ namespace Abraca {
 			Gtk.Label label = new Gtk.Label("Filter:");
 			hbox.pack_start(label, false, false, 0);
 
-			Gtk.Entry entry = new Gtk.Entry();
-			hbox.pack_start(entry, true, true, 0);
+			_filter_entry = new Gtk.Entry();
+			hbox.pack_start(_filter_entry, true, true, 0);
 
 			box.pack_start(hbox, false, false, 2);
 
