@@ -19,7 +19,7 @@ namespace Abraca {
 			show_expanders = true;
 
 			create_columns ();
-			model = new Gtk.TreeStore(
+			model = new Gtk.ListStore(
 				FilterColumn.Total,
 				typeof(string), typeof(string), typeof(string),
 				typeof(string), typeof(string), typeof(string),
