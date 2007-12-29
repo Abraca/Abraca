@@ -73,6 +73,7 @@ namespace Abraca {
 
 			res.get_dict_entry_uint("id", out id);
 			res.get_dict_entry_string("artist", out artist);
+			res.get_dict_entry_string("title", out title);
 			res.get_dict_entry_string("album", out album);
 
 			pos = store.iter_n_children(null);
