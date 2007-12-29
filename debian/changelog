@@ -1,3 +1,18 @@
+abraca (0.2-2) unstable; urgency=low
+
+  * Recommend essential xmms2 packages and suggest the CLI client.
+    (Closes: #456369)
+
+ -- Thomas Jollans <thomas@jollans.com>  Sat, 29 Dec 2007 11:12:17 +0100
+
+abraca (0.2-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Use a temporary $HOME during build to stop waf writing outside the build
+    directory (Closes: #439567).
+
+ -- Simon McVittie <smcv@ianadd.pseudorandom.co.uk>  Mon, 10 Dec 2007 19:47:31 +0000
+
 abraca (0.2-1) unstable; urgency=low
 
   * Initial release (Closes: #430729)

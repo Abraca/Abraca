@@ -9,18 +9,19 @@ else
 endif
 
 export NOCOLOR=1
+WAF_HOME = debian/tmp-waf-home
 
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	./waf configure --prefix=/usr
+	HOME=$(WAF_HOME) ./waf configure --prefix=/usr
 	touch configure-stamp
 
 build: build-stamp
 
 build-stamp: configure-stamp
 	dh_testdir
-	./waf -v
+	HOME=$(WAF_HOME) ./waf -v
 	xsltproc --nonet /usr/share/sgml/docbook/stylesheet/xsl/nwalsh/manpages/docbook.xsl debian/abraca.xml
 	touch $@
 
@@ -29,7 +30,8 @@ clean:
 	dh_testroot
 	rm -f build-stamp configure-stamp
 	rm -f abraca.1
-	./waf distclean
+	HOME=$(WAF_HOME) ./waf distclean
+	rm -rf debian/tmp-waf-home
 	dh_clean
 
 install: build
@@ -37,7 +39,7 @@ install: build
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
-	./waf install --destdir=$(CURDIR)/debian/abraca install
+	HOME=$(WAF_HOME) ./waf install --destdir=$(CURDIR)/debian/abraca install
 	dh_install debian/abraca.desktop usr/share/applications
 
 # Build architecture-independent files here.
