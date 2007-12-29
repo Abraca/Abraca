@@ -15,6 +15,8 @@ namespace Abraca {
 	}
 
 	public class FilterTree : Gtk.TreeView {
+		private Gtk.Menu filter_menu;
+
 		construct {
 			show_expanders = true;
 
@@ -24,6 +26,10 @@ namespace Abraca {
 				typeof(uint), typeof(string), typeof(string),
 				typeof(string), typeof(string), typeof(string)
 			);
+
+			create_context_menu();
+
+			button_press_event += on_button_press_event;
 		}
 
 		public void query_collection(Xmms.Collection coll) {
@@ -78,6 +84,50 @@ namespace Abraca {
 			);
 		}
 
+		[InstanceLast]
+		private bool on_button_press_event(
+			Gtk.Widget widget, Gdk.EventButton event
+		) {
+			/* we're only interested in the 3rd mouse button */
+			if (event.button != 3)
+				return false;
+
+			/* bail if the user didn't select any items */
+			if (get_selection().count_selected_rows() == 0)
+				return false;
+
+			filter_menu.popup(
+				null, null, null, null, event.button,
+				Gtk.get_current_event_time()
+			);
+
+			return true;
+		}
+
+		private void on_menu_add(Gtk.MenuItem item) {
+			get_selection().selected_foreach(add_to_playlist, this);
+		}
+
+		private void on_menu_replace(Gtk.MenuItem item) {
+			Xmms.Client xmms = Abraca.instance().xmms;
+
+			xmms.playlist_clear("_active");
+			get_selection().selected_foreach(add_to_playlist, this);
+		}
+
+		[InstanceLast]
+		private void add_to_playlist(
+			Gtk.TreeModel model, Gtk.TreePath path,
+			out Gtk.TreeIter iter
+		) {
+			Xmms.Client xmms = Abraca.instance().xmms;
+			uint id;
+
+			model.get(ref iter, FilterColumn.ID, ref id);
+
+			xmms.playlist_add_id("_active", id);
+		}
+
 		private void create_columns() {
 			Gtk.CellRenderer cell = new Gtk.CellRendererText();
 
@@ -104,6 +154,23 @@ namespace Abraca {
  			insert_column_with_attributes(
 				-1, "Genre", cell, "text", FilterColumn.Genre, null
 			);
+		}
+
+		private void create_context_menu() {
+			Gtk.MenuItem item;
+			Gtk.ImageMenuItem img_item;
+
+			filter_menu = new Gtk.Menu();
+
+			item = Gtk.ImageMenuItem.from_stock("gtk-add", null);
+			item.activate += on_menu_add;
+			filter_menu.append(item);
+
+			item = Gtk.MenuItem.with_label("Replace");
+			item.activate += on_menu_replace;
+			filter_menu.append(item);
+
+			filter_menu.show_all();
 		}
 	}
 }
