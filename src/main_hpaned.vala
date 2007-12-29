@@ -6,11 +6,17 @@ using GLib;
 namespace Abraca {
 	public class MainHPaned : Gtk.HPaned {
 		private CollectionsTree _coll_tree;
-		private RightHPaned right_hpaned;
+		private RightHPaned _right_hpaned;
 
 		public CollectionsTree collections_tree {
 			get {
 				return _coll_tree;
+			}
+		}
+
+		public RightHPaned right_hpaned {
+			get {
+				return _right_hpaned;
 			}
 		}
 
@@ -27,7 +33,7 @@ namespace Abraca {
 			position = pos.clamp(120, 800);
 
 			/* other widgets */
-			right_hpaned.eval_config();
+			_right_hpaned.eval_config();
 		}
 
 		private void create_widgets() {
@@ -43,8 +49,8 @@ namespace Abraca {
 
 			pack1(scrolled, false, true);
 
-			right_hpaned = new RightHPaned();
-			pack2(right_hpaned, true, true);
+			_right_hpaned = new RightHPaned();
+			pack2(_right_hpaned, true, true);
 		}
 	}
 }

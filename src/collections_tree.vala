@@ -26,6 +26,8 @@ namespace Abraca {
 
 			create_columns ();
 			model = create_model();
+
+			row_activated += on_row_activated;
 		}
 
 		public void query_collections() {
@@ -83,6 +85,34 @@ namespace Abraca {
 			}
 
 			expand_all();
+		}
+
+		[InstanceLast]
+		private void on_row_activated(
+			Gtk.TreeView tree, Gtk.TreePath path,
+			Gtk.TreeViewColumn column
+		) {
+			Gtk.TreeStore store = (Gtk.TreeStore) model;
+			Gtk.TreeIter iter;
+			Xmms.Client xmms = Abraca.instance().xmms;
+			string name;
+
+			store.get_iter(out iter, path);
+			model.get(ref iter, CollColumn.Name, ref name, -1);
+
+			xmms.coll_get(name, "Collections").notifier_set(
+				on_coll_get, this
+			);
+		}
+
+		[InstanceLast]
+		private void on_coll_get(Xmms.Result res) {
+			Xmms.Collection coll;
+
+			res.get_collection(out coll);
+
+			Abraca.instance().main_window.main_hpaned.
+				right_hpaned.filter_tree.query_collection(coll);
 		}
 
 		private void create_columns() {

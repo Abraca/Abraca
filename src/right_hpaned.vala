@@ -5,6 +5,14 @@ using GLib;
 
 namespace Abraca {
 	public class RightHPaned : Gtk.HPaned {
+		private FilterTree _filter_tree;
+
+		public FilterTree filter_tree {
+			get {
+				return _filter_tree;
+			}
+		}
+
 		construct {
 			position = 433;
 			position_set = false;
@@ -42,7 +50,9 @@ namespace Abraca {
 
 			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
 			                    Gtk.PolicyType.AUTOMATIC);
-			scrolled.add_with_viewport(new FilterTree());
+
+			_filter_tree = new FilterTree();
+			scrolled.add_with_viewport(_filter_tree);
 			box.pack_start(scrolled, true, true, 0);
 
 			return box;

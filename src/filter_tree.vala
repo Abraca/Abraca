@@ -26,6 +26,58 @@ namespace Abraca {
 			);
 		}
 
+		public void query_collection(Xmms.Collection coll) {
+			Xmms.Client xmms = Abraca.instance().xmms;
+
+			xmms.coll_query_ids(coll, null, 0, 0).notifier_set(
+				on_coll_query_ids, this
+			);
+		}
+
+		[InstanceLast]
+		private void on_coll_query_ids(Xmms.Result res) {
+			Xmms.Client xmms = Abraca.instance().xmms;
+			Gtk.ListStore store = (Gtk.ListStore) model;
+
+			store.clear();
+
+			for (res.list_first(); res.list_valid(); res.list_next()) {
+				uint id;
+
+				if (!res.get_uint(out id))
+					continue;
+
+				xmms.medialib_get_info(id).notifier_set(
+					on_medialib_get_info, this
+				);
+			}
+		}
+
+		[InstanceLast]
+		private void on_medialib_get_info(Xmms.Result res) {
+			Gtk.ListStore store = (Gtk.ListStore) model;
+			Gtk.TreeIter iter;
+			weak string artist, title, album;
+			uint id;
+			int pos;
+			bool b;
+
+			res.get_dict_entry_uint("id", out id);
+			res.get_dict_entry_string("artist", out artist);
+			res.get_dict_entry_string("album", out album);
+
+			pos = store.iter_n_children(null);
+
+			store.insert_with_values(
+				ref iter, pos,
+				FilterColumn.ID, id,
+				FilterColumn.Artist, artist,
+				FilterColumn.Title, title,
+				FilterColumn.Album, album,
+				-1
+			);
+		}
+
 		private void create_columns() {
 			Gtk.CellRenderer cell = new Gtk.CellRendererText();
 
