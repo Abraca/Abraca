@@ -7,10 +7,17 @@ namespace Abraca {
 	public class RightHPaned : Gtk.HPaned {
 		private Gtk.Entry _filter_entry;
 		private FilterTree _filter_tree;
+		private PlaylistTree _playlist_tree;
 
 		public FilterTree filter_tree {
 			get {
 				return _filter_tree;
+			}
+		}
+
+		public PlaylistTree playlist_tree {
+			get {
+				return _playlist_tree;
 			}
 		}
 
@@ -85,7 +92,9 @@ namespace Abraca {
 
 			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
 			                    Gtk.PolicyType.AUTOMATIC);
-			scrolled.add_with_viewport(new PlaylistTree());
+
+			_playlist_tree = new PlaylistTree();
+			scrolled.add_with_viewport(_playlist_tree);
 			box.pack_start(scrolled, true, true, 0);
 
 			return box;

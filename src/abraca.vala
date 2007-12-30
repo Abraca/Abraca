@@ -56,6 +56,8 @@ namespace Abraca {
 
 			_main_window.main_hpaned.collections_tree.
 				query_collections();
+			_main_window.main_hpaned.right_hpaned.playlist_tree.
+				query_active_playlist();
 		}
 
 		public static int main(string[] args) {
