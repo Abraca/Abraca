@@ -79,8 +79,7 @@ namespace Abraca {
 					ref iter, ref parent, pos++,
 					CollColumn.Type, type,
 					CollColumn.Icon, null,
-					CollColumn.Name, s,
-					-1
+					CollColumn.Name, s
 				);
 			}
 
@@ -98,7 +97,7 @@ namespace Abraca {
 			string name;
 
 			store.get_iter(out iter, path);
-			model.get(ref iter, CollColumn.Name, ref name, -1);
+			model.get(ref iter, CollColumn.Name, ref name);
 
 			xmms.coll_get(name, "Collections").notifier_set(
 				on_coll_get, this

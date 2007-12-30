@@ -83,8 +83,7 @@ namespace Abraca {
 				FilterColumn.ID, id,
 				FilterColumn.Artist, artist,
 				FilterColumn.Title, title,
-				FilterColumn.Album, album,
-				-1
+				FilterColumn.Album, album
 			);
 		}
 

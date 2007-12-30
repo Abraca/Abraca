@@ -99,8 +99,7 @@ namespace Abraca {
 				ref iter, pos,
 				PlaylistColumn.ID, id,
 				PlaylistColumn.CoverArt, null,
-				PlaylistColumn.Info, info,
-				-1
+				PlaylistColumn.Info, info
 			);
 		}
 
