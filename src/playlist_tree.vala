@@ -17,6 +17,7 @@ namespace Abraca {
 			search_column = 1;
 			headers_visible = false;
 			show_expanders = false;
+			rules_hint = true;
 
 			create_columns ();
 
