@@ -1,5 +1,6 @@
+include config.mk
+
 DESTDIR =
-PREFIX ?= /usr/local
 
 SOURCES = \
 	src/abraca.vala \
@@ -19,7 +20,7 @@ build/abraca: $(SOURCES)
 	@if [ ! -d build ]; then \
 		mkdir build; \
 	fi
-	valac --save-temps -d build $(PACKAGES) $^ -o abraca
+	$(VALAC) --save-temps -d build $(PACKAGES) $^ -o abraca
 
 install: build/abraca
 	install -m 755 -D build/abraca $(DESTDIR)$(PREFIX)/bin/abraca
