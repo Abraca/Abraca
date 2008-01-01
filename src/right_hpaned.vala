@@ -27,6 +27,7 @@ namespace Abraca {
 
 			create_widgets();
 
+			_filter_entry.changed += on_filter_entry_changed;
 			_filter_entry.activate += on_filter_entry_activate;
 		}
 
@@ -34,6 +35,33 @@ namespace Abraca {
 			int pos = Abraca.instance().config.panes_pos1;
 
 			position = pos.clamp(433, 800);
+		}
+
+		private void on_filter_entry_changed(Gtk.Editable editable) {
+			Xmms.Collection coll;
+			Gdk.Color color;
+			weak string text;
+			bool is_error = false;
+
+			text = _filter_entry.get_text();
+
+			if (text.size() > 0) {
+				Xmms.Collection.parse(text, out coll);
+
+				if (coll == null) {
+					is_error = true;
+
+					/* set color to a bright red */
+					color.red = (ushort) 0xffff;
+					color.green = (ushort) 0x6666;
+					color.blue = (ushort) 0x6666;
+				}
+			}
+
+			if (is_error)
+				_filter_entry.modify_base(Gtk.StateType.NORMAL, out color);
+			else
+				_filter_entry.modify_base(Gtk.StateType.NORMAL, null);
 		}
 
 		private void on_filter_entry_activate(Gtk.Entry entry) {
