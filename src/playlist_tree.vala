@@ -32,15 +32,72 @@ namespace Abraca {
 			Xmms.Client xmms = Abraca.instance().xmms;
 
 			xmms.playlist_current_active().notifier_set(
-				on_playlist_current_active, this
+				on_playlist_loaded, this
+			);
+
+			xmms.broadcast_playlist_loaded().notifier_set(
+				on_playlist_loaded, this
+			);
+
+			xmms.broadcast_playlist_changed().notifier_set(
+				on_playlist_changed, this
 			);
 		}
 
 		[InstanceLast]
-		private void on_playlist_current_active(Xmms.Result res) {
+		private void on_playlist_changed(Xmms.Result res) {
 			Xmms.Client xmms = Abraca.instance().xmms;
+			Gtk.ListStore store = (Gtk.ListStore) model;
 
-			xmms.playlist_list_entries("_active").notifier_set(
+			int change;
+			int pos = 0;
+			uint id = 0;
+
+			res.get_dict_entry_int("type", out change);
+			res.get_dict_entry_int("pos", out pos);
+			res.get_dict_entry_uint("id", out id);
+
+			switch (change) {
+				case Xmms.PlaylistChange.ADD:
+					xmms.medialib_get_info(id).notifier_set(
+						on_medialib_get_info, this
+					);
+					break;
+				case Xmms.PlaylistChange.INSERT:
+					GLib.stdout.printf("PlaylistChange.INSERT not implemented!\n");
+					break;
+				case Xmms.PlaylistChange.REMOVE:
+					GLib.stdout.printf("PlaylistChange.REMOVE not implemented!\n");
+					break;
+				case Xmms.PlaylistChange.MOVE:
+					GLib.stdout.printf("PlaylistChange.MOVE not implemented!\n");
+					break;
+				case Xmms.PlaylistChange.UPDATE:
+					GLib.stdout.printf("PlaylistChange.UPDATE not implemented!\n");
+					break;
+				case Xmms.PlaylistChange.CLEAR:
+					store.clear();
+					break;
+				case Xmms.PlaylistChange.SHUFFLE:
+				case Xmms.PlaylistChange.SORT:
+					store.clear();
+					xmms.playlist_current_active().notifier_set(
+						on_playlist_loaded, this
+					);
+					break;
+				default:
+					break;
+			}
+		}
+
+		[InstanceLast]
+		private void on_playlist_loaded(Xmms.Result res) {
+			Xmms.Client xmms = Abraca.instance().xmms;
+			string name;
+
+			res.get_string(out name);
+
+			xmms.playlist_list_entries(name).notifier_set(
 				on_playlist_list_entries, this
 			);
 		}
