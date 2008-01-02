@@ -38,7 +38,6 @@ namespace Abraca {
 		) {
 			Xmms.Client xmms = Abraca.instance().xmms;
 			int pos = path.to_string().to_int();
-			GLib.stdout.printf("%d\n", pos);
 
 			xmms.playlist_set_next(pos);
 			xmms.playback_tickle();
@@ -184,8 +183,6 @@ namespace Abraca {
 			);
 
 			pos = store.iter_n_children(null);
-
-			GLib.stdout.printf("hoho->%d\n", id);
 
 			store.insert_with_values(
 				ref iter, pos,
