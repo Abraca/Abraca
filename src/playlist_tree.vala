@@ -23,9 +23,41 @@ namespace Abraca {
 
 			model = new Gtk.ListStore(
 				PlaylistColumn.Total,
-				typeof(uint), typeof(string), typeof(string)
+				typeof(int), typeof(string), typeof(string)
 			);
+			row_activated += on_row_activated;
+
 			show_all();
+
+		}
+
+		[InstanceLast]
+		private void on_row_activated(
+			Gtk.TreeView tree, Gtk.TreePath path,
+			Gtk.TreeViewColumn column
+		) {
+			Xmms.Client xmms = Abraca.instance().xmms;
+			int pos = path.to_string().to_int();
+			GLib.stdout.printf("%d\n", pos);
+
+			xmms.playlist_set_next(pos);
+			xmms.playback_tickle();
+
+			xmms.playback_status().notifier_set(
+				on_playback_status, this
+			);
+		}
+
+		[InstanceLast]
+		private void on_playback_status(Xmms.Result res) {
+			Xmms.Client xmms = Abraca.instance().xmms;
+			uint status;
+
+			res.get_uint(out status);
+
+			if ((int)status != Xmms.PlaybackStatus.PLAY) {
+				xmms.playback_start();
+			}
 		}
 
 		public void query_active_playlist() {
@@ -130,7 +162,7 @@ namespace Abraca {
 			uint id;
 			int duration, dur_min, dur_sec, pos;
 
-			res.get_dict_entry_uint("id", out id);
+			res.get_dict_entry_int("id", out id);
 			res.get_dict_entry_int("duration", out duration);
 
 			if (!res.get_dict_entry_string("artist", out artist))
@@ -152,6 +184,8 @@ namespace Abraca {
 			);
 
 			pos = store.iter_n_children(null);
+
+			GLib.stdout.printf("hoho->%d\n", id);
 
 			store.insert_with_values(
 				ref iter, pos,
