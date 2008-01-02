@@ -6,12 +6,18 @@ using GLib;
 namespace Abraca {
 	public class MainWindow : Gtk.Window {
 		private MenuBar menubar;
-		private ToolBar toolbar;
+		private ToolBar _toolbar;
 		private MainHPaned _main_hpaned;
 
 		public MainHPaned main_hpaned {
 			get {
 				return _main_hpaned;
+			}
+		}
+
+		public ToolBar toolbar {
+			get {
+				return _toolbar;
 			}
 		}
 
@@ -55,8 +61,8 @@ namespace Abraca {
 			menubar = new MenuBar();
 			vbox6.pack_start(menubar, false, true, 0);
 
-			toolbar = new ToolBar();
-			vbox6.pack_start(toolbar, false, false, 6);
+			_toolbar = new ToolBar();
+			vbox6.pack_start(_toolbar, false, false, 6);
 
 			vbox6.pack_start(new Gtk.HSeparator(), false, true, 0);
 

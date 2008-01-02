@@ -58,6 +58,8 @@ namespace Abraca {
 				query_collections();
 			_main_window.main_hpaned.right_hpaned.playlist_tree.
 				query_active_playlist();
+			_main_window.toolbar.
+				query_playback_status();
 		}
 
 		public static int main(string[] args) {

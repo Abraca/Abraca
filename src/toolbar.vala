@@ -5,6 +5,9 @@ using GLib;
 
 namespace Abraca {
 	public class ToolBar : Gtk.HBox {
+		private Gtk.Button play_pause;
+		private uint _status;
+
 		construct {
 			homogeneous = false;
 			spacing = 0;
@@ -12,6 +15,8 @@ namespace Abraca {
 
 			btn = create_playback_button(Gtk.STOCK_MEDIA_PLAY);
 			btn.clicked += on_media_play;
+
+			play_pause = btn;
 
 			btn = create_playback_button(Gtk.STOCK_MEDIA_STOP);
 			btn.clicked += on_media_stop;
@@ -25,6 +30,19 @@ namespace Abraca {
 			create_seekbar();
 			create_cover_image();
 			create_track_label();
+
+		}
+
+		public void query_playback_status() {
+			Xmms.Client xmms = Abraca.instance().xmms;
+
+			xmms.broadcast_playback_status().notifier_set(
+				on_playback_status_change, this
+			);
+			
+			xmms.playback_status().notifier_set(
+				on_playback_status_change, this
+			);
 		}
 
 		private Gtk.Button create_playback_button(weak string s) {
@@ -70,7 +88,12 @@ namespace Abraca {
 		[InstanceLast]
 		private void on_media_play(Gtk.Button btn) {
 			Xmms.Client xmms = Abraca.instance().xmms;
-			xmms.playback_start();
+
+			if ((int)_status == Xmms.PlaybackStatus.PLAY) {
+				xmms.playback_pause();
+			} else {
+				xmms.playback_start();
+			}
 		}
 
 		[InstanceLast]
@@ -91,6 +114,27 @@ namespace Abraca {
 			Xmms.Client xmms = Abraca.instance().xmms;
 			xmms.playlist_set_next_rel(-1);
 			xmms.playback_tickle();
+		}
+
+		[InstanceLast]
+		private void on_playback_status_change(Xmms.Result res) {
+			Gtk.Image image;
+
+			res.get_uint(out _status);
+
+			if ((int)_status != Xmms.PlaybackStatus.PLAY) {
+				image = Gtk.Image.from_stock(
+					Gtk.STOCK_MEDIA_PLAY,
+					Gtk.IconSize.SMALL_TOOLBAR
+				);
+				play_pause.set_image(image);
+			} else {
+				image = Gtk.Image.from_stock(
+					Gtk.STOCK_MEDIA_PAUSE,
+					Gtk.IconSize.SMALL_TOOLBAR
+				);
+				play_pause.set_image(image);
+			}
 		}
 	}
 }
