@@ -8,22 +8,32 @@ namespace Abraca {
 		construct {
 			homogeneous = false;
 			spacing = 0;
+			Gtk.Button btn;
 
-			create_playback_button(Gtk.STOCK_MEDIA_PLAY);
-			create_playback_button(Gtk.STOCK_MEDIA_STOP);
-			create_playback_button(Gtk.STOCK_MEDIA_PREVIOUS);
-			create_playback_button(Gtk.STOCK_MEDIA_NEXT);
+			btn = create_playback_button(Gtk.STOCK_MEDIA_PLAY);
+			btn.clicked += on_media_play;
+
+			btn = create_playback_button(Gtk.STOCK_MEDIA_STOP);
+			btn.clicked += on_media_stop;
+
+			btn = create_playback_button(Gtk.STOCK_MEDIA_PREVIOUS);
+			btn.clicked += on_media_prev;
+
+			btn = create_playback_button(Gtk.STOCK_MEDIA_NEXT);
+			btn.clicked += on_media_next;
 
 			create_seekbar();
 			create_cover_image();
 			create_track_label();
 		}
 
-		private void create_playback_button(weak string s) {
+		private Gtk.Button create_playback_button(weak string s) {
 			Gtk.Button button = new Gtk.Button();
 			button.relief = Gtk.ReliefStyle.NONE;
 			button.image = Gtk.Image.from_stock(s, Gtk.IconSize.SMALL_TOOLBAR);
 			pack_start(button, false, false, 0);
+
+			return button;
 		}
 
 		private void create_seekbar() {
@@ -55,6 +65,32 @@ namespace Abraca {
 			Gtk.Label label = new Gtk.Label("label");
 
 			pack_start(label, false, true, 4);
+		}
+
+		[InstanceLast]
+		private void on_media_play(Gtk.Button btn) {
+			Xmms.Client xmms = Abraca.instance().xmms;
+			xmms.playback_start();
+		}
+
+		[InstanceLast]
+		private void on_media_stop(Gtk.Button btn) {
+			Xmms.Client xmms = Abraca.instance().xmms;
+			xmms.playback_stop();
+		}
+
+		[InstanceLast]
+		private void on_media_prev(Gtk.Button btn) {
+			Xmms.Client xmms = Abraca.instance().xmms;
+			xmms.playlist_set_next_rel(1);
+			xmms.playback_tickle();
+		}
+
+		[InstanceLast]
+		private void on_media_next(Gtk.Button btn) {
+			Xmms.Client xmms = Abraca.instance().xmms;
+			xmms.playlist_set_next_rel(-1);
+			xmms.playback_tickle();
 		}
 	}
 }
