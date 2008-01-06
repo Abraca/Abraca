@@ -74,6 +74,10 @@ namespace Abraca {
 				on_playback_current_id, this
 			);
 
+			_xmms.playback_playtime().notifier_set(
+				on_playback_playtime, this
+			);
+
 			_xmms.signal_playback_playtime().notifier_set(
 				on_playback_playtime, this
 			);
@@ -117,7 +121,9 @@ namespace Abraca {
 				playback_playtime(pos);
 			}
 
-			res.restart();
+			if (res.get_class() == Xmms.ResultClass.SIGNAL) {
+				res.restart();
+			}
 		}
 
 		[InstanceLast]

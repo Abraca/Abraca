@@ -9,6 +9,7 @@ namespace Abraca {
 
 		private int _status;
 		private int _duration;
+		private bool _seek;
 
 		private Gtk.Label _track_label;
 		private Gtk.Label _time_label;
@@ -16,9 +17,12 @@ namespace Abraca {
 
 		construct {
 			Client c = Client.instance();
+			Gtk.Button btn;
+
 			homogeneous = false;
 			spacing = 0;
-			Gtk.Button btn;
+
+			_seek = false;
 
 			btn = create_playback_button(Gtk.STOCK_MEDIA_PLAY);
 			btn.clicked += on_media_play;
@@ -57,22 +61,56 @@ namespace Abraca {
 		private void create_seekbar() {
 			Gtk.VBox vbox = new Gtk.VBox(false, 0);
 
-			_time_slider = new Gtk.HScale(
-				new Gtk.Adjustment(
-					0.0, 0.0, 100.0, 1.0, 10.0, 10.0
-				)
-			);
+			_time_slider = new Gtk.HScale.with_range(0, 1, 0.01);
 
 			_time_slider.digits = 1;
 			_time_slider.draw_value = false;
 			_time_slider.width_request = 130;
+			_time_slider.sensitive = false;
+
+			_time_slider.button_press_event += on_time_slider_press;
+			_time_slider.button_release_event += on_time_slider_release;
 
 			vbox.pack_start(_time_slider, true, true, 0);
 
-			_time_label = new Gtk.Label("label");
+			_time_label = new Gtk.Label("");
 			vbox.pack_start(_time_label, true, true, 0);
 
 			pack_start(vbox, false, true, 0);
+		}
+
+		[InstanceLast]
+		private bool on_time_slider_press(Gtk.HScale scale, Gdk.EventButton e) {
+			_seek = true;
+			_time_slider.motion_notify_event += on_time_slider_motion_notify;
+
+			return false;
+		}
+
+		[InstanceLast]
+		private bool on_time_slider_release(Gtk.HScale scale, Gdk.EventButton e) {
+			Client c = Client.instance();
+
+			double percent = scale.get_value();
+			uint pos = (uint) _duration * percent;
+
+			c.xmms.playback_seek_ms(pos);
+
+			_time_slider.motion_notify_event -= on_time_slider_motion_notify;
+
+			_seek = false;
+
+			return false;
+		}
+
+		[InstanceLast]
+		private bool on_time_slider_motion_notify(Gtk.HScale scale, Gdk.EventMotion e) {
+			double percent = scale.get_value();
+			uint pos = (uint) _duration * percent;
+
+			update_time(pos);
+
+			return false;
 		}
 
 		private void create_cover_image() {
@@ -80,7 +118,7 @@ namespace Abraca {
 		}
 
 		private void create_track_label() {
-			_track_label = new Gtk.Label("label");
+			_track_label = new Gtk.Label("No Track");
 
 			pack_start(_track_label, false, true, 4);
 		}
@@ -91,30 +129,39 @@ namespace Abraca {
 			);
 		}
 
-		private void on_playback_playtime(Client c, uint pos) {
-			if (_duration > 0) {
-				uint dur_min, dur_sec, pos_min, pos_sec;
-				double percent;
-				string info;
-
-				dur_min = _duration / 60000;
-				dur_sec = (_duration % 60000) / 1000;
-
-				pos_min = pos / 60000;
-				pos_sec = (pos % 60000) / 1000;
-
-				info = Markup.printf_escaped("%2d:%2d / %2d:%2d", pos_min, pos_sec, dur_min, dur_sec);
-
-				_time_label.set_markup(info);
-
-				percent = (double) pos / (double) _duration;
-
-				_time_slider.set_value(100.0 * percent);
-			} else {
-				_time_label.set_markup("");
-				_time_slider.set_value(0);
+		private void update_time(uint pos) {
+			/* This is a HACK to circumvent a bug in XMMS2 */
+			if (_status == Xmms.PlaybackStatus.STOP) {
+				pos = 0;
 			}
 
+			if (_duration > 0) {
+				double percent = (double) pos / (double) _duration;
+				_time_slider.set_value(percent);
+				_time_slider.set_sensitive(true);
+			} else {
+				_time_slider.set_value(0);
+				_time_slider.set_sensitive(false);
+			}
+
+			uint dur_min, dur_sec, pos_min, pos_sec;
+			string info;
+
+			dur_min = _duration / 60000;
+			dur_sec = (_duration % 60000) / 1000;
+
+			pos_min = pos / 60000;
+			pos_sec = (pos % 60000) / 1000;
+
+			info = Markup.printf_escaped("%3d:%0.2d  of %3d:%0.2d", pos_min, pos_sec, dur_min, dur_sec);
+
+			_time_label.set_markup(info);
+		}
+
+		private void on_playback_playtime(Client c, uint pos) {
+			if (_seek == false) {
+				update_time(pos);
+			}
 		}
 
 		[InstanceLast]
@@ -196,6 +243,10 @@ namespace Abraca {
 					Gtk.IconSize.SMALL_TOOLBAR
 				);
 				play_pause.set_image(image);
+			}
+
+			if (_status == Xmms.PlaybackStatus.STOP) {
+				update_time(0);
 			}
 		}
 	}
