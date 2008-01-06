@@ -19,6 +19,8 @@ namespace Abraca {
 
 	public class CollectionsTree : Gtk.TreeView {
 		construct {
+			Client c = Client.instance();
+
 			enable_search = true;
 			search_column = 0;
 			headers_visible = false;
@@ -28,16 +30,15 @@ namespace Abraca {
 			model = create_model();
 
 			row_activated += on_row_activated;
+			c.connected += query_collections;
 		}
 
-		public void query_collections() {
-			Xmms.Client xmms = Abraca.instance().xmms;
-
-			xmms.coll_list("Collections").notifier_set(
+		private void query_collections(Client c) {
+			c.xmms.coll_list("Collections").notifier_set(
 				on_coll_list_collections, this
 			);
 
-			xmms.coll_list("Playlists").notifier_set(
+			c.xmms.coll_list("Playlists").notifier_set(
 				on_coll_list_playlists, this
 			);
 		}
@@ -93,13 +94,13 @@ namespace Abraca {
 		) {
 			Gtk.TreeStore store = (Gtk.TreeStore) model;
 			Gtk.TreeIter iter;
-			Xmms.Client xmms = Abraca.instance().xmms;
+			Client c = Client.instance();
 			string name;
 
 			store.get_iter(out iter, path);
 			model.get(ref iter, CollColumn.Name, ref name);
 
-			xmms.coll_get(name, "Collections").notifier_set(
+			c.xmms.coll_get(name, "Collections").notifier_set(
 				on_coll_get, this
 			);
 		}

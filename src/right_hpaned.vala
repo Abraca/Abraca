@@ -15,12 +15,6 @@ namespace Abraca {
 			}
 		}
 
-		public PlaylistTree playlist_tree {
-			get {
-				return _playlist_tree;
-			}
-		}
-
 		construct {
 			position = 433;
 			position_set = false;

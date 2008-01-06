@@ -36,16 +36,16 @@ namespace Abraca {
 		}
 
 		public void query_collection(Xmms.Collection coll) {
-			Xmms.Client xmms = Abraca.instance().xmms;
+			Client c = Client.instance();
 
-			xmms.coll_query_ids(coll, null, 0, 0).notifier_set(
+			c.xmms.coll_query_ids(coll, null, 0, 0).notifier_set(
 				on_coll_query_ids, this
 			);
 		}
 
 		[InstanceLast]
 		private void on_coll_query_ids(Xmms.Result res) {
-			Xmms.Client xmms = Abraca.instance().xmms;
+			Client c = Client.instance();
 			Gtk.ListStore store = (Gtk.ListStore) model;
 
 			store.clear();
@@ -56,7 +56,7 @@ namespace Abraca {
 				if (!res.get_uint(out id))
 					continue;
 
-				xmms.medialib_get_info(id).notifier_set(
+				c.xmms.medialib_get_info(id).notifier_set(
 					on_medialib_get_info, this
 				);
 			}
@@ -112,9 +112,9 @@ namespace Abraca {
 		}
 
 		private void on_menu_replace(Gtk.MenuItem item) {
-			Xmms.Client xmms = Abraca.instance().xmms;
+			Client c = Client.instance();
 
-			xmms.playlist_clear("_active");
+			c.xmms.playlist_clear("_active");
 			get_selection().selected_foreach(add_to_playlist, this);
 		}
 
@@ -123,12 +123,12 @@ namespace Abraca {
 			Gtk.TreeModel model, Gtk.TreePath path,
 			out Gtk.TreeIter iter
 		) {
-			Xmms.Client xmms = Abraca.instance().xmms;
+			Client c = Client.instance();
 			uint id;
 
 			model.get(ref iter, FilterColumn.ID, ref id);
 
-			xmms.playlist_add_id("_active", id);
+			c.xmms.playlist_add_id("_active", id);
 		}
 
 		private void create_columns() {

@@ -13,6 +13,7 @@ SOURCES = \
 	src/playlist_tree.vala \
 	src/right_hpaned.vala \
 	src/toolbar.vala \
+	src/client.vala \
 
 PACKAGES = $(addprefix --pkg ,gtk+-2.0 xmms2-client-glib)
 

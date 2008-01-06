@@ -6,9 +6,10 @@ using GLib;
 namespace Abraca {
 	public class ToolBar : Gtk.HBox {
 		private Gtk.Button play_pause;
-		private uint _status;
+		private int _status;
 
 		construct {
+			Client c = Client.instance();
 			homogeneous = false;
 			spacing = 0;
 			Gtk.Button btn;
@@ -31,18 +32,7 @@ namespace Abraca {
 			create_cover_image();
 			create_track_label();
 
-		}
-
-		public void query_playback_status() {
-			Xmms.Client xmms = Abraca.instance().xmms;
-
-			xmms.broadcast_playback_status().notifier_set(
-				on_playback_status_change, this
-			);
-			
-			xmms.playback_status().notifier_set(
-				on_playback_status_change, this
-			);
+			c.playback_status += on_playback_status_change;
 		}
 
 		private Gtk.Button create_playback_button(weak string s) {
@@ -87,42 +77,42 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_media_play(Gtk.Button btn) {
-			Xmms.Client xmms = Abraca.instance().xmms;
+			Client c = Client.instance();
 
-			if ((int)_status == Xmms.PlaybackStatus.PLAY) {
-				xmms.playback_pause();
+			if (_status == Xmms.PlaybackStatus.PLAY) {
+				c.xmms.playback_pause();
 			} else {
-				xmms.playback_start();
+				c.xmms.playback_start();
 			}
 		}
 
 		[InstanceLast]
 		private void on_media_stop(Gtk.Button btn) {
-			Xmms.Client xmms = Abraca.instance().xmms;
-			xmms.playback_stop();
+			Client c = Client.instance();
+			c.xmms.playback_stop();
 		}
 
 		[InstanceLast]
 		private void on_media_prev(Gtk.Button btn) {
-			Xmms.Client xmms = Abraca.instance().xmms;
-			xmms.playlist_set_next_rel(1);
-			xmms.playback_tickle();
+			Client c = Client.instance();
+			c.xmms.playlist_set_next_rel(1);
+			c.xmms.playback_tickle();
 		}
 
 		[InstanceLast]
 		private void on_media_next(Gtk.Button btn) {
-			Xmms.Client xmms = Abraca.instance().xmms;
-			xmms.playlist_set_next_rel(-1);
-			xmms.playback_tickle();
+			Client c = Client.instance();
+			c.xmms.playlist_set_next_rel(-1);
+			c.xmms.playback_tickle();
 		}
 
 		[InstanceLast]
-		private void on_playback_status_change(Xmms.Result res) {
+		private void on_playback_status_change(Client c, int status) {
 			Gtk.Image image;
 
-			res.get_uint(out _status);
+			_status = status;
 
-			if ((int)_status != Xmms.PlaybackStatus.PLAY) {
+			if (_status != Xmms.PlaybackStatus.PLAY) {
 				image = Gtk.Image.from_stock(
 					Gtk.STOCK_MEDIA_PLAY,
 					Gtk.IconSize.SMALL_TOOLBAR

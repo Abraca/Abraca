@@ -8,15 +8,12 @@ namespace Abraca {
 		static Abraca _instance;
 		private MainWindow _main_window;
 		private Config _config;
-		private Xmms.Client _xmms;
 
 		construct {
 			_main_window = new MainWindow();
 
 			_config = new Config();
 			_config.load();
-
-			_xmms = new Xmms.Client("Abraca");
 		}
 
 		public MainWindow main_window {
@@ -28,12 +25,6 @@ namespace Abraca {
 		public Config config {
 			get {
 				return _config;
-			}
-		}
-
-		public Xmms.Client xmms {
-			get {
-				return _xmms;
 			}
 		}
 
@@ -50,26 +41,17 @@ namespace Abraca {
 			Gtk.main_quit();
 		}
 
-		public void try_connect() {
-			_xmms.connect(Environment.get_variable("XMMS_PATH"));
-			Xmms.MainLoop.GMain.init(_xmms);
-
-			_main_window.main_hpaned.collections_tree.
-				query_collections();
-			_main_window.main_hpaned.right_hpaned.playlist_tree.
-				query_active_playlist();
-			_main_window.toolbar.
-				query_playback_status();
-		}
-
 		public static int main(string[] args) {
+			Client c = Client.instance();
+
 			Gtk.init(out args);
 
 			Environment.set_application_name("Abraca");
 
 			Abraca.instance().main_window.eval_config();
 			Abraca.instance().main_window.show_all();
-			Abraca.instance().try_connect();
+
+			c.try_connect();
 
 			Gtk.main();
 

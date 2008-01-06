@@ -12,7 +12,11 @@ namespace Abraca {
 	}
 
 	public class PlaylistTree : Gtk.TreeView {
+		private int _status;
+
 		construct {
+			Client c = Client.instance();
+
 			enable_search = true;
 			search_column = 1;
 			headers_visible = false;
@@ -27,115 +31,62 @@ namespace Abraca {
 			);
 			row_activated += on_row_activated;
 
+			c.playlist_loaded += on_playlist_loaded;
+			c.playlist_add += on_playlist_add;
+			c.playback_status += on_playback_status;
+
 			show_all();
 
 		}
+
+		private void create_columns() {
+ 			insert_column_with_attributes(
+				-1, null, new Gtk.CellRendererPixbuf(),
+				"stock-id", PlaylistColumn.CoverArt, null
+			);
+
+ 			insert_column_with_attributes(
+				-1, null, new Gtk.CellRendererText(),
+				"markup", PlaylistColumn.Info, null
+			);
+		}
+
 
 		[InstanceLast]
 		private void on_row_activated(
 			Gtk.TreeView tree, Gtk.TreePath path,
 			Gtk.TreeViewColumn column
 		) {
-			Xmms.Client xmms = Abraca.instance().xmms;
+			Client c = Client.instance();
 			int pos = path.to_string().to_int();
 
-			xmms.playlist_set_next(pos);
-			xmms.playback_tickle();
+			c.xmms.playlist_set_next(pos);
+			c.xmms.playback_tickle();
 
-			xmms.playback_status().notifier_set(
-				on_playback_status, this
-			);
-		}
-
-		[InstanceLast]
-		private void on_playback_status(Xmms.Result res) {
-			Xmms.Client xmms = Abraca.instance().xmms;
-			uint status;
-
-			res.get_uint(out status);
-
-			if ((int)status != Xmms.PlaybackStatus.PLAY) {
-				xmms.playback_start();
+			if (_status != Xmms.PlaybackStatus.PLAY) {
+				c.xmms.playback_start();
 			}
 		}
 
-		public void query_active_playlist() {
-			Xmms.Client xmms = Abraca.instance().xmms;
-
-			xmms.playlist_current_active().notifier_set(
-				on_playlist_loaded, this
-			);
-
-			xmms.broadcast_playlist_loaded().notifier_set(
-				on_playlist_loaded, this
-			);
-
-			xmms.broadcast_playlist_changed().notifier_set(
-				on_playlist_changed, this
-			);
+		private void on_playback_status(Client c, int status) {
+			_status = status;
 		}
 
-		[InstanceLast]
-		private void on_playlist_changed(Xmms.Result res) {
-			Xmms.Client xmms = Abraca.instance().xmms;
-			Gtk.ListStore store = (Gtk.ListStore) model;
-
-			int change;
-			int pos = 0;
-			uint id = 0;
-
-			res.get_dict_entry_int("type", out change);
-			res.get_dict_entry_int("pos", out pos);
-			res.get_dict_entry_uint("id", out id);
-
-			switch (change) {
-				case Xmms.PlaylistChange.ADD:
-					xmms.medialib_get_info(id).notifier_set(
-						on_medialib_get_info, this
-					);
-					break;
-				case Xmms.PlaylistChange.INSERT:
-					GLib.stdout.printf("PlaylistChange.INSERT not implemented!\n");
-					break;
-				case Xmms.PlaylistChange.REMOVE:
-					GLib.stdout.printf("PlaylistChange.REMOVE not implemented!\n");
-					break;
-				case Xmms.PlaylistChange.MOVE:
-					GLib.stdout.printf("PlaylistChange.MOVE not implemented!\n");
-					break;
-				case Xmms.PlaylistChange.UPDATE:
-					GLib.stdout.printf("PlaylistChange.UPDATE not implemented!\n");
-					break;
-				case Xmms.PlaylistChange.CLEAR:
-					store.clear();
-					break;
-				case Xmms.PlaylistChange.SHUFFLE:
-				case Xmms.PlaylistChange.SORT:
-					store.clear();
-					xmms.playlist_current_active().notifier_set(
-						on_playlist_loaded, this
-					);
-					break;
-				default:
-					break;
-			}
-		}
-
-		[InstanceLast]
-		private void on_playlist_loaded(Xmms.Result res) {
-			Xmms.Client xmms = Abraca.instance().xmms;
-			string name;
-
-			res.get_string(out name);
-
-			xmms.playlist_list_entries(name).notifier_set(
+		private void on_playlist_loaded(Client c, string name) {
+			c.xmms.playlist_list_entries(name).notifier_set(
 				on_playlist_list_entries, this
+			);
+		}
+
+		private void on_playlist_add(Client c, uint mid) {
+			c.xmms.medialib_get_info(mid).notifier_set(
+				on_medialib_get_info, this
 			);
 		}
 
 		[InstanceLast]
 		private void on_playlist_list_entries(Xmms.Result res) {
-			Xmms.Client xmms = Abraca.instance().xmms;
+			Client c = Client.instance();
 			Gtk.ListStore store = (Gtk.ListStore) model;
 
 			store.clear();
@@ -146,7 +97,7 @@ namespace Abraca {
 				if (!res.get_uint(out id))
 					continue;
 
-				xmms.medialib_get_info(id).notifier_set(
+				c.xmms.medialib_get_info(id).notifier_set(
 					on_medialib_get_info, this
 				);
 			}
@@ -189,19 +140,6 @@ namespace Abraca {
 				PlaylistColumn.ID, id,
 				PlaylistColumn.CoverArt, null,
 				PlaylistColumn.Info, info
-			);
-		}
-
-
-		private void create_columns() {
- 			insert_column_with_attributes(
-				-1, null, new Gtk.CellRendererPixbuf(),
-				"stock-id", PlaylistColumn.CoverArt, null
-			);
-
- 			insert_column_with_attributes(
-				-1, null, new Gtk.CellRendererText(),
-				"markup", PlaylistColumn.Info, null
 			);
 		}
 	}
