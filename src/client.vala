@@ -8,6 +8,8 @@ namespace Abraca {
 		public signal void disconnected();
 
 		public signal void playback_status(int status);
+		public signal void playback_current_id(uint mid);
+		public signal void playback_playtime(uint pos);
 		public signal void playlist_loaded(string name);
 
 		public signal void playlist_add(uint mid);
@@ -64,6 +66,18 @@ namespace Abraca {
 				on_playback_status, this
 			);
 
+			_xmms.playback_current_id().notifier_set(
+				on_playback_current_id, this
+			);
+
+			_xmms.broadcast_playback_current_id().notifier_set(
+				on_playback_current_id, this
+			);
+
+			_xmms.signal_playback_playtime().notifier_set(
+				on_playback_playtime, this
+			);
+
 			_xmms.playlist_current_active().notifier_set(
 				on_playlist_loaded, this
 			);
@@ -87,8 +101,28 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
+		private void on_playback_current_id(Xmms.Result res) {
+			uint mid;
+
+			if (res.get_uint(out mid)) {
+				playback_current_id(mid);
+			}
+		}
+
+		[InstanceLast]
+		private void on_playback_playtime(Xmms.Result res) {
+			uint pos;
+
+			if (res.get_uint(out pos)) {
+				playback_playtime(pos);
+			}
+
+			res.restart();
+		}
+
+		[InstanceLast]
 		private void on_playlist_loaded(Xmms.Result res) {
-			string name;
+			weak string name;
 
 			if (res.get_string(out name)) {
 				playlist_loaded(name);
