@@ -109,6 +109,8 @@ namespace Abraca {
 			d.authors = new string[] {
 				"Sebastian Sareyko <smoon@nooms.de>",
 				"Martin Salzer <stoky@gmx.net>",
+				"Tilman Sauerbeck <tilman@xmms.org>",
+				"Daniel Svensson <dsvensson@gmail.com>",
 				null
 			};
 
