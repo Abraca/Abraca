@@ -5,6 +5,15 @@ using GLib;
 
 namespace Abraca {
 	public class MenuBar : Gtk.MenuBar {
+
+		private const string[] _authors = {
+				"Sebastian Sareyko <smoon@nooms.de>",
+				"Martin Salzer <stoky@gmx.net>",
+				"Tilman Sauerbeck <tilman@xmms.org>",
+				"Daniel Svensson <dsvensson@gmail.com>",
+				null
+			};
+
 		construct {
 			append(create_music_menu());
 			append(create_playlist_menu());
@@ -32,7 +41,7 @@ namespace Abraca {
 			item.activate += on_music_quit;
 			sub.append(item);
 
-			ret.submenu = sub;
+			ret.set_submenu(sub);
 
 			return ret;
 		}
@@ -70,7 +79,7 @@ namespace Abraca {
 			//item.activate += on_playlist_shuffle();
 			sub.append(item);
 
-			ret.submenu = sub;
+			ret.set_submenu(sub);
 
 			return ret;
 		}
@@ -84,7 +93,7 @@ namespace Abraca {
 			item.activate += on_help_about;
 			sub.append(item);
 
-			ret.submenu = sub;
+			ret.set_submenu(sub);
 
 			return ret;
 		}
@@ -106,14 +115,7 @@ namespace Abraca {
 			d.name = Environment.get_application_name();
 			d.comments = "A client for the XMMS2 music player";
 
-			d.authors = new string[] {
-				"Sebastian Sareyko <smoon@nooms.de>",
-				"Martin Salzer <stoky@gmx.net>",
-				"Tilman Sauerbeck <tilman@xmms.org>",
-				"Daniel Svensson <dsvensson@gmail.com>",
-				null
-			};
-
+			d.authors = _authors;
 			d.copyright = "Copyright © 2007 Sebastian Sareyko";
 			d.website = "http://nooms.de/projects/abraca/";
 
