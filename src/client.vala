@@ -4,6 +4,8 @@ namespace Abraca {
 		private Xmms.Client _xmms;
 		private pointer _gmain;
 
+		private string _playlist = null;
+
 		public signal void connected();
 		public signal void disconnected();
 
@@ -12,9 +14,10 @@ namespace Abraca {
 		public signal void playback_playtime(uint pos);
 		public signal void playlist_loaded(string name);
 
-		public signal void playlist_add(uint mid);
-		public signal void playlist_insert(uint mid, int pos);
-		public signal void playlist_remove(int pos);
+		public signal void playlist_add(weak string playlist, uint mid);
+		public signal void playlist_move(weak string playlist, int pos, int npos);
+		public signal void playlist_insert(weak string playlist, uint mid, int pos);
+		public signal void playlist_remove(weak string playlist, int pos);
 
 		construct {
 			_xmms = new Xmms.Client("Abraca");
@@ -113,6 +116,10 @@ namespace Abraca {
 			}
 		}
 
+		/**
+		 * Emit the current playback position in ms.
+		 * TODO: Throttle this so we don't sink the system.
+		 */
 		[InstanceLast]
 		private void on_playback_playtime(Xmms.Result res) {
 			uint pos;
@@ -131,35 +138,35 @@ namespace Abraca {
 			weak string name;
 
 			if (res.get_string(out name)) {
+				_playlist = name;
 				playlist_loaded(name);
 			}
 		}
 
 		[InstanceLast]
 		private void on_playlist_changed(Xmms.Result res) {
-			int change, pos;
-			uint id;
+			int change, pos, npos;
+			uint mid;
 
 			res.get_dict_entry_int("type", out change);
-			res.get_dict_entry_int("pos", out pos);
-			res.get_dict_entry_uint("id", out id);
+			res.get_dict_entry_int("position", out pos);
+			res.get_dict_entry_int("newposition", out npos);
+			res.get_dict_entry_uint("id", out mid);
 
 			switch (change) {
 				case Xmms.PlaylistChange.ADD:
-					playlist_add(id);
+					playlist_add(_playlist, mid);
 					break;
 				case Xmms.PlaylistChange.INSERT:
-					GLib.stdout.printf("PlaylistChange.INSERT not implemented!\n");
+					playlist_insert(_playlist, mid, pos);
 					break;
 				case Xmms.PlaylistChange.REMOVE:
-					GLib.stdout.printf("PlaylistChange.REMOVE not implemented!\n");
+					playlist_remove(_playlist, pos);
 					break;
 				case Xmms.PlaylistChange.MOVE:
-					GLib.stdout.printf("PlaylistChange.MOVE not implemented!\n");
+					playlist_move(_playlist, pos, npos);
 					break;
 				case Xmms.PlaylistChange.UPDATE:
-					GLib.stdout.printf("PlaylistChange.UPDATE not implemented!\n");
-					break;
 				case Xmms.PlaylistChange.CLEAR:
 				case Xmms.PlaylistChange.SHUFFLE:
 				case Xmms.PlaylistChange.SORT:

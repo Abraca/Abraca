@@ -16,6 +16,7 @@ namespace Abraca {
 
 	public class FilterTree : Gtk.TreeView {
 		private Gtk.Menu filter_menu;
+		private Gtk.TargetEntry[] _target_entries;
 
 		construct {
 			show_expanders = true;
@@ -26,11 +27,12 @@ namespace Abraca {
 
 			model = new Gtk.ListStore(
 				FilterColumn.Total,
-				typeof(uint), typeof(string), typeof(string),
+				typeof(int), typeof(string), typeof(string),
 				typeof(string), typeof(string), typeof(string)
 			);
 
 			create_context_menu();
+			create_drag_n_drop();
 
 			button_press_event += on_button_press_event;
 		}
@@ -71,7 +73,7 @@ namespace Abraca {
 			int pos;
 			bool b;
 
-			res.get_dict_entry_uint("id", out id);
+			res.get_dict_entry_int("id", out id);
 			res.get_dict_entry_string("artist", out artist);
 			res.get_dict_entry_string("title", out title);
 			res.get_dict_entry_string("album", out album);
@@ -174,6 +176,52 @@ namespace Abraca {
 			filter_menu.append(item);
 
 			filter_menu.show_all();
+		}
+
+		private void create_drag_n_drop() {
+			_target_entries = new Gtk.TargetEntry[1];
+
+			_target_entries[0].target = "application/x-xmms2mlibid";
+			_target_entries[0].flags = 0;
+			_target_entries[0].info = 0;
+
+			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
+			                         _target_entries, _target_entries.length,
+			                         Gdk.DragAction.MOVE);
+
+			drag_data_get += on_drag_data_get;
+		}
+
+		[InstanceLast]
+		private void on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
+		                              Gtk.SelectionData selection_data,
+		                              uint info, uint time) {
+			weak Gtk.TreeSelection sel = get_selection();
+			weak List<weak Gtk.TreeRowReference> lst = sel.get_selected_rows(null);
+			List<uint> mid_list = new List<uint>();
+
+			string buf = null;
+
+			foreach (weak Gtk.TreePath p in lst) {
+				Gtk.TreeIter iter;
+				uint mid;
+
+				model.get_iter(out iter, p);
+				model.get(ref iter, 0, out mid, -1);
+
+				mid_list.prepend((int) mid);
+			}
+
+			uint len = mid_list.length();
+			uint[] mid_array = new uint[len];
+
+			int pos = 0;
+			foreach (int mid in mid_list) {
+				mid_array[pos++] = mid;
+			}
+
+			selection_data.set(Gdk.Atom.intern("application/x-xmms2mlibid", true), 8,
+			                   (uchar[]) mid_array, (int) len * 32);
 		}
 	}
 }
