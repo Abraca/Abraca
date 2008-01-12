@@ -22,12 +22,27 @@ namespace Abraca {
 		}
 
 		construct {
+			Client c = Client.instance();
+
 			create_widgets();
 
 			width_request = 800;
 			height_request = 600;
 
 			destroy += on_quit;
+
+			main_hpaned.set_sensitive(false);
+			toolbar.set_sensitive(false);
+
+			c.disconnected += c => {
+				main_hpaned.set_sensitive(false);
+				toolbar.set_sensitive(false);
+			};
+
+			c.connected += c => {
+				main_hpaned.set_sensitive(true);
+				toolbar.set_sensitive(true);
+			};
 		}
 
 		public void eval_config() {
