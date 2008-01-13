@@ -218,7 +218,7 @@ namespace Abraca {
 		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path,
 		                              Gtk.TreeViewColumn column) {
 			Client c = Client.instance();
-			int pos = path.to_string().to_int();
+			int pos = path.get_indices()[0];
 
 			c.xmms.playlist_set_next(pos);
 			c.xmms.playback_tickle();
