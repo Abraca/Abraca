@@ -118,7 +118,6 @@ namespace Abraca {
 
 		/**
 		 * Emit the current playback position in ms.
-		 * TODO: Throttle this so we don't sink the system.
 		 */
 		[InstanceLast]
 		private void on_playback_playtime(Xmms.Result res) {
@@ -129,7 +128,12 @@ namespace Abraca {
 			}
 
 			if (res.get_class() == Xmms.ResultClass.SIGNAL) {
-				res.restart();
+				/* Throttle playback time to only hit once a second */
+				GLib.Timeout.add(900, ptr => {
+					Xmms.Result res = (Xmms.Result) ptr;
+					res.restart();
+					return false;
+				}, res);
 			}
 		}
 
