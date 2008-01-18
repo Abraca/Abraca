@@ -200,7 +200,7 @@ namespace Abraca {
 		[InstanceLast]
 		private void on_medialib_get_info(Xmms.Result res) {
 			weak string tmp;
-			uint mid;
+			int mid;
 
 			if (!res.get_dict_entry_int("id", out mid)) {
 				return;

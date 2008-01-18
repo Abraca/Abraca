@@ -69,8 +69,7 @@ namespace Abraca {
 			Gtk.ListStore store = (Gtk.ListStore) model;
 			Gtk.TreeIter iter;
 			weak string artist, title, album;
-			uint id;
-			int pos;
+			int pos, id;
 			bool b;
 
 			res.get_dict_entry_int("id", out id);

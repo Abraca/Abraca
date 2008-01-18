@@ -368,8 +368,7 @@ namespace Abraca {
 			Gtk.TreeIter iter;
 			weak string artist, title, album;
 			string info;
-			uint id;
-			int duration, dur_min, dur_sec, pos;
+			int duration, dur_min, dur_sec, pos, id;
 
 			res.get_dict_entry_int("id", out id);
 			res.get_dict_entry_int("duration", out duration);

@@ -168,7 +168,7 @@ namespace Abraca {
 		private void on_medialib_get_info(Xmms.Result res) {
 			weak string artist, title, album;
 			string info;
-			uint id;
+			int id;
 			int duration, dur_min, dur_sec, pos;
 
 			res.get_dict_entry_int("id", out id);
