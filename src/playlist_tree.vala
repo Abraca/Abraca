@@ -26,6 +26,11 @@ namespace Abraca {
 		/** allowed drag-n-drop variants */
 		private Gtk.TargetEntry[] _target_entries;
 
+		/* TODO: This is bogous, use a Hash<uint,List<uint>> instead
+		 *       to allow for multiple rows <-> same medialib id.
+		 */
+		private GLib.HashTable<int,Gtk.TreeRowReference[]> pos_map;
+
 		construct {
 			Client c = Client.instance();
 
@@ -39,6 +44,7 @@ namespace Abraca {
 			weak Gtk.TreeSelection sel = get_selection();
 			sel.set_mode(Gtk.SelectionMode.MULTIPLE);
 
+			pos_map = new GLib.HashTable<int,pointer>(GLib.direct_hash, GLib.direct_equal);
 			create_columns ();
 
 			model = new Gtk.ListStore(
@@ -56,11 +62,13 @@ namespace Abraca {
 
 			c.playback_status += on_playback_status;
 
+			c.media_info += on_media_info;
+
 			create_dragndrop();
 
 			show_all();
-
 		}
+
 
 		/**
 		 * Create metadata and coverart columns.
@@ -71,8 +79,12 @@ namespace Abraca {
 				"stock-id", PlaylistColumn.CoverArt, null
 			);
 
+			Gtk.CellRendererText renderer = new Gtk.CellRendererText();
+			/* TODO: It's most likely incorrect to assume a fixed height here */
+			renderer.height = 30;
+
  			insert_column_with_attributes(
-				-1, null, new Gtk.CellRendererText(),
+				-1, null, renderer,
 				"markup", PlaylistColumn.Info, null
 			);
 		}
@@ -149,14 +161,18 @@ namespace Abraca {
 
 			weak uint[] ids = (uint[]) sel.data;
 
+			/* TODO: Check if store is empty to get rid of assert */
 			if (get_dest_row_at_pos(x, y, out path, out align)) {
 				int pos = path.get_indices()[0];
 
 				for (int i; i < sel.length / 32; i++) {
 					c.xmms.playlist_insert_id(_playlist, pos, ids[i]);
 				}
+			} else {
+				for (int i; i < sel.length / 32; i++) {
+					c.xmms.playlist_add_id(_playlist, ids[i]);
+				}
 			}
-
 
 			return true;
 		}
@@ -178,9 +194,16 @@ namespace Abraca {
 			if (model.get_iter(out iter, path)) {
 				Gtk.TreeIter added;
 
-				store.insert_before (out added, ref iter);
+				store.insert_before (out added, iter);
 
-				/* fixme */
+				Gtk.TreePath path = store.get_path(added);
+				Gtk.TreeRowReference row = new Gtk.TreeRowReference(store, path);
+
+				weak Gtk.TreeRowReference cpy = row.copy();
+
+				pos_map.insert(mid.to_pointer(), cpy);
+
+				c.get_media_info(mid, new string[]{"artist", "album", "title"});
 			}
 		}
 
@@ -198,7 +221,7 @@ namespace Abraca {
 
 			path = new Gtk.TreePath.from_indices(pos, -1);
 			if (model.get_iter(out iter, path)) {
-				store.remove(ref iter);
+				store.remove(iter);
 			}
 		}
 
@@ -243,7 +266,7 @@ namespace Abraca {
 			_playlist = name;
 
 			c.xmms.playlist_list_entries(name).notifier_set(
-				on_playlist_list_entries, this
+				on_playlist_list_entries
 			);
 		}
 
@@ -253,7 +276,7 @@ namespace Abraca {
 		 */
 		private void on_playlist_add(Client c, string playlist, uint mid) {
 			c.xmms.medialib_get_info(mid).notifier_set(
-				on_medialib_get_info, this
+				on_medialib_get_info
 			);
 		}
 
@@ -263,21 +286,76 @@ namespace Abraca {
 		 */
 		[InstanceLast]
 		private void on_playlist_list_entries(Xmms.Result res) {
-			Client c = Client.instance();
 			Gtk.ListStore store = (Gtk.ListStore) model;
+			Gtk.TreeIter iter;
 
 			store.clear();
 
+			/* disconnect our model while the shit hits the fan */
+			set_model(null);
+
 			for (res.list_first(); res.list_valid(); res.list_next()) {
 				uint id;
+				int pos;
 
 				if (!res.get_uint(out id))
 					continue;
 
-				c.xmms.medialib_get_info(id).notifier_set(
-					on_medialib_get_info, this
+				/* TODO: This is bogous, use _first, then reuse the iter. */
+				pos = store.iter_n_children(null);
+
+				store.insert_with_values(
+					out iter, pos,
+					PlaylistColumn.ID, id
 				);
+
+				Gtk.TreePath path = store.get_path(iter);
+				Gtk.TreeRowReference row = new Gtk.TreeRowReference(store, path);
+
+				weak Gtk.TreeRowReference cpy = row.copy();
+
+				pos_map.insert(id.to_pointer(), cpy);
 			}
+
+			/* reconnect the model again */
+			set_model(store);
+
+			pos_map.for_each((k,v,u) => {
+				Client c = Client.instance();
+				c.get_media_info(k.to_int(), new string[] {
+					"artist", "album", "title"
+				});
+			}, null);
+		}
+
+		private void on_media_info(Client c, weak GLib.HashTable<string,pointer> m) {
+			Gtk.ListStore store = (Gtk.ListStore) model;
+
+			int mid = m.lookup("id").to_int();
+			weak string artist = m.lookup("artist");
+			weak string album = m.lookup("album");
+			weak string title = m.lookup("title");
+
+			weak Gtk.TreeRowReference row = pos_map.lookup(mid.to_pointer());
+			if (row == null || !row.valid()) {
+				GLib.stdout.printf("row (%d) not valid!!\n", mid);
+			}
+
+			string info;
+			info = Markup.printf_escaped(
+				"<b>%s</b> - <small>%d:%02d</small>\n" +
+				"<small>by</small> %s <small>from</small> %s",
+				title, 0, 0, artist, album
+			);
+
+			Gtk.TreeIter iter;
+			weak Gtk.TreePath path = row.get_path();
+
+			if (!model.get_iter(out iter, path)) {
+				GLib.stdout.printf("couldn't get iter!!!\n");
+			}
+
+			store.set(iter, PlaylistColumn.Info, info);
 		}
 
 		/**
@@ -317,7 +395,7 @@ namespace Abraca {
 			pos = store.iter_n_children(null);
 
 			store.insert_with_values(
-				ref iter, pos,
+				out iter, pos,
 				PlaylistColumn.ID, id,
 				PlaylistColumn.CoverArt, null,
 				PlaylistColumn.Info, info

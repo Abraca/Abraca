@@ -35,11 +35,11 @@ namespace Abraca {
 
 		private void query_collections(Client c) {
 			c.xmms.coll_list("Collections").notifier_set(
-				on_coll_list_collections, this
+				on_coll_list_collections
 			);
 
 			c.xmms.coll_list("Playlists").notifier_set(
-				on_coll_list_playlists, this
+				on_coll_list_playlists
 			);
 		}
 
@@ -61,7 +61,7 @@ namespace Abraca {
 			else
 				model.get_iter_from_string(out parent, "1");
 
-			int pos = model.iter_n_children(out parent);
+			int pos = model.iter_n_children(parent);
 
 			Gtk.TreeStore store = (Gtk.TreeStore) model;
 
@@ -77,7 +77,7 @@ namespace Abraca {
 					continue;
 
 				store.insert_with_values(
-					ref iter, ref parent, pos++,
+					out iter, parent, pos++,
 					CollColumn.Type, type,
 					CollColumn.Icon, null,
 					CollColumn.Name, s
@@ -98,10 +98,10 @@ namespace Abraca {
 			string name;
 
 			store.get_iter(out iter, path);
-			model.get(ref iter, CollColumn.Name, ref name);
+			model.get(iter, CollColumn.Name, ref name);
 
 			c.xmms.coll_get(name, "Collections").notifier_set(
-				on_coll_get, this
+				on_coll_get
 			);
 		}
 
@@ -137,7 +137,7 @@ namespace Abraca {
 			int pos = 1;
 
 			store.insert_with_values(
-				ref iter, null, pos++,
+				out iter, null, pos++,
 				CollColumn.Type, CollectionType.Invalid,
 				CollColumn.Icon, null,
 				CollColumn.Name, "<b>Collections</b>",
@@ -145,7 +145,7 @@ namespace Abraca {
 			);
 
 			store.insert_with_values(
-				ref iter, null, pos++,
+				out iter, null, pos++,
 				CollColumn.Type, CollectionType.Invalid,
 				CollColumn.Icon, null,
 				CollColumn.Name, "<b>Playlists</b>",

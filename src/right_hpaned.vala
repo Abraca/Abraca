@@ -53,7 +53,7 @@ namespace Abraca {
 			}
 
 			if (is_error)
-				_filter_entry.modify_base(Gtk.StateType.NORMAL, out color);
+				_filter_entry.modify_base(Gtk.StateType.NORMAL, color);
 			else
 				_filter_entry.modify_base(Gtk.StateType.NORMAL, null);
 		}

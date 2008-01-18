@@ -19,6 +19,8 @@ namespace Abraca {
 		public signal void playlist_insert(weak string playlist, uint mid, int pos);
 		public signal void playlist_remove(weak string playlist, int pos);
 
+		public signal void media_info(weak GLib.HashTable<string,pointer> hash);
+
 		construct {
 			_xmms = new Xmms.Client("Abraca");
 		}
@@ -42,14 +44,14 @@ namespace Abraca {
 		}
 
 
-		public bool try_connect() {
-			string path;
-
-			path = GLib.Environment.get_variable("XMMS_PATH");
+		public bool try_connect(string path = null) {
+			if (path == null) {
+				path = GLib.Environment.get_variable("XMMS_PATH");
+			}
 
 			if (_xmms.connect(path)) {
 				_gmain = Xmms.MainLoop.GMain.init(_xmms);
-				_xmms.disconnect_callback_set(on_disconnect, this);
+				_xmms.disconnect_callback_set(on_disconnect);
 				create_callbacks();
 
 				connected();
@@ -62,39 +64,39 @@ namespace Abraca {
 
 		private void create_callbacks() {
 			_xmms.playback_status().notifier_set(
-				on_playback_status, this
+				on_playback_status
 			);
 
 			_xmms.broadcast_playback_status().notifier_set(
-				on_playback_status, this
+				on_playback_status
 			);
 
 			_xmms.playback_current_id().notifier_set(
-				on_playback_current_id, this
+				on_playback_current_id
 			);
 
 			_xmms.broadcast_playback_current_id().notifier_set(
-				on_playback_current_id, this
+				on_playback_current_id
 			);
 
 			_xmms.playback_playtime().notifier_set(
-				on_playback_playtime, this
+				on_playback_playtime
 			);
 
 			_xmms.signal_playback_playtime().notifier_set(
-				on_playback_playtime, this
+				on_playback_playtime
 			);
 
 			_xmms.playlist_current_active().notifier_set(
-				on_playlist_loaded, this
+				on_playlist_loaded
 			);
 
 			_xmms.broadcast_playlist_loaded().notifier_set(
-				on_playlist_loaded, this
+				on_playlist_loaded
 			);
 
 			_xmms.broadcast_playlist_changed().notifier_set(
-				on_playlist_changed, this
+				on_playlist_changed
 			);
 		}
 
@@ -129,7 +131,7 @@ namespace Abraca {
 
 			if (res.get_class() == Xmms.ResultClass.SIGNAL) {
 				/* Throttle playback time to only hit once a second */
-				GLib.Timeout.add(900, ptr => {
+				GLib.Timeout.add(500, ptr => {
 					Xmms.Result res = (Xmms.Result) ptr;
 					res.restart();
 					return false;
@@ -175,12 +177,59 @@ namespace Abraca {
 				case Xmms.PlaylistChange.SHUFFLE:
 				case Xmms.PlaylistChange.SORT:
 					xmms.playlist_current_active().notifier_set(
-						on_playlist_loaded, this
+						on_playlist_loaded
 					);
 					break;
 				default:
 					break;
 			}
+		}
+
+		/**
+		 * TODO: Lookup in cache and return if found instead of requesting.
+		 */
+		public void get_media_info(uint mid, weak string[] keys) {
+			xmms.medialib_get_info(mid).notifier_set(
+				on_medialib_get_info
+			);
+		}
+
+		/**
+		 * TODO: Update cache here.
+		 */
+		[InstanceLast]
+		private void on_medialib_get_info(Xmms.Result res) {
+			weak string tmp;
+			uint mid;
+
+			if (!res.get_dict_entry_int("id", out mid)) {
+				return;
+			}
+
+			/* TODO: Dispatch as a hash so the delegate can handle
+			 *       both stuff from here, and stuff from cache hits.
+			 */
+			GLib.HashTable<string,pointer> m =
+				new GLib.HashTable<string,pointer>(GLib.str_hash, GLib.str_equal);
+
+			m.insert("id", mid.to_pointer());
+
+			if (!res.get_dict_entry_string("artist", out tmp)) {
+				tmp = "Unknown";
+			}
+			m.insert("artist", (pointer) tmp);
+
+			if (!res.get_dict_entry_string("album", out tmp)) {
+				tmp = "Unknown";
+			}
+			m.insert("album", (pointer) tmp);
+
+			if (!res.get_dict_entry_string("title", out tmp)) {
+				tmp = "Unknown";
+			}
+			m.insert("title", (pointer) tmp);
+
+			media_info(m);
 		}
 	}
 }

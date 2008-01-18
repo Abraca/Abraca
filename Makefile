@@ -14,6 +14,7 @@ SOURCES = \
 	src/right_hpaned.vala \
 	src/toolbar.vala \
 	src/client.vala \
+	src/server_browser.vala \
 
 PACKAGES = $(addprefix --pkg ,gtk+-2.0 xmms2-client-glib)
 
@@ -21,7 +22,7 @@ build/abraca: $(SOURCES)
 	@if [ ! -d build ]; then \
 		mkdir build; \
 	fi
-	$(VALAC) --save-temps -d build $(PACKAGES) $^ -o abraca
+	$(VALAC) --vapidir=vapi --save-temps -d build $(PACKAGES) $^ -o abraca
 
 install: build/abraca
 	install -m 755 -D build/abraca $(DESTDIR)$(PREFIX)/bin/abraca

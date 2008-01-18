@@ -41,7 +41,7 @@ namespace Abraca {
 			Client c = Client.instance();
 
 			c.xmms.coll_query_ids(coll, null, 0, 0).notifier_set(
-				on_coll_query_ids, this
+				on_coll_query_ids
 			);
 		}
 
@@ -59,7 +59,7 @@ namespace Abraca {
 					continue;
 
 				c.xmms.medialib_get_info(id).notifier_set(
-					on_medialib_get_info, this
+					on_medialib_get_info
 				);
 			}
 		}
@@ -81,7 +81,7 @@ namespace Abraca {
 			pos = store.iter_n_children(null);
 
 			store.insert_with_values(
-				ref iter, pos,
+				out iter, pos,
 				FilterColumn.ID, id,
 				FilterColumn.Artist, artist,
 				FilterColumn.Title, title,
@@ -128,7 +128,7 @@ namespace Abraca {
 			Client c = Client.instance();
 			uint id;
 
-			model.get(ref iter, FilterColumn.ID, ref id);
+			model.get(iter, FilterColumn.ID, ref id);
 
 			c.xmms.playlist_add_id("_active", id);
 		}
@@ -167,11 +167,11 @@ namespace Abraca {
 
 			filter_menu = new Gtk.Menu();
 
-			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
 			item.activate += on_menu_add;
 			filter_menu.append(item);
 
-			item = Gtk.MenuItem.with_label("Replace");
+			item = new Gtk.MenuItem.with_label("Replace");
 			item.activate += on_menu_replace;
 			filter_menu.append(item);
 
@@ -193,7 +193,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private void on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
+		private bool on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			weak Gtk.TreeSelection sel = get_selection();
@@ -207,7 +207,7 @@ namespace Abraca {
 				uint mid;
 
 				model.get_iter(out iter, p);
-				model.get(ref iter, 0, out mid, -1);
+				model.get(iter, 0, out mid, -1);
 
 				mid_list.prepend((int) mid);
 			}
@@ -222,6 +222,8 @@ namespace Abraca {
 
 			selection_data.set(Gdk.Atom.intern("application/x-xmms2mlibid", true), 8,
 			                   (uchar[]) mid_array, (int) len * 32);
+
+			return true;
 		}
 	}
 }

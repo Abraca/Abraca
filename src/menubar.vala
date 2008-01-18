@@ -21,23 +21,23 @@ namespace Abraca {
 		}
 
 		private Gtk.MenuItem create_music_menu() {
-			Gtk.MenuItem ret = Gtk.MenuItem.with_mnemonic("_Music");
+			Gtk.MenuItem ret = new Gtk.MenuItem.with_mnemonic("_Music");
 			Gtk.MenuItem item;
 			Gtk.Menu sub = new Gtk.Menu();
 
-			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
 			item.activate += on_music_add;
 			sub.append(item);
 
 			sub.append(new Gtk.SeparatorMenuItem());
 
-			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_SAVE, null);
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_SAVE, null);
 			item.activate += on_music_save;
 			sub.append(item);
 
 			sub.append(new Gtk.SeparatorMenuItem());
 
-			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_QUIT, null);
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_QUIT, null);
 			item.activate += on_music_quit;
 			sub.append(item);
 
@@ -47,35 +47,35 @@ namespace Abraca {
 		}
 
 		private Gtk.MenuItem create_playlist_menu() {
-			Gtk.MenuItem ret = Gtk.MenuItem.with_mnemonic("_Playlist");
+			Gtk.MenuItem ret = new Gtk.MenuItem.with_mnemonic("_Playlist");
 			Gtk.MenuItem item;
 			Gtk.Menu sub = new Gtk.Menu();
 
-			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_NEW, null);
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_NEW, null);
 			//item.activate += on_playlist_new();
 			sub.append(item);
 
-			item = Gtk.MenuItem.with_mnemonic("_New from filter");
+			item = new Gtk.MenuItem.with_mnemonic("_New from filter");
 			//item.activate += on_playlist_new_from_filter();
 			sub.append(item);
 
 			sub.append(new Gtk.SeparatorMenuItem());
 
-			item = Gtk.ImageMenuItem.with_mnemonic("_Add filter results");
+			item = new Gtk.ImageMenuItem.with_mnemonic("_Add filter results");
 			//item.activate += on_playlist_add_filter_results();
 			sub.append(item);
 
-			item = Gtk.ImageMenuItem.with_mnemonic("_Replace with filter results");
+			item = new Gtk.ImageMenuItem.with_mnemonic("_Replace with filter results");
 			//item.activate += on_playlist_replace_with_filter_results();
 			sub.append(item);
 
 			sub.append(new Gtk.SeparatorMenuItem());
 
-			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_CLEAR, null);
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_CLEAR, null);
 			//item.activate += on_playlist_clear();
 			sub.append(item);
 
-			item = Gtk.ImageMenuItem.with_mnemonic("_Shuffle");
+			item = new Gtk.ImageMenuItem.with_mnemonic("_Shuffle");
 			//item.activate += on_playlist_shuffle();
 			sub.append(item);
 
@@ -85,11 +85,11 @@ namespace Abraca {
 		}
 
 		private Gtk.MenuItem create_help_menu() {
-			Gtk.MenuItem ret = Gtk.MenuItem.with_mnemonic("_Help");
+			Gtk.MenuItem ret = new Gtk.MenuItem.with_mnemonic("_Help");
 			Gtk.MenuItem item;
 			Gtk.Menu sub = new Gtk.Menu();
 
-			item = Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ABOUT, null);
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ABOUT, null);
 			item.activate += on_help_about;
 			sub.append(item);
 

@@ -44,12 +44,19 @@ namespace Abraca {
 		public static int main(string[] args) {
 			Client c = Client.instance();
 
-			Gtk.init(out args);
+			Gtk.init(ref args);
 
 			Environment.set_application_name("Abraca");
 
-			Abraca.instance().main_window.eval_config();
-			Abraca.instance().main_window.show_all();
+			Abraca a = Abraca.instance();
+
+			a.main_window.eval_config();
+			a.main_window.show_all();
+
+			/**
+			 * TODO: Server Browser is a bit stupid, fix it.
+			 * ServerBrowser sb = new ServerBrowser(a.main_window);
+			 */
 
 			c.try_connect();
 

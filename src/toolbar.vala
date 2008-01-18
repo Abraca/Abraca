@@ -51,7 +51,7 @@ namespace Abraca {
 			Gtk.Button button = new Gtk.Button();
 
 			button.relief = Gtk.ReliefStyle.NONE;
-			button.image = Gtk.Image.from_stock(s, Gtk.IconSize.SMALL_TOOLBAR);
+			button.image = new Gtk.Image.from_stock(s, Gtk.IconSize.SMALL_TOOLBAR);
 
 			pack_start(button, false, false, 0);
 
@@ -125,7 +125,7 @@ namespace Abraca {
 
 		private void on_playback_current_id(Client c, uint mid) {
 			c.xmms.medialib_get_info(mid).notifier_set(
-				on_medialib_get_info, this
+				on_medialib_get_info
 			);
 		}
 
@@ -153,7 +153,7 @@ namespace Abraca {
 			pos_min = pos / 60000;
 			pos_sec = (pos % 60000) / 1000;
 
-			info = Markup.printf_escaped("%3d:%0.2d  of %3d:%0.2d", pos_min, pos_sec, dur_min, dur_sec);
+			info = Markup.printf_escaped("%3d:%02d  of %3d:%02d", pos_min, pos_sec, dur_min, dur_sec);
 
 			_time_label.set_markup(info);
 		}
@@ -232,13 +232,13 @@ namespace Abraca {
 			_status = status;
 
 			if (_status != Xmms.PlaybackStatus.PLAY) {
-				image = Gtk.Image.from_stock(
+				image = new Gtk.Image.from_stock(
 					Gtk.STOCK_MEDIA_PLAY,
 					Gtk.IconSize.SMALL_TOOLBAR
 				);
 				play_pause.set_image(image);
 			} else {
-				image = Gtk.Image.from_stock(
+				image = new Gtk.Image.from_stock(
 					Gtk.STOCK_MEDIA_PAUSE,
 					Gtk.IconSize.SMALL_TOOLBAR
 				);
