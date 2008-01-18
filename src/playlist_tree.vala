@@ -29,7 +29,7 @@ namespace Abraca {
 		/* TODO: This is bogous, use a Hash<uint,List<uint>> instead
 		 *       to allow for multiple rows <-> same medialib id.
 		 */
-		private GLib.HashTable<int,Gtk.TreeRowReference[]> pos_map;
+		private GLib.HashTable<int,Gtk.TreeRowReference> pos_map;
 
 		construct {
 			Client c = Client.instance();
