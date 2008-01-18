@@ -1,0 +1,19 @@
+Import('env')
+
+vala_sources = """
+	client.vala
+	collections_tree.vala
+	config.vala
+	filter_tree.vala
+	main_hpaned.vala
+	main_window.vala
+	menubar.vala
+	playlist_tree.vala
+	right_hpaned.vala
+	toolbar.vala
+	abraca.vala
+	server_browser.vala
+""".split()
+
+sources = env.Vala(vala_sources)
+env.Program('abraca', sources)

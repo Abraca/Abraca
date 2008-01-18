@@ -1,0 +1,42 @@
+import SCons
+
+env = Environment()
+
+# Load the custom vala builder
+env.Tool('vala', toolpath=['scons-tools'])
+
+# Vala will touch the files so decide on content changes
+env.Decider('content')
+
+# Add some build options
+opts = Options(['.scons_options'])
+opts.AddOptions(
+	BoolOption('silent', 'build silently', True),
+	BoolOption('debug', 'build debug variant', True)
+)
+opts.Update(env)
+opts.Save('.scons_options', env)
+
+env.Help(opts.GenerateHelpText(env))
+
+# Hide compiler command line if silent mode on
+if env['silent']:
+	env['VALACOMSTR'] = 'Generating: $TARGETS'
+	env['CCCOMSTR']   = '  Building: $TARGET'
+	env['LINKCOMSTR'] = '   Linking: $TARGET'
+
+if env['debug']:
+	env.Append(CCFLAGS = ['-g'])
+else:
+	env.Append(CCFLAGS = ['-O2'])
+
+env.Append(VALAPKGPATH = ['vapi'])
+
+for pkg in ['gtk+-2.0', 'xmms2-client', 'xmms2-client-glib']:
+	if not env.ParseConfig('pkg-config --libs --cflags ' + pkg):
+		raise SCons.Errors.UserError(pkg + ' required to build Abraca')
+	env.Append(VALAPKGS = [pkg])
+
+env.Append(CCFLAGS = ['-Wall', '-Wno-unused-variable'])
+
+env.SConscript('src/SConscript', build_dir='build', exports='env', duplicate=0)
