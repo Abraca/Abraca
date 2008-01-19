@@ -28,6 +28,7 @@ install: build/abraca
 	install -m 755 -D build/abraca $(DESTDIR)$(PREFIX)/bin/abraca
 	install -m 644 -D data/abraca.desktop $(DESTDIR)$(PREFIX)/share/applications/abraca.desktop
 	install -m 644 -D data/abraca-128.png $(DESTDIR)$(PREFIX)/share/pixmaps/abraca-128.png
+	install -m 644 -D data/abraca.svg $(DESTDIR)$(PREFIX)/share/pixmaps/abraca.svg
 
 clean:
 	rm -f build/abraca
