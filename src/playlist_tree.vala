@@ -32,7 +32,7 @@ namespace Abraca {
 		private GLib.HashTable<int,Gtk.TreeRowReference> pos_map;
 
 		private const string[] _properties = {
-			"artist", "album", "title", "duration", null
+			"artist", "album", "title", "duration"
 		};
 
 
