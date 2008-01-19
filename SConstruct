@@ -12,7 +12,8 @@ env.Decider('content')
 opts = Options(['.scons_options'])
 opts.AddOptions(
 	BoolOption('silent', 'build silently', True),
-	BoolOption('debug', 'build debug variant', True)
+	BoolOption('debug', 'build debug variant', True),
+	PathOption('prefix', 'install prefix', '/usr/local'),
 )
 opts.Update(env)
 opts.Save('.scons_options', env)
@@ -39,4 +40,7 @@ for pkg in ['gtk+-2.0', 'xmms2-client', 'xmms2-client-glib']:
 
 env.Append(CCFLAGS = ['-Wall', '-Wno-unused-variable'])
 
-env.SConscript('src/SConscript', build_dir='build', exports='env', duplicate=0)
+env.BuildDir('build', '.')
+
+env.SConscript('build/src/SConscript', exports='env', duplicate=0)
+env.SConscript('build/data/SConscript', exports='env', duplicate=0)

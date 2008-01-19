@@ -16,4 +16,6 @@ vala_sources = """
 """.split()
 
 sources = env.Vala(vala_sources)
-env.Program('abraca', sources)
+prog = env.Program('abraca', sources)
+
+env.Alias('install', env.Install('$prefix/bin', prog))

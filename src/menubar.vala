@@ -110,7 +110,15 @@ namespace Abraca {
 		}
 
 		private void on_help_about(Gtk.MenuItem item) {
-			Gtk.AboutDialog d = new Gtk.AboutDialog();
+			weak string filename;
+			Gtk.AboutDialog d;
+			Gdk.Pixbuf buf;
+
+			filename = "/usr/local/share/pixmaps/abraca-128.png";
+			buf = new Gdk.Pixbuf.from_file(filename);
+
+			d = new Gtk.AboutDialog();
+			d.set_logo(buf);
 
 			d.name = Environment.get_application_name();
 			d.comments = "A client for the XMMS2 music player";
