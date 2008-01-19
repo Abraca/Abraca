@@ -1,26 +1,39 @@
 namespace Xmms
 {
-
-	[CCode (cprefix = "XMMSC_RESULT_CLASS_", cheader_filename = "xmmsclient/xmmsclient.h")]
-	public enum ResultClass {
-		DEFAULT,
-		SIGNAL,
-		BROADCAST,
+	[CCode (
+		cprefix = "XMMS_COLLECTION_CHANGED_",
+		cheader_filename = "xmmsclient/xmmsclient.h"
+	)]
+	public enum CollectionChanged {
+		ADD,
+		UPDATE,
+		RENAME,
+		REMOVE,
 	}
 
-	[CCode (cprefix = "XMMSC_RESULT_VALUE_TYPE_", cheader_filename = "xmmsclient/xmmsclient.h")]
-	public enum ResultType {
-		NONE = 0,
-		UINT32,
-		INT32,
-		STRING,
-		DICT,
-		PROPDICT,
-		COLL,
-		BIN,
+	[CCode (
+		cprefix = "XMMS_MEDIAINFO_READER_STATUS_",
+		cheader_filename = "xmmsclient/xmmsclient.h"
+	)]
+	public enum ReaderStatus {
+		IDLE,
+		RUNNING,
 	}
 
-	[CCode (cprefix = "XMMS_PLAYLIST_CHANGED_", cheader_filename = "xmmsclient/xmmsclient.h")]
+	[CCode (
+		cprefix = "XMMS_PLAYBACK_STATUS_",
+		cheader_filename = "xmmsclient/xmmsclient.h"
+	)]
+	public enum PlaybackStatus {
+		STOP,
+		PLAY,
+		PAUSE,
+	}
+
+	[CCode (
+		cprefix = "XMMS_PLAYLIST_CHANGED_",
+		cheader_filename = "xmmsclient/xmmsclient.h"
+	)]
 	public enum PlaylistChange {
 		ADD,
 		INSERT,
@@ -32,14 +45,22 @@ namespace Xmms
 		UPDATE,
 	}
 
-	[CCode (cprefix = "XMMS_PLAYBACK_STATUS_", cheader_filename = "xmmsclient/xmmsclient.h")]
-	public enum PlaybackStatus {
-		STOP,
-		PLAY,
-		PAUSE,
+
+	[CCode (
+		cprefix = "XMMS_PLUGIN_TYPE_",
+		cheader_filename = "xmmsc/xmmsc_idnumbers.h"
+	)]
+	public enum PluginType {
+		ALL,
+		OUTPUT,
+		XFORM,
 	}
-	[CCode (cprefix = "XMMS_COLLECTION_TOKEN_", cheader_filename = "xmmsclient/xmmsclient.h")]
-	public enum CollectionToken {
+
+	[CCode (
+		cprefix = "XMMS_COLLECTION_TOKEN_",
+		cheader_filename = "xmmsclient/xmmsclient.h"
+	)]
+	public enum CollectionTokenType {
 		INVALID,
 		GROUP_OPEN,
 		GROUP_CLOSE,
@@ -63,7 +84,10 @@ namespace Xmms
 		OPFIL_GREATEREQ,
 	}
 
-	[CCode (cprefix = "XMMS_COLLECTION_TYPE_", cheader_filename = "xmmsc/xmmsc_idnumbers.h")]
+	[CCode (
+		cprefix = "XMMS_COLLECTION_TYPE_",
+		cheader_filename = "xmmsc/xmmsc_idnumbers.h"
+	)]
 	public enum CollectionType {
 		REFERENCE,
 		UNION,
@@ -79,16 +103,90 @@ namespace Xmms
 		PARTYSHUFFLE,
 	}
 
-	[CCode (cprefix = "XMMS_PLUGIN_TYPE_", cheader_filename = "xmmsc/xmmsc_idnumbers.h")]
-	public enum PluginType {
-		ALL,
-		OUTPUT,
-		XFORM,
+	[CCode (
+		cprefix = "XMMS_MEDIALIB_ENTRY_STATUS_",
+		cheader_filename = "xmmsclient/xmmsclient.h"
+	)]
+	public enum EntryStatus {
+		NEW,
+		OK,
+		RESOLVING,
+		NOT_AVAILABLE,
+		REHASH,
+	}
+
+	[CCode (
+		cprefix = "XMMSC_RESULT_CLASS_",
+		cheader_filename = "xmmsclient/xmmsclient.h"
+	)]
+	public enum ResultClass {
+		DEFAULT,
+		SIGNAL,
+		BROADCAST,
+	}
+
+	[CCode (
+		cprefix = "XMMSC_RESULT_VALUE_TYPE_",
+		cheader_filename = "xmmsclient/xmmsclient.h"
+	)]
+	public enum ResultType {
+		NONE = 0,
+		UINT32,
+		INT32,
+		STRING,
+		DICT,
+		PROPDICT,
+		COLL,
+		BIN,
 	}
 
 
 	[CCode (cname = "xmmsc_disconnect_func_t")]
 	public delegate void DisconnectFunc ();
+
+	[CCode (cname = "xmmsc_dict_foreach_func")]
+	public delegate void DictForEachFunc (weak string key,
+	                                      Xmms.ResultType t,
+	                                      pointer val,
+	                                      pointer udata);
+
+	[CCode (cname = "xmmsc_propdict_foreach_func")]
+	public delegate void PropDictForEachFunc (weak string key,
+	                                          Xmms.ResultType t,
+	                                          pointer val,
+	                                          weak string source,
+	                                          pointer udata);
+
+	[CCode (cname = "xmmsc_result_notifier_t")]
+	public delegate void NotifierFunc (Result res);
+
+	[CCode (cname = "xmmsc_user_data_free_func_t")]
+	public delegate void UserDataFreeFunc (pointer obj);
+
+	[CCode (cname = "xmmsc_coll_parse_tokens_f")]
+	public delegate CollectionToken CollectionParseTokensFunc (weak string key,
+	                                                           weak string[] npos);
+
+	[CCode (cname = "xmmsc_coll_parse_build_f")]
+	public delegate Collection CollectionParseBuildFunc (CollectionToken[] t);
+
+	[CCode (cname = "xmmsc_coll_attribute_foreach_func")]
+	public delegate void CollectionAttributeForeachFunc (weak string key,
+	                                                     weak string val,
+	                                                     pointer udata);
+
+	public const string ACTIVE_PLAYLIST;
+	public const string COLLECTION_NS_ALL;
+	public const string COLLECTION_NS_COLLECTIONS;
+	public const string COLLECTION_NS_PLAYLISTS;
+
+	[CCode (cheader_filename = "xmmsclient/xmmsclient.h")]
+	public struct CollectionToken {
+			public Xmms.CollectionTokenType type;
+			[CCode(cname="string")]
+			public weak string str;
+			public weak CollectionToken next;
+	}
 
 	[CCode (ref_function = "xmmsc_ref",
 	        unref_function = "xmmsc_unref",
@@ -209,26 +307,10 @@ namespace Xmms
 		public Result broadcast_collection_changed ();
 	}
 
-	[CCode (cname = "xmmsc_coll_parse_tokens_f")]
-	public delegate CollectionToken CollParseTokensFunc (weak string key,
-	                                                     out weak string newpos);
-
-	[CCode (cname = "xmmsc_coll_parse_build_f")]
-	public delegate Collection CollParseBuildFunc (CollectionToken[] tokens);
-
-	[CCode (cname = "xmmsc_coll_attribute_foreach_func")]
-	public delegate void CollAttributeForeachFunc (weak string key,
-	                                               weak string val,
-	                                               pointer udata);
-
-	[CCode (ref_function = "xmmsc_coll_ref",
-	        unref_function = "xmmsc_coll_unref",
-	        cprefix = "xmmsc_coll_",
-	        cname = "xmmsc_coll_t",
-	        cheader_filename = "xmmsclient/xmmsclient.h")]
+	[CCode (ref_function = "xmmsc_coll_ref", unref_function = "xmmsc_coll_unref", cprefix = "xmmsc_coll_", cname = "xmmsc_coll_t", cheader_filename = "xmmsclient/xmmsclient.h")]
 	public class Collection {
 		public static int parse (weak string pattern, out Collection coll);
-		public static int parse_custom (weak string pattern, CollParseTokensFunc parse_f, CollParseBuildFunc build_f, out Collection coll);
+		public static int parse_custom (weak string pattern, CollectionParseTokensFunc parse_f, CollectionParseBuildFunc build_f, out Collection coll);
 		public static Collection coll_default_parse_build (CollectionToken[] tokens);
 		public static CollectionToken[] mmsc_coll_default_parse_tokens (weak string str, out weak string newpos);
 
@@ -266,26 +348,10 @@ namespace Xmms
 		public void attribute_set (weak string key, weak string val);
 		public int attribute_remove (weak string key);
 		public int attribute_get (weak string key, out weak string val);
-		public void attribute_foreach (CollAttributeForeachFunc func, pointer user_data);
+		public void attribute_foreach (CollectionAttributeForeachFunc func, pointer user_data);
 
 		public static Collection universe ();
 	}
-
-
-	[CCode (cname = "xmmsc_dict_foreach_func")]
-	public delegate void DictForEachFunc (weak string key, Xmms.ResultType t,
-	                                      pointer val, pointer udata);
-
-	[CCode (cname = "xmmsc_propdict_foreach_func")]
-	public delegate void PropDictForEachFunc (weak string key, Xmms.ResultType t,
-	                                          pointer val, weak string source,
-	                                          pointer udata);
-
-	[CCode (cname = "xmmsc_result_notifier_t")]
-	public delegate void NotifierFunc (Result res);
-
-	[CCode (cname = "xmmsc_user_data_free_func_t")]
-	public delegate void UserDataFreeFunc (pointer obj);
 
 
 	[CCode (ref_function = "xmmsc_result_ref",
