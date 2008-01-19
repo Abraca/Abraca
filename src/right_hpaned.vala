@@ -92,7 +92,7 @@ namespace Abraca {
 				null, null
 			);
 
-			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
+			scrolled.set_policy(Gtk.PolicyType.NEVER,
 			                    Gtk.PolicyType.AUTOMATIC);
 
 			_filter_tree = new FilterTree();

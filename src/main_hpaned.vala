@@ -41,7 +41,7 @@ namespace Abraca {
 				null, null
 			);
 
-			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
+			scrolled.set_policy(Gtk.PolicyType.NEVER,
 			                    Gtk.PolicyType.AUTOMATIC);
 
 			_coll_tree = new CollectionsTree();
