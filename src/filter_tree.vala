@@ -15,8 +15,14 @@ namespace Abraca {
 	}
 
 	public class FilterTree : Gtk.TreeView {
+		/** context menu */
 		private Gtk.Menu filter_menu;
-		private Gtk.TargetEntry[] _target_entries;
+
+		/** allowed drag-n-drop variants */
+		private const Gtk.TargetEntry[] _target_entries = {
+			{"application/x-xmms2mlibid", 0, 0}
+		};
+
 
 		construct {
 			show_expanders = true;
@@ -178,14 +184,8 @@ namespace Abraca {
 		}
 
 		private void create_drag_n_drop() {
-			_target_entries = new Gtk.TargetEntry[1];
-
-			_target_entries[0].target = "application/x-xmms2mlibid";
-			_target_entries[0].flags = 0;
-			_target_entries[0].info = 0;
-
 			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-			                         _target_entries, _target_entries.length,
+			                         _target_entries, 1,
 			                         Gdk.DragAction.MOVE);
 
 			drag_data_get += on_drag_data_get;

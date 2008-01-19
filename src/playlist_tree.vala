@@ -15,7 +15,8 @@ namespace Abraca {
 		POS = 0,
 		MID,
 		PATH,
-		URL
+		URL,
+		TOTAL,
 	}
 
 	public class PlaylistTree : Gtk.TreeView {
@@ -23,16 +24,23 @@ namespace Abraca {
 		private int _status;
 		/** current playlist displayed */
 		private string _playlist;
-		/** allowed drag-n-drop variants */
-		private Gtk.TargetEntry[] _target_entries;
 
 		/* TODO: This is bogous, use a Hash<uint,List<uint>> instead
 		 *       to allow for multiple rows <-> same medialib id.
 		 */
 		private GLib.HashTable<int,Gtk.TreeRowReference> pos_map;
 
+		/* metadata properties we're interested in */
 		private const string[] _properties = {
 			"artist", "album", "title", "duration"
+		};
+
+		/** allowed drag-n-drop variants */
+		private const Gtk.TargetEntry[] _target_entries = {
+			{ "application/x-xmms2poslist", 0, PlaylistDrop.POS  },
+			{ "application/x-xmms2mlibid",  0, PlaylistDrop.MID  },
+			{ "text/uri-list",              0, PlaylistDrop.PATH },
+			{ "_NETSCAPE_URL",              0, PlaylistDrop.URL  }
 		};
 
 
@@ -127,30 +135,11 @@ namespace Abraca {
 		 * Setup dragndrop for the playlist.
 		 */
 		private void create_dragndrop() {
-			_target_entries = new Gtk.TargetEntry[4];
-
-			_target_entries[0].target = "application/x-xmms2poslist";
-			_target_entries[0].flags = 0;
-			_target_entries[0].info = (uint) PlaylistDrop.POS;
-
-			_target_entries[1].target = "application/x-xmms2mlibid";
-			_target_entries[1].flags = 0;
-			_target_entries[1].info = (uint) PlaylistDrop.MID;
-
-			_target_entries[2].target = "text/uri-list";
-			_target_entries[2].flags = 0;
-			_target_entries[2].info = (uint) PlaylistDrop.PATH;
-
-			_target_entries[3].target = "_NETSCAPE_URL";
-			_target_entries[3].flags = 0;
-			_target_entries[3].info = (uint) PlaylistDrop.URL;
-
-
-			enable_model_drag_dest(_target_entries, _target_entries.length,
+			enable_model_drag_dest(_target_entries, PlaylistDrop.TOTAL,
 			                       Gdk.DragAction.MOVE);
 
 			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-			                         _target_entries, _target_entries.length,
+			                         _target_entries, PlaylistDrop.TOTAL,
 			                         Gdk.DragAction.MOVE);
 
 			drag_data_received += on_drag_data_receive;
