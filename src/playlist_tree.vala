@@ -57,6 +57,7 @@ namespace Abraca {
 				typeof(int), typeof(string), typeof(string)
 			);
 			row_activated += on_row_activated;
+			key_press_event += on_key_press_event;
 
 			c.playlist_loaded += on_playlist_loaded;
 
@@ -72,6 +73,34 @@ namespace Abraca {
 			create_dragndrop();
 
 			show_all();
+		}
+
+
+		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e) {
+			int KEY_DELETE = 65535;
+
+			if (e.keyval == KEY_DELETE) {
+				weak List<weak Gtk.TreePath> paths;
+				weak Gtk.TreeSelection sel;
+				List<uint> lst;
+
+
+				sel = get_selection();
+				paths = sel.get_selected_rows(null);
+				lst = new List<uint>();
+
+				foreach (weak Gtk.TreePath path in paths) {
+					lst.prepend(path.get_indices()[0]);
+				}
+
+				Client c = Client.instance();
+
+				foreach (int id in lst) {
+					c.xmms.playlist_remove_entry(_playlist, id);
+				}
+			}
+
+			return false;
 		}
 
 

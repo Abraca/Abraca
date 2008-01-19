@@ -196,7 +196,7 @@ namespace Abraca {
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			weak Gtk.TreeSelection sel = get_selection();
-			weak List<weak Gtk.TreeRowReference> lst = sel.get_selected_rows(null);
+			weak List<weak Gtk.TreePath> lst = sel.get_selected_rows(null);
 			List<uint> mid_list = new List<uint>();
 
 			string buf = null;
