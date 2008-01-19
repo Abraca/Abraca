@@ -31,6 +31,11 @@ namespace Abraca {
 		 */
 		private GLib.HashTable<int,Gtk.TreeRowReference> pos_map;
 
+		private const string[] _properties = {
+			"artist", "album", "title", "duration", null
+		};
+
+
 		construct {
 			Client c = Client.instance();
 
@@ -203,7 +208,8 @@ namespace Abraca {
 
 				pos_map.insert(mid.to_pointer(), cpy);
 
-				c.get_media_info(mid, new string[]{"artist", "album", "title"});
+				/* TODO: Cast shouldn't be needed here */
+				c.get_media_info(mid, (string[]) _properties);
 			}
 		}
 
@@ -275,9 +281,27 @@ namespace Abraca {
 		 *       schedule resolve operation.
 		 */
 		private void on_playlist_add(Client c, string playlist, uint mid) {
-			c.xmms.medialib_get_info(mid).notifier_set(
-				on_medialib_get_info
-			);
+			Gtk.ListStore store = (Gtk.ListStore) model;
+			weak Gtk.TreeRowReference cpy;
+			Gtk.TreeRowReference row;
+			Gtk.TreePath path;
+			Gtk.TreeIter iter;
+
+			if (playlist != _playlist) {
+				return;
+			}
+
+			store.append(out iter);
+
+			path = store.get_path(iter);
+			row = new Gtk.TreeRowReference(store, path);
+
+			cpy = row.copy();
+
+			pos_map.insert(mid.to_pointer(), cpy);
+
+			/* TODO: Cast shouldn't be needed here */
+			c.get_media_info(mid, (string[]) _properties);
 		}
 
 		/**
@@ -328,9 +352,8 @@ namespace Abraca {
 
 			pos_map.for_each((k,v,u) => {
 				Client c = Client.instance();
-				c.get_media_info(k.to_int(), new string[] {
-					"artist", "album", "title"
-				});
+				/* TODO: Cast shouldn't be needed here */
+				c.get_media_info(k.to_int(), (string[]) _properties);
 			}, null);
 		}
 
