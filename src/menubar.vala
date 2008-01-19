@@ -11,6 +11,7 @@ namespace Abraca {
 				"Martin Salzer <stoky@gmx.net>",
 				"Tilman Sauerbeck <tilman@xmms.org>",
 				"Daniel Svensson <dsvensson@gmail.com>",
+				"Johan Slikkie van der Slikke <johan@slikkie.nl>",
 				null
 			};
 
