@@ -282,12 +282,12 @@ namespace Abraca {
 
 		/**
 		 * Refresh the whole playlist.
-		 * TODO: This should only insert mids, and schedule resolve operation.
 		 */
 		[InstanceLast]
 		private void on_playlist_list_entries(Xmms.Result res) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
-			Gtk.TreeIter iter;
+			Gtk.TreeIter iter, sibling;
+			bool first = true;
 
 			store.clear();
 
@@ -295,24 +295,30 @@ namespace Abraca {
 			set_model(null);
 
 			for (res.list_first(); res.list_valid(); res.list_next()) {
+				weak Gtk.TreeRowReference cpy;
+				Gtk.TreeRowReference row;
+				Gtk.TreePath path;
 				uint id;
 				int pos;
 
 				if (!res.get_uint(out id))
 					continue;
 
-				/* TODO: This is bogous, use _first, then reuse the iter. */
-				pos = store.iter_n_children(null);
+				if (first) {
+					store.insert_after(out iter, null);
+					first = !first;
+				} else {
+					store.insert_after(out iter, sibling);
+				}
 
-				store.insert_with_values(
-					out iter, pos,
-					PlaylistColumn.ID, id
-				);
+				store.set(iter, PlaylistColumn.ID, id);
 
-				Gtk.TreePath path = store.get_path(iter);
-				Gtk.TreeRowReference row = new Gtk.TreeRowReference(store, path);
+				sibling = iter;
 
-				weak Gtk.TreeRowReference cpy = row.copy();
+				path = store.get_path(iter);
+				row = new Gtk.TreeRowReference(store, path);
+
+				cpy = row.copy();
 
 				pos_map.insert(id.to_pointer(), cpy);
 			}
@@ -328,59 +334,33 @@ namespace Abraca {
 			}, null);
 		}
 
-		private void on_media_info(Client c, weak GLib.HashTable<string,pointer> m) {
-			Gtk.ListStore store = (Gtk.ListStore) model;
-
-			int mid = m.lookup("id").to_int();
-			weak string artist = m.lookup("artist");
-			weak string album = m.lookup("album");
-			weak string title = m.lookup("title");
-
-			weak Gtk.TreeRowReference row = pos_map.lookup(mid.to_pointer());
-			if (row == null || !row.valid()) {
-				GLib.stdout.printf("row (%d) not valid!!\n", mid);
-			}
-
-			string info;
-			info = Markup.printf_escaped(
-				"<b>%s</b> - <small>%d:%02d</small>\n" +
-				"<small>by</small> %s <small>from</small> %s",
-				title, 0, 0, artist, album
-			);
-
-			Gtk.TreeIter iter;
-			weak Gtk.TreePath path = row.get_path();
-
-			if (!model.get_iter(out iter, path)) {
-				GLib.stdout.printf("couldn't get iter!!!\n");
-			}
-
-			store.set(iter, PlaylistColumn.Info, info);
-		}
-
 		/**
 		 * TODO: Should check the future hash[mid] = [row1, row2, row3] and
 		 *       update the rows accordingly.
+		 *       Should also update the current coverart image.
 		 */
-		[InstanceLast]
-		private void on_medialib_get_info(Xmms.Result res) {
+		private void on_media_info(Client c, weak GLib.HashTable<string,pointer> m) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
-			Gtk.TreeIter iter;
-			weak string artist, title, album;
+			int duration, mid, dur_min, dur_sec, pos, id;
+			weak string artist, album, title;
+			weak Gtk.TreeRowReference row;
 			string info;
-			int duration, dur_min, dur_sec, pos, id;
+			Gtk.TreeIter iter;
+			weak Gtk.TreePath path;
 
-			res.get_dict_entry_int("id", out id);
-			res.get_dict_entry_int("duration", out duration);
+			mid = m.lookup("id").to_int();
 
-			if (!res.get_dict_entry_string("artist", out artist))
-				artist = "Unknown";
+			row = pos_map.lookup(mid.to_pointer());
+			if (row == null || !row.valid()) {
+				/* the given mid doesn't match any of our rows */
+				return;
+			}
 
-			if (!res.get_dict_entry_string("title", out title))
-				title = "Unknown";
+			duration = m.lookup("duration").to_int();
 
-			if (!res.get_dict_entry_string("album", out album))
-				album = "Unknown";
+			artist = (string) m.lookup("artist");
+			album = (string) m.lookup("album");
+			title = (string) m.lookup("title");
 
 			dur_min = duration / 60000;
 			dur_sec = (duration % 60000) / 1000;
@@ -391,14 +371,13 @@ namespace Abraca {
 				title, dur_min, dur_sec, artist, album
 			);
 
-			pos = store.iter_n_children(null);
+			path = row.get_path();
 
-			store.insert_with_values(
-				out iter, pos,
-				PlaylistColumn.ID, id,
-				PlaylistColumn.CoverArt, null,
-				PlaylistColumn.Info, info
-			);
+			if (!model.get_iter(out iter, path)) {
+				GLib.stdout.printf("couldn't get iter!!!\n");
+			} else {
+				store.set(iter, PlaylistColumn.Info, info);
+			}
 		}
 	}
 }

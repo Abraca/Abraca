@@ -200,7 +200,7 @@ namespace Abraca {
 		[InstanceLast]
 		private void on_medialib_get_info(Xmms.Result res) {
 			weak string tmp;
-			int mid;
+			int mid, duration;
 
 			if (!res.get_dict_entry_int("id", out mid)) {
 				return;
@@ -228,6 +228,11 @@ namespace Abraca {
 				tmp = "Unknown";
 			}
 			m.insert("title", (pointer) tmp);
+
+			if (!res.get_dict_entry_int("duration", out duration)) {
+				duration = 0;
+			}
+			m.insert("duration", duration.to_pointer());
 
 			media_info(m);
 		}
