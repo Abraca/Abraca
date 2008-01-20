@@ -125,7 +125,7 @@ namespace Abraca {
 			d.comments = "A client for the XMMS2 music player";
 
 			d.authors = _authors;
-			d.copyright = "Copyright © 2007 Sebastian Sareyko";
+			d.copyright = "Copyright © 2007-2008 Sebastian Sareyko";
 			d.website = "http://nooms.de/projects/abraca/";
 
 			d.run();
