@@ -462,7 +462,7 @@ namespace Xmms {
 		 * Bindata functions
 		 */
 		public Result bindata_add (
-			uchar[] data, uint len
+			uchar[] data
 		);
 		public Result bindata_retrieve (
 			weak string hash
@@ -552,6 +552,7 @@ namespace Xmms {
 		public Collection (
 			CollectionType type
 		);
+		[NoArrayLength]
 		public void set_idlist (
 			uint[] ids
 		);
