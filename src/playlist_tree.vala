@@ -122,7 +122,7 @@ namespace Abraca {
 			);
 
 			Gtk.CellRendererText renderer = new Gtk.CellRendererText();
-			/* TODO: It's most likely incorrect to assume a fixed height here */
+			/* TODO: Incorrect to assume fixed height here */
 			renderer.height = 30;
 
  			insert_column_with_attributes(
@@ -174,7 +174,6 @@ namespace Abraca {
 
 		/**
 		 * Handle dropping of medialib ids.
-		 * TODO: Should perform an xmms.playlist_add when drop is at end.
 		 */
 		private bool on_drop_medialib_id(Gtk.SelectionData sel, int x, int y) {
 			Gtk.TreeViewDropPosition align;
@@ -202,7 +201,6 @@ namespace Abraca {
 
 		/**
 		 * Insert a row when a new entry has been inserted in the playlist.
-		 * TODO: Insert mid here and schedule a resolve operation.
 		 */
 		private void on_playlist_insert(Client c, string playlist, uint mid, int pos) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
@@ -294,10 +292,6 @@ namespace Abraca {
 			);
 		}
 
-		/**
-		 * TODO: This should simply append a mid to the playlist and
-		 *       schedule resolve operation.
-		 */
 		private void on_playlist_add(Client c, string playlist, uint mid) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
 			weak Gtk.TreeRowReference cpy;
