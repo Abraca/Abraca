@@ -142,10 +142,6 @@ namespace Abraca {
 			Gtk.CellRenderer cell = new Gtk.CellRendererText();
 
  			insert_column_with_attributes(
-				-1, "ID", cell, "text", FilterColumn.ID, null
-			);
-
- 			insert_column_with_attributes(
 				-1, "Artist", cell, "text", FilterColumn.Artist, null
 			);
 
