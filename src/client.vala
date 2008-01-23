@@ -19,7 +19,7 @@ namespace Abraca {
 		public signal void playlist_insert(weak string playlist, uint mid, int pos);
 		public signal void playlist_remove(weak string playlist, int pos);
 
-		public signal void media_info(weak GLib.HashTable<string,pointer> hash);
+		public signal void media_info(GLib.HashTable<string,pointer> hash);
 
 		construct {
 			_xmms = new Xmms.Client("Abraca");
@@ -107,6 +107,10 @@ namespace Abraca {
 			if (res.get_uint(out status)) {
 				playback_status((int)status);
 			}
+
+			if (res.get_class() == Xmms.ResultClass.DEFAULT) {
+				res.unref();
+			}
 		}
 
 		[InstanceLast]
@@ -115,6 +119,10 @@ namespace Abraca {
 
 			if (res.get_uint(out mid)) {
 				playback_current_id(mid);
+			}
+
+			if (res.get_class() == Xmms.ResultClass.DEFAULT) {
+				res.unref();
 			}
 		}
 
@@ -133,9 +141,13 @@ namespace Abraca {
 				/* Throttle playback time to only hit once a second */
 				GLib.Timeout.add(500, ptr => {
 					Xmms.Result res = (Xmms.Result) ptr;
-					res.restart();
+					Xmms.Result tmp = res;
+					res = res.restart();
+					tmp.unref();
 					return false;
 				}, res);
+			} else {
+				res.unref();
 			}
 		}
 
@@ -146,6 +158,10 @@ namespace Abraca {
 			if (res.get_string(out name)) {
 				_playlist = name;
 				playlist_loaded(name);
+			}
+
+			if (res.get_class() == Xmms.ResultClass.DEFAULT) {
+				res.unref();
 			}
 		}
 
@@ -235,6 +251,10 @@ namespace Abraca {
 			m.insert("duration", duration.to_pointer());
 
 			media_info(m);
+
+			if (res.get_class() == Xmms.ResultClass.DEFAULT) {
+				res.unref();
+			}
 		}
 	}
 }

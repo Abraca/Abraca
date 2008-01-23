@@ -23,6 +23,16 @@ namespace Abraca {
 			{"application/x-xmms2mlibid", 0, 0}
 		};
 
+		/* metadata properties we're interested in */
+		private const string[] _properties = {
+			"artist", "album", "title"
+		};
+
+
+		/* TODO: This is bogous, use a Hash<uint,List<uint>> instead
+		 *       to allow for multiple rows <-> same medialib id.
+		 */
+		private GLib.HashTable<int,Gtk.TreeRowReference> pos_map;
 
 		construct {
 			show_expanders = true;
@@ -40,6 +50,10 @@ namespace Abraca {
 			create_context_menu();
 			create_drag_n_drop();
 
+			pos_map = new GLib.HashTable<int,pointer>(GLib.direct_hash, GLib.direct_equal);
+			Client c = Client.instance();
+			c.media_info += on_media_info;
+
 			button_press_event += on_button_press_event;
 		}
 
@@ -53,45 +67,95 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_coll_query_ids(Xmms.Result res) {
-			Client c = Client.instance();
 			Gtk.ListStore store = (Gtk.ListStore) model;
+			Gtk.TreeIter iter, sibling;
+			bool first = true;
+
 
 			store.clear();
 
+			/* disconnect our model while the shit hits the fan */
+			set_model(null);
+
 			for (res.list_first(); res.list_valid(); res.list_next()) {
+				weak Gtk.TreeRowReference cpy;
+				Gtk.TreeRowReference row;
+				Gtk.TreePath path;
 				uint id;
+				int pos;
 
 				if (!res.get_uint(out id))
 					continue;
 
-				c.xmms.medialib_get_info(id).notifier_set(
-					on_medialib_get_info
-				);
+				if (first) {
+					store.insert_after(out iter, null);
+					first = !first;
+				} else {
+					store.insert_after(out iter, sibling);
+				}
+
+				store.set(iter, FilterColumn.ID, id);
+
+				sibling = iter;
+
+				path = store.get_path(iter);
+				row = new Gtk.TreeRowReference(store, path);
+
+				cpy = row.copy();
+
+				pos_map.insert(id.to_pointer(), cpy);
 			}
+
+			res.unref();
+
+			/* reconnect the model again */
+			set_model(store);
+
+			pos_map.for_each((k,v,u) => {
+				Client c = Client.instance();
+				/* TODO: Cast shouldn't be needed here */
+				c.get_media_info(k.to_int(), (string[]) _properties);
+			}, null);
 		}
 
-		[InstanceLast]
-		private void on_medialib_get_info(Xmms.Result res) {
+		/**
+		 * TODO: Should check the future hash[mid] = [row1, row2, row3] and
+		 *       update the rows accordingly.
+		 *       Should also update the current coverart image.
+		 */
+		private void on_media_info(Client c, weak GLib.HashTable<string,pointer> m) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
+			int mid, pos, id;
+			weak string artist, album, title;
+			weak Gtk.TreeRowReference row;
+			string info;
 			Gtk.TreeIter iter;
-			weak string artist, title, album;
-			int pos, id;
-			bool b;
+			weak Gtk.TreePath path;
 
-			res.get_dict_entry_int("id", out id);
-			res.get_dict_entry_string("artist", out artist);
-			res.get_dict_entry_string("title", out title);
-			res.get_dict_entry_string("album", out album);
+			mid = m.lookup("id").to_int();
 
-			pos = store.iter_n_children(null);
+			row = pos_map.lookup(mid.to_pointer());
+			if (row == null || !row.valid()) {
+				/* the given mid doesn't match any of our rows */
+				return;
+			}
 
-			store.insert_with_values(
-				out iter, pos,
-				FilterColumn.ID, id,
-				FilterColumn.Artist, artist,
-				FilterColumn.Title, title,
-				FilterColumn.Album, album
-			);
+			artist = (string) m.lookup("artist");
+			album = (string) m.lookup("album");
+			title = (string) m.lookup("title");
+
+			path = row.get_path();
+
+			if (!model.get_iter(out iter, path)) {
+				GLib.stdout.printf("couldn't get iter!!!\n");
+			} else {
+				store.set(iter,
+					FilterColumn.ID, id,
+					FilterColumn.Artist, artist,
+					FilterColumn.Title, title,
+					FilterColumn.Album, album
+				);
+			}
 		}
 
 		[InstanceLast]

@@ -169,7 +169,7 @@ namespace Xmms {
 		cheader_filename = "xmmsclient/xmmsclient.h"
 	)]
 	public delegate void NotifierFunc (
-		Result res
+		Result #res
 	);
 
 	[CCode(
@@ -720,6 +720,8 @@ namespace Xmms {
 		);
 		public string decode_url (
 			weak string url
+		);
+		public void unref (
 		);
 	}
 }

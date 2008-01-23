@@ -359,6 +359,8 @@ namespace Abraca {
 				pos_map.insert(id.to_pointer(), cpy);
 			}
 
+			res.unref();
+
 			/* reconnect the model again */
 			set_model(store);
 

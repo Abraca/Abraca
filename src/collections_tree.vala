@@ -46,11 +46,13 @@ namespace Abraca {
 		[InstanceLast]
 		private void on_coll_list_collections(Xmms.Result res) {
 			on_coll_list(res, CollectionType.Collection);
+			res.unref();
 		}
 
 		[InstanceLast]
 		private void on_coll_list_playlists(Xmms.Result res) {
 			on_coll_list(res, CollectionType.Playlist);
+			res.unref();
 		}
 
 		private void on_coll_list(Xmms.Result res, CollectionType type) {
@@ -113,6 +115,7 @@ namespace Abraca {
 
 			Abraca.instance().main_window.main_hpaned.
 				right_hpaned.filter_tree.query_collection(coll);
+			res.unref();
 		}
 
 		private void create_columns() {
