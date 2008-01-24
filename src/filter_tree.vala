@@ -36,6 +36,7 @@ namespace Abraca {
 
 		construct {
 			show_expanders = true;
+			fixed_height_mode = true;
 
 			create_columns ();
 
@@ -203,27 +204,53 @@ namespace Abraca {
 		}
 
 		private void create_columns() {
-			Gtk.CellRenderer cell = new Gtk.CellRendererText();
+			Gtk.TreeViewColumn column;
+			Gtk.CellRendererText cell;
 
- 			insert_column_with_attributes(
-				-1, "Artist", cell, "text", FilterColumn.Artist, null
-			);
+			cell = new Gtk.CellRendererText();
+			cell.ellipsize = Pango.EllipsizeMode.END;
 
- 			insert_column_with_attributes(
-				-1, "Title", cell, "text", FilterColumn.Title, null
+			column = new Gtk.TreeViewColumn.with_attributes(
+				"Artist", cell, "text", FilterColumn.Artist, null
 			);
+			column.resizable = true;
+			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
+			column.min_width = 120;
+			insert_column(column, -1);
 
- 			insert_column_with_attributes(
-				-1, "Album", cell, "text", FilterColumn.Album, null
+			column = new Gtk.TreeViewColumn.with_attributes(
+				"Title", cell, "text", FilterColumn.Title, null
 			);
+			column.resizable = true;
+			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
+			column.min_width = 150;
+			insert_column(column, -1);
 
- 			insert_column_with_attributes(
-				-1, "Duration", cell, "text", FilterColumn.Duration, null
+			column = new Gtk.TreeViewColumn.with_attributes(
+				"Album", cell, "text", FilterColumn.Album, null
 			);
+			column.resizable = true;
+			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
+			column.min_width = 150;
+			insert_column(column, -1);
 
- 			insert_column_with_attributes(
-				-1, "Genre", cell, "text", FilterColumn.Genre, null
+			/*
+			column = new Gtk.TreeViewColumn.with_attributes(
+				"Duration", cell, "text", FilterColumn.Duration, null
 			);
+			column.resizable = true;
+			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
+			column.min_width = 100;
+			insert_column(column, -1);
+
+			column = new Gtk.TreeViewColumn.with_attributes(
+				"Genre", cell, "text", FilterColumn.Genre, null
+			);
+			column.resizable = true;
+			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
+			column.min_width = 100;
+			insert_column(column, -1);
+			*/
 		}
 
 		private void create_context_menu() {
