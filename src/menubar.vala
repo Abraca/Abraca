@@ -115,8 +115,8 @@ namespace Abraca {
 			Gtk.AboutDialog d;
 			Gdk.Pixbuf buf;
 
-			filename = "/usr/local/share/pixmaps/abraca-128.png";
-			buf = new Gdk.Pixbuf.from_file(filename);
+			filename = "/usr/local/share/pixmaps/abraca.svg";
+			buf = new Gdk.Pixbuf.from_file_at_scale(filename, 180, 180, true);
 
 			d = new Gtk.AboutDialog();
 			d.set_logo(buf);

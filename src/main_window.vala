@@ -26,6 +26,8 @@ namespace Abraca {
 
 			create_widgets();
 
+			set_icon_from_file("/usr/local/share/pixmaps/abraca.svg");
+
 			width_request = 800;
 			height_request = 600;
 
@@ -33,6 +35,7 @@ namespace Abraca {
 
 			main_hpaned.set_sensitive(false);
 			toolbar.set_sensitive(false);
+
 
 			c.disconnected += c => {
 				main_hpaned.set_sensitive(false);
