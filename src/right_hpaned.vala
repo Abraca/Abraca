@@ -105,9 +105,6 @@ namespace Abraca {
 		private Gtk.Box create_right_box() {
 			Gtk.VBox box = new Gtk.VBox(false, 0);
 
-			Gtk.Expander exp = new Gtk.Expander("Playlist");
-			box.pack_start(exp, false, false, 2);
-
 			Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(
 				null, null
 			);

@@ -25,6 +25,7 @@ namespace Abraca {
 			search_column = 0;
 			headers_visible = false;
 			show_expanders = true;
+			fixed_height_mode = true;
 
 			create_columns ();
 			model = create_model();
@@ -119,10 +120,12 @@ namespace Abraca {
 		}
 
 		private void create_columns() {
+			/* TODO: Fix icon
  			insert_column_with_attributes(
 				-1, null, new Gtk.CellRendererPixbuf(),
 				"stock-id", CollColumn.Icon, null
 			);
+			*/
 
  			insert_column_with_attributes(
 				-1, null, new Gtk.CellRendererText(),
