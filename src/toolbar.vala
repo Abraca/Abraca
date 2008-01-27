@@ -92,7 +92,7 @@ namespace Abraca {
 			Client c = Client.instance();
 
 			double percent = scale.get_value();
-			uint pos = (uint) _duration * percent;
+			uint pos = (uint)(_duration * percent);
 
 			c.xmms.playback_seek_ms(pos);
 
@@ -106,7 +106,7 @@ namespace Abraca {
 		[InstanceLast]
 		private bool on_time_slider_motion_notify(Gtk.HScale scale, Gdk.EventMotion e) {
 			double percent = scale.get_value();
-			uint pos = (uint) _duration * percent;
+			uint pos = (uint)(_duration * percent);
 
 			update_time(pos);
 

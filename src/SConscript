@@ -13,6 +13,7 @@ vala_sources = """
 	toolbar.vala
 	abraca.vala
 	server_browser.vala
+	dragdroptarget.vala
 """.split()
 
 sources = env.Vala(vala_sources)

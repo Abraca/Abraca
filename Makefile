@@ -15,6 +15,7 @@ SOURCES = \
 	src/toolbar.vala \
 	src/client.vala \
 	src/server_browser.vala \
+	src/dragdroptarget.vala \
 
 PACKAGES = $(addprefix --pkg ,gtk+-2.0 xmms2-client-glib)
 

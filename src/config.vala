@@ -42,12 +42,13 @@ namespace Abraca {
 		}
 
 		private string build_filename() {
-			string buf = malloc(1024);
-			Xmms.Client.userconfdir_get(buf, 1024);
-
-			return Path.build_filename(
+			weak string buf = (string) malloc(255 * sizeof(string));
+			Xmms.Client.userconfdir_get(buf, 255);
+			string ret = Path.build_filename(
 				buf, "clients", "abraca.conf", null
 			);
+
+			return ret;
 		}
 
 		public void load() {

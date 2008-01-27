@@ -20,7 +20,7 @@ namespace Abraca {
 
 		/** allowed drag-n-drop variants */
 		private const Gtk.TargetEntry[] _target_entries = {
-			{"application/x-xmms2mlibid", 0, 0}
+			DragDropTarget.TrackId
 		};
 
 		/* metadata properties we're interested in */
@@ -151,7 +151,6 @@ namespace Abraca {
 				GLib.stdout.printf("couldn't get iter!!!\n");
 			} else {
 				store.set(iter,
-					FilterColumn.ID, id,
 					FilterColumn.Artist, artist,
 					FilterColumn.Title, title,
 					FilterColumn.Album, album
@@ -295,19 +294,21 @@ namespace Abraca {
 				model.get_iter(out iter, p);
 				model.get(iter, 0, out mid, -1);
 
-				mid_list.prepend((int) mid);
+				mid_list.prepend(mid);
 			}
 
 			uint len = mid_list.length();
 			uint[] mid_array = new uint[len];
 
 			int pos = 0;
-			foreach (int mid in mid_list) {
+			foreach (uint mid in mid_list) {
 				mid_array[pos++] = mid;
 			}
 
-			selection_data.set(Gdk.Atom.intern("application/x-xmms2mlibid", true), 8,
-			                   (uchar[]) mid_array, (int) len * 32);
+			selection_data.set(
+				Gdk.Atom.intern(_target_entries[0].target, true),
+				8, (uchar[]) mid_array, (int) len * 32
+			);
 
 			return true;
 		}

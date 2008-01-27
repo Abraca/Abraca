@@ -11,14 +11,6 @@ namespace Abraca {
 		Total
 	}
 
-	enum PlaylistDrop {
-		POS = 0,
-		MID,
-		PATH,
-		URL,
-		TOTAL,
-	}
-
 	public class PlaylistTree : Gtk.TreeView {
 		/** current playback status */
 		private int _status;
@@ -37,12 +29,9 @@ namespace Abraca {
 
 		/** allowed drag-n-drop variants */
 		private const Gtk.TargetEntry[] _target_entries = {
-			{ "application/x-xmms2poslist", 0, PlaylistDrop.POS  },
-			{ "application/x-xmms2mlibid",  0, PlaylistDrop.MID  },
-			{ "text/uri-list",              0, PlaylistDrop.PATH },
-			{ "_NETSCAPE_URL",              0, PlaylistDrop.URL  }
+			DragDropTarget.PlaylistRow,
+			DragDropTarget.TrackId
 		};
-
 
 		construct {
 			Client c = Client.instance();
@@ -103,7 +92,7 @@ namespace Abraca {
 
 				Client c = Client.instance();
 
-				foreach (int id in lst) {
+				foreach (uint id in lst) {
 					c.xmms.playlist_remove_entry(_playlist, id);
 				}
 			}
@@ -135,11 +124,11 @@ namespace Abraca {
 		 * Setup dragndrop for the playlist.
 		 */
 		private void create_dragndrop() {
-			enable_model_drag_dest(_target_entries, PlaylistDrop.TOTAL,
+			enable_model_drag_dest(_target_entries, 2,
 			                       Gdk.DragAction.MOVE);
 
 			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-			                         _target_entries, PlaylistDrop.TOTAL,
+			                         _target_entries, 2,
 			                         Gdk.DragAction.MOVE);
 
 			drag_data_received += on_drag_data_receive;
@@ -156,13 +145,13 @@ namespace Abraca {
 			Gtk.TargetList target_list;
 			bool success = false;
 
-			if (info == (uint) PlaylistDrop.POS) {
+			if (info == (uint) DragDropTargetType.ROW) {
 				GLib.stdout.printf("Drop from playlist not implemented.\n");
-			} else if (info == (uint) PlaylistDrop.MID) {
+			} else if (info == (uint) DragDropTargetType.MID) {
 				success = on_drop_medialib_id(sel, x, y);
-			} else if (info == (uint) PlaylistDrop.PATH) {
+			} else if (info == (uint) DragDropTargetType.URI) {
 				GLib.stdout.printf("Drop from filesystem not implemented\n");
-			} else if (info == (uint) PlaylistDrop.URL) {
+			} else if (info == (uint) DragDropTargetType.INTERNET) {
 				GLib.stdout.printf("Drop from intarweb not implemented\n");
 			} else {
 				GLib.stdout.printf("Nogle gange går der kuk i maskineriet\n");

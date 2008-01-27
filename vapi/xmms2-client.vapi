@@ -517,7 +517,7 @@ namespace Xmms {
 			string target, int len, string fmt, Result res
 		);
 		public static weak string userconfdir_get (
-			string buf, int len
+			weak string buf, int len
 		);
 		public weak string get_last_error (
 		);
