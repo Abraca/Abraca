@@ -12,6 +12,9 @@ namespace Abraca {
 	}
 
 	public class PlaylistTree : Gtk.TreeView {
+		/** context menu */
+		private Gtk.Menu _playlist_menu;
+
 		/** current playback status */
 		private int _status;
 		/** current playlist displayed */
@@ -53,8 +56,10 @@ namespace Abraca {
 				PlaylistColumn.Total,
 				typeof(int), typeof(string), typeof(string)
 			);
+
 			row_activated += on_row_activated;
 			key_press_event += on_key_press_event;
+			button_press_event += on_button_press_event;
 
 			c.playlist_loaded += on_playlist_loaded;
 
@@ -67,9 +72,24 @@ namespace Abraca {
 
 			c.media_info += on_media_info;
 
+			create_context_menu();
 			create_dragndrop();
 
 			show_all();
+		}
+
+
+		private bool on_button_press_event(Gtk.Widget w, Gdk.EventButton e) {
+			/* we're only interested in the 3rd mouse button */
+			if (e.button != 3)
+				return false;
+
+			_playlist_menu.popup(
+				null, null, null, null, e.button,
+				Gtk.get_current_event_time()
+			);
+
+			return true;
 		}
 
 
@@ -95,6 +115,8 @@ namespace Abraca {
 				foreach (uint id in lst) {
 					c.xmms.playlist_remove_entry(_playlist, id);
 				}
+
+				return true;
 			}
 
 			return false;
@@ -118,6 +140,64 @@ namespace Abraca {
 				-1, null, renderer,
 				"markup", PlaylistColumn.Info, null
 			);
+		}
+
+
+		private void create_context_menu() {
+			Gtk.ImageMenuItem img_item;
+			Gtk.MenuItem item;
+			Gtk.Menu submenu;
+
+			_playlist_menu = new Gtk.Menu();
+
+			submenu = new Gtk.Menu();
+			item = new Gtk.MenuItem.with_label("Artist");
+			item.activate += i => {
+				on_menu_playlist_sort("artist");
+			};
+			submenu.append(item);
+
+			item = new Gtk.MenuItem.with_label("Album");
+			item.activate += i => {
+				on_menu_playlist_sort("album");
+			};
+			submenu.append(item);
+
+			item = new Gtk.MenuItem.with_label("Title");
+			item.activate += i => {
+				on_menu_playlist_sort("title");
+			};
+			submenu.append(item);
+
+			item = new Gtk.MenuItem.with_label("Track Nr");
+			item.activate += i => {
+				on_menu_playlist_sort("tracknr");
+			};
+			submenu.append(item);
+
+			item = new Gtk.MenuItem.with_label("Path");
+			item.activate += i => {
+				on_menu_playlist_sort("url");
+			};
+			submenu.append(item);
+
+			item = new Gtk.MenuItem.with_label("Advanced");
+			item.sensitive = false;
+			submenu.append(item);
+
+			item = new Gtk.MenuItem.with_label("Sort");
+			item.set_submenu(submenu);
+			_playlist_menu.append(item);
+
+
+			_playlist_menu.show_all();
+		}
+
+
+		private void on_menu_playlist_sort(string type) {
+			Client c = Client.instance();
+			string[] sort = new string[] {type, null};
+			c.xmms.playlist_sort(_playlist, sort);
 		}
 
 		/**

@@ -319,6 +319,7 @@ namespace Xmms {
 		public Result playlist_list_entries (
 			weak string playlist = "Default"
 		);
+		[NoArrayLength]
 		public Result playlist_sort (
 			weak string playlist, weak string[] properties
 		);
