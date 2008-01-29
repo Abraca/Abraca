@@ -49,7 +49,7 @@ namespace Abraca {
 			weak Gtk.TreeSelection sel = get_selection();
 			sel.set_mode(Gtk.SelectionMode.MULTIPLE);
 
-			pos_map = new GLib.HashTable<int,pointer>(GLib.direct_hash, GLib.direct_equal);
+			pos_map = new GLib.HashTable<int,Gtk.TreeRowReference>(GLib.direct_hash, GLib.direct_equal);
 			create_columns ();
 
 			model = new Gtk.ListStore(
@@ -288,10 +288,7 @@ namespace Abraca {
 
 				Gtk.TreePath path = store.get_path(added);
 				Gtk.TreeRowReference row = new Gtk.TreeRowReference(store, path);
-
-				weak Gtk.TreeRowReference cpy = row.copy();
-
-				pos_map.insert(mid.to_pointer(), cpy);
+				pos_map.insert(mid.to_pointer(), #row);
 
 				/* TODO: Cast shouldn't be needed here */
 				c.get_media_info(mid, (string[]) _properties);
@@ -363,7 +360,6 @@ namespace Abraca {
 
 		private void on_playlist_add(Client c, string playlist, uint mid) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
-			weak Gtk.TreeRowReference cpy;
 			Gtk.TreeRowReference row;
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
@@ -377,9 +373,7 @@ namespace Abraca {
 			path = store.get_path(iter);
 			row = new Gtk.TreeRowReference(store, path);
 
-			cpy = row.copy();
-
-			pos_map.insert(mid.to_pointer(), cpy);
+			pos_map.insert(mid.to_pointer(), #row);
 
 			/* TODO: Cast shouldn't be needed here */
 			c.get_media_info(mid, (string[]) _properties);
@@ -400,7 +394,6 @@ namespace Abraca {
 			set_model(null);
 
 			for (res.list_first(); res.list_valid(); res.list_next()) {
-				weak Gtk.TreeRowReference cpy;
 				Gtk.TreeRowReference row;
 				Gtk.TreePath path;
 				uint id;
@@ -423,9 +416,7 @@ namespace Abraca {
 				path = store.get_path(iter);
 				row = new Gtk.TreeRowReference(store, path);
 
-				cpy = row.copy();
-
-				pos_map.insert(id.to_pointer(), cpy);
+				pos_map.insert(id.to_pointer(), #row);
 			}
 
 			res.unref();

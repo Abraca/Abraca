@@ -51,7 +51,7 @@ namespace Abraca {
 			create_context_menu();
 			create_drag_n_drop();
 
-			pos_map = new GLib.HashTable<int,pointer>(GLib.direct_hash, GLib.direct_equal);
+			pos_map = new GLib.HashTable<int,Gtk.TreeRowReference>(GLib.direct_hash, GLib.direct_equal);
 			Client c = Client.instance();
 			c.media_info += on_media_info;
 
@@ -79,7 +79,6 @@ namespace Abraca {
 			set_model(null);
 
 			for (res.list_first(); res.list_valid(); res.list_next()) {
-				weak Gtk.TreeRowReference cpy;
 				Gtk.TreeRowReference row;
 				Gtk.TreePath path;
 				uint id;
@@ -102,9 +101,7 @@ namespace Abraca {
 				path = store.get_path(iter);
 				row = new Gtk.TreeRowReference(store, path);
 
-				cpy = row.copy();
-
-				pos_map.insert(id.to_pointer(), cpy);
+				pos_map.insert(id.to_pointer(), #row);
 			}
 
 			res.unref();
@@ -135,7 +132,7 @@ namespace Abraca {
 
 			mid = m.lookup("id").to_int();
 
-			row = pos_map.lookup(mid.to_pointer());
+			row = (Gtk.TreeRowReference) pos_map.lookup(mid.to_pointer());
 			if (row == null || !row.valid()) {
 				/* the given mid doesn't match any of our rows */
 				return;
