@@ -98,6 +98,10 @@ namespace Abraca {
 			_xmms.broadcast_playlist_changed().notifier_set(
 				on_playlist_changed
 			);
+
+			_xmms.broadcast_medialib_entry_changed().notifier_set(
+				on_medialib_entry_changed
+			);
 		}
 
 		[InstanceLast]
@@ -208,6 +212,17 @@ namespace Abraca {
 			xmms.medialib_get_info(mid).notifier_set(
 				on_medialib_get_info
 			);
+		}
+
+		[InstanceLast]
+		public void on_medialib_entry_changed(Xmms.Result res) {
+			uint mid;
+
+			if (res.get_uint(out mid)) {
+				_xmms.medialib_get_info(mid).notifier_set(
+					on_medialib_get_info
+				);
+			}
 		}
 
 		/**
