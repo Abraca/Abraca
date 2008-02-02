@@ -16,7 +16,7 @@ vala_sources = """
 	dragdroptarget.vala
 """.split()
 
-sources = env.Vala(vala_sources)
+sources = env.Vala(vala_sources, VALADEFINES = {'PREFIX':'$prefix'})
 prog = env.Program('abraca', sources + ['utils/playlist_map.c'])
 
 env.Append(CPPPATH = ['utils'])

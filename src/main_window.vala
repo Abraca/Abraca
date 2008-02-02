@@ -26,7 +26,7 @@ namespace Abraca {
 
 			create_widgets();
 
-			set_icon_from_file("/usr/local/share/pixmaps/abraca.svg");
+			set_icon_from_file(Build.Config.PREFIX + "/share/pixmaps/abraca.svg");
 
 			width_request = 800;
 			height_request = 600;

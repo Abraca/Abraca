@@ -111,11 +111,11 @@ namespace Abraca {
 		}
 
 		private void on_help_about(Gtk.MenuItem item) {
-			weak string filename;
+			string filename;
 			Gtk.AboutDialog d;
 			Gdk.Pixbuf buf;
 
-			filename = "/usr/local/share/pixmaps/abraca.svg";
+			filename = Build.Config.PREFIX + "/share/pixmaps/abraca.svg";
 			buf = new Gdk.Pixbuf.from_file_at_scale(filename, 180, 180, true);
 
 			d = new Gtk.AboutDialog();

@@ -22,9 +22,10 @@ env.Help(opts.GenerateHelpText(env))
 
 # Hide compiler command line if silent mode on
 if env['silent']:
-	env['VALACOMSTR'] = 'Generating: $TARGETS'
-	env['CCCOMSTR']   = '  Building: $TARGET'
-	env['LINKCOMSTR'] = '   Linking: $TARGET'
+	env['VALADEFINESCOMSTR'] = '   Defines: $TARGET'
+	env['VALACOMSTR']        = 'Generating: $TARGETS'
+	env['CCCOMSTR']          = '  Building: $TARGET'
+	env['LINKCOMSTR']        = '   Linking: $TARGET'
 
 if env['debug']:
 	env.Append(CCFLAGS = ['-g'])
