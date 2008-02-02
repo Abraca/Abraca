@@ -17,6 +17,8 @@ vala_sources = """
 """.split()
 
 sources = env.Vala(vala_sources)
-prog = env.Program('abraca', sources)
+prog = env.Program('abraca', sources + ['utils/playlist_map.c'])
+
+env.Append(CPPPATH = ['utils'])
 
 env.Alias('install', env.Install('$prefix/bin', prog))

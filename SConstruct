@@ -38,6 +38,8 @@ for pkg in ['gtk+-2.0', 'xmms2-client', 'xmms2-client-glib']:
 		raise SCons.Errors.UserError(pkg + ' required to build Abraca')
 	env.Append(VALAPKGS = [pkg])
 
+env.Append(VALAPKGS = ['playlist-map'])
+
 env.Append(CCFLAGS = ['-Wall', '-Wno-unused-variable'])
 
 env.BuildDir('build', '.')
