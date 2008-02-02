@@ -23,8 +23,9 @@ def vala_emitter(target, source, env):
 	target = []
 
 	if env.get('VALADEFINES') and source:
-		source += env._ValaDefines('build-config.vala',
-		                           VALADEFINES = env['VALADEFINES'])
+		conf = env._ValaDefines('build-config.vala', VALADEFINES = env['VALADEFINES'])
+		env.AlwaysBuild(conf)
+		source += conf
 
 	for src in source:
 		tgt = src.target_from_source('', '.c')
