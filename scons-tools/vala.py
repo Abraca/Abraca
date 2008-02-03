@@ -1,31 +1,37 @@
 import SCons
 
 def vala_defines(target, source, env):
-	defines = env.get('VALADEFINES')
-	if defines is not None:
-		buffer = ''
-		buffer += 'namespace Build {\n'
-		buffer += '\tpublic class Config {\n'
-		for k, v in defines.items():
-			if SCons.Util.is_String(v):
-				buffer += '\t\tpublic const string %s = "%s";\n' % (k, env.subst(v))
-		buffer += '\t}\n'
-		buffer += '}\n'
+	defines = source[0].read()
 
-		fd = file(str(target[0]), 'w+')
-		fd.write(buffer)
-		fd.close()
+	buffer = ''
+	buffer += 'namespace Build {\n'
+	buffer += '\tpublic class Config {\n'
 
-def vala_defines_emitter(target, source, env):
-	return target, []
+	for pair in defines.items():
+		buffer += '\t\tpublic const string %s = "%s";\n' % pair
+
+	buffer += '\t}\n'
+	buffer += '}\n'
+
+	fd = file(str(target[0]), 'w+')
+	fd.write(buffer)
+	fd.close()
 
 def vala_emitter(target, source, env):
 	target = []
 
-	if env.get('VALADEFINES') and source:
-		conf = env._ValaDefines('build-config.vala', VALADEFINES = env['VALADEFINES'])
-		env.AlwaysBuild(conf)
-		source += conf
+	defines = env.get('VALADEFINES')
+	if defines:
+		if not SCons.Util.is_Dict(defines):
+			raise SCons.Errors.UserError('ValaDefines only support dict values')
+
+		for k, v in defines.items():
+			if not SCons.Util.is_String(v):
+				raise SCons.Errors.UserError('Defines dict can only contain strings')
+			defines[k] = env.subst(v)
+
+		conf = SCons.Node.Python.Value(defines)
+		source += env._ValaDefines('build-config.vala', conf)
 
 	for src in source:
 		tgt = src.target_from_source('', '.c')
@@ -54,7 +60,6 @@ def generate(env):
 	)
 	vala_defines_builder = SCons.Builder.Builder(
 		action = vala_defines_action,
-		emitter = vala_defines_emitter,
 		suffix = '.vala'
 	)
 	env['BUILDERS']['_ValaDefines'] = vala_defines_builder

@@ -2,11 +2,11 @@ import SCons
 
 env = Environment()
 
+# Oldest usable SCons version.
+env.EnsureSConsVersion(0, 97)
+
 # Load the custom vala builder
 env.Tool('vala', toolpath=['scons-tools'])
-
-# Vala will touch the files so decide on content changes
-env.Decider('content')
 
 # Add some build options
 opts = Options(['.scons_options'])
@@ -37,6 +37,7 @@ env.Append(VALAPKGPATH = ['vapi'])
 for pkg in ['gtk+-2.0', 'xmms2-client', 'xmms2-client-glib']:
 	if not env.ParseConfig('pkg-config --libs --cflags ' + pkg):
 		raise SCons.Errors.UserError(pkg + ' required to build Abraca')
+	
 	env.Append(VALAPKGS = [pkg])
 
 env.Append(VALAPKGS = ['playlist-map'])
