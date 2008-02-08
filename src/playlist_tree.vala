@@ -125,14 +125,36 @@ namespace Abraca {
 		 * Create metadata and coverart columns.
 		 */
 		private void create_columns() {
+			Gtk.CellRendererText renderer;
+			weak Gtk.Settings settings;
+			Pango.FontDescription desc;
+			weak Pango.Context ctx;
+			Pango.Layout layout;
+			int w, h;
+
  			insert_column_with_attributes(
 				-1, null, new Gtk.CellRendererPixbuf(),
 				"stock-id", PlaylistColumn.CoverArt, null
 			);
 
-			Gtk.CellRendererText renderer = new Gtk.CellRendererText();
-			/* TODO: Incorrect to assume fixed height here */
-			renderer.height = 30;
+			renderer = new Gtk.CellRendererText();
+
+			/* Find out the current font height */
+			settings = Gtk.Settings.get_default();
+
+			desc = new Pango.FontDescription();
+			desc.set_family (settings.gtk_font_name);
+
+			ctx = get_pango_context();
+
+			layout = new Pango.Layout(ctx);
+			layout.set_text("look behind you! a three-headed monkey!\0", -1);
+			layout.set_font_description (desc);
+
+			layout.get_pixel_size(out w, out h);
+
+			/* Two rows, plus some extra height */
+			renderer.height = h * 2 + 4;
 
  			insert_column_with_attributes(
 				-1, null, renderer,
