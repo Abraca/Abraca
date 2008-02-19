@@ -304,6 +304,9 @@ namespace Xmms {
 		public Result playlist_add_encoded (
 			weak string playlist, weak string url
 		);
+		public Result playlist_add_idlist (
+			weak string playlist, Collection coll
+		);
 		public Result playlist_add_collection (
 			weak string playlist, Collection coll, string[] order
 		);
