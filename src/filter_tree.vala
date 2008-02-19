@@ -67,7 +67,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private void on_coll_query_ids(Xmms.Result res) {
+		private void on_coll_query_ids(Xmms.Result #res) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
 			Gtk.TreeIter iter, sibling;
 			bool first = true;
@@ -103,8 +103,6 @@ namespace Abraca {
 
 				pos_map.insert(id.to_pointer(), #row);
 			}
-
-			res.unref();
 
 			/* reconnect the model again */
 			set_model(store);
@@ -156,11 +154,11 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private bool on_button_press_event(
-			Gtk.Widget widget, Gdk.EventButton event
-		) {
+		private bool on_button_press_event(Gtk.Widget widget, Gdk.Event e) {
+			weak Gdk.EventButton event_button = (Gdk.EventButton) e;
+
 			/* we're only interested in the 3rd mouse button */
-			if (event.button != 3)
+			if (event_button.button != 3)
 				return false;
 
 			/* bail if the user didn't select any items */
@@ -168,13 +166,14 @@ namespace Abraca {
 				return false;
 
 			filter_menu.popup(
-				null, null, null, null, event.button,
+				null, null, null, null, event_button.button,
 				Gtk.get_current_event_time()
 			);
 
 			return true;
 		}
 
+		/*
 		private void on_menu_add(Gtk.MenuItem item) {
 			get_selection().selected_foreach(add_to_playlist, this);
 		}
@@ -198,6 +197,7 @@ namespace Abraca {
 
 			c.xmms.playlist_add_id("_active", id);
 		}
+		*/
 
 		private void create_columns() {
 			Gtk.TreeViewColumn column;
@@ -250,11 +250,13 @@ namespace Abraca {
 		}
 
 		private void create_context_menu() {
+			/*
 			Gtk.MenuItem item;
 			Gtk.ImageMenuItem img_item;
 
 			filter_menu = new Gtk.Menu();
 
+			
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
 			item.activate += on_menu_add;
 			filter_menu.append(item);
@@ -264,11 +266,12 @@ namespace Abraca {
 			filter_menu.append(item);
 
 			filter_menu.show_all();
+			*/
 		}
 
 		private void create_drag_n_drop() {
 			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-			                         _target_entries, 1,
+			                         _target_entries,
 			                         Gdk.DragAction.MOVE);
 
 			drag_data_get += on_drag_data_get;

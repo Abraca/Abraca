@@ -21,12 +21,25 @@ namespace Abraca {
 
 		public signal void media_info(GLib.HashTable<string,pointer> hash);
 
+		private Xmms.Result _result_playback_status;
+		private Xmms.Result _result_playback_current_id;
+		private Xmms.Result _result_medialib_entry_changed;
+		private Xmms.Result _result_playlist_loaded;
+		private Xmms.Result _result_playlist_changed;
+
 		construct {
 			_xmms = new Xmms.Client("Abraca");
 		}
 
 		private void on_disconnect() {
 			disconnected();
+
+			_result_playback_status = null;
+			_result_playback_current_id = null;
+			_result_playlist_loaded = null;
+			_result_playlist_changed = null;
+			_result_medialib_entry_changed = null;
+
 			Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
 		}
 
@@ -105,7 +118,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private void on_playback_status(Xmms.Result res) {
+		private void on_playback_status(Xmms.Result #res) {
 			uint status;
 
 			if (res.get_uint(out status)) {
@@ -113,20 +126,22 @@ namespace Abraca {
 			}
 
 			if (res.get_class() == Xmms.ResultClass.DEFAULT) {
-				res.unref();
+				_result_playback_status = res;
+				_result_playback_status.ref();
 			}
 		}
 
 		[InstanceLast]
-		private void on_playback_current_id(Xmms.Result res) {
+		private void on_playback_current_id(Xmms.Result #res) {
 			uint mid;
 
 			if (res.get_uint(out mid)) {
 				playback_current_id(mid);
 			}
 
-			if (res.get_class() == Xmms.ResultClass.DEFAULT) {
-				res.unref();
+			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
+				_result_playback_current_id = res;
+				_result_playback_current_id.ref();
 			}
 		}
 
@@ -134,7 +149,7 @@ namespace Abraca {
 		 * Emit the current playback position in ms.
 		 */
 		[InstanceLast]
-		private void on_playback_playtime(Xmms.Result res) {
+		private void on_playback_playtime(Xmms.Result #res) {
 			uint pos;
 
 			if (res.get_uint(out pos)) {
@@ -142,21 +157,12 @@ namespace Abraca {
 			}
 
 			if (res.get_class() == Xmms.ResultClass.SIGNAL) {
-				/* Throttle playback time to only hit once a second */
-				GLib.Timeout.add(500, ptr => {
-					Xmms.Result res = (Xmms.Result) ptr;
-					Xmms.Result tmp = res;
-					res = res.restart();
-					tmp.unref();
-					return false;
-				}, res);
-			} else {
-				res.unref();
+				res.restart();
 			}
 		}
 
 		[InstanceLast]
-		private void on_playlist_loaded(Xmms.Result res) {
+		private void on_playlist_loaded(Xmms.Result #res) {
 			weak string name;
 
 			if (res.get_string(out name)) {
@@ -164,13 +170,14 @@ namespace Abraca {
 				playlist_loaded(name);
 			}
 
-			if (res.get_class() == Xmms.ResultClass.DEFAULT) {
-				res.unref();
+			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
+				_result_playlist_loaded = res;
+				_result_playlist_loaded.ref();
 			}
 		}
 
 		[InstanceLast]
-		private void on_playlist_changed(Xmms.Result res) {
+		private void on_playlist_changed(Xmms.Result #res) {
 			int change, pos, npos;
 			uint mid;
 
@@ -203,6 +210,9 @@ namespace Abraca {
 				default:
 					break;
 			}
+
+			_result_playlist_changed = res;
+			_result_playlist_changed.ref();
 		}
 
 		/**
@@ -215,7 +225,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		public void on_medialib_entry_changed(Xmms.Result res) {
+		public void on_medialib_entry_changed(Xmms.Result #res) {
 			uint mid;
 
 			if (res.get_uint(out mid)) {
@@ -223,13 +233,16 @@ namespace Abraca {
 					on_medialib_get_info
 				);
 			}
+
+			_result_medialib_entry_changed = res;
+			_result_medialib_entry_changed.ref();
 		}
 
 		/**
 		 * TODO: Update cache here.
 		 */
 		[InstanceLast]
-		private void on_medialib_get_info(Xmms.Result res) {
+		private void on_medialib_get_info(Xmms.Result #res) {
 			weak string tmp;
 			int mid, duration;
 
@@ -267,8 +280,12 @@ namespace Abraca {
 
 			media_info(m);
 
-			if (res.get_class() == Xmms.ResultClass.DEFAULT) {
-				res.unref();
+			/* destroy hashtable properly here */
+
+			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
+				/* does this ever happen? */
+				GLib.stdout.printf("this probably never happens, to be removed?\n");
+				res.ref();
 			}
 		}
 	}

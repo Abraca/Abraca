@@ -90,7 +90,7 @@ namespace Abraca {
 			add(vbox6);
 		}
 
-		private void on_quit(Gtk.Widget w) {
+		private void on_quit(Gtk.Object w) {
 			Abraca.instance().quit();
 		}
 	}

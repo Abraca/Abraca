@@ -80,7 +80,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private bool on_time_slider_press(Gtk.HScale scale, Gdk.EventButton e) {
+		private bool on_time_slider_press(Gtk.Widget widget, Gdk.Event e) {
 			_seek = true;
 			_time_slider.motion_notify_event += on_time_slider_motion_notify;
 
@@ -88,7 +88,8 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private bool on_time_slider_release(Gtk.HScale scale, Gdk.EventButton e) {
+		private bool on_time_slider_release(Gtk.Widget widget, Gdk.Event e) {
+			weak Gtk.HScale scale = (Gtk.HScale) widget;
 			Client c = Client.instance();
 
 			double percent = scale.get_value();
@@ -104,7 +105,9 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private bool on_time_slider_motion_notify(Gtk.HScale scale, Gdk.EventMotion e) {
+		private bool on_time_slider_motion_notify(Gtk.Widget widget, Gdk.Event e) {
+			weak Gtk.HScale scale = (Gtk.HScale) widget;
+
 			double percent = scale.get_value();
 			uint pos = (uint)(_duration * percent);
 
@@ -165,7 +168,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private void on_medialib_get_info(Xmms.Result res) {
+		private void on_medialib_get_info(Xmms.Result #res) {
 			weak string artist, title, album;
 			string info;
 			int id;

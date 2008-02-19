@@ -724,5 +724,7 @@ namespace Xmms {
 		);
 		public void unref (
 		);
+		public weak Xmms.Result @ref (
+		);
 	}
 }

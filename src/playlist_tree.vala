@@ -77,13 +77,16 @@ namespace Abraca {
 		}
 
 
-		private bool on_button_press_event(Gtk.Widget w, Gdk.EventButton e) {
+		private bool on_button_press_event(Gtk.Widget w, Gdk.Event e) {
+			weak Gdk.EventButton button_event = (Gdk.EventButton) e;
+
 			/* we're only interested in the 3rd mouse button */
-			if (e.button != 3)
+			if (button_event.button != 3) {
 				return false;
+			}
 
 			_playlist_menu.popup(
-				null, null, null, null, e.button,
+				null, null, null, null, button_event.button,
 				Gtk.get_current_event_time()
 			);
 
@@ -225,11 +228,11 @@ namespace Abraca {
 		 * Setup dragndrop for the playlist.
 		 */
 		private void create_dragndrop() {
-			enable_model_drag_dest(_target_entries, 2,
+			enable_model_drag_dest(_target_entries,
 			                       Gdk.DragAction.MOVE);
 
 			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-			                         _target_entries, 2,
+			                         _target_entries,
 			                         Gdk.DragAction.MOVE);
 
 			drag_data_received += on_drag_data_receive;
@@ -409,7 +412,7 @@ namespace Abraca {
 		 * Refresh the whole playlist.
 		 */
 		[InstanceLast]
-		private void on_playlist_list_entries(Xmms.Result res) {
+		private void on_playlist_list_entries(Xmms.Result #res) {
 			Client c = Client.instance();
 			Gtk.ListStore store = (Gtk.ListStore) model;
 			Gtk.TreeIter iter, sibling;
@@ -446,8 +449,6 @@ namespace Abraca {
 
 				playlist_map.insert(mid, row);
 			}
-
-			res.unref();
 
 			/* reconnect the model again */
 			set_model(store);

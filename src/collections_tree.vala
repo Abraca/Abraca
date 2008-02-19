@@ -44,7 +44,7 @@ namespace Abraca {
 			create_columns ();
 			model = create_model();
 
-			enable_model_drag_dest(_target_entries, 2,
+			enable_model_drag_dest(_target_entries,
 			                       Gdk.DragAction.COPY);
 
 			row_activated += on_row_activated;
@@ -115,7 +115,7 @@ namespace Abraca {
 			get_drag_dest_row(out _drop_path, out pos);
 
 			tmp = store.get_path(_new_playlist_iter);
-			if (_new_playlist_visible && _drop_path == null) {
+			if (_new_playlist_visible) {
 				store.remove(_new_playlist_iter);
 				_new_playlist_visible = false;
 			}
@@ -183,18 +183,16 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private void on_coll_list_collections(Xmms.Result res) {
+		private void on_coll_list_collections(Xmms.Result #res) {
 			on_coll_list(res, CollectionType.Collection);
-			res.unref();
 		}
 
 		[InstanceLast]
-		private void on_coll_list_playlists(Xmms.Result res) {
+		private void on_coll_list_playlists(Xmms.Result #res) {
 			on_coll_list(res, CollectionType.Playlist);
-			res.unref();
 		}
 
-		private void on_coll_list(Xmms.Result res, CollectionType type) {
+		private void on_coll_list(Xmms.Result #res, CollectionType type) {
 			Gtk.TreeIter parent;
 
 			if (type == CollectionType.Collection)
@@ -255,14 +253,13 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private void on_coll_get(Xmms.Result res) {
+		private void on_coll_get(Xmms.Result #res) {
 			Xmms.Collection coll;
 
 			res.get_collection(out coll);
 
 			Abraca.instance().main_window.main_hpaned.
 				right_hpaned.filter_tree.query_collection(coll);
-			res.unref();
 		}
 
 		private void create_columns() {
