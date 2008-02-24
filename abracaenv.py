@@ -1,4 +1,5 @@
 import SCons
+from SCons.Script import ARGUMENTS
 from SCons.Script.SConscript import SConsEnvironment
 from SCons.Options import Options, PathOption, BoolOption
 
@@ -13,7 +14,7 @@ class AbracaEnvironment(SConsEnvironment):
 		self.Tool('vala', toolpath=['scons-tools'])
 
 		# Add some build options
-		opts = Options(['.scons_options'])
+		opts = Options(['.scons_options'], ARGUMENTS)
 		opts.AddOptions(
 			BoolOption('silent', 'build silently', True),
 			BoolOption('debug', 'build debug variant', True),
