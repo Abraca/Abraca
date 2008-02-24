@@ -1,3 +1,5 @@
 build
-config.mk
 *.swp
+*.pyc
+.scon*
+config.log
