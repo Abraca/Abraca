@@ -86,7 +86,7 @@ namespace Abraca {
 			}
 
 			_playlist_menu.popup(
-				null, null, null, null, button_event.button,
+				null, null, null, button_event.button,
 				Gtk.get_current_event_time()
 			);
 

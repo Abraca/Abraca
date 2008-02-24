@@ -166,7 +166,7 @@ namespace Abraca {
 				return false;
 
 			filter_menu.popup(
-				null, null, null, null, event_button.button,
+				null, null, null, event_button.button,
 				Gtk.get_current_event_time()
 			);
 
@@ -305,9 +305,13 @@ namespace Abraca {
 				mid_array[pos++] = mid;
 			}
 
+			/* This should be removed as #515409 gets fixed. */
+			weak uchar[] data = (uchar[]) mid_array;
+			data.length = mid_array.length * 32;
+
 			selection_data.set(
 				Gdk.Atom.intern(_target_entries[0].target, true),
-				8, (uchar[]) mid_array, (int) len * 32
+				8, data
 			);
 
 			return true;
