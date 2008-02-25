@@ -501,10 +501,12 @@ namespace Xmms {
 		);
 		public Result coll_sync (
 		);
+		[NoArrayLength]
 		public Result coll_query_ids (
-			Collection coll, pointer order,
+			Collection coll, weak string[]? order,
 			uint limit_start = 0, uint limit_len = 0
 		);
+		[NoArrayLength]
 		public Result coll_query_infos (
 			Collection coll, weak string[] order,
 			uint limit_start = 0, uint limit_len = 0,

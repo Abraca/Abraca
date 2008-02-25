@@ -18,6 +18,10 @@ namespace Abraca {
 		/** context menu */
 		private Gtk.Menu filter_menu;
 
+		private const string[] _sort_order = {
+			"artist", "album", "tracknr"
+		};
+
 		/** allowed drag-n-drop variants */
 		private const Gtk.TargetEntry[] _target_entries = {
 			DragDropTarget.TrackId
@@ -61,7 +65,7 @@ namespace Abraca {
 		public void query_collection(Xmms.Collection coll) {
 			Client c = Client.instance();
 
-			c.xmms.coll_query_ids(coll, null, 0, 0).notifier_set(
+			c.xmms.coll_query_ids(coll, _sort_order, 0, 0).notifier_set(
 				on_coll_query_ids
 			);
 		}
