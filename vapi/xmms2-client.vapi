@@ -508,10 +508,10 @@ namespace Xmms {
 		);
 		[NoArrayLength]
 		public Result coll_query_infos (
-			Collection coll, weak string[] order,
+			Collection coll, weak string[]? order,
 			uint limit_start = 0, uint limit_len = 0,
-			weak string[] fetch = null,
-			weak string[] group = null
+			weak string[]? fetch = null,
+			weak string[]? group = null
 		);
 		public Result broadcast_collection_changed (
 		);
