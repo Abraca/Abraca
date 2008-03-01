@@ -1,10 +1,6 @@
 from abracaenv import AbracaEnvironment
-import os
 
-env = AbracaEnvironment(
-	tools = ['gcc', 'gnulink'],
-	ENV = os.environ
-)
+env = AbracaEnvironment(tools = ['gcc', 'gnulink'])
 
 env.Append(VALAPKGPATH = ['vapi'])
 

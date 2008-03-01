@@ -3,6 +3,8 @@ from SCons.Script import ARGUMENTS
 from SCons.Script.SConscript import SConsEnvironment
 from SCons.Options import Options, PathOption, BoolOption
 
+import os
+
 # We don't care about having Program for example
 # accessible detached from an environment.
 SCons.Defaults.DefaultEnvironment(tools = [])
@@ -10,6 +12,9 @@ SCons.Defaults.DefaultEnvironment(tools = [])
 class AbracaEnvironment(SConsEnvironment):
 	def __init__(self, *args, **kwargs):
 		SConsEnvironment.__init__(self, *args, **kwargs)
+
+		# It's fairly common that users add their own pkg-config path
+		self['ENV']['PKG_CONFIG_PATH'] = os.environ.get('PKG_CONFIG_PATH')
 
 		# Oldest usable SCons version.
 		self.EnsureSConsVersion(0, 97)
