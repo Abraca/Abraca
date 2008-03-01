@@ -3,6 +3,10 @@ from SCons.Script import ARGUMENTS
 from SCons.Script.SConscript import SConsEnvironment
 from SCons.Options import Options, PathOption, BoolOption
 
+# We don't care about having Program for example
+# accessible detached from an environment.
+SCons.Defaults.DefaultEnvironment(tools = [])
+
 class AbracaEnvironment(SConsEnvironment):
 	def __init__(self, *args, **kwargs):
 		SConsEnvironment.__init__(self, *args, **kwargs)
@@ -12,6 +16,9 @@ class AbracaEnvironment(SConsEnvironment):
 
 		# Load the custom vala builder
 		self.Tool('vala', toolpath=['scons-tools'])
+
+		# Beef up performance a bit by caching implicit deps
+		self.SetOption('implicit_cache', True)
 
 		# Add some build options
 		opts = Options(['.scons_options'], ARGUMENTS)
