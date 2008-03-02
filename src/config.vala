@@ -57,17 +57,13 @@ namespace Abraca {
 			KeyFile f = new KeyFile();
 			string filename = build_filename();
 
-			/* Should be in try/catch below, depends on vala bug */
-			f.load_from_file(filename, KeyFileFlags.NONE);
-
-			/*
 			try {
+				f.load_from_file(filename, KeyFileFlags.NONE);
 			} catch (Error ex) {
 				stderr.printf("cannot read config file at %s\n",
 				              filename);
 				return;
 			}
-			*/
 
 			main_window_gravity = f.get_integer("main_win", "gravity");
 			main_window_x = f.get_integer("main_win", "x");
