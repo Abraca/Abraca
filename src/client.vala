@@ -132,7 +132,7 @@ namespace Abraca {
 				playback_status((int)status);
 			}
 
-			if (res.get_class() == Xmms.ResultClass.DEFAULT) {
+			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
 				_result_playback_status = res;
 				_result_playback_status.ref();
 			}
