@@ -217,14 +217,14 @@ namespace Abraca {
 		[InstanceLast]
 		private void on_media_prev(Gtk.Button btn) {
 			Client c = Client.instance();
-			c.xmms.playlist_set_next_rel(1);
+			c.xmms.playlist_set_next_rel(-1);
 			c.xmms.playback_tickle();
 		}
 
 		[InstanceLast]
 		private void on_media_next(Gtk.Button btn) {
 			Client c = Client.instance();
-			c.xmms.playlist_set_next_rel(-1);
+			c.xmms.playlist_set_next_rel(1);
 			c.xmms.playback_tickle();
 		}
 
