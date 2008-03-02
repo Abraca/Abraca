@@ -6,7 +6,7 @@ using GLib;
 namespace Abraca {
 	enum PlaylistColumn {
 		ID = 0,
-		CoverArt,
+		PositionIndicator,
 		Info,
 		Total
 	}
@@ -17,9 +17,14 @@ namespace Abraca {
 
 		/** current playback status */
 		private int _status;
+
 		/** current playlist displayed */
 		private string _playlist;
 
+		/** keep track of current playlist position */
+		private int _position;
+
+		/** keep track of playlist position <-> medialib id */
 		private PlaylistMap playlist_map;
 
 		/* metadata properties we're interested in */
@@ -65,6 +70,7 @@ namespace Abraca {
 			c.playlist_move += on_playlist_move;
 			c.playlist_insert += on_playlist_insert;
 			c.playlist_remove += on_playlist_remove;
+			c.playlist_position += on_playlist_position;
 
 			c.playback_status += on_playback_status;
 
@@ -128,19 +134,32 @@ namespace Abraca {
 		 * Create metadata and coverart columns.
 		 */
 		private void create_columns() {
-			Gtk.CellRendererText renderer;
+			Gtk.CellRendererText text_renderer;
+			Gtk.CellRendererPixbuf pbuf_renderer;
+			Gtk.TreeViewColumn column;
 			weak Gtk.Settings settings;
 			Pango.FontDescription desc;
 			weak Pango.Context ctx;
 			Pango.Layout layout;
 			int w, h;
 
- 			insert_column_with_attributes(
-				-1, null, new Gtk.CellRendererPixbuf(),
-				"stock-id", PlaylistColumn.CoverArt, null
+
+			pbuf_renderer = new Gtk.CellRendererPixbuf();
+			pbuf_renderer.stock_size = Gtk.IconSize.SMALL_TOOLBAR;
+
+			column = new Gtk.TreeViewColumn.with_attributes (
+				null, pbuf_renderer,
+				"stock-id", PlaylistColumn.PositionIndicator,
+				null
 			);
 
-			renderer = new Gtk.CellRendererText();
+			column.set_min_width(20);
+			column.set_sizing(Gtk.TreeViewColumnSizing.FIXED);
+
+			append_column (column);
+
+
+			text_renderer = new Gtk.CellRendererText();
 
 			/* Find out the current font height */
 			settings = Gtk.Settings.get_default();
@@ -157,10 +176,10 @@ namespace Abraca {
 			layout.get_pixel_size(out w, out h);
 
 			/* Two rows, plus some extra height */
-			renderer.height = h * 2 + 4;
+			text_renderer.height = h * 2 + 4;
 
  			insert_column_with_attributes(
-				-1, null, renderer,
+				-1, null, text_renderer,
 				"markup", PlaylistColumn.Info, null
 			);
 		}
@@ -347,6 +366,28 @@ namespace Abraca {
 		 */
 		private void on_playlist_move(Client c, string playlist, int pos, int npos) {
 			GLib.stdout.printf("Move Not Implemented!\n");
+		}
+
+
+		/**
+		 * Update the position indicator to point at the
+		 * current playing entry.
+		 */
+		private void on_playlist_position(Client c, string playlist, uint pos) {
+			Gtk.ListStore store = (Gtk.ListStore) model;
+			Gtk.TreeIter iter;
+
+			/* Remove the old position indicator */
+			if (store.iter_nth_child (out iter, null, _position)) {
+				store.set(iter, PlaylistColumn.PositionIndicator, 0);
+				_position = -1;
+			}
+
+			/* Add the new position indicator */
+			if (store.iter_nth_child (out iter, null, (int) pos)) {
+				store.set(iter, PlaylistColumn.PositionIndicator, Gtk.STOCK_GO_FORWARD);
+				_position = (int) pos;
+			}
 		}
 
 

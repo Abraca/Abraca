@@ -18,6 +18,7 @@ namespace Abraca {
 		public signal void playlist_move(weak string playlist, int pos, int npos);
 		public signal void playlist_insert(weak string playlist, uint mid, int pos);
 		public signal void playlist_remove(weak string playlist, int pos);
+		public signal void playlist_position(weak string playlist, uint pos);
 
 		public signal void media_info(GLib.HashTable<string,pointer> hash);
 
@@ -26,6 +27,7 @@ namespace Abraca {
 		private Xmms.Result _result_medialib_entry_changed;
 		private Xmms.Result _result_playlist_loaded;
 		private Xmms.Result _result_playlist_changed;
+		private Xmms.Result _result_playlist_position;
 
 		construct {
 			_xmms = new Xmms.Client("Abraca");
@@ -36,9 +38,10 @@ namespace Abraca {
 
 			_result_playback_status = null;
 			_result_playback_current_id = null;
+			_result_medialib_entry_changed = null;
 			_result_playlist_loaded = null;
 			_result_playlist_changed = null;
-			_result_medialib_entry_changed = null;
+			_result_playlist_position = null;
 
 			Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
 		}
@@ -115,6 +118,10 @@ namespace Abraca {
 			_xmms.broadcast_medialib_entry_changed().notifier_set(
 				on_medialib_entry_changed
 			);
+
+			_xmms.broadcast_playlist_current_pos().notifier_set(
+				on_playlist_position
+			);
 		}
 
 		[InstanceLast]
@@ -168,6 +175,24 @@ namespace Abraca {
 			if (res.get_string(out name)) {
 				_playlist = name;
 				playlist_loaded(name);
+
+				_xmms.playlist_current_pos (name).notifier_set(
+					on_playlist_position
+				);
+			}
+
+			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
+				_result_playlist_loaded = res;
+				_result_playlist_loaded.ref();
+			}
+		}
+
+		[InstanceLast]
+		private void on_playlist_position(Xmms.Result #res) {
+			uint pos;
+
+			if (res.get_uint(out pos)) {
+				playlist_position(_playlist, pos);
 			}
 
 			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
