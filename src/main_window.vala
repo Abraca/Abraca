@@ -26,7 +26,11 @@ namespace Abraca {
 
 			create_widgets();
 
-			set_icon_from_file(Build.Config.PREFIX + "/share/pixmaps/abraca.svg");
+			try {
+				set_icon_from_file(Build.Config.PREFIX + "/share/pixmaps/abraca.svg");
+			} catch (Error e) {
+				GLib.stdout.printf("Abraca not properly installed, missing icon.");
+			}
 
 			width_request = 800;
 			height_request = 600;
