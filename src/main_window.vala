@@ -1,7 +1,6 @@
 /*
  * vim:noexpandtab:sw=4:sts=0:ts=4:syn=cs
  */
-using GLib;
 
 namespace Abraca {
 	public class MainWindow : Gtk.Window {
@@ -28,7 +27,7 @@ namespace Abraca {
 
 			try {
 				set_icon_from_file(Build.Config.PREFIX + "/share/pixmaps/abraca.svg");
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 				GLib.stdout.printf("Abraca not properly installed, missing icon.");
 			}
 

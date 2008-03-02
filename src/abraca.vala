@@ -1,10 +1,9 @@
 /*
  * vim:noexpandtab:sw=4:sts=0:ts=4:syn=cs
  */
-using GLib;
 
 namespace Abraca {
-	public class Abraca : Object {
+	public class Abraca : GLib.Object {
 		static Abraca _instance;
 		private MainWindow _main_window;
 		private Config _config;
@@ -46,7 +45,7 @@ namespace Abraca {
 
 			Gtk.init(ref args);
 
-			Environment.set_application_name("Abraca");
+			GLib.Environment.set_application_name("Abraca");
 
 			Abraca a = Abraca.instance();
 

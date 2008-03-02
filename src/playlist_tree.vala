@@ -1,7 +1,6 @@
 /*
  * vim:noexpandtab:sw=4:sts=0:ts=4:syn=cs
  */
-using GLib;
 
 namespace Abraca {
 	enum PlaylistColumn {
@@ -104,14 +103,14 @@ namespace Abraca {
 			int KEY_DELETE = 65535;
 
 			if (e.keyval == KEY_DELETE) {
-				weak List<weak Gtk.TreePath> paths;
+				weak GLib.List<weak Gtk.TreePath> paths;
 				weak Gtk.TreeSelection sel;
-				List<uint> lst;
+				GLib.List<uint> lst;
 
 
 				sel = get_selection();
 				paths = sel.get_selected_rows(null);
-				lst = new List<uint>();
+				lst = new GLib.List<uint>();
 
 				foreach (weak Gtk.TreePath path in paths) {
 					lst.prepend(path.get_indices()[0]);
@@ -531,7 +530,7 @@ namespace Abraca {
 			dur_min = duration / 60000;
 			dur_sec = (duration % 60000) / 1000;
 
-			info = Markup.printf_escaped(
+			info = GLib.Markup.printf_escaped(
 				"<b>%s</b> - <small>%d:%02d</small>\n" +
 				"<small>by</small> %s <small>from</small> %s",
 				title, dur_min, dur_sec, artist, album

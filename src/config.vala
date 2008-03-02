@@ -1,7 +1,6 @@
 /*
  * vim:noexpandtab:sw=4:sts=0:ts=4:syn=cs
  */
-using GLib;
 
 namespace Abraca {
 	public class Config {
@@ -46,7 +45,7 @@ namespace Abraca {
 
 			Xmms.Client.userconfdir_get(buf);
 
-			string ret = Path.build_filename(
+			string ret = GLib.Path.build_filename(
 				(string) buf, "clients", "abraca.conf", null
 			);
 
@@ -54,13 +53,13 @@ namespace Abraca {
 		}
 
 		public void load() {
-			KeyFile f = new KeyFile();
+			GLib.KeyFile f = new GLib.KeyFile();
 			string filename = build_filename();
 
 			try {
-				f.load_from_file(filename, KeyFileFlags.NONE);
-			} catch (Error ex) {
-				stderr.printf("cannot read config file at %s\n",
+				f.load_from_file(filename, GLib.KeyFileFlags.NONE);
+			} catch (GLib.Error ex) {
+				GLib.stderr.printf("cannot read config file at %s\n",
 				              filename);
 				return;
 			}
@@ -77,7 +76,7 @@ namespace Abraca {
 		}
 
 		public void save() {
-			KeyFile f = new KeyFile();
+			GLib.KeyFile f = new GLib.KeyFile();
 
 			f.set_integer("main_win", "gravity", main_window_gravity);
 			f.set_integer("main_win", "x", main_window_x);
@@ -89,7 +88,7 @@ namespace Abraca {
 			f.set_integer("panes", "pos2", panes_pos2);
 			f.set_boolean("playlist", "expanded", playlist_expanded);
 
-			FileStream stream = FileStream.open(build_filename(), "w");
+			GLib.FileStream stream = GLib.FileStream.open(build_filename(), "w");
 
 			uint length;
 			stream.puts(f.to_data(out length));

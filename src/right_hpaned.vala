@@ -1,7 +1,6 @@
 /*
  * vim:noexpandtab:sw=4:sts=0:ts=4:syn=cs
  */
-using GLib;
 
 namespace Abraca {
 	public class RightHPaned : Gtk.HPaned {

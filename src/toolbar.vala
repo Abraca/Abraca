@@ -1,7 +1,6 @@
 /*
  * vim:noexpandtab:sw=4:sts=0:ts=4:syn=cs
  */
-using GLib;
 
 namespace Abraca {
 	public class ToolBar : Gtk.HBox {
@@ -156,7 +155,10 @@ namespace Abraca {
 			pos_min = pos / 60000;
 			pos_sec = (pos % 60000) / 1000;
 
-			info = Markup.printf_escaped("%3d:%02d  of %3d:%02d", pos_min, pos_sec, dur_min, dur_sec);
+			info = GLib.Markup.printf_escaped(
+				"%3d:%02d  of %3d:%02d",
+				pos_min, pos_sec, dur_min, dur_sec
+			);
 
 			_time_label.set_markup(info);
 		}
@@ -186,7 +188,7 @@ namespace Abraca {
 			if (!res.get_dict_entry_string("album", out album))
 				album = "Unknown";
 
-			info = Markup.printf_escaped(
+			info = GLib.Markup.printf_escaped(
 				"<b>%s</b>\n" +
 				"<small>by</small> %s <small>from</small> %s",
 				title, artist, album

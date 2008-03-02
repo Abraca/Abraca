@@ -1,7 +1,6 @@
 /*
  * vim:noexpandtab:sw=4:sts=0:ts=4:syn=cs
  */
-using GLib;
 
 namespace Abraca {
 	public class MenuBar : Gtk.MenuBar {
@@ -121,7 +120,7 @@ namespace Abraca {
 			d = new Gtk.AboutDialog();
 			d.set_logo(buf);
 
-			d.name = Environment.get_application_name();
+			d.name = GLib.Environment.get_application_name();
 			d.comments = "A client for the XMMS2 music player";
 
 			d.authors = _authors;
