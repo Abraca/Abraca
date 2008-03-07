@@ -687,9 +687,8 @@ namespace Xmms {
 		public bool get_collection (
 			out Collection val
 		);
-		[NoArrayLength]
 		public bool get_bin (
-			out uchar[] val, out uint length
+			out uchar[] val
 		);
 		public ResultType get_dict_entry_type (
 			weak string key

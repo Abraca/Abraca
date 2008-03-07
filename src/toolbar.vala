@@ -222,7 +222,7 @@ namespace Abraca {
 		private void on_bindata_retrieve(Xmms.Result #res) {
 			weak uchar[] data;
 
-			if (res.get_bin(out data, out data.length)) {
+			if (res.get_bin(out data)) {
 				Gdk.PixbufLoader loader;
 				weak Gdk.Pixbuf pixbuf;
 
