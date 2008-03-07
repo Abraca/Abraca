@@ -687,6 +687,7 @@ namespace Xmms {
 		public bool get_collection (
 			out Collection val
 		);
+		[NoArrayLength]
 		public bool get_bin (
 			out uchar[] val, out uint length
 		);

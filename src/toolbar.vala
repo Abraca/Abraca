@@ -10,6 +10,7 @@ namespace Abraca {
 		private int _duration;
 		private bool _seek;
 
+		private Gtk.Image _coverart;
 		private Gtk.Label _track_label;
 		private Gtk.Label _time_label;
 		private Gtk.HScale _time_slider;
@@ -116,7 +117,11 @@ namespace Abraca {
 		}
 
 		private void create_cover_image() {
-			// FIXME
+			_coverart = new Gtk.Image.from_stock(
+				Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR
+			);
+
+			pack_start(_coverart, false, true, 4);
 		}
 
 		private void create_track_label() {
@@ -171,7 +176,7 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_medialib_get_info(Xmms.Result #res) {
-			weak string artist, title, album;
+			weak string artist, title, album, cover;
 			string info;
 			int id;
 			int duration, dur_min, dur_sec, pos;
@@ -179,14 +184,29 @@ namespace Abraca {
 			res.get_dict_entry_int("id", out id);
 			res.get_dict_entry_int("duration", out duration);
 
-			if (!res.get_dict_entry_string("artist", out artist))
+			if (!res.get_dict_entry_string("artist", out artist)) {
 				artist = "Unknown";
+			}
 
-			if (!res.get_dict_entry_string("title", out title))
+			if (!res.get_dict_entry_string("title", out title)) {
 				title = "Unknown";
+			}
 
-			if (!res.get_dict_entry_string("album", out album))
+			if (!res.get_dict_entry_string("album", out album)) {
 				album = "Unknown";
+			}
+
+			if (!res.get_dict_entry_string("picture_front", out cover)) {
+				_coverart.set_from_stock(
+					Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR
+				);
+			} else {
+				Client c = Client.instance();
+
+				c.xmms.bindata_retrieve(cover).notifier_set(
+					on_bindata_retrieve
+				);
+			}
 
 			info = GLib.Markup.printf_escaped(
 				"<b>%s</b>\n" +
@@ -196,6 +216,28 @@ namespace Abraca {
 
 			_track_label.set_markup(info);
 			_duration = duration;
+		}
+
+		[InstanceLast]
+		private void on_bindata_retrieve(Xmms.Result #res) {
+			weak uchar[] data;
+
+			if (res.get_bin(out data, out data.length)) {
+				Gdk.PixbufLoader loader;
+				weak Gdk.Pixbuf pixbuf;
+
+				loader = new Gdk.PixbufLoader();
+				try {
+					loader.write(data);
+					loader.close();
+				} catch (GLib.Error ex) {
+					GLib.stdout.printf("never happens, should default to CDROM icon\n");
+				}
+
+				pixbuf = loader.get_pixbuf();
+				pixbuf = pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR);
+				_coverart.set_from_pixbuf(pixbuf);
+			}
 		}
 
 
