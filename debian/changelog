@@ -1,7 +1,7 @@
 abraca (0.2-3) unstable; urgency=low
 
   * Recompile for xmms2 0.4DrKosmos
-  * Add myself to uploaders
+  * Add myself and rafl to uploaders
   * Add Vcs-* fields
 
  -- Anders Waldenborg <anders@0x63.nu>  Wed, 06 Feb 2008 19:29:00 +0100
