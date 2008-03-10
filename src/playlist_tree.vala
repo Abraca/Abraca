@@ -230,6 +230,19 @@ namespace Abraca {
 			item.set_submenu(submenu);
 			_playlist_menu.append(item);
 
+			item = new Gtk.MenuItem.with_label("Shuffle");
+			item.activate += i => {
+				Client c = Client.instance();
+				c.xmms.playlist_shuffle(_playlist);
+			};
+			_playlist_menu.append(item);
+
+			item = new Gtk.MenuItem.with_label("Clear");
+			item.activate += i => {
+				Client c = Client.instance();
+				c.xmms.playlist_clear(_playlist);
+			};
+			_playlist_menu.append(item);
 
 			_playlist_menu.show_all();
 		}
