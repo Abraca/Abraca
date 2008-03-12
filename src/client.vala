@@ -4,6 +4,7 @@ namespace Abraca {
 		private Xmms.Client _xmms;
 		private pointer _gmain;
 
+		private uint _status;
 		private string _playlist = null;
 
 		public signal void connected();
@@ -56,6 +57,12 @@ namespace Abraca {
 		public Xmms.Client xmms {
 			get {
 				return _xmms;
+			}
+		}
+
+		public void set_playlist_id (uint mid) {
+			if (_status == Xmms.PlaybackStatus.STOP) {
+				playback_current_id(mid);
 			}
 		}
 
@@ -126,10 +133,8 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_playback_status(Xmms.Result #res) {
-			uint status;
-
-			if (res.get_uint(out status)) {
-				playback_status((int)status);
+			if (res.get_uint(out _status)) {
+				playback_status((int) _status);
 			}
 
 			if (res.get_class() != Xmms.ResultClass.DEFAULT) {

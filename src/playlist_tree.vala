@@ -397,6 +397,12 @@ namespace Abraca {
 
 			/* Add the new position indicator */
 			if (store.iter_nth_child (out iter, null, (int) pos)) {
+				uint mid;
+
+				/* Notify the Client of the current medialib id */
+				model.get(iter, PlaylistColumn.ID, out mid);
+				c.set_playlist_id(mid);
+
 				store.set(
 					iter,
 					PlaylistColumn.PositionIndicator,
@@ -433,6 +439,17 @@ namespace Abraca {
 		 */
 		private void on_playback_status(Client c, int status) {
 			_status = status;
+
+			/* Notify the Client of the current medialib id */
+			if (_position.valid()) {
+				Gtk.TreeIter iter;
+				uint mid;
+
+				model.get_iter(out iter, _position.get_path());
+				model.get(iter, PlaylistColumn.ID, out mid);
+
+				c.set_playlist_id(mid);
+			}
 		}
 
 		/**
