@@ -21,7 +21,7 @@ namespace Abraca {
 		private string _playlist;
 
 		/** keep track of current playlist position */
-		private int _position;
+		private Gtk.TreeRowReference _position = null;
 
 		/** keep track of playlist position <-> medialib id */
 		private PlaylistMap playlist_map;
@@ -390,15 +390,22 @@ namespace Abraca {
 			Gtk.TreeIter iter;
 
 			/* Remove the old position indicator */
-			if (store.iter_nth_child (out iter, null, _position)) {
+			if (_position.valid()) {
+				model.get_iter(out iter, _position.get_path());
 				store.set(iter, PlaylistColumn.PositionIndicator, 0);
-				_position = -1;
 			}
 
 			/* Add the new position indicator */
 			if (store.iter_nth_child (out iter, null, (int) pos)) {
-				store.set(iter, PlaylistColumn.PositionIndicator, Gtk.STOCK_GO_FORWARD);
-				_position = (int) pos;
+				store.set(
+					iter,
+					PlaylistColumn.PositionIndicator,
+					Gtk.STOCK_GO_FORWARD
+				);
+
+				_position = new Gtk.TreeRowReference (
+					model, model.get_path(iter)
+				);
 			}
 		}
 
