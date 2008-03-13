@@ -21,6 +21,11 @@ namespace Abraca {
 		public signal void playlist_remove(weak string playlist, int pos);
 		public signal void playlist_position(weak string playlist, uint pos);
 
+		public signal void collection_add(weak string name, weak string ns);
+		public signal void collection_update(weak string name, weak string ns);
+		public signal void collection_rename(weak string name, weak string newname, weak string ns);
+		public signal void collection_remove(weak string name, weak string ns);
+
 		public signal void media_info(GLib.HashTable<string,pointer> hash);
 
 		private Xmms.Result _result_playback_status;
@@ -29,6 +34,8 @@ namespace Abraca {
 		private Xmms.Result _result_playlist_loaded;
 		private Xmms.Result _result_playlist_changed;
 		private Xmms.Result _result_playlist_position;
+
+		private Xmms.Result _result_collection_changed;
 
 		construct {
 			_xmms = new Xmms.Client("Abraca");
@@ -43,6 +50,7 @@ namespace Abraca {
 			_result_playlist_loaded = null;
 			_result_playlist_changed = null;
 			_result_playlist_position = null;
+			_result_collection_changed = null;
 
 			Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
 		}
@@ -120,6 +128,10 @@ namespace Abraca {
 
 			_xmms.broadcast_playlist_changed().notifier_set(
 				on_playlist_changed
+			);
+
+			_xmms.broadcast_collection_changed().notifier_set(
+				on_collection_changed
 			);
 
 			_xmms.broadcast_medialib_entry_changed().notifier_set(
@@ -245,6 +257,36 @@ namespace Abraca {
 			_result_playlist_changed.ref();
 		}
 
+		[InstanceLast]
+		private void on_collection_changed(Xmms.Result #res) {
+			int change;
+			weak string name, newname, ns;
+
+			res.get_dict_entry_string("name", out name);
+			res.get_dict_entry_string("namespace", out ns);
+			res.get_dict_entry_int("type", out change);
+
+			switch (change) {
+				case Xmms.CollectionChanged.ADD:
+					collection_add(name, ns);
+					break;
+				case Xmms.CollectionChanged.UPDATE:
+					collection_update(name, ns);
+					break;
+				case Xmms.CollectionChanged.RENAME:
+					res.get_dict_entry_string("newname", out newname);
+					collection_rename(name, newname, ns);
+					break;
+				case Xmms.CollectionChanged.REMOVE:
+					collection_remove(name, ns);
+					break;
+				default:
+					break;
+			}
+
+			_result_collection_changed = res;
+			_result_collection_changed.ref();
+		}
 		/**
 		 * TODO: Lookup in cache and return if found instead of requesting.
 		 */

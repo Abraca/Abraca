@@ -52,6 +52,9 @@ namespace Abraca {
 			drag_leave += on_drag_leave;
 			drag_data_received += on_drag_data_received;
 
+			c.collection_add += on_collection_add;
+			c.collection_rename += on_collection_rename;
+			c.collection_remove += on_collection_remove;
 			c.connected += query_collections;
 		}
 
@@ -170,6 +173,94 @@ namespace Abraca {
 			}
 		}
 
+
+		private void on_collection_add (Client c, string name, string ns) {
+			Gtk.TreeIter parent;
+			Gtk.TreeIter iter;
+			CollectionType type;
+
+			if (name[0] == '_') {
+				return;
+			}
+
+			if (ns == Xmms.COLLECTION_NS_PLAYLISTS) {
+				parent = _playlist_iter;
+				type = CollectionType.Playlist;
+			} else {
+				parent = _collection_iter;
+				type = CollectionType.Collection;
+			}
+
+			Gtk.TreeStore store = (Gtk.TreeStore) model;
+
+			store.append(out iter, parent);
+			store.set(iter,
+			          CollColumn.Type, type,
+			          CollColumn.Icon, null,
+			          CollColumn.Name, name);
+		}
+
+		private void on_collection_rename(Client c, string name, string newname, string ns) {
+			Gtk.TreeIter parent;
+			Gtk.TreeIter iter;
+			string current;
+
+			/* check for any current or future invisible collections */
+			if (name[0] == '_') {
+				if (newname[0] == '_') {
+					return;
+				} else {
+					on_collection_add(c, newname, ns);
+				}
+				return;
+			} else {
+				if (newname[0] == '_') {
+					on_collection_remove(c, name, ns);
+					return;
+				}
+			}
+
+
+			if (ns == Xmms.COLLECTION_NS_PLAYLISTS) {
+				parent = _playlist_iter;
+			} else {
+				parent = _collection_iter;
+			}
+
+			Gtk.TreeStore store = (Gtk.TreeStore) model;
+
+			store.iter_children(out iter, parent);
+			do {
+				store.get(iter, CollColumn.Name, out current);
+				if (name == current) {
+					store.set(iter, CollColumn.Name, newname);
+					break;
+				}
+			} while (store.iter_next(ref iter));
+		}
+
+		private void on_collection_remove(Client c, string name, string ns) {
+			Gtk.TreeIter parent;
+			Gtk.TreeIter iter;
+			string current;
+
+			if (ns == Xmms.COLLECTION_NS_PLAYLISTS) {
+				parent = _playlist_iter;
+			} else {
+				parent = _collection_iter;
+			}
+
+			Gtk.TreeStore store = (Gtk.TreeStore) model;
+
+			store.iter_children(out iter, parent);
+			do {
+				store.get(iter, CollColumn.Name, out current);
+				if (name == current) {
+					store.remove(iter);
+					break;
+				}
+			} while (store.iter_next(ref iter));
+		}
 
 		private void query_collections(Client c) {
 			c.xmms.coll_list("Collections").notifier_set(
