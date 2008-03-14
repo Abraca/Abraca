@@ -129,7 +129,7 @@ namespace Abraca {
 			weak Gtk.TreeRowReference row;
 			string info;
 			Gtk.TreeIter iter;
-			weak Gtk.TreePath path;
+			Gtk.TreePath path;
 
 			mid = m.lookup("id").to_int();
 

@@ -1644,7 +1644,7 @@ namespace Gtk {
 		public weak Gtk.TreeRowReference copy ();
 		public static void deleted (GLib.Object proxy, Gtk.TreePath path);
 		public weak Gtk.TreeModel get_model ();
-		public weak Gtk.TreePath get_path ();
+		public Gtk.TreePath get_path ();
 		public static void inserted (GLib.Object proxy, Gtk.TreePath path);
 		public TreeRowReference (Gtk.TreeModel model, Gtk.TreePath path);
 		public TreeRowReference.proxy (GLib.Object proxy, Gtk.TreeModel model, Gtk.TreePath path);
