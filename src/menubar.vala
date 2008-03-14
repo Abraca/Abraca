@@ -10,9 +10,13 @@ namespace Abraca {
 				"Martin Salzer <stoky@gmx.net>",
 				"Tilman Sauerbeck <tilman@xmms.org>",
 				"Daniel Svensson <dsvensson@gmail.com>",
+				null
+		};
+
+		private const string[] _artists = {
 				"Johan Slikkie van der Slikke <johan@slikkie.nl>",
 				null
-			};
+		};
 
 		construct {
 			append(create_music_menu());
@@ -124,6 +128,7 @@ namespace Abraca {
 			d.comments = "A client for the XMMS2 music player";
 
 			d.authors = _authors;
+			d.artists = _artists;
 			d.copyright = "Copyright © 2007-2008 Sebastian Sareyko";
 			d.website = "http://nooms.de/projects/abraca/";
 
