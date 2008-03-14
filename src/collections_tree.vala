@@ -12,10 +12,11 @@ namespace Abraca {
 	enum CollColumn {
 		Type = 0,
 		Icon,
+		Style,
+		Weight,
 		Name,
 		Total
 	}
-	const string PlaylistMarkupString = "<b><i>%s</i></b>";
 
 	public class CollectionsTree : Gtk.TreeView {
 
@@ -188,18 +189,19 @@ namespace Abraca {
 			string current;
 			weak string attr;
 			string text;
+			int style;
 
 			if (model.iter_children(out iter, _playlist_iter)) {
 				do {
-					store.get(iter, CollColumn.Name, out current);
-					if (current[0] == '<') {
-						/* Todo: replace this with a better strip-off function */
-						text = current.substring(6, current.len()-PlaylistMarkupString.len()+2);
-						store.set(iter, CollColumn.Name, text);
+					store.get(iter, CollColumn.Name, out current, CollColumn.Style, out style);
+
+					if (style != Pango.Style.NORMAL) {
+						store.set(iter, CollColumn.Style, Pango.Style.NORMAL,
+						                CollColumn.Weight, Pango.Weight.NORMAL);
 					}
 					if (current == name) {
-						text = GLib.Markup.printf_escaped(PlaylistMarkupString, name);
-						store.set(iter, CollColumn.Name, text);
+						store.set(iter, CollColumn.Style, Pango.Style.ITALIC,
+						                CollColumn.Weight, Pango.Weight.BOLD);
 					}
 				} while (model.iter_next(ref iter));
 			}
@@ -329,6 +331,8 @@ namespace Abraca {
 			for (res.list_first(); res.list_valid(); res.list_next()) {
 				Gtk.TreeIter iter;
 				weak string s;
+				Pango.Style style;
+				Pango.Weight weight;
 
 				if (!res.get_string (out s))
 					continue;
@@ -338,16 +342,20 @@ namespace Abraca {
 					continue;
 
 				if (type == CollectionType.Playlist && s == _playlist) {
-					name = GLib.Markup.printf_escaped(PlaylistMarkupString, s);
+					style = Pango.Style.ITALIC;
+					weight = Pango.Weight.BOLD;
 				} else {
-					name = s;
+					style = Pango.Style.NORMAL;
+					weight = Pango.Weight.NORMAL;
 				}
 
 				store.insert_with_values(
 					out iter, parent, pos++,
 					CollColumn.Type, type,
 					CollColumn.Icon, null,
-					CollColumn.Name, name
+					CollColumn.Style, style,
+					CollColumn.Weight, weight,
+					CollColumn.Name, s
 				);
 			}
 
@@ -400,6 +408,8 @@ namespace Abraca {
 
  			insert_column_with_attributes(
 				-1, null, new Gtk.CellRendererText(),
+				"style", CollColumn.Style,
+				"weight", CollColumn.Weight,
 				"markup", CollColumn.Name, null
 			);
 		}
@@ -407,7 +417,7 @@ namespace Abraca {
 		private Gtk.TreeModel create_model() {
 			Gtk.TreeStore store = new Gtk.TreeStore(
 				CollColumn.Total,
-				typeof(int), typeof(string), typeof(string)
+				typeof(int), typeof(string), typeof(int), typeof(int), typeof(string)
 			);
 
 			int pos = 1;
@@ -416,7 +426,9 @@ namespace Abraca {
 				out _collection_iter, null, pos++,
 				CollColumn.Type, CollectionType.Invalid,
 				CollColumn.Icon, null,
-				CollColumn.Name, "<b>Collections</b>",
+				CollColumn.Style, Pango.Style.NORMAL,
+				CollColumn.Weight, Pango.Weight.BOLD,
+				CollColumn.Name, "Collections",
 				-1
 			);
 
@@ -424,7 +436,9 @@ namespace Abraca {
 				out _playlist_iter, null, pos++,
 				CollColumn.Type, CollectionType.Invalid,
 				CollColumn.Icon, null,
-				CollColumn.Name, "<b>Playlists</b>",
+				CollColumn.Style, Pango.Style.NORMAL,
+				CollColumn.Weight, Pango.Weight.BOLD,
+				CollColumn.Name, "Playlists",
 				-1
 			);
 
