@@ -263,11 +263,11 @@ namespace Abraca {
 		}
 
 		private void query_collections(Client c) {
-			c.xmms.coll_list("Collections").notifier_set(
+			c.xmms.coll_list(Xmms.COLLECTION_NS_COLLECTIONS).notifier_set(
 				on_coll_list_collections
 			);
 
-			c.xmms.coll_list("Playlists").notifier_set(
+			c.xmms.coll_list(Xmms.COLLECTION_NS_PLAYLISTS).notifier_set(
 				on_coll_list_playlists
 			);
 		}
@@ -301,8 +301,8 @@ namespace Abraca {
 				if (!res.get_string (out s))
 					continue;
 
-				/* ignore playlists that are for internal use only */
-				if (type == CollectionType.Playlist && s[0] == '_')
+				/* ignore everything that is for internal use only */
+				if (s[0] == '_')
 					continue;
 
 				store.insert_with_values(

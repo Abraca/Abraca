@@ -182,7 +182,10 @@ namespace Abraca {
 			int duration, dur_min, dur_sec, pos;
 
 			res.get_dict_entry_int("id", out id);
-			res.get_dict_entry_int("duration", out duration);
+			if (!res.get_dict_entry_int("duration", out duration)) {
+				duration = 0;
+			}
+
 
 			if (!res.get_dict_entry_string("artist", out artist)) {
 				artist = "Unknown";
