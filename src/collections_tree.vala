@@ -26,6 +26,9 @@ namespace Abraca {
 			DragDropTarget.Collection
 		};
 
+		/** context menu */
+		private Gtk.Menu _collection_menu;
+
 		private string _playlist;
 		private Gtk.TreeIter _playlist_iter;
 		private Gtk.TreeIter _collection_iter;
@@ -45,6 +48,7 @@ namespace Abraca {
 
 			create_columns ();
 			model = create_model();
+			create_context_menu();
 
 			enable_model_drag_dest(_target_entries,
 			                       Gdk.DragAction.COPY);
@@ -54,12 +58,54 @@ namespace Abraca {
 			drag_motion += on_drag_motion;
 			drag_leave += on_drag_leave;
 			drag_data_received += on_drag_data_received;
+			button_press_event += on_button_press_event;
 
 			c.playlist_loaded += on_playlist_loaded;
 			c.collection_add += on_collection_add;
 			c.collection_rename += on_collection_rename;
 			c.collection_remove += on_collection_remove;
 			c.connected += query_collections;
+		}
+
+		private bool on_button_press_event(Gtk.Widget w, Gdk.Event e) {
+			weak Gdk.EventButton button_event = (Gdk.EventButton) e;
+
+			/* we're only interested in the 3rd mouse button */
+			if (button_event.button != 3) {
+				return false;
+			}
+
+			_collection_menu.popup(
+				null, null, null, button_event.button,
+				Gtk.get_current_event_time()
+			);
+
+			return true;
+		}
+
+		/**
+		 * send rename-command to server, when item in collection-list was changed
+		 */
+		private void on_collection_cell_renderer_edited (Gtk.CellRendererText renderer, string path, string new_text) {
+			Gtk.TreeIter iter;
+			int type;
+			string name, ns;
+
+			model.get_iter_from_string(out iter, path);
+
+			model.get(iter, CollColumn.Name, out name, CollColumn.Type, out type);
+
+			if (type == CollectionType.Playlist) {
+				ns = Xmms.COLLECTION_NS_PLAYLISTS;
+			}
+			else {
+				ns = Xmms.COLLECTION_NS_COLLECTIONS;
+			}
+
+			Client c = Client.instance();
+			c.xmms.coll_rename(name, new_text, ns);
+
+			return;
 		}
 
 		/**
@@ -388,6 +434,29 @@ namespace Abraca {
 			}
 		}
 
+		private void on_menu_collection_rename() {
+			Gtk.TreeIter iter;
+			Gtk.TreePath path;
+			Gtk.TreeViewColumn col;
+			GLib.Object obj;
+			weak GLib.List<Gtk.CellRenderer> renderers;
+			weak GLib.List<Gtk.TreeViewColumn> cols;
+			weak Gtk.TreeSelection selection;
+
+			selection = get_selection();
+
+			if (selection.get_selected(null, out iter) && !model.iter_has_child(iter)) {
+				path = model.get_path(iter);
+				cols =  get_columns();
+				col = cols.data;
+				renderers =  col.get_cell_renderers();
+				obj = renderers.data;
+				obj.set("editable", true, null);
+				set_cursor_on_cell(path, col, renderers.data, true);
+				obj.set("editable", false, null);
+			}
+		}
+
 		[InstanceLast]
 		private void on_coll_get(Xmms.Result #res) {
 			Xmms.Collection coll;
@@ -406,8 +475,11 @@ namespace Abraca {
 			);
 			*/
 
+			Gtk.CellRendererText renderer = new Gtk.CellRendererText();
+			renderer.edited += on_collection_cell_renderer_edited;
+
  			insert_column_with_attributes(
-				-1, null, new Gtk.CellRendererText(),
+				-1, null, renderer,
 				"style", CollColumn.Style,
 				"weight", CollColumn.Weight,
 				"markup", CollColumn.Name, null
@@ -443,6 +515,19 @@ namespace Abraca {
 			);
 
 			return store;
+		}
+
+		private void create_context_menu() {
+			Gtk.MenuItem item;
+
+			_collection_menu = new Gtk.Menu();
+
+			item = new Gtk.MenuItem.with_label("_Rename");
+			item.activate += i => {
+				on_menu_collection_rename();
+			};
+			_collection_menu.append(item);
+			_collection_menu.show_all();
 		}
 	}
 }
