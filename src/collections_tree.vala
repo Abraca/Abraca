@@ -445,15 +445,22 @@ namespace Abraca {
 
 			selection = get_selection();
 
-			if (selection.get_selected(null, out iter) && !model.iter_has_child(iter)) {
+			if (selection.get_selected(null, out iter)) {
 				path = model.get_path(iter);
-				cols =  get_columns();
-				col = cols.data;
-				renderers =  col.get_cell_renderers();
-				obj = renderers.data;
-				obj.set("editable", true, null);
-				set_cursor_on_cell(path, col, renderers.data, true);
-				obj.set("editable", false, null);
+
+				if (path.get_depth() == 2) {
+					cols = get_columns();
+					col = cols.data;
+
+					renderers = col.get_cell_renderers();
+
+					obj = renderers.data;
+					obj.set("editable", true, null);
+
+					set_cursor_on_cell(path, col, renderers.data, true);
+
+					obj.set("editable", false, null);
+				}
 			}
 		}
 
