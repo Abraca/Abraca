@@ -15,6 +15,7 @@ namespace Abraca {
 		Name,
 		Total
 	}
+	const string PlaylistMarkupString = "<b><i>%s</i></b>";
 
 	public class CollectionsTree : Gtk.TreeView {
 
@@ -24,6 +25,7 @@ namespace Abraca {
 			DragDropTarget.Collection
 		};
 
+		private string _playlist;
 		private Gtk.TreeIter _playlist_iter;
 		private Gtk.TreeIter _collection_iter;
 		private Gtk.TreePath _drop_path = null;
@@ -52,6 +54,7 @@ namespace Abraca {
 			drag_leave += on_drag_leave;
 			drag_data_received += on_drag_data_received;
 
+			c.playlist_loaded += on_playlist_loaded;
 			c.collection_add += on_collection_add;
 			c.collection_rename += on_collection_rename;
 			c.collection_remove += on_collection_remove;
@@ -173,6 +176,34 @@ namespace Abraca {
 			}
 		}
 
+		/**
+		 * Called when xmms2 has loaded a new playlist, simply saves
+		 * the name and updates the treeview
+		 */
+		private void on_playlist_loaded(Client c, string name) {
+			_playlist = name;
+
+			Gtk.TreeStore store = (Gtk.TreeStore) model;
+			Gtk.TreeIter iter;
+			string current;
+			weak string attr;
+			string text;
+
+			if (model.iter_children(out iter, _playlist_iter)) {
+				do {
+					store.get(iter, CollColumn.Name, out current);
+					if (current[0] == '<') {
+						/* Todo: replace this with a better strip-off function */
+						text = current.substring(6, current.len()-PlaylistMarkupString.len()+2);
+						store.set(iter, CollColumn.Name, text);
+					}
+					if (current == name) {
+						text = GLib.Markup.printf_escaped(PlaylistMarkupString, name);
+						store.set(iter, CollColumn.Name, text);
+					}
+				} while (model.iter_next(ref iter));
+			}
+		}
 
 		private void on_collection_add (Client c, string name, string ns) {
 			Gtk.TreeIter parent;
@@ -284,6 +315,7 @@ namespace Abraca {
 
 		private void on_coll_list(Xmms.Result #res, CollectionType type) {
 			Gtk.TreeIter parent;
+			string name;
 
 			if (type == CollectionType.Collection)
 				parent = _collection_iter;
@@ -305,11 +337,17 @@ namespace Abraca {
 				if (s[0] == '_')
 					continue;
 
+				if (type == CollectionType.Playlist && s == _playlist) {
+					name = GLib.Markup.printf_escaped(PlaylistMarkupString, s);
+				} else {
+					name = s;
+				}
+
 				store.insert_with_values(
 					out iter, parent, pos++,
 					CollColumn.Type, type,
 					CollColumn.Icon, null,
-					CollColumn.Name, s
+					CollColumn.Name, name
 				);
 			}
 
