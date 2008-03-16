@@ -267,6 +267,41 @@ namespace Abraca {
 			                         Gdk.DragAction.MOVE);
 
 			drag_data_received += on_drag_data_receive;
+			drag_data_get += on_drag_data_get;
+		}
+
+		[InstanceLast]
+		private bool on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
+		                              Gtk.SelectionData selection_data,
+		                              uint info, uint time) {
+			weak Gtk.TreeSelection sel = get_selection();
+			weak GLib.List<weak Gtk.TreePath> lst = sel.get_selected_rows(null);
+			GLib.List<uint> pos_list = new GLib.List<uint>();
+
+			string buf = null;
+
+			foreach (weak Gtk.TreePath p in lst) {
+				pos_list.prepend(p.get_indices()[0]);
+			}
+
+			uint len = pos_list.length();
+			uint[] pos_array = new uint[len];
+
+			int pos = 0;
+			foreach (uint position in pos_list) {
+				pos_array[pos++] = position;
+			}
+
+			/* This should be removed as #515409 gets fixed. */
+			weak uchar[] data = (uchar[]) pos_array;
+			data.length = pos_array.length * 32;
+
+			selection_data.set(
+					Gdk.Atom.intern(_target_entries[0].target, true),
+					8, data
+			);
+
+			return true;
 		}
 
 		/**
@@ -281,7 +316,7 @@ namespace Abraca {
 			bool success = false;
 
 			if (info == (uint) DragDropTargetType.ROW) {
-				GLib.stdout.printf("Drop from playlist not implemented.\n");
+				success = on_drop_playlist_entries(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.MID) {
 				success = on_drop_medialib_id(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.URI) {
@@ -296,6 +331,43 @@ namespace Abraca {
 			Gtk.drag_finish(ctx, success, false, time);
 		}
 
+		/**
+		 * Handle dropping of playlist entries.
+		 */
+
+		private bool on_drop_playlist_entries(Gtk.SelectionData sel, int x, int y) {
+			Gtk.TreeViewDropPosition align;
+			Gtk.TreePath path;
+
+			Client c = Client.instance();
+
+			weak uint[] source = (uint[]) sel.data;
+
+			/* TODO: Check if store is empty to get rid of assert */
+			if (get_dest_row_at_pos(x, y, out path, out align)) {
+				int dest = path.get_indices()[0];
+
+				if (align == Gtk.TreeViewDropPosition.AFTER
+						|| align ==  Gtk.TreeViewDropPosition.INTO_OR_AFTER) {
+					dest++;
+				}
+
+				int downward = 0;
+				int upward = 0;
+
+				for (int i = sel.length/32 - 1; i >= 0; i--) {
+					if (source[i] < dest) {
+						c.xmms.playlist_move_entry(_playlist, source[i]-downward, (uint) dest-1);
+						downward++;
+					} else {
+						c.xmms.playlist_move_entry(_playlist, source[i], (uint) dest+upward);
+						upward++;
+					}
+				}
+			}
+
+			return false;
+		}
 		/**
 		 * Handle dropping of medialib ids.
 		 */
@@ -377,7 +449,16 @@ namespace Abraca {
 		 * TODO: Move row x to pos y.
 		 */
 		private void on_playlist_move(Client c, string playlist, int pos, int npos) {
-			GLib.stdout.printf("Move Not Implemented!\n");
+			Gtk.ListStore store = (Gtk.ListStore) model;
+			Gtk.TreeIter iter, niter;
+			if (store.iter_nth_child (out iter, null, pos) &&
+			    store.iter_nth_child(out niter, null, npos)) {
+				if (pos < npos) {
+					store.move_after (iter, niter);
+				} else {
+					store.move_before (iter, niter);
+				}
+			}
 		}
 
 
