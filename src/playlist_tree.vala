@@ -194,36 +194,38 @@ namespace Abraca {
 			submenu = new Gtk.Menu();
 			item = new Gtk.MenuItem.with_label("Artist");
 			item.activate += i => {
-				on_menu_playlist_sort("artist");
+				on_menu_playlist_sort(Abraca.instance().config.sorting_artist);
 			};
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label("Album");
 			item.activate += i => {
-				on_menu_playlist_sort("album");
+				on_menu_playlist_sort(Abraca.instance().config.sorting_album);
 			};
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label("Title");
 			item.activate += i => {
-				on_menu_playlist_sort("title");
+				on_menu_playlist_sort(Abraca.instance().config.sorting_title);
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label("Track Nr");
+			item = new Gtk.MenuItem.with_label("Year");
 			item.activate += i => {
-				on_menu_playlist_sort("tracknr");
+				on_menu_playlist_sort(Abraca.instance().config.sorting_year);
 			};
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label("Path");
 			item.activate += i => {
-				on_menu_playlist_sort("url");
+				on_menu_playlist_sort(Abraca.instance().config.sorting_path);
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label("Advanced");
-			item.sensitive = false;
+			item = new Gtk.MenuItem.with_label("Custom");
+			item.activate += i => {
+				on_menu_playlist_sort(Abraca.instance().config.sorting_custom);
+			};
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label("Sort");
@@ -250,7 +252,7 @@ namespace Abraca {
 
 		private void on_menu_playlist_sort(string type) {
 			Client c = Client.instance();
-			string[] sort = new string[] {type};
+			string[] sort = type.split(",");
 
 			c.xmms.playlist_sort(_playlist, (string[]) sort);
 		}

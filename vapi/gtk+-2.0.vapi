@@ -2611,7 +2611,7 @@ namespace Gtk {
 	}
 	[CCode (cheader_filename = "gtk/gtk.h")]
 	public class Dialog : Gtk.Window, Atk.Implementor, Gtk.Buildable {
-		public weak Gtk.Widget vbox;
+		public weak Gtk.VBox vbox;
 		public weak Gtk.Widget action_area;
 		public weak Gtk.Widget separator;
 		public void add_action_widget (Gtk.Widget child, int response_id);

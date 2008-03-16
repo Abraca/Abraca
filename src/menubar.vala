@@ -75,6 +75,10 @@ namespace Abraca {
 
 			sub.append(new Gtk.SeparatorMenuItem());
 
+			item = new Gtk.ImageMenuItem.with_mnemonic("Configure Sorting");
+			item.activate += on_configure_sorting;
+			sub.append(item);
+
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_CLEAR, null);
 			//item.activate += on_playlist_clear();
 			sub.append(item);
@@ -111,6 +115,10 @@ namespace Abraca {
 
 		private void on_music_quit(Gtk.MenuItem item) {
 			Abraca.instance().quit();
+		}
+
+		private void on_configure_sorting(Gtk.MenuItem item) {
+			Abraca.instance().config.show_sorting_dialog();
 		}
 
 		private void on_help_about(Gtk.MenuItem item) {
