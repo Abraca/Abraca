@@ -59,6 +59,7 @@ namespace Abraca {
 			c.media_info += on_media_info;
 
 			button_press_event += on_button_press_event;
+			row_activated += on_row_activated;
 		}
 
 		public void query_collection(Xmms.Collection coll) {
@@ -174,6 +175,16 @@ namespace Abraca {
 			);
 
 			return true;
+		}
+
+		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
+			Client c = Client.instance();
+			Gtk.TreeIter iter;
+			uint id;
+
+			model.get_iter(out iter, path);
+			model.get(iter, FilterColumn.ID, out id);
+			c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 		}
 
 		/*
