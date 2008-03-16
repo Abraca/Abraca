@@ -187,18 +187,42 @@ namespace Abraca {
 			c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 		}
 
-		/*
 		private void on_menu_add(Gtk.MenuItem item) {
-			get_selection().selected_foreach(add_to_playlist, this);
+			Client c = Client.instance();
+			weak GLib.List<Gtk.TreePath> list;
+			weak Gtk.TreeModel mod;
+			Gtk.TreeIter iter;
+			uint id;
+
+			list = get_selection().get_selected_rows(out mod);
+			while (list != null) {
+				model.get_iter(out iter, list.data);
+				model.get(iter, FilterColumn.ID, out id);
+				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+				list = list.next;
+			}
 		}
 
 		private void on_menu_replace(Gtk.MenuItem item) {
 			Client c = Client.instance();
+			weak GLib.List<Gtk.TreePath> list;
+			weak Gtk.TreeModel mod;
+			Gtk.TreeIter iter;
+			uint id;
 
-			c.xmms.playlist_clear("_active");
-			get_selection().selected_foreach(add_to_playlist, this);
+			c.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
+
+			list = get_selection().get_selected_rows(out mod);
+			while (list != null) {
+				model.get_iter(out iter, list.data);
+				model.get(iter, FilterColumn.ID, out id);
+				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+				list = list.next;
+			}
+
 		}
 
+		/*
 		[InstanceLast]
 		private void add_to_playlist(
 			Gtk.TreeModel model, Gtk.TreePath path,
@@ -264,7 +288,6 @@ namespace Abraca {
 		}
 
 		private void create_context_menu() {
-			/*
 			Gtk.MenuItem item;
 			Gtk.ImageMenuItem img_item;
 
@@ -275,12 +298,11 @@ namespace Abraca {
 			item.activate += on_menu_add;
 			filter_menu.append(item);
 
-			item = new Gtk.MenuItem.with_label("Replace");
+			item = new Gtk.MenuItem.with_mnemonic("_Replace");
 			item.activate += on_menu_replace;
 			filter_menu.append(item);
 
 			filter_menu.show_all();
-			*/
 		}
 
 		private void create_drag_n_drop() {
