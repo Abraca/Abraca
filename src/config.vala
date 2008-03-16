@@ -3,8 +3,11 @@
  */
 
 namespace Abraca {
-	public class Config {
-		const string[] _sort_keys = {"Artist", "Album", "Title", "Year", "Path", "Custom"};
+	public class Config : GLib.Object {
+		const string[] _sort_keys = {
+			"Artist", "Album", "Title", "Year", "Path", "Custom"
+		};
+
 		public int main_window_gravity {
 			get; set;
 		}
@@ -63,18 +66,6 @@ namespace Abraca {
 
 		public string sorting_custom {
 			get; set; default("artist,date,album,tracknr,title,url");
-		}
-
-		public Config () {
-			/* TODO: To be removed once default strings
-			 *       work in Vala again.
-			 */
-			sorting_artist = "artist,title";
-			sorting_album = "album,tracknr";
-			sorting_title = "title,url";
-			sorting_year = "date,artist,album,title,tracknr";
-			sorting_path = "url";
-			sorting_custom = "artist,date,album,tracknr,title,url";
 		}
 
 		private string build_filename() {
