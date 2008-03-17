@@ -608,7 +608,7 @@ namespace Abraca {
 		 * Update the position indicator to point at the
 		 * current playing entry.
 		 */
-		private void on_playlist_position(Client c, string playlist, uint pos) {
+		private void on_playlist_position(Client c, string playlist, int pos) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
 			Gtk.TreeIter iter;
 
@@ -617,6 +617,10 @@ namespace Abraca {
 				model.get_iter(out iter, _position.get_path());
 				store.set(iter, PlaylistColumn.PositionIndicator, 0);
 			}
+
+			/* Playlist is probably empty */
+			if (pos < 0)
+				return;
 
 			/* Add the new position indicator */
 			if (store.iter_nth_child (out iter, null, (int) pos)) {
