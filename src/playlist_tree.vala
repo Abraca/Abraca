@@ -23,6 +23,9 @@ namespace Abraca {
 		/** current playlist displayed */
 		private string _playlist;
 
+		/** current sorting order */
+		private string[] _sort;
+
 		/** keep track of current playlist position */
 		private Gtk.TreeRowReference _position = null;
 
@@ -37,6 +40,7 @@ namespace Abraca {
 		/** allowed drag-n-drop variants */
 		private const Gtk.TargetEntry[] _target_entries = {
 			DragDropTarget.PlaylistRow,
+			DragDropTarget.Collection,
 			DragDropTarget.TrackId
 		};
 
@@ -292,9 +296,9 @@ namespace Abraca {
 
 		private void on_menu_playlist_sort(string type) {
 			Client c = Client.instance();
-			string[] sort = type.split(",");
+			_sort = type.split(",");
 
-			c.xmms.playlist_sort(_playlist, (string[]) sort);
+			c.xmms.playlist_sort(_playlist, (string[]) _sort);
 		}
 
 		private void on_menu_playlist_filter(string key) {
@@ -424,6 +428,8 @@ namespace Abraca {
 				success = on_drop_playlist_entries(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.MID) {
 				success = on_drop_medialib_id(sel, x, y);
+			} else if (info == (uint) DragDropTargetType.COLL) {
+				success = on_drop_collection(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.URI) {
 				GLib.stdout.printf("Drop from filesystem not implemented\n");
 			} else if (info == (uint) DragDropTargetType.INTERNET) {
@@ -495,6 +501,34 @@ namespace Abraca {
 				for (int i; i < sel.length / 32; i++) {
 					c.xmms.playlist_add_id(_playlist, ids[i]);
 				}
+			}
+
+			return true;
+		}
+
+		private bool on_drop_collection(Gtk.SelectionData sel, int x, int y) {
+			Client c = Client.instance();
+			Xmms.Collection coll;
+			Gtk.TreeViewDropPosition align;
+			Gtk.TreePath path;
+
+			weak string coll_name = (string) sel.data;
+
+			coll = new Xmms.Collection(Xmms.CollectionType.REFERENCE);
+			coll.attribute_set("reference", coll_name);
+			coll.attribute_set("namespace", Xmms.COLLECTION_NS_COLLECTIONS);
+
+			/* TODO: Check if store is empty to get rid of assert */
+			if (get_dest_row_at_pos(x, y, out path, out align)) {
+				int pos = path.get_indices()[0];
+
+				if (align == Gtk.TreeViewDropPosition.AFTER ||
+				    align ==  Gtk.TreeViewDropPosition.INTO_OR_AFTER) {
+					pos++;
+				}
+				c.xmms.playlist_insert_collection(_playlist, pos, coll, _sort);
+			} else {
+				c.xmms.playlist_add_collection(_playlist, coll, _sort);
 			}
 
 			return true;

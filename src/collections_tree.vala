@@ -55,9 +55,14 @@ namespace Abraca {
 
 			row_activated += on_row_activated;
 
+			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
+			                         _target_entries,
+			                         Gdk.DragAction.MOVE);
+
 			drag_motion += on_drag_motion;
 			drag_leave += on_drag_leave;
 			drag_data_received += on_drag_data_received;
+			drag_data_get += on_drag_data_get;
 			button_press_event += on_button_press_event;
 
 			c.playlist_loaded += on_playlist_loaded;
@@ -65,6 +70,30 @@ namespace Abraca {
 			c.collection_rename += on_collection_rename;
 			c.collection_remove += on_collection_remove;
 			c.connected += query_collections;
+		}
+
+		[InstanceLast]
+		private bool on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
+		                              Gtk.SelectionData selection_data,
+		                              uint info, uint time) {
+			weak Gtk.TreeSelection sel = get_selection();
+			weak GLib.List<weak Gtk.TreePath> lst = sel.get_selected_rows(null);
+			Gtk.TreeIter iter;
+			string name;
+
+			model.get_iter(out iter, lst.data);
+			model.get(iter, CollColumn.Name, out name);
+
+			/* This should be removed as #515409 gets fixed. */
+			weak uchar[] data = (uchar[]) name;
+			data.length = (int) name.len()*8;
+
+			selection_data.set(
+					Gdk.Atom.intern(_target_entries[1].target, true),
+					8, data
+			);
+
+			return true;
 		}
 
 		private bool on_button_press_event(Gtk.Widget w, Gdk.Event e) {

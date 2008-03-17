@@ -307,6 +307,7 @@ namespace Xmms {
 		public Result playlist_add_idlist (
 			weak string playlist, Collection coll
 		);
+		[NoArrayLength]
 		public Result playlist_add_collection (
 			weak string playlist, Collection coll, string[] order
 		);
@@ -353,6 +354,7 @@ namespace Xmms {
 		public Result playlist_insert_encoded (
 			weak string playlist, int pos, weak string url
 		);
+		[NoArrayLength]
 		public Result playlist_insert_collection (
 			weak string playlist, int pos,
 			Collection coll, weak string[] order
