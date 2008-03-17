@@ -192,6 +192,7 @@ namespace Abraca {
 			Gtk.ImageMenuItem img_item;
 			Gtk.MenuItem item;
 			Gtk.Menu submenu;
+			Gtk.Image img;
 
 			_playlist_menu = new Gtk.Menu();
 
@@ -233,34 +234,41 @@ namespace Abraca {
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label("Sort");
-			item.set_submenu(submenu);
-			_playlist_menu.append(item);
+			img = new Gtk.Image.from_stock(
+				Gtk.STOCK_SORT_ASCENDING, Gtk.IconSize.MENU
+			);
+
+			img_item = new Gtk.ImageMenuItem.with_label("Sort");
+			img_item.set_image(img);
+			img_item.set_submenu(submenu);
+			_playlist_menu.append(img_item);
 
 			/* Filter submenu */
 			submenu = new Gtk.Menu();
 
-			item = new Gtk.MenuItem.with_label("Artist");
+			item = new Gtk.MenuItem.with_label("By Artist");
 			item.activate += i => {
 				on_menu_playlist_filter("artist");
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label("Album");
+			item = new Gtk.MenuItem.with_label("By Album");
 			item.activate += i => {
 				on_menu_playlist_filter("album");
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label("Genre");
+			item = new Gtk.MenuItem.with_label("By Genre");
 			item.activate += i => {
 				on_menu_playlist_filter("genre");
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label("Filter for...");
-			item.set_submenu(submenu);
-			_playlist_menu.append(item);
+			img_item = new Gtk.ImageMenuItem.from_stock(
+				Gtk.STOCK_FIND, null
+			);
+			img_item.set_submenu(submenu);
+			_playlist_menu.append(img_item);
 
 			item = new Gtk.MenuItem.with_label("Shuffle");
 			item.activate += i => {
@@ -269,12 +277,14 @@ namespace Abraca {
 			};
 			_playlist_menu.append(item);
 
-			item = new Gtk.MenuItem.with_label("Clear");
-			item.activate += i => {
+			img_item = new Gtk.ImageMenuItem.from_stock(
+				Gtk.STOCK_CLEAR, null
+			);
+			img_item.activate += i => {
 				Client c = Client.instance();
 				c.xmms.playlist_clear(_playlist);
 			};
-			_playlist_menu.append(item);
+			_playlist_menu.append(img_item);
 
 			_playlist_menu.show_all();
 		}

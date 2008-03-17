@@ -529,7 +529,7 @@ namespace Abraca {
 
 			_collection_menu = new Gtk.Menu();
 
-			item = new Gtk.MenuItem.with_label("_Rename");
+			item = new Gtk.MenuItem.with_mnemonic("_Rename");
 			item.activate += i => {
 				on_menu_collection_rename();
 			};

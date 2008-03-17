@@ -70,6 +70,38 @@ namespace Abraca {
 			);
 		}
 
+		public void playlist_replace_with_filter_results() {
+			Client c = Client.instance();
+			Gtk.TreeIter iter;
+			uint id;
+
+			if (!model.iter_children(out iter, null)) {
+				return;
+			}
+
+			c.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
+
+			do {
+				model.get(iter, FilterColumn.ID, out id);
+				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+			} while (model.iter_next(ref iter));
+		}
+
+		public void playlist_add_filter_results() {
+			Client c = Client.instance();
+			Gtk.TreeIter iter;
+			uint id;
+
+			if (!model.iter_children(out iter, null)) {
+				return;
+			}
+
+			do {
+				model.get(iter, FilterColumn.ID, out id);
+				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+			} while (model.iter_next(ref iter));
+		}
+
 		[InstanceLast]
 		private void on_coll_query_ids(Xmms.Result #res) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
