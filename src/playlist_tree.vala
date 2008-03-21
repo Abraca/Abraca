@@ -6,6 +6,9 @@ namespace Abraca {
 	enum PlaylistColumn {
 		ID = 0,
 		PositionIndicator,
+		Artist,
+		Album,
+		Genre,
 		Info,
 		Total
 	}
@@ -56,7 +59,8 @@ namespace Abraca {
 
 			model = new Gtk.ListStore(
 				PlaylistColumn.Total,
-				typeof(int), typeof(string), typeof(string)
+				typeof(int), typeof(string), typeof(string),
+				typeof(string), typeof(string), typeof(string)
 			);
 
 			row_activated += on_row_activated;
@@ -191,6 +195,7 @@ namespace Abraca {
 
 			_playlist_menu = new Gtk.Menu();
 
+			/* Sorting submenu */
 			submenu = new Gtk.Menu();
 			item = new Gtk.MenuItem.with_label("Artist");
 			item.activate += i => {
@@ -232,6 +237,31 @@ namespace Abraca {
 			item.set_submenu(submenu);
 			_playlist_menu.append(item);
 
+			/* Filter submenu */
+			submenu = new Gtk.Menu();
+
+			item = new Gtk.MenuItem.with_label("Artist");
+			item.activate += i => {
+				on_menu_playlist_filter("artist");
+			};
+			submenu.append(item);
+
+			item = new Gtk.MenuItem.with_label("Album");
+			item.activate += i => {
+				on_menu_playlist_filter("album");
+			};
+			submenu.append(item);
+
+			item = new Gtk.MenuItem.with_label("Genre");
+			item.activate += i => {
+				on_menu_playlist_filter("genre");
+			};
+			submenu.append(item);
+
+			item = new Gtk.MenuItem.with_label("Filter for...");
+			item.set_submenu(submenu);
+			_playlist_menu.append(item);
+
 			item = new Gtk.MenuItem.with_label("Shuffle");
 			item.activate += i => {
 				Client c = Client.instance();
@@ -255,6 +285,59 @@ namespace Abraca {
 			string[] sort = type.split(",");
 
 			c.xmms.playlist_sort(_playlist, (string[]) sort);
+		}
+
+		private void on_menu_playlist_filter(string key) {
+			Client c = Client.instance();
+			weak GLib.List<Gtk.TreePath> list;
+			Gtk.TreeSelection sel;
+			Gtk.TreeIter iter;
+			string val;
+			int column;
+			bool empty = true;
+
+			if (key == "artist") {
+				column = PlaylistColumn.Artist;
+			} else if (key == "album") {
+				column = PlaylistColumn.Album;
+			} else if (key == "genre") {
+				column = PlaylistColumn.Genre;
+			} else {
+				return;
+			}
+
+			sel = get_selection();
+			list = sel.get_selected_rows(null);
+
+			Xmms.Collection union = new Xmms.Collection(Xmms.CollectionType.UNION);
+			Xmms.Collection universe = Xmms.Collection.universe();
+			Xmms.Collection coll;
+
+			foreach(weak Gtk.TreePath path in list) {
+				model.get_iter(out iter, path);
+				model.get(iter, column, out val);
+
+				if (val == "Unknown") {
+					continue;
+				}
+
+				if (empty) {
+					empty = false;
+				}
+
+				coll = new Xmms.Collection(Xmms.CollectionType.EQUALS);
+
+				coll.attribute_set("field", key);
+				coll.attribute_set("value", val);
+				coll.add_operand(universe);
+
+				union.add_operand(coll);
+			}
+
+			if (!empty) {
+				Abraca.instance().main_window.main_hpaned.
+					right_hpaned.filter_tree.query_collection(union);
+			}
 		}
 
 		/**
@@ -629,7 +712,7 @@ namespace Abraca {
 			weak GLib.SList<Gtk.TreeRowReference> lst;
 
 			string info;
-			weak string artist, album, title;
+			weak string artist, album, title, genre;
 			int duration, dur_min, dur_sec, pos, id;
 			uint mid;
 
@@ -645,6 +728,7 @@ namespace Abraca {
 
 			artist = (string) m.lookup("artist");
 			album = (string) m.lookup("album");
+			genre = (string) m.lookup("genre");
 			title = (string) m.lookup("title");
 
 			dur_min = duration / 60000;
@@ -667,7 +751,10 @@ namespace Abraca {
 					continue;
 				}
 
-				store.set(iter, PlaylistColumn.Info, info);
+				store.set(iter, PlaylistColumn.Info, info,
+						PlaylistColumn.Artist, artist,
+						PlaylistColumn.Album, album,
+						PlaylistColumn.Genre, genre);
 			}
 		}
 	}

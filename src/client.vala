@@ -340,6 +340,11 @@ namespace Abraca {
 			}
 			m.insert("album", (pointer) tmp);
 
+			if (!res.get_dict_entry_string("genre", out tmp)) {
+				tmp = "Unknown";
+			}
+			m.insert("genre", (pointer) tmp);
+
 			if (!res.get_dict_entry_string("title", out tmp)) {
 				tmp = "Unknown";
 			}
