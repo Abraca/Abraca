@@ -434,7 +434,7 @@ namespace Abraca {
 			}
 		}
 
-		private void on_menu_collection_rename() {
+		private void on_menu_collection_rename(Gtk.MenuItem item) {
 			Gtk.TreeIter iter;
 			Gtk.TreePath path;
 			Gtk.TreeViewColumn col;
@@ -460,6 +460,35 @@ namespace Abraca {
 					set_cursor_on_cell(path, col, renderers.data, true);
 
 					obj.set("editable", false, null);
+				}
+			}
+		}
+
+		private void on_menu_collection_delete(Gtk.MenuItem item) {
+			weak Gtk.TreeSelection selection;
+			Gtk.TreeIter iter;
+
+			selection = get_selection();
+
+			if (selection.get_selected(null, out iter)) {
+				Gtk.TreePath path = model.get_path(iter);
+				if (path.get_depth() == 2) {
+					Client c = Client.instance();
+					Gtk.TreePath tmp;
+					weak string ns;
+					string name;
+
+					model.get(iter, CollColumn.Name, ref name);
+
+					if (path.is_descendant(model.get_path(_playlist_iter))) {
+						ns = Xmms.COLLECTION_NS_PLAYLISTS;
+					}
+
+					if (path.is_descendant(model.get_path(_collection_iter))) {
+						ns = Xmms.COLLECTION_NS_COLLECTIONS;
+					}
+
+					c.xmms.coll_remove(name, ns);
 				}
 			}
 		}
@@ -525,15 +554,24 @@ namespace Abraca {
 		}
 
 		private void create_context_menu() {
-			Gtk.MenuItem item;
+			Gtk.ImageMenuItem item;
 
 			_collection_menu = new Gtk.Menu();
 
-			item = new Gtk.MenuItem.with_mnemonic("_Rename");
-			item.activate += i => {
-				on_menu_collection_rename();
-			};
+			item = new Gtk.ImageMenuItem.with_mnemonic("_Rename");
+			item.image = new Gtk.Image.from_stock(
+				Gtk.STOCK_EDIT, Gtk.IconSize.MENU
+			);
+			item.activate += on_menu_collection_rename;
 			_collection_menu.append(item);
+
+			item = new Gtk.ImageMenuItem.with_mnemonic("Delete");
+			item.image = new Gtk.Image.from_stock(
+				Gtk.STOCK_DELETE, Gtk.IconSize.MENU
+			);
+			item.activate += on_menu_collection_delete;
+			_collection_menu.append(item);
+
 			_collection_menu.show_all();
 		}
 	}
