@@ -373,9 +373,9 @@ namespace Abraca {
 				mid_array[pos++] = mid;
 			}
 
-			/* This should be removed as #515409 gets fixed. */
+			/* This should be removed as #515408 gets fixed. */
 			weak uchar[] data = (uchar[]) mid_array;
-			data.length = mid_array.length * 32;
+			data.length = (int)(mid_array.length * sizeof(uint));
 
 			selection_data.set(
 				Gdk.Atom.intern(_target_entries[0].target, true),

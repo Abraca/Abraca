@@ -401,9 +401,9 @@ namespace Abraca {
 				pos_array[pos++] = position;
 			}
 
-			/* This should be removed as #515409 gets fixed. */
+			/* This should be removed as #515408 gets fixed. */
 			weak uchar[] data = (uchar[]) pos_array;
-			data.length = pos_array.length * 32;
+			data.length = (int)(pos_array.length * sizeof(uint));
 
 			selection_data.set(
 					Gdk.Atom.intern(_target_entries[0].target, true),
@@ -452,9 +452,10 @@ namespace Abraca {
 
 			Client c = Client.instance();
 
+			/* TODO: Updated when #515408 vala bug has been fixed */
 			weak uint[] source = (uint[]) sel.data;
+			source.length = (int)(sel.length / sizeof(uint));
 
-			/* TODO: Check if store is empty to get rid of assert */
 			if (get_dest_row_at_pos(x, y, out path, out align)) {
 				int dest = path.get_indices()[0];
 
@@ -466,7 +467,7 @@ namespace Abraca {
 				int downward = 0;
 				int upward = 0;
 
-				for (int i = sel.length/32 - 1; i >= 0; i--) {
+				for (int i = source.length - 1; i >= 0; i--) {
 					if (source[i] < dest) {
 						c.xmms.playlist_move_entry(_playlist, source[i]-downward, (uint) dest-1);
 						downward++;
@@ -488,18 +489,18 @@ namespace Abraca {
 
 			Client c = Client.instance();
 
+			/* TODO: Updated when #515408 vala bug has been fixed */
 			weak uint[] ids = (uint[]) sel.data;
+			ids.length = (int)(sel.length / sizeof(uint));
 
-			/* TODO: Check if store is empty to get rid of assert */
 			if (get_dest_row_at_pos(x, y, out path, out align)) {
 				int pos = path.get_indices()[0];
-
-				for (int i; i < sel.length / 32; i++) {
-					c.xmms.playlist_insert_id(_playlist, pos, ids[i]);
+				foreach (uint id in ids) {
+					c.xmms.playlist_insert_id(_playlist, pos, id);
 				}
 			} else {
-				for (int i; i < sel.length / 32; i++) {
-					c.xmms.playlist_add_id(_playlist, ids[i]);
+				foreach (uint id in ids) {
+					c.xmms.playlist_add_id(_playlist, id);
 				}
 			}
 

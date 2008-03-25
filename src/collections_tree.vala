@@ -84,9 +84,9 @@ namespace Abraca {
 			model.get_iter(out iter, lst.data);
 			model.get(iter, CollColumn.Name, out name);
 
-			/* This should be removed as #515409 gets fixed. */
+			/* This should be removed as #515408 gets fixed. */
 			weak uchar[] data = (uchar[]) name;
-			data.length = (int) name.len()*8;
+			data.length = (int) name.len() * 8;
 
 			selection_data.set(
 					Gdk.Atom.intern(_target_entries[1].target, true),
@@ -246,9 +246,13 @@ namespace Abraca {
 
 		private void playlist_insert_drop_data(string name, Gtk.SelectionData sel) {
 			Client c = Client.instance();
+
+			/* This should be removed as #515408 gets fixed. */
 			weak uint[] ids = (uint[]) sel.data;
-			for (int i; i < sel.length / 32; i++) {
-				c.xmms.playlist_add_id(name, ids[i]);
+			ids.length = (int)(sel.length / sizeof(uint));
+
+			foreach (uint id in ids) {
+				c.xmms.playlist_add_id(name, id);
 			}
 		}
 
