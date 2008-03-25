@@ -143,6 +143,47 @@ namespace Abraca {
 
 			return;
 		}
+		/**
+		  * Little helper function to get a working name for a new playlist.
+		  */
+		private string get_new_playlist_name() {
+			Gtk.TreeIter iter;
+			int current, highest = -1;
+			string[] parts;
+			string name;
+
+			model.iter_children(out iter, _playlist_iter);
+			do {
+				model.get(iter, CollColumn.Name, out name);
+
+				if (name == null) {
+					continue;
+				}
+
+				parts = name.split("-", 2);
+				if (parts[0] == "New Playlist") {
+					if (parts[1] != null) {
+						current = parts[1].to_int();
+					} else {
+						highest = 0;
+					}
+
+					if (current > highest) {
+						highest = current;
+					}
+				}
+			} while (model.iter_next(ref iter));
+
+			if (!_new_playlist_visible) {
+				highest++;
+			}
+
+			if (highest > 0) {
+				return "New Playlist" + highest.to_string("-%i");
+			} else {
+				return "New Playlist";
+			}
+		}
 
 		/**
 		 * Add a temporary new playlist.
@@ -178,9 +219,9 @@ namespace Abraca {
 				store.append(out _new_playlist_iter, _playlist_iter);
 
 				store.set(_new_playlist_iter,
-					CollColumn.Type, type,
-					CollColumn.Icon, null,
-					CollColumn.Name, "New Playlist"
+				          CollColumn.Type, type,
+				          CollColumn.Icon, null,
+				          CollColumn.Name, get_new_playlist_name()
 				);
 
 				_new_playlist_visible = true;
@@ -224,9 +265,10 @@ namespace Abraca {
 				if (_drop_path.compare(tmp) == 0) {
 					Client c = Client.instance();
 
-					c.xmms.playlist_create("New Playlist");
+					name = get_new_playlist_name();
+					c.xmms.playlist_create(name);
 
-					playlist_insert_drop_data("New Playlist", selection_data);
+					playlist_insert_drop_data(name, selection_data);
 
 					_new_playlist_visible = false;
 				} else {
