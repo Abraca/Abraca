@@ -513,11 +513,13 @@ namespace Abraca {
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
 
-			weak string coll_name = (string) sel.data;
+			string[] collection_data = ((string) sel.data).split("/");
+			string coll_ns = collection_data[0];
+			string coll_name = collection_data[1];
 
 			coll = new Xmms.Collection(Xmms.CollectionType.REFERENCE);
 			coll.attribute_set("reference", coll_name);
-			coll.attribute_set("namespace", Xmms.COLLECTION_NS_COLLECTIONS);
+			coll.attribute_set("namespace", coll_ns);
 
 			/* TODO: Check if store is empty to get rid of assert */
 			if (get_dest_row_at_pos(x, y, out path, out align)) {

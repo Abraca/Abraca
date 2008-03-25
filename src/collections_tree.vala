@@ -80,9 +80,16 @@ namespace Abraca {
 			weak GLib.List<weak Gtk.TreePath> lst = sel.get_selected_rows(null);
 			Gtk.TreeIter iter;
 			string name;
+			int type;
 
 			model.get_iter(out iter, lst.data);
-			model.get(iter, CollColumn.Name, out name);
+			model.get(iter, CollColumn.Name, out name, CollColumn.Type, out type);
+
+			if (type == CollectionType.Playlist) {
+				name = Xmms.COLLECTION_NS_PLAYLISTS + "/" + name;
+			} else {
+				name = Xmms.COLLECTION_NS_COLLECTIONS + "/" + name;
+			}
 
 			/* This should be removed as #515408 gets fixed. */
 			weak uchar[] data = (uchar[]) name;
