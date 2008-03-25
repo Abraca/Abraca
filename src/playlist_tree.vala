@@ -375,8 +375,18 @@ namespace Abraca {
 
 			string buf = null;
 
-			foreach (weak Gtk.TreePath p in lst) {
-				pos_list.prepend(p.get_indices()[0]);
+			if (info == (uint) DragDropTargetType.ROW) {
+				foreach (weak Gtk.TreePath p in lst) {
+					pos_list.prepend(p.get_indices()[0]);
+				}
+			} else {
+				Gtk.TreeIter iter;
+				uint mid;
+				foreach (weak Gtk.TreePath p in lst) {
+					model.get_iter(out iter, p);
+					model.get(iter, PlaylistColumn.ID, out mid);
+					pos_list.prepend(mid);
+				}
 			}
 
 			uint len = pos_list.length();
