@@ -243,7 +243,6 @@ namespace Abraca {
 			/* save to handle */
 			get_drag_dest_row(out _drop_path, out pos);
 
-			tmp = store.get_path(_new_playlist_iter);
 			if (_new_playlist_visible) {
 				store.remove(_new_playlist_iter);
 				_new_playlist_visible = false;
