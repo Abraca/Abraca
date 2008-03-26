@@ -69,6 +69,10 @@ namespace Abraca {
 				_filter_tree.query_collection(coll);
 		}
 
+		public void filter_entry_set_text(string text) {
+			_filter_entry.text = text;
+		}
+
 		private void create_widgets() {
 			pack1(create_left_box(), false, true);
 			pack2(create_right_box(), true, true);

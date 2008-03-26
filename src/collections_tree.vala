@@ -506,6 +506,23 @@ namespace Abraca {
 
 			expand_all();
 		}
+		private bool needs_quoting (string str) {
+			for(int i = 0; i < str.len(); i++) {
+				switch(str[i]) {
+					case ' ':
+					case '\\':
+					case '\"':
+					case '\'':
+					case '(':
+					case ')':
+							return true;
+							break;
+					default:
+							break;
+				}
+			}
+			return false;
+		}
 
 		[InstanceLast]
 		private void on_row_activated(
@@ -528,6 +545,13 @@ namespace Abraca {
 				c.xmms.coll_get(name, "Collections").notifier_set(
 					on_coll_get
 				);
+				if (needs_quoting(name)) {
+					Abraca.instance().main_window.main_hpaned.
+					right_hpaned.filter_entry_set_text("in:\"" + name + "\"");
+				} else {
+					Abraca.instance().main_window.main_hpaned.
+						right_hpaned.filter_entry_set_text("in:" + name);
+				}
 			} else {
 				c.xmms.playlist_load(name);
 			}
