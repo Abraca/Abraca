@@ -260,8 +260,10 @@ namespace Abraca {
 			if (_drop_path != null) {
 				Gtk.TreePath tmp;
 
-				tmp = store.get_path(_new_playlist_iter);
-				if (_drop_path.compare(tmp) == 0) {
+				if (_new_playlist_visible)
+					tmp = store.get_path(_new_playlist_iter);
+
+				if (!_new_playlist_visible || _drop_path.compare(tmp) == 0) {
 					Client c = Client.instance();
 
 					name = get_new_playlist_name();
