@@ -7,12 +7,14 @@ namespace Abraca {
 		static Abraca _instance;
 		private MainWindow _main_window;
 		private Config _config;
+		private Medialib _medialib;
 
 		construct {
 			_main_window = new MainWindow();
 
 			_config = new Config();
 			_config.load();
+			_medialib = new Medialib();
 		}
 
 		public MainWindow main_window {
@@ -24,6 +26,12 @@ namespace Abraca {
 		public Config config {
 			get {
 				return _config;
+			}
+		}
+
+		public Medialib medialib {
+			get {
+				return _medialib;
 			}
 		}
 

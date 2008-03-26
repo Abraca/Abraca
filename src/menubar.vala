@@ -26,12 +26,32 @@ namespace Abraca {
 
 		private Gtk.MenuItem create_music_menu() {
 			Gtk.MenuItem ret = new Gtk.MenuItem.with_mnemonic("_Music");
+			Gtk.ImageMenuItem img_item;
 			Gtk.MenuItem item;
+			Gtk.Image img;
 			Gtk.Menu sub = new Gtk.Menu();
+			Gtk.Menu subsub = new Gtk.Menu();
+
+			img = new Gtk.Image.from_stock(Gtk.STOCK_FILE, Gtk.IconSize.MENU);
+			img_item = new Gtk.ImageMenuItem.with_mnemonic("_Files");
+			img_item.set_image(img);
+			img_item.activate += on_music_add_file;
+			subsub.append(img_item);
+
+			img = new Gtk.Image.from_stock(Gtk.STOCK_DIRECTORY, Gtk.IconSize.MENU);
+			img_item = new Gtk.ImageMenuItem.with_mnemonic("_Dirs");
+			img_item.set_image(img);
+			img_item.activate += on_music_add_dir;
+			subsub.append(img_item);
+
+			img = new Gtk.Image.from_stock(Gtk.STOCK_NETWORK, Gtk.IconSize.MENU);
+			img_item = new Gtk.ImageMenuItem.with_mnemonic("_URL");
+			img_item.set_image(img);
+			img_item.activate += on_music_add_url;
+			subsub.append(img_item);
 
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
-			item.activate += on_music_add;
-			item.sensitive = false;
+			item.set_submenu(subsub);
 			sub.append(item);
 
 			sub.append(new Gtk.SeparatorMenuItem());
@@ -120,7 +140,18 @@ namespace Abraca {
 		}
 
 		/* callbacks */
-		private void on_music_add(Gtk.MenuItem item) {
+		private void on_music_add_file(Gtk.MenuItem item) {
+			Abraca.instance().medialib.
+				create_add_file_dialog(Gtk.FileChooserAction.OPEN);
+		}
+
+		private void on_music_add_dir(Gtk.MenuItem item) {
+			Abraca.instance().medialib.
+				create_add_file_dialog(Gtk.FileChooserAction.SELECT_FOLDER);
+		}
+
+		private void on_music_add_url(Gtk.MenuItem item) {
+			Abraca.instance().medialib.create_add_url_dialog();
 		}
 
 		private void on_music_save(Gtk.MenuItem item) {
