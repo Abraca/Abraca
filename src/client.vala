@@ -52,6 +52,8 @@ namespace Abraca {
 			_result_playlist_position = null;
 			_result_collection_changed = null;
 
+			GLib.Timeout.add(500, reconnect);
+
 			Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
 		}
 
@@ -74,7 +76,6 @@ namespace Abraca {
 			}
 		}
 
-
 		public bool try_connect(string path = null) {
 			if (path == null) {
 				path = GLib.Environment.get_variable("XMMS_PATH");
@@ -91,6 +92,10 @@ namespace Abraca {
 			}
 
 			return false;
+		}
+
+		private bool reconnect() {
+			return !try_connect();
 		}
 
 		private void create_callbacks() {

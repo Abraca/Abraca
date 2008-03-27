@@ -446,6 +446,7 @@ namespace Abraca {
 
 		private void on_coll_list(Xmms.Result #res, CollectionType type) {
 			Gtk.TreeIter parent;
+			Gtk.TreeIter child;
 			string name;
 
 			if (type == CollectionType.Collection)
@@ -453,9 +454,12 @@ namespace Abraca {
 			else
 				parent = _playlist_iter;
 
-			int pos = model.iter_n_children(parent);
-
 			Gtk.TreeStore store = (Gtk.TreeStore) model;
+
+			while (model.iter_children(out child, parent))
+					store.remove(child);
+
+			int pos = model.iter_n_children(parent);
 
 			for (res.list_first(); res.list_valid(); res.list_next()) {
 				Gtk.TreeIter iter;
