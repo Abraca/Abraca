@@ -93,9 +93,10 @@ namespace Abraca {
 
 			scrolled.set_policy(Gtk.PolicyType.NEVER,
 			                    Gtk.PolicyType.AUTOMATIC);
+			scrolled.set_shadow_type(Gtk.ShadowType.IN);
 
 			_filter_tree = new FilterTree();
-			scrolled.add_with_viewport(_filter_tree);
+			scrolled.add(_filter_tree);
 			box.pack_start(scrolled, true, true, 0);
 
 			return box;
@@ -110,9 +111,10 @@ namespace Abraca {
 
 			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
 			                    Gtk.PolicyType.AUTOMATIC);
+			scrolled.set_shadow_type(Gtk.ShadowType.IN);
 
 			_playlist_tree = new PlaylistTree();
-			scrolled.add_with_viewport(_playlist_tree);
+			scrolled.add(_playlist_tree);
 			box.pack_start(scrolled, true, true, 0);
 
 			return box;

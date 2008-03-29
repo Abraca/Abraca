@@ -42,9 +42,10 @@ namespace Abraca {
 
 			scrolled.set_policy(Gtk.PolicyType.NEVER,
 			                    Gtk.PolicyType.AUTOMATIC);
+			scrolled.set_shadow_type(Gtk.ShadowType.IN);
 
 			_coll_tree = new CollectionsTree();
-			scrolled.add_with_viewport(_coll_tree);
+			scrolled.add(_coll_tree);
 
 			pack1(scrolled, false, true);
 
