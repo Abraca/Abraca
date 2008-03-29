@@ -1,5 +1,7 @@
 Import('env')
 
+env.Alias('install', env.Install('$prefix/share/pixmaps', 'abraca-playlist-22.png'))
+env.Alias('install', env.Install('$prefix/share/pixmaps', 'abraca-collection-22.png'))
 env.Alias('install', env.Install('$prefix/share/pixmaps', 'abraca.svg'))
 env.Alias('install', env.Install('$prefix/share/pixmaps', 'abraca-128.png'))
 env.Alias('install', env.Install('$prefix/share/applications', 'abraca.desktop'))

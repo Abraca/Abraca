@@ -6,8 +6,8 @@ namespace Abraca {
 	public class MenuBar : Gtk.MenuBar {
 
 		private const string[] _authors = {
-				"Sebastian Sareyko <smoon@nooms.de>",
 				"Martin Salzer <stoky@gmx.net>",
+				"Sebastian Sareyko <smoon@nooms.de>",
 				"Tilman Sauerbeck <tilman@xmms.org>",
 				"Daniel Svensson <dsvensson@gmail.com>",
 				null
@@ -15,6 +15,7 @@ namespace Abraca {
 
 		private const string[] _artists = {
 				"Johan Slikkie van der Slikke <johan@slikkie.nl>",
+				"Jakub Steiner <jimmac@ximian.com>",
 				null
 		};
 
@@ -194,7 +195,7 @@ namespace Abraca {
 
 			d.authors = _authors;
 			d.artists = _artists;
-			d.copyright = "Copyright © 2007-2008 Sebastian Sareyko";
+			d.copyright = "Copyright © 2007-2008 Abraca Developers";
 			d.website = "http://nooms.de/projects/abraca/";
 
 			d.run();

@@ -37,6 +37,9 @@ namespace Abraca {
 		private Gtk.TreeIter _new_playlist_iter;
 		private bool _new_playlist_visible = false;
 
+		private Gdk.Pixbuf _playlist_pixbuf;
+		private Gdk.Pixbuf _collection_pixbuf;
+
 		construct {
 			Client c = Client.instance();
 
@@ -47,7 +50,9 @@ namespace Abraca {
 			fixed_height_mode = true;
 
 			create_columns ();
+
 			model = create_model();
+
 			create_context_menu();
 
 			enable_model_drag_dest(_target_entries,
@@ -220,7 +225,7 @@ namespace Abraca {
 
 				store.set(_new_playlist_iter,
 				          CollColumn.Type, type,
-				          CollColumn.Icon, null,
+				          CollColumn.Icon, _playlist_pixbuf,
 				          CollColumn.Name, get_new_playlist_name()
 				);
 
@@ -340,6 +345,7 @@ namespace Abraca {
 			Gtk.TreeIter parent;
 			Gtk.TreeIter iter;
 			CollectionType type;
+			weak Gdk.Pixbuf pixbuf;
 
 			if (name[0] == '_') {
 				return;
@@ -348,9 +354,11 @@ namespace Abraca {
 			if (ns == Xmms.COLLECTION_NS_PLAYLISTS) {
 				parent = _playlist_iter;
 				type = CollectionType.Playlist;
+				pixbuf = _playlist_pixbuf;
 			} else {
 				parent = _collection_iter;
 				type = CollectionType.Collection;
+				pixbuf = _collection_pixbuf;
 			}
 
 			Gtk.TreeStore store = (Gtk.TreeStore) model;
@@ -358,7 +366,7 @@ namespace Abraca {
 			store.append(out iter, parent);
 			store.set(iter,
 			          CollColumn.Type, type,
-			          CollColumn.Icon, null,
+			          CollColumn.Icon, pixbuf,
 			          CollColumn.Name, name);
 		}
 
@@ -447,12 +455,16 @@ namespace Abraca {
 		private void on_coll_list(Xmms.Result #res, CollectionType type) {
 			Gtk.TreeIter parent;
 			Gtk.TreeIter child;
+			weak Gdk.Pixbuf pixbuf;
 			string name;
 
-			if (type == CollectionType.Collection)
+			if (type == CollectionType.Collection) {
 				parent = _collection_iter;
-			else
+				pixbuf = _collection_pixbuf;
+			} else {
 				parent = _playlist_iter;
+				pixbuf = _playlist_pixbuf;
+			}
 
 			Gtk.TreeStore store = (Gtk.TreeStore) model;
 
@@ -485,7 +497,7 @@ namespace Abraca {
 				store.insert_with_values(
 					out iter, parent, pos++,
 					CollColumn.Type, type,
-					CollColumn.Icon, null,
+					CollColumn.Icon, pixbuf,
 					CollColumn.Style, style,
 					CollColumn.Weight, weight,
 					CollColumn.Name, s
@@ -591,28 +603,54 @@ namespace Abraca {
 		}
 
 		private void create_columns() {
-			/* TODO: Fix icon
- 			insert_column_with_attributes(
-				-1, null, new Gtk.CellRendererPixbuf(),
-				"stock-id", CollColumn.Icon, null
-			);
-			*/
+			Gtk.CellRendererText renderer;
+			Gtk.TreeViewColumn column;
+			weak Gdk.Pixbuf pixbuf;
 
-			Gtk.CellRendererText renderer = new Gtk.CellRendererText();
+			/* Load the playlist icon */
+			try {
+				_playlist_pixbuf = new Gdk.Pixbuf.from_file(
+					Build.Config.PREFIX + "/share/pixmaps/abraca-playlist-22.png"
+				);
+			} catch (GLib.Error e) {
+				GLib.stdout.printf("Unable to load playlist icon. %s\n", e.message);
+			}
+
+			/* ..and the collection icon */
+			try {
+				_collection_pixbuf = new Gdk.Pixbuf.from_file(
+					Build.Config.PREFIX + "/share/pixmaps/abraca-collection-22.png"
+				);
+			} catch (GLib.Error e) {
+				GLib.stdout.printf("Unable to load collection icon. %s\n", e.message);
+			}
+
+			renderer = new CollCellRenderer();
+
 			renderer.edited += on_collection_cell_renderer_edited;
 
- 			insert_column_with_attributes(
-				-1, null, renderer,
+			pixbuf = (_playlist_pixbuf != null) ? _playlist_pixbuf : _collection_pixbuf;
+			if (pixbuf != null) {
+				renderer.height = pixbuf.height - 2;
+			}
+
+			column = new Gtk.TreeViewColumn.with_attributes (
+				null, renderer,
+				"pixbuf", CollColumn.Icon,
 				"style", CollColumn.Style,
 				"weight", CollColumn.Weight,
 				"markup", CollColumn.Name, null
 			);
+			column.set_sizing(Gtk.TreeViewColumnSizing.FIXED);
+
+			append_column (column);
 		}
 
 		private Gtk.TreeModel create_model() {
 			Gtk.TreeStore store = new Gtk.TreeStore(
 				CollColumn.Total,
-				typeof(int), typeof(string), typeof(int), typeof(int), typeof(string)
+				typeof(int), typeof(Gdk.Pixbuf),
+				typeof(int), typeof(int), typeof(string)
 			);
 
 			int pos = 1;

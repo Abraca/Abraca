@@ -15,6 +15,7 @@ vala_sources = """
 	abraca.vala
 	server_browser.vala
 	dragdroptarget.vala
+	collection_cellrenderer.vala
 """.split()
 
 sources = env.Vala(vala_sources, VALADEFINES = {'PREFIX':'$prefix'})
