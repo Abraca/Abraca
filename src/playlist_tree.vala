@@ -148,11 +148,12 @@ namespace Abraca {
 			Pango.FontDescription desc;
 			weak Pango.Context ctx;
 			Pango.Layout layout;
+			Gdk.Pixbuf pbuf;
 			int w, h;
 
 
 			pbuf_renderer = new Gtk.CellRendererPixbuf();
-			pbuf_renderer.stock_size = Gtk.IconSize.SMALL_TOOLBAR;
+			pbuf_renderer.stock_size = Gtk.IconSize.MENU;
 
 			column = new Gtk.TreeViewColumn.with_attributes (
 				null, pbuf_renderer,
@@ -160,7 +161,11 @@ namespace Abraca {
 				null
 			);
 
-			column.set_min_width(20);
+			/* Find out the width of the position idicator icon */
+			pbuf = render_icon(Gtk.STOCK_GO_FORWARD, Gtk.IconSize.MENU, null);
+
+			/* Add some extra width otherwise it will not fit into the column */
+			column.set_min_width(pbuf.width + 3 * 2);
 			column.set_sizing(Gtk.TreeViewColumnSizing.FIXED);
 
 			append_column (column);
@@ -177,7 +182,7 @@ namespace Abraca {
 			ctx = get_pango_context();
 
 			layout = new Pango.Layout(ctx);
-			layout.set_text("look behind you! a three-headed monkey!\0", -1);
+			layout.set_text("look behind you! a three-headed monkey!", -1);
 			layout.set_font_description (desc);
 
 			layout.get_pixel_size(out w, out h);
