@@ -56,7 +56,9 @@ namespace Abraca {
 		private const Gtk.TargetEntry[] _target_entries = {
 			DragDropTarget.PlaylistRow,
 			DragDropTarget.Collection,
-			DragDropTarget.TrackId
+			DragDropTarget.TrackId,
+			DragDropTarget.UriList,
+			DragDropTarget.Internet
 		};
 
 		construct {
@@ -445,15 +447,19 @@ namespace Abraca {
 			bool success = false;
 
 			if (info == (uint) DragDropTargetType.ROW) {
+				GLib.stdout.printf("apan1\n");
 				success = on_drop_playlist_entries(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.MID) {
+				GLib.stdout.printf("apan2\n");
 				success = on_drop_medialib_id(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.COLL) {
+				GLib.stdout.printf("apan3\n");
 				success = on_drop_collection(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.URI) {
 				GLib.stdout.printf("Drop from filesystem not implemented\n");
+				// success = on_drop_files(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.INTERNET) {
-				GLib.stdout.printf("Drop from intarweb not implemented\n");
+				success = on_drop_files(sel, x, y, true);
 			} else {
 				GLib.stdout.printf("Nogle gange går der kuk i maskineriet\n");
 			}
@@ -521,6 +527,45 @@ namespace Abraca {
 			} else {
 				foreach (uint id in ids) {
 					c.xmms.playlist_add_id(_playlist, id);
+				}
+			}
+
+			return true;
+		}
+
+		/**
+		 * Handle dropping of urls.
+		 * TODO: Handle coding of urls from nautilus.
+		 * TODO: Handle inserting of directories.
+		 */
+		private bool on_drop_files(Gtk.SelectionData sel, int x, int y,
+		                           bool internet = false) {
+			string[] uri_list;
+
+			Client c = Client.instance();
+
+			uri_list = ((string) sel.data).split("\n");
+
+			for (int i = 0; uri_list[i] != null; i++) {
+				if (internet && (i % 2 != 0)) {
+					continue;
+				}
+
+				if (((string)uri_list[i]).len() > 0) {
+					Gtk.TreeViewDropPosition align;
+					Gtk.TreePath path;
+
+					if (get_dest_row_at_pos(x, y, out path, out align)) {
+						int pos = path.get_indices()[0];
+
+						c.xmms.playlist_insert_url(
+							Xmms.ACTIVE_PLAYLIST, pos, uri_list[i]
+						);
+					} else {
+						c.xmms.playlist_add_url(
+							Xmms.ACTIVE_PLAYLIST, uri_list[i]
+						);
+					}
 				}
 			}
 

@@ -40,11 +40,11 @@ namespace Abraca {
 		};
 
 		public const Gtk.TargetEntry UriList = {
-			"text/uri-list", DragDropTargetType.URI
+			"text/uri-list", 0, DragDropTargetType.URI
 		};
 
 		public const Gtk.TargetEntry Internet = {
-			"_NETSCAPE_URL", DragDropTargetType.INTERNET
+			"_NETSCAPE_URL", 0, DragDropTargetType.INTERNET
 		};
 	}
 }
