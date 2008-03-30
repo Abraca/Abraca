@@ -1,9 +1,9 @@
 You'll need the following applications and libraries to build and run Abraca:
 
-    o xmms2 (obviously)
-    o Gtk2
-    o pkg-config
-    o vala
+    o XMMS2 DrKosmos
+    o GTK 2.12 (perhaps older)
+    o pkg-config 0.22 (perhaps older)
+    o vala 0.1.7
 
 Execute the following commands to compile and install Abraca:
 

@@ -1,5 +1,20 @@
-/*
- * vim:noexpandtab:sw=4:sts=0:ts=4:syn=cs
+/**
+ * Abraca, an XMMS2 client.
+ * Copyright (C) 2008  Abraca Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
 namespace Abraca {
@@ -18,6 +33,8 @@ namespace Abraca {
 				"Jakub Steiner <jimmac@ximian.com>",
 				null
 		};
+
+		private const string _license = "Abraca, an XMMS2 client.\nCopyright (C) 2008  Abraca Team\n\nThis program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.";
 
 		construct {
 			append(create_music_menu());
@@ -195,7 +212,12 @@ namespace Abraca {
 
 			d.authors = _authors;
 			d.artists = _artists;
+
 			d.copyright = "Copyright © 2007-2008 Abraca Developers";
+
+			d.license = _license;
+			d.wrap_license = true;
+
 			d.website = "http://nooms.de/projects/abraca/";
 
 			d.run();
