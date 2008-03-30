@@ -185,7 +185,7 @@ namespace Abraca {
 					if (parts[1] != null) {
 						current = parts[1].to_int();
 					} else {
-						highest = 0;
+						current = 0;
 					}
 
 					if (current > highest) {
@@ -279,11 +279,11 @@ namespace Abraca {
 
 			if (_drop_path != null) {
 				Gtk.TreePath tmp;
+				Gtk.TreeIter iter;
 
-				if (_new_playlist_visible)
-					tmp = store.get_path(_new_playlist_iter);
+				model.get_iter(out iter, _drop_path);
 
-				if (!_new_playlist_visible || _drop_path.compare(tmp) == 0) {
+				if (!model.get_iter(out iter, _drop_path)) {
 					Client c = Client.instance();
 
 					name = get_new_playlist_name();
@@ -295,11 +295,8 @@ namespace Abraca {
 				} else {
 					tmp = store.get_path(_playlist_iter);
 					if (_drop_path.is_descendant(tmp)) {
-						Gtk.TreeIter iter;
-						if (model.get_iter(out iter, _drop_path)) {
-							model.get(iter, CollColumn.Name, out name);
-							playlist_insert_drop_data(name, selection_data);
-						}
+						model.get(iter, CollColumn.Name, out name);
+						playlist_insert_drop_data(name, selection_data);
 					}
 				}
 
@@ -321,8 +318,8 @@ namespace Abraca {
 			weak uint[] ids = (uint[]) sel.data;
 			ids.length = (int)(sel.length / sizeof(uint));
 
-			foreach (uint id in ids) {
-				c.xmms.playlist_add_id(name, id);
+			for(int i = ids.length -1; i >= 0; i--) {
+				c.xmms.playlist_add_id(name, ids[i]);
 			}
 		}
 
