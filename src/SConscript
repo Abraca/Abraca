@@ -13,7 +13,6 @@ vala_sources = """
 	right_hpaned.vala
 	toolbar.vala
 	abraca.vala
-	server_browser.vala
 	dragdroptarget.vala
 	collection_cellrenderer.vala
 """.split()
