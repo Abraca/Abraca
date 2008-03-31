@@ -218,7 +218,7 @@ namespace Abraca {
 			d.license = _license;
 			d.wrap_license = true;
 
-			d.website = "http://nooms.de/projects/abraca/";
+			d.website = "http://abraca.xmms.se/";
 
 			d.run();
 			d.hide();
