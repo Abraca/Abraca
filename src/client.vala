@@ -244,6 +244,7 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_playlist_changed(Xmms.Result #res) {
+			weak string playlist;
 			int change, pos, npos;
 			uint mid;
 
@@ -251,19 +252,20 @@ namespace Abraca {
 			res.get_dict_entry_int("position", out pos);
 			res.get_dict_entry_int("newposition", out npos);
 			res.get_dict_entry_uint("id", out mid);
+			res.get_dict_entry_string("name", out playlist);
 
 			switch (change) {
 				case Xmms.PlaylistChange.ADD:
-					playlist_add(_playlist, mid);
+					playlist_add(playlist, mid);
 					break;
 				case Xmms.PlaylistChange.INSERT:
-					playlist_insert(_playlist, mid, pos);
+					playlist_insert(playlist, mid, pos);
 					break;
 				case Xmms.PlaylistChange.REMOVE:
-					playlist_remove(_playlist, pos);
+					playlist_remove(playlist, pos);
 					break;
 				case Xmms.PlaylistChange.MOVE:
-					playlist_move(_playlist, pos, npos);
+					playlist_move(playlist, pos, npos);
 					break;
 				case Xmms.PlaylistChange.UPDATE:
 				case Xmms.PlaylistChange.CLEAR:
