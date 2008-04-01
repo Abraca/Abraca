@@ -80,7 +80,9 @@ namespace Abraca {
 			 * ServerBrowser sb = new ServerBrowser(a.main_window);
 			 */
 
-			c.try_connect();
+			if (!c.try_connect())
+				GLib.Timeout.add(500, c.reconnect);
+
 
 			Gtk.main();
 

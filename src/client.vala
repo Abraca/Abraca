@@ -113,7 +113,7 @@ namespace Abraca {
 			return false;
 		}
 
-		private bool reconnect() {
+		public bool reconnect() {
 			return !try_connect();
 		}
 
