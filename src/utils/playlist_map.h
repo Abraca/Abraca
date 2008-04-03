@@ -29,7 +29,7 @@ playlist_map_t *playlist_map_ref (playlist_map_t *map);
 void playlist_map_unref (playlist_map_t *map);
 void playlist_map_insert (playlist_map_t *map, guint mid, GtkTreeRowReference *row);
 gboolean playlist_map_remove (playlist_map_t *map, guint mid, GtkTreePath *path);
-GSList *playlist_map_lookup (playlist_map_t *map, uint mid);
+GSList *playlist_map_lookup (playlist_map_t *map, guint mid);
 GList *playlist_map_get_ids (playlist_map_t *map);
 void playlist_map_clear (playlist_map_t *map);
 

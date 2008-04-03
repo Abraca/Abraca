@@ -149,7 +149,7 @@ playlist_map_clear (playlist_map_t *map)
 }
 
 GSList *
-playlist_map_lookup (playlist_map_t *map, uint mid)
+playlist_map_lookup (playlist_map_t *map, guint mid)
 {
 	g_return_val_if_fail (map, NULL);
 
