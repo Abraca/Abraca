@@ -4,8 +4,21 @@ You'll need the following applications and libraries to build and run Abraca:
     o GTK 2.12 (perhaps older)
     o pkg-config 0.22 (perhaps older)
     o vala 0.1.7
+    o gcc 4.2.3 (perhaps older)
 
 Execute the following commands to compile and install Abraca:
 
-	scons prefix=/usr/local
-	scons install
+    scons PREFIX=/usr/local
+    scons install
+
+To clean the build directory:
+
+    scons -c
+
+Project related options:
+
+    scons -h
+
+SCons related options:
+
+    scons -H

@@ -42,9 +42,9 @@ class AbracaEnvironment(SConsEnvironment):
 		# Add some build options
 		opts = Options(['.scons_options'], ARGUMENTS)
 		opts.AddOptions(
-			BoolOption('silent', 'build silently', True),
-			BoolOption('debug', 'build debug variant', True),
-			PathOption('prefix', 'install prefix', '/usr/local'),
+			BoolOption('verbose', 'build silently', 'yes'),
+			BoolOption('debug', 'build debug variant', 'no'),
+			PathOption('PREFIX', 'install prefix', '/usr/local'),
 		)
 		opts.Update(self)
 		opts.Save('.scons_options', self)
@@ -52,7 +52,7 @@ class AbracaEnvironment(SConsEnvironment):
 		self.Help(opts.GenerateHelpText(self))
 
 		# Hide compiler command line if silent mode on
-		if self['silent']:
+		if not self['verbose']:
 			self['VALADEFINESCOMSTR'] = '   Defines: $TARGET'
 			self['VALACOMSTR']        = 'Generating: $TARGETS'
 			self['CCCOMSTR']          = '  Building: $TARGET'
