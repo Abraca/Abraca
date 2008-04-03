@@ -11,7 +11,7 @@ conf.CheckPkgConfig()
 
 for pkg in ['gtk+-2.0', 'xmms2-client', 'xmms2-client-glib']:
 	if conf.CheckPkg(pkg):
-		env.ParseConfig('pkg-config --libs --cflags ' + pkg)
+		env.AppendPkg(pkg)
 		env.Append(VALAPKGS = [pkg])
 
 conf.Finish()

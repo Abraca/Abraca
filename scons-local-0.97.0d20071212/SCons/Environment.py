@@ -495,13 +495,13 @@ class SubstitutionEnvironment:
             p = subprocess.Popen(command,
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE,
-                                 universal_newlines=True)
+                                 universal_newlines=True, env=self['ENV'])
         else:
             p = subprocess.Popen(command,
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE,
                                  universal_newlines=True,
-                                 shell=True)
+                                 shell=True, env=self['ENV'])
         out = p.stdout.read()
         p.stdout.close()
         err = p.stderr.read()

@@ -25,10 +25,20 @@ SCons.Defaults.DefaultEnvironment(tools = [])
 
 class AbracaEnvironment(SConsEnvironment):
 	def __init__(self, *args, **kwargs):
+		import_settings = [
+			'CC', 'LINKFLAGS', 'PKG_CONFIG_FLAGS', 'PROGSUFFIX'
+		]
+		for key in import_settings:
+			if ARGUMENTS.has_key(key):
+				kwargs[key] = [ARGUMENTS[key]]
+
 		SConsEnvironment.__init__(self, *args, **kwargs)
 
-		# It's fairly common that users add their own pkg-config path
-		self['ENV']['PKG_CONFIG_PATH'] = os.environ.get('PKG_CONFIG_PATH')
+		# Import pkg-config path into shell environment.
+		if ARGUMENTS.has_key('PKG_CONFIG_LIBDIR'):
+			self['ENV']['PKG_CONFIG_LIBDIR'] = ARGUMENTS.get('PKG_CONFIG_LIBDIR')
+		elif os.environ.has_key('PKG_CONFIG_LIBDIR'):
+			self['ENV']['PKG_CONFIG_LIBDIR'] = os.environ.get('PKG_CONFIG_LIBDIR')
 
 		# Oldest usable SCons version.
 		self.EnsureSConsVersion(0, 97)
@@ -70,9 +80,14 @@ class AbracaEnvironment(SConsEnvironment):
 	def DebugVariant(self):
 		return self['debug']
 
+	def AppendPkg(self, pkg):
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --libs --cflags %s')
+		self.ParseConfig(cmd % pkg)
+
 	def CheckPkgConfig(ctx, fail=True):
 		ctx.Message('Checking for pkg-config... ')
-		exit_code, output = ctx.TryAction('pkg-config --version')
+		cmd = ctx.env.subst('pkg-config $PKG_CONFIG_FLAGS --version')
+		exit_code, output = ctx.TryAction(cmd)
 		ctx.Result(exit_code)
 		if not exit_code and fail:
 			raise SCons.Errors.UserError('The pkg-config tool is required to build')
@@ -81,10 +96,11 @@ class AbracaEnvironment(SConsEnvironment):
 
 	def CheckPkg(ctx, pkg, fail=True):
 		ctx.Message('Checking for %s... ' % pkg)
-		exit_code, output = ctx.TryAction('pkg-config --exists \'%s\'' % pkg)
+		cmd = ctx.env.subst('pkg-config $PKG_CONFIG_FLAGS --exists \'%s\'')
+		exit_code, output = ctx.TryAction(cmd % pkg)
 		ctx.Result(exit_code)
 		if not exit_code and fail:
-			raise SCons.Errors.UserError('The %s library is required to build' % pkg)
+			raise SCons.Errors.UserError('The %s package and its dependencies are required to build' % pkg)
 		return exit_code
 	CheckPkg = staticmethod(CheckPkg)
 
