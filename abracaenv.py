@@ -25,20 +25,24 @@ SCons.Defaults.DefaultEnvironment(tools = [])
 
 class AbracaEnvironment(SConsEnvironment):
 	def __init__(self, *args, **kwargs):
-		import_settings = [
-			'CC', 'LINKFLAGS', 'PKG_CONFIG_FLAGS', 'PROGSUFFIX'
+		variables = [
+			'VALAC', 'CC', 'LINKFLAGS', 'PKG_CONFIG_FLAGS', 'PROGSUFFIX'
 		]
-		for key in import_settings:
-			if ARGUMENTS.has_key(key):
-				kwargs[key] = [ARGUMENTS[key]]
+		for key in variables:
+			val = self._import_variable(key)
+			if val:
+				kwargs[key] = [val]
+		
+		kwargs['tools'] = ['gcc', 'gnulink']
 
 		SConsEnvironment.__init__(self, *args, **kwargs)
 
 		# Import pkg-config path into shell environment.
-		if ARGUMENTS.has_key('PKG_CONFIG_LIBDIR'):
-			self['ENV']['PKG_CONFIG_LIBDIR'] = ARGUMENTS.get('PKG_CONFIG_LIBDIR')
-		elif os.environ.has_key('PKG_CONFIG_LIBDIR'):
-			self['ENV']['PKG_CONFIG_LIBDIR'] = os.environ.get('PKG_CONFIG_LIBDIR')
+		for name in ['PKG_CONFIG_LIBDIR', 'PKG_CONFIG_PATH']:
+			val = self._import_variable(name)
+			if val:
+				self['ENV'][name] = val
+				break
 
 		# Oldest usable SCons version.
 		self.EnsureSConsVersion(0, 97)
@@ -67,6 +71,16 @@ class AbracaEnvironment(SConsEnvironment):
 			self['VALACOMSTR']        = 'Generating: $TARGETS'
 			self['CCCOMSTR']          = '  Building: $TARGET'
 			self['LINKCOMSTR']        = '   Linking: $TARGET'
+
+	def _import_variable(self, name):
+		if ARGUMENTS.has_key(name):
+			value = ARGUMENTS.get(name)
+		elif os.environ.has_key(name):
+			value = os.environ.get(name)
+		else:
+			value = None
+
+		return value
 
 	def Configure(self):
 		conf = SConsEnvironment.Configure(self, custom_tests = {
