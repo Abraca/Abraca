@@ -88,6 +88,7 @@ class AbracaEnvironment(SConsEnvironment):
 
 	def Configure(self, config_h):
 		conf = SConsEnvironment.Configure(self,
+			clean = False, help = False,
 			config_h = config_h,
 			custom_tests = {
 				'CheckPkgConfig' : AbracaEnvironment.CheckPkgConfig,
