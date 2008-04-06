@@ -57,7 +57,7 @@ class AbracaEnvironment(SConsEnvironment):
 		# Add some build options
 		opts = Options(['.scons_options'], ARGUMENTS)
 		opts.AddOptions(
-			BoolOption('verbose', 'build silently', 'yes'),
+			BoolOption('verbose', 'verbose output', 'no'),
 			BoolOption('debug', 'build debug variant', 'no'),
 			PathOption('PREFIX', 'install prefix', '/usr/local'),
 			PathOption('DATADIR', 'data dir', '$PREFIX/share'),
