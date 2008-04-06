@@ -98,7 +98,7 @@ namespace Abraca {
 
 			Gtk.HBox hbox = new Gtk.HBox(false, 6);
 
-			Gtk.Label label = new Gtk.Label("Filter:");
+			Gtk.Label label = new Gtk.Label(GLib._("Filter:"));
 			hbox.pack_start(label, false, false, 0);
 
 			_filter_entry = new Gtk.Entry();

@@ -22,7 +22,7 @@ namespace Abraca {
 		public void create_add_url_dialog() {
 
 			Gtk.Dialog dialog = new Gtk.Dialog.with_buttons(
-					"Add URL",
+					GLib._("Add URL"),
 					(Gtk.Window) (Abraca.instance().main_window),
 					Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.MODAL,
 					Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -46,7 +46,7 @@ namespace Abraca {
 		public void create_add_file_dialog(Gtk.FileChooserAction action) {
 			Gtk.FileChooserDialog dialog;
 
-			dialog = new Gtk.FileChooserDialog("Add file",
+			dialog = new Gtk.FileChooserDialog(GLib._("Add file"),
 					(Gtk.Window) (Abraca.instance().main_window), action,
 					Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
 					Gtk.STOCK_ADD, Gtk.ResponseType.OK
@@ -54,7 +54,7 @@ namespace Abraca {
 			dialog.select_multiple = true;
 
 			Gtk.CheckButton button = new Gtk.CheckButton.with_label(
-					"don't add to active playlist");
+					GLib._("don't add to active playlist"));
 			dialog.extra_widget = button;
 
 			dialog.show_all();

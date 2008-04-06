@@ -43,7 +43,9 @@ namespace Abraca {
 		}
 
 		private Gtk.MenuItem create_music_menu() {
-			Gtk.MenuItem ret = new Gtk.MenuItem.with_mnemonic("_Music");
+			Gtk.MenuItem ret = new Gtk.MenuItem.with_mnemonic(
+				GLib._("_Music")
+			);
 			Gtk.ImageMenuItem img_item;
 			Gtk.MenuItem item;
 			Gtk.Image img;
@@ -51,19 +53,25 @@ namespace Abraca {
 			Gtk.Menu subsub = new Gtk.Menu();
 
 			img = new Gtk.Image.from_stock(Gtk.STOCK_FILE, Gtk.IconSize.MENU);
-			img_item = new Gtk.ImageMenuItem.with_mnemonic("_Files");
+			img_item = new Gtk.ImageMenuItem.with_mnemonic(
+				GLib._("_Files")
+			);
 			img_item.set_image(img);
 			img_item.activate += on_music_add_file;
 			subsub.append(img_item);
 
 			img = new Gtk.Image.from_stock(Gtk.STOCK_DIRECTORY, Gtk.IconSize.MENU);
-			img_item = new Gtk.ImageMenuItem.with_mnemonic("_Dirs");
+			img_item = new Gtk.ImageMenuItem.with_mnemonic(
+				GLib._("_Dirs")
+			);
 			img_item.set_image(img);
 			img_item.activate += on_music_add_dir;
 			subsub.append(img_item);
 
 			img = new Gtk.Image.from_stock(Gtk.STOCK_NETWORK, Gtk.IconSize.MENU);
-			img_item = new Gtk.ImageMenuItem.with_mnemonic("_URL");
+			img_item = new Gtk.ImageMenuItem.with_mnemonic(
+				GLib._("_URL")
+			);
 			img_item.set_image(img);
 			img_item.activate += on_music_add_url;
 			subsub.append(img_item);
@@ -91,7 +99,9 @@ namespace Abraca {
 		}
 
 		private Gtk.MenuItem create_playlist_menu() {
-			Gtk.MenuItem ret = new Gtk.MenuItem.with_mnemonic("_Playlist");
+			Gtk.MenuItem ret = new Gtk.MenuItem.with_mnemonic(
+				GLib._("_Playlist")
+			);
 			Gtk.MenuItem item;
 			Gtk.ImageMenuItem img_item;
 			Gtk.Image img;
@@ -102,7 +112,9 @@ namespace Abraca {
 			item.sensitive = false;
 			sub.append(item);
 
-			item = new Gtk.MenuItem.with_mnemonic("_New from filter");
+			item = new Gtk.MenuItem.with_mnemonic(
+				GLib._("_New from filter")
+			);
 			//item.activate += on_playlist_new_from_filter();
 			item.sensitive = false;
 			sub.append(item);
@@ -114,19 +126,23 @@ namespace Abraca {
 			);
 
 			img_item = new Gtk.ImageMenuItem.with_mnemonic(
-				"_Add filter results"
+				GLib._("_Add filter results")
 			);
 			img_item.set_image(img);
 			img_item.activate += on_playlist_add_filter_results;
 			sub.append(img_item);
 
-			item = new Gtk.ImageMenuItem.with_mnemonic("_Replace with filter results");
+			item = new Gtk.ImageMenuItem.with_mnemonic(
+				GLib._("_Replace with filter results")
+			);
 			item.activate += on_playlist_replace_with_filter_results;
 			sub.append(item);
 
 			sub.append(new Gtk.SeparatorMenuItem());
 
-			item = new Gtk.ImageMenuItem.with_mnemonic("Configure Sorting");
+			item = new Gtk.ImageMenuItem.with_mnemonic(
+				GLib._("Configure Sorting")
+			);
 			item.activate += on_configure_sorting;
 			sub.append(item);
 
@@ -134,7 +150,9 @@ namespace Abraca {
 			item.activate += on_playlist_clear;
 			sub.append(item);
 
-			item = new Gtk.ImageMenuItem.with_mnemonic("_Shuffle");
+			item = new Gtk.ImageMenuItem.with_mnemonic(
+				GLib._("_Shuffle")
+			);
 			item.activate += on_playlist_shuffle;
 			sub.append(item);
 
@@ -144,7 +162,9 @@ namespace Abraca {
 		}
 
 		private Gtk.MenuItem create_help_menu() {
-			Gtk.MenuItem ret = new Gtk.MenuItem.with_mnemonic("_Help");
+			Gtk.MenuItem ret = new Gtk.MenuItem.with_mnemonic(
+				GLib._("_Help")
+			);
 			Gtk.MenuItem item;
 			Gtk.Menu sub = new Gtk.Menu();
 
@@ -208,12 +228,12 @@ namespace Abraca {
 			d.set_logo(buf);
 
 			d.name = GLib.Environment.get_application_name();
-			d.comments = "A client for the XMMS2 music player";
+			d.comments = GLib._("A client for the XMMS2 music player");
 
 			d.authors = _authors;
 			d.artists = _artists;
 
-			d.copyright = "Copyright © 2007-2008 Abraca Developers";
+			d.copyright = GLib._("Copyright © 2007-2008 Abraca Developers");
 
 			d.license = _license;
 			d.wrap_license = true;

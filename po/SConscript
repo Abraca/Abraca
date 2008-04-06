@@ -1,0 +1,10 @@
+Import('*')
+
+sources = Split("""
+	sv.po
+	en.po
+""")
+
+for po in sources:
+	mo = env.MsgFmt(po, MSGFMT_NAME='abraca')
+	env.Alias('install', env.InstallAs(mo[0].attributes.install_path, mo))

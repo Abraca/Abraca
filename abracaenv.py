@@ -32,7 +32,7 @@ class AbracaEnvironment(SConsEnvironment):
 			val = self._import_variable(key)
 			if val:
 				kwargs[key] = [val]
-		
+
 		kwargs['tools'] = ['gcc', 'gnulink']
 
 		SConsEnvironment.__init__(self, *args, **kwargs)
@@ -49,6 +49,7 @@ class AbracaEnvironment(SConsEnvironment):
 
 		# Load the custom vala builder
 		self.Tool('vala', toolpath=['scons-tools'])
+		self.Tool('msgfmt', toolpath=['scons-tools'])
 
 		# Beef up performance a bit by caching implicit deps
 		self.SetOption('implicit_cache', True)
@@ -59,6 +60,8 @@ class AbracaEnvironment(SConsEnvironment):
 			BoolOption('verbose', 'build silently', 'yes'),
 			BoolOption('debug', 'build debug variant', 'no'),
 			PathOption('PREFIX', 'install prefix', '/usr/local'),
+			PathOption('DATADIR', 'data dir', '$PREFIX/share'),
+			PathOption('LOCALEDIR', 'locale dir', '$DATADIR/locale'),
 		)
 		opts.Update(self)
 		opts.Save('.scons_options', self)
@@ -71,6 +74,7 @@ class AbracaEnvironment(SConsEnvironment):
 			self['VALACOMSTR']        = 'Generating: $TARGETS'
 			self['CCCOMSTR']          = '  Building: $TARGET'
 			self['LINKCOMSTR']        = '   Linking: $TARGET'
+			self['MSGFMTCOMSTR']      = '  Localize: $TARGET'
 
 	def _import_variable(self, name):
 		if ARGUMENTS.has_key(name):

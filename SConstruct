@@ -28,3 +28,4 @@ env.BuildDir('build', '.')
 
 env.SConscript('build/src/SConscript', exports='env', duplicate=0)
 env.SConscript('build/data/SConscript', exports='env', duplicate=0)
+env.SConscript('build/po/SConscript', exports='env', duplicate=0)

@@ -357,22 +357,22 @@ namespace Abraca {
 			m.insert("id", mid.to_pointer());
 
 			if (!res.get_dict_entry_string("artist", out tmp)) {
-				tmp = "Unknown";
+				tmp = GLib._("Unknown");
 			}
 			m.insert("artist", (pointer) tmp);
 
 			if (!res.get_dict_entry_string("album", out tmp)) {
-				tmp = "Unknown";
+				tmp = GLib._("Unknown");
 			}
 			m.insert("album", (pointer) tmp);
 
 			if (!res.get_dict_entry_string("genre", out tmp)) {
-				tmp = "Unknown";
+				tmp = GLib._("Unknown");
 			}
 			m.insert("genre", (pointer) tmp);
 
 			if (!res.get_dict_entry_string("title", out tmp)) {
-				tmp = "Unknown";
+				tmp = GLib._("Unknown");
 			}
 			m.insert("title", (pointer) tmp);
 

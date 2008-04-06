@@ -292,7 +292,7 @@ namespace Abraca {
 			cell.ellipsize = Pango.EllipsizeMode.END;
 
 			column = new Gtk.TreeViewColumn.with_attributes(
-				"Artist", cell, "text", FilterColumn.Artist, null
+				GLib._("Artist"), cell, "text", FilterColumn.Artist, null
 			);
 			column.resizable = true;
 			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
@@ -300,7 +300,7 @@ namespace Abraca {
 			insert_column(column, -1);
 
 			column = new Gtk.TreeViewColumn.with_attributes(
-				"Title", cell, "text", FilterColumn.Title, null
+				GLib._("Title"), cell, "text", FilterColumn.Title, null
 			);
 			column.resizable = true;
 			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
@@ -308,7 +308,7 @@ namespace Abraca {
 			insert_column(column, -1);
 
 			column = new Gtk.TreeViewColumn.with_attributes(
-				"Album", cell, "text", FilterColumn.Album, null
+				GLib._("Album"), cell, "text", FilterColumn.Album, null
 			);
 			column.resizable = true;
 			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
@@ -345,7 +345,7 @@ namespace Abraca {
 			item.activate += on_menu_add;
 			filter_menu.append(item);
 
-			item = new Gtk.MenuItem.with_mnemonic("_Replace");
+			item = new Gtk.MenuItem.with_mnemonic(GLib._("_Replace"));
 			item.activate += on_menu_replace;
 			filter_menu.append(item);
 

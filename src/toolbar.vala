@@ -140,7 +140,9 @@ namespace Abraca {
 		}
 
 		private void create_track_label() {
-			_track_label = new Gtk.Label("No Track");
+			_track_label = new Gtk.Label(
+				GLib._("No Track")
+			);
 
 			pack_start(_track_label, false, true, 4);
 		}
@@ -176,7 +178,7 @@ namespace Abraca {
 			pos_sec = (pos % 60000) / 1000;
 
 			info = GLib.Markup.printf_escaped(
-				"%3d:%02d  of %3d:%02d",
+				GLib._("%3d:%02d  of %3d:%02d"),
 				pos_min, pos_sec, dur_min, dur_sec
 			);
 
@@ -203,15 +205,15 @@ namespace Abraca {
 
 
 			if (!res.get_dict_entry_string("artist", out artist)) {
-				artist = "Unknown";
+				artist = GLib._("Unknown");
 			}
 
 			if (!res.get_dict_entry_string("title", out title)) {
-				title = "Unknown";
+				title = GLib._("Unknown");
 			}
 
 			if (!res.get_dict_entry_string("album", out album)) {
-				album = "Unknown";
+				album = GLib._("Unknown");
 			}
 
 			if (!res.get_dict_entry_string("picture_front", out cover)) {
@@ -227,8 +229,8 @@ namespace Abraca {
 			}
 
 			info = GLib.Markup.printf_escaped(
-				"<b>%s</b>\n" +
-				"<small>by</small> %s <small>from</small> %s",
+				GLib._("<b>%s</b>\n" +
+				"<small>by</small> %s <small>from</small> %s"),
 				title, artist, album
 			);
 
