@@ -86,13 +86,16 @@ class AbracaEnvironment(SConsEnvironment):
 
 		return value
 
-	def Configure(self):
-		conf = SConsEnvironment.Configure(self, custom_tests = {
-			'CheckPkgConfig' : AbracaEnvironment.CheckPkgConfig,
-			'CheckPkg' : AbracaEnvironment.CheckPkg,
-			'CheckVala' : AbracaEnvironment.CheckVala,
-			'CheckCCompiler' : AbracaEnvironment.CheckCCompiler,
-		})
+	def Configure(self, config_h):
+		conf = SConsEnvironment.Configure(self,
+			config_h = config_h,
+			custom_tests = {
+				'CheckPkgConfig' : AbracaEnvironment.CheckPkgConfig,
+				'CheckPkg' : AbracaEnvironment.CheckPkg,
+				'CheckVala' : AbracaEnvironment.CheckVala,
+				'CheckCCompiler' : AbracaEnvironment.CheckCCompiler,
+			}
+		)
 		return conf
 
 	def DebugVariant(self):

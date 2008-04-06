@@ -646,7 +646,7 @@ namespace Abraca {
 			/* Load the playlist icon */
 			try {
 				_playlist_pixbuf = new Gdk.Pixbuf.from_file(
-					Build.Config.PREFIX + "/share/pixmaps/abraca-playlist-22.png"
+					Build.Config.DATADIR + "/pixmaps/abraca-playlist-22.png"
 				);
 			} catch (GLib.Error e) {
 				GLib.stdout.printf("Unable to load playlist icon. %s\n", e.message);
@@ -655,7 +655,7 @@ namespace Abraca {
 			/* ..and the collection icon */
 			try {
 				_collection_pixbuf = new Gdk.Pixbuf.from_file(
-					Build.Config.PREFIX + "/share/pixmaps/abraca-collection-22.png"
+					Build.Config.DATADIR + "/pixmaps/abraca-collection-22.png"
 				);
 			} catch (GLib.Error e) {
 				GLib.stdout.printf("Unable to load collection icon. %s\n", e.message);

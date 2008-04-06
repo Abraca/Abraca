@@ -17,7 +17,7 @@ vala_sources = """
 	collection_cellrenderer.vala
 """.split()
 
-sources = env.Vala(vala_sources, VALADEFINES = {'PREFIX':'$PREFIX'})
+sources = env.Vala(vala_sources)
 prog = env.Program('abraca', sources + ['utils/playlist_map.c'])
 
 env.Append(CPPPATH = ['utils'])

@@ -14,38 +14,8 @@
 
 import SCons
 
-def vala_defines(target, source, env):
-	defines = source[0].read()
-
-	buffer = ''
-	buffer += 'namespace Build {\n'
-	buffer += '\tpublic class Config {\n'
-
-	for pair in defines.items():
-		buffer += '\t\tpublic const string %s = "%s";\n' % pair
-
-	buffer += '\t}\n'
-	buffer += '}\n'
-
-	fd = file(str(target[0]), 'w+')
-	fd.write(buffer)
-	fd.close()
-
 def vala_emitter(target, source, env):
 	target = []
-
-	defines = env.get('VALADEFINES')
-	if defines:
-		if not SCons.Util.is_Dict(defines):
-			raise SCons.Errors.UserError('ValaDefines only support dict values')
-
-		for k, v in defines.items():
-			if not SCons.Util.is_String(v):
-				raise SCons.Errors.UserError('Defines dict can only contain strings')
-			defines[k] = env.subst(v)
-
-		conf = SCons.Node.Python.Value(defines)
-		source += env._ValaDefines('build-config.vala', conf)
 
 	for src in source:
 		tgt = src.target_from_source('', '.c')
@@ -58,7 +28,6 @@ def generate(env):
 	env['VALAC'] = 'valac'
 	env['VALACOM'] = '$VALAC --quiet -C -d $TARGET.dir $VALAFLAGS $_VALAPKGPATHS $_VALAPKGS $SOURCES'
 	env['VALAFLAGS'] = SCons.Util.CLVar('')
-	env['VALADEFINES'] = SCons.Util.CLVar('')
 
 	env['VALAPKGS'] = SCons.Util.CLVar('')
 	env['VALAPKGPREFIX'] = '--pkg='
@@ -67,16 +36,6 @@ def generate(env):
 	env['VALAPKGPATH'] = SCons.Util.CLVar('')
 	env['VALAPKGPATHPREFIX'] = '--vapidir='
 	env['_VALAPKGPATHS'] = '${_defines(VALAPKGPATHPREFIX, VALAPKGPATH, None, __env__)}'
-
-	vala_defines_action = SCons.Action.Action(
-		vala_defines,
-		'$VALADEFINESCOMSTR',
-	)
-	vala_defines_builder = SCons.Builder.Builder(
-		action = vala_defines_action,
-		suffix = '.vala'
-	)
-	env['BUILDERS']['_ValaDefines'] = vala_defines_builder
 
 	vala_compiler_action = SCons.Action.Action(
 		'$VALACOM',

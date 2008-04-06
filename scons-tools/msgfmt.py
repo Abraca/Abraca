@@ -44,8 +44,6 @@ def generate(env):
 	env['BUILDERS']['MsgFmt'] = msgfmt_builder
 
 	env.Append(CPPDEFINES = [('GETTEXT_PACKAGE','\\"abraca\\"')])
-	env.Append(CPPDEFINES = [('ENABLE_NLS','1')])
-	env.Append(CPPDEFINES = [('LOCALE_DIR','$LOCALEDIR')])
 
 def exists(env):
 	return env.Detect('msgfmt')
