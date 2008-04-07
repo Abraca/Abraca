@@ -18,9 +18,11 @@ def vala_emitter(target, source, env):
 	target = []
 
 	for src in source:
-		tgt = src.target_from_source('', '.c')
-		env.SideEffect(src.target_from_source('', '.h'), src)
-		target.append(tgt)
+		tmp = src.target_from_source('', '.c')
+		target.append(tmp)
+
+		tmp = src.target_from_source('', '.h')
+		target.append(tmp)
 
 	return target, source
 
@@ -50,7 +52,12 @@ def generate(env):
 		src_suffix = '.vala',
 		suffix = '.c'
 	)
-	env['BUILDERS']['Vala'] = vala_builder
+	env['BUILDERS']['_Vala'] = vala_builder
+
+	def _vala_wrapper(env, lst, *args, **kwargs):
+		return [x for x in env._Vala(lst, *args, **kwargs) if str(x).endswith('.c')]
+
+	env.AddMethod(_vala_wrapper, 'Vala')
 
 def exists(env):
 	return env.Detect('valac')

@@ -139,7 +139,7 @@ class AbracaEnvironment(SConsEnvironment):
 	def CheckVala(ctx, fail=True):
 		ctx.Message('Checking for valac... ')
 		code = 'public class Test { public static void main (string[] args) { } }'
-		exit_code = ctx.TryBuild(ctx.env.Vala, code, '.vala')
+		exit_code = ctx.TryBuild(ctx.env._Vala, code, '.vala')
 		ctx.Result(exit_code)
 		if not exit_code and fail:
 			raise SCons.Errors.UserError('The valac compiler is required to build')
