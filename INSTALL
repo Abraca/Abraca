@@ -1,24 +1,49 @@
 You'll need the following applications and libraries to build and run Abraca:
 
-    o XMMS2 DrKosmos+WiP (at least 1ac9a98c39cdb684a7bc318c5d5a2c5316cded72)
-    o GTK 2.12 (perhaps older)
-    o pkg-config 0.22 (perhaps older)
+    o XMMS2 0.4DrKosmos-61-g1ac9a98 (or newer)
+    o GTK 2.12 (older may work)
+    o pkg-config 0.22 (older may work)
     o vala 0.1.7
-    o gcc 4.2.3 (perhaps older)
+    o gcc 4.2.3 (older may work)
+
 
 Execute the following commands to compile and install Abraca:
 
     scons PREFIX=/usr/local
     scons install
 
+
 To clean the build directory:
 
     scons -c
+
 
 Project related options:
 
     scons -h
 
+
 SCons related options:
 
     scons -H
+
+
+Environment variables SCons listens to:
+
+    VALAC, CC, LINKFLAGS, PROGSUFFIX
+    PKG_CONFIG_FLAGS, PKG_CONFIG_LIBDIR, PKG_CONFIG_PATH,
+
+
+Crosscompiling Linux -> Windows:
+
+    wget http://abraca.xmms.se/gtkwin32.tar.gz
+
+    tar xvfz gtkwin32.tar.gz
+
+    cd abraca
+
+    ./scons CC=/usr/bin/i586-mingw32msvc-gcc \
+       PKG_CONFIG_FLAGS="--define-variable=prefix=/path/to/gtkwin32/" \
+       PKG_CONFIG_LIBDIR="/path/to/gtkwin32/lib/pkgconfig" \
+       LINKFLAGS="-Wl,--subsystem,windows" \
+       PROGSUFFIX=".exe"
