@@ -22,4 +22,4 @@ prog = env.Program('abraca', sources + ['utils/playlist_map.c'])
 
 env.Append(CPPPATH = ['utils'])
 
-env.Alias('install', env.Install('$PREFIX/bin', prog))
+env.Alias('install', env.Install('$BINDIR', prog))

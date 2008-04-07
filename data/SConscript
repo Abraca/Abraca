@@ -8,9 +8,9 @@ images = Split("""
 """)
 
 env.Alias('install',
-	env.Install('$PREFIX/share/pixmaps', images)
+	env.Install('$DATADIR/pixmaps', images)
 )
 
 env.Alias('install',
-	env.Install('$PREFIX/share/applications', 'abraca.desktop')
+	env.Install('$DATADIR/applications', 'abraca.desktop')
 )

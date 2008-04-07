@@ -18,8 +18,7 @@ import os
 def msgfmt_emitter(target, source, env):
 	base, ext = SCons.Util.splitext(source[0].name)
 
-	path = os.path.join('$LOCALEDIR', base, 'LC_MESSAGES',
-	                    env.subst('${MSGFMT_NAME}.mo'))
+	path = os.path.join(base, 'LC_MESSAGES', env.subst('${MSGFMT_NAME}.mo'))
 
 	target[0].attributes.install_path = path
 
