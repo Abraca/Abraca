@@ -645,18 +645,22 @@ namespace Abraca {
 
 			/* Load the playlist icon */
 			try {
-				_playlist_pixbuf = new Gdk.Pixbuf.from_file(
+				/* TODO: Remove tmp variable once Vala bug has been fixed */
+				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_file(
 					Build.Config.DATADIR + "/pixmaps/abraca-playlist-22.png"
 				);
+				_playlist_pixbuf = tmp;
 			} catch (GLib.Error e) {
 				GLib.stdout.printf("Unable to load playlist icon. %s\n", e.message);
 			}
 
 			/* ..and the collection icon */
 			try {
-				_collection_pixbuf = new Gdk.Pixbuf.from_file(
+				/* TODO: Remove tmp variable once Vala bug has been fixed */
+				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_file(
 					Build.Config.DATADIR + "/pixmaps/abraca-collection-22.png"
 				);
+				_collection_pixbuf = tmp;
 			} catch (GLib.Error e) {
 				GLib.stdout.printf("Unable to load collection icon. %s\n", e.message);
 			}
