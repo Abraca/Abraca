@@ -32,7 +32,7 @@ namespace Abraca {
 		/** context menu */
 		private Gtk.Menu filter_menu;
 
-		private const string[] _sort_order = {
+		private const string[]? _sort_order = {
 			"artist", "album", "tracknr"
 		};
 
@@ -177,7 +177,7 @@ namespace Abraca {
 			weak Gtk.TreeRowReference row;
 			string info;
 			Gtk.TreeIter iter;
-			Gtk.TreePath path;
+			weak Gtk.TreePath path;
 
 			mid = m.lookup("id").to_int();
 

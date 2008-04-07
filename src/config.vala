@@ -211,7 +211,7 @@ namespace Abraca {
 				table.attach_defaults(entrys[i], 1, 2, i + 0, i + 1);
 			}
 
-			dialog.vbox.pack_start_defaults(table);
+			((Gtk.VBox)dialog.vbox).pack_start_defaults(table);
 			dialog.show_all();
 
 			response_id = dialog.run();

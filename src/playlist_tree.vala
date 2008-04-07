@@ -867,7 +867,7 @@ namespace Abraca {
 			);
 
 			foreach (weak Gtk.TreeRowReference row in lst) {
-				Gtk.TreePath path;
+				weak Gtk.TreePath path;
 				Gtk.TreeIter iter;
 
 				path = row.get_path();

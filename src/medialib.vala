@@ -31,7 +31,7 @@ namespace Abraca {
 
 			Gtk.Entry entry = new Gtk.Entry();
 
-			dialog.vbox.pack_start_defaults(entry);
+			((Gtk.VBox)dialog.vbox).pack_start_defaults(entry);
 			dialog.show_all();
 
 			if (dialog.run() == Gtk.ResponseType.OK) {

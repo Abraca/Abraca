@@ -179,7 +179,7 @@ namespace Gdk {
 		public uint width;
 		public uint height;
 		[NoArrayLength]
-		public weak uchar[] pixel_data;
+		public uchar[] pixel_data;
 		public bool deserialize ([CCode (array_length_pos = 0.9)] uchar[] stream) throws GLib.Error;
 		public pointer from_pixbuf (Gdk.Pixbuf pixbuf, bool use_rle);
 		public weak uchar[] serialize ();

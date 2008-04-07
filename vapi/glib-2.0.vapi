@@ -720,7 +720,7 @@ namespace GLib {
 
 		[CCode (cname = "G_TYPE_FROM_INSTANCE")]
 		public Type get_type ();
-		public Object @ref ();
+		public weak Object @ref ();
 		public void unref ();
 		public Object ref_sink ();
 		public void get (...);
@@ -1076,7 +1076,8 @@ namespace GLib {
 	}
 	
 	public static delegate int PollFunc (PollFD[] ufds, uint nfsd, int timeout_);
-	
+
+	[CCode (cname = "GSource")]
 	public class TimeoutSource : Source {
 		public TimeoutSource (uint interval);
 	}
@@ -1087,7 +1088,8 @@ namespace GLib {
 		public static uint add_seconds (uint interval, SourceFunc function);
 		public static uint add_seconds_full (int priority, uint interval, SourceFunc function, DestroyNotify notify);
 	}
-	
+
+	[CCode (cname = "GSource")]
 	public class IdleSource : Source {
 		public IdleSource ();
 	}
@@ -1103,15 +1105,15 @@ namespace GLib {
 	public struct Pid {
 	}
 
-	public static delegate void ChildWatchFunc (Pid pid, int status, pointer data);
+	public delegate void ChildWatchFunc (Pid pid, int status);
 	
 	public class ChildWatchSource : Source {
 		public ChildWatchSource (Pid pid, int status, pointer data);
 	}
 	
 	public static class ChildWatch {
-		public static uint add (Pid pid, ChildWatchFunc function, pointer data);
-		public static uint add_full (int priority, Pid pid, ChildWatchFunc function, pointer data, DestroyNotify notify);
+		public static uint add (Pid pid, ChildWatchFunc function);
+		public static uint add_full (int priority, Pid pid, ChildWatchFunc function, DestroyNotify notify);
 	}
 	
 	public struct PollFD {
@@ -1208,7 +1210,7 @@ namespace GLib {
 	public class Mutex {
 		public Mutex ();
 		public void @lock ();
-		public bool try_lock ();
+		public bool trylock ();
 		public void unlock ();
 	}
 	
@@ -1313,32 +1315,40 @@ namespace GLib {
 	
 	[CCode (ref_function = "g_io_channel_ref", unref_function = "g_io_channel_unref")]
 	public class IOChannel : Boxed {
-		public IOChannel.file (string filename, string mode) throws FileError;
 		[CCode (cname = "g_io_channel_unix_new")]
 		public IOChannel.unix_new (int fd);
 		public int unix_get_fd ();
-		[NoArrayLength]
-		public IOStatus read_chars (char[] buf, size_t count, out size_t bytes_read) throws ConvertError, IOChannelError;
+		[CCode (cname = "g_io_channel_win32_new_fd")]
+		public IOChannel.win32_new_fd (int fd);
+		public void init ();
+		public IOChannel.file (string filename, string mode) throws FileError;
+		public IOStatus read_chars (char[] buf, out size_t bytes_read) throws ConvertError, IOChannelError;
 		public IOStatus read_unichar (out unichar thechar) throws ConvertError, IOChannelError;
 		public IOStatus read_line (out string str_return, out size_t length, out size_t terminator_pos) throws ConvertError, IOChannelError;
 		public IOStatus read_line_string (String buffer, out size_t terminator_pos) throws ConvertError, IOChannelError;
 		public IOStatus read_to_end (out string str_return, out size_t length) throws ConvertError, IOChannelError;
-		[NoArrayLength]
-		public IOStatus write_chars (char[] buf, ssize_t count, out size_t bytes_written) throws ConvertError, IOChannelError;
+		public IOStatus write_chars (char[] buf, out size_t bytes_written) throws ConvertError, IOChannelError;
 		public IOStatus write_unichar (unichar thechar) throws ConvertError, IOChannelError;
 		public IOStatus flush () throws IOChannelError;
 		public IOStatus seek_position (int64 offset, SeekType type) throws IOChannelError;
 		public IOStatus shutdown (bool flush) throws IOChannelError;
-	}
-
-	[CCode (cprefix = "G_IO_", type_id = "G_TYPE_IO_CONDITION")]
-	public enum IOCondition {
-		IN,
-		OUT,
-		PRI,
-		ERR,
-		HUP,
-		NVAL
+		[CCode (cname = "g_io_create_watch")]
+		public GLib.Source create_watch (IOCondition condition);
+		[CCode (cname = "g_io_add_watch")]
+		public uint add_watch (IOCondition condition, IOFunc func);
+		public size_t get_buffer_size ();
+		public void set_buffer_size (size_t size);
+		public IOCondition get_buffer_condition ();
+		public IOFlags get_flags ();
+		public IOStatus set_flags (IOFlags flags) throws IOChannelError;
+		public weak string get_line_term (out int length);
+		public void set_line_term (string line_term, int length);
+		public bool get_buffered ();
+		public void set_buffered (bool buffered);
+		public weak string get_encoding ();
+		public IOStatus set_encoding (string encoding) throws IOChannelError;
+		public bool get_close_on_unref ();
+		public void set_close_on_unref (bool do_close);
 	}
 
 	[CCode (cprefix = "G_SEEK_")]
@@ -1355,8 +1365,7 @@ namespace GLib {
 		AGAIN
 	}
 
-	[ErrorDomain]
-	public enum IOChannelError {
+	public errordomain IOChannelError {
 		FBIG,
 		INVAL,
 		IO,
@@ -1366,6 +1375,30 @@ namespace GLib {
 		OVERFLOW,
 		PIPE,
 		FAILED
+	}
+
+	[CCode (cprefix = "G_IO_", type_id = "G_TYPE_IO_CONDITION")]
+	public enum IOCondition {
+		IN,
+		OUT,
+		PRI,
+		ERR,
+		HUP,
+		NVAL
+	}
+
+	public delegate bool IOFunc (IOChannel source, IOCondition condition);
+
+	[CCode (cprefix = "G_IO_FLAG_")]
+	public enum IOFlags {
+		APPEND,
+		NONBLOCK,
+		READABLE,
+		WRITEABLE,
+		SEEKABLE,
+		MASK,
+		GET_MASK,
+		SET_MASK
 	}
 
 	/* Error Reporting */
@@ -2100,7 +2133,7 @@ namespace GLib {
 	}
 
 	public static class Shell {
-		public static bool parse_argv (string! command_line, out int argcp, out string[] argvp) throws ShellError;
+		public static bool parse_argv (string! command_line, [CCode (array_length_pos = 1.9)] out string[] argvp) throws ShellError;
 		public static string! quote (string! unquoted_string);
 		public static string! unquote (string! quoted_string) throws ShellError;
 	}
