@@ -89,8 +89,8 @@ namespace Abraca {
 		}
 
 		private void create_widgets() {
-			pack1(create_left_box(), false, true);
-			pack2(create_right_box(), true, true);
+			pack1(create_left_box(), true, true);
+			pack2(create_right_box(), false, true);
 		}
 
 		private Gtk.Box create_left_box() {

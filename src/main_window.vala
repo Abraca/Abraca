@@ -48,6 +48,7 @@ namespace Abraca {
 
 			width_request = 800;
 			height_request = 600;
+			allow_shrink = true;
 
 			destroy += on_quit;
 
