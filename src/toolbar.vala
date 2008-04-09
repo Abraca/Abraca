@@ -23,6 +23,7 @@ namespace Abraca {
 
 		private int _status;
 		private int _duration;
+		private uint _pos;
 		private bool _seek;
 
 		private Gtk.Image _coverart;
@@ -124,9 +125,9 @@ namespace Abraca {
 			weak Gtk.HScale scale = (Gtk.HScale) widget;
 
 			double percent = scale.get_value();
-			uint pos = (uint)(_duration * percent);
+			_pos = (uint)(_duration * percent);
 
-			update_time(pos);
+			update_time_label();
 
 			return false;
 		}
@@ -153,14 +154,14 @@ namespace Abraca {
 			);
 		}
 
-		private void update_time(uint pos) {
+		private void update_time_label() {
 			/* This is a HACK to circumvent a bug in XMMS2 */
 			if (_status == Xmms.PlaybackStatus.STOP) {
-				pos = 0;
+				_pos = 0;
 			}
 
 			if (_duration > 0) {
-				double percent = (double) pos / (double) _duration;
+				double percent = (double) _pos / (double) _duration;
 				_time_slider.set_value(percent);
 				_time_slider.set_sensitive(true);
 			} else {
@@ -174,8 +175,8 @@ namespace Abraca {
 			dur_min = _duration / 60000;
 			dur_sec = (_duration % 60000) / 1000;
 
-			pos_min = pos / 60000;
-			pos_sec = (pos % 60000) / 1000;
+			pos_min = _pos / 60000;
+			pos_sec = (_pos % 60000) / 1000;
 
 			info = GLib.Markup.printf_escaped(
 				GLib._("%3d:%02d  of %3d:%02d"),
@@ -187,7 +188,8 @@ namespace Abraca {
 
 		private void on_playback_playtime(Client c, uint pos) {
 			if (_seek == false) {
-				update_time(pos);
+				_pos = pos;
+				update_time_label();
 			}
 		}
 
@@ -236,6 +238,7 @@ namespace Abraca {
 
 			_track_label.set_markup(info);
 			_duration = duration;
+			update_time_label();
 		}
 
 		[InstanceLast]
@@ -313,7 +316,7 @@ namespace Abraca {
 			}
 
 			if (_status == Xmms.PlaybackStatus.STOP) {
-				update_time(0);
+				update_time_label();
 			}
 		}
 	}
