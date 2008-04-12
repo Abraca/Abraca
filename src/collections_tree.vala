@@ -291,16 +291,15 @@ namespace Abraca {
 					name = get_new_playlist_name();
 					c.xmms.playlist_create(name);
 
-					playlist_insert_drop_data(name, selection_data);
-
 					_new_playlist_visible = false;
 				} else {
 					tmp = store.get_path(_playlist_iter);
 					if (_drop_path.is_descendant(tmp)) {
 						model.get(iter, CollColumn.Name, out name);
-						playlist_insert_drop_data(name, selection_data);
 					}
 				}
+
+				playlist_insert_drop_data(info, name, selection_data);
 
 				_drop_path = null;
 			}
@@ -313,15 +312,32 @@ namespace Abraca {
 			Gtk.drag_finish(ctx, true, false, time);
 		}
 
-		private void playlist_insert_drop_data(string name, Gtk.SelectionData sel) {
+		private void playlist_insert_drop_data(uint info, string name,
+		                                       Gtk.SelectionData sel) {
 			Client c = Client.instance();
 
-			/* This should be removed as #515408 gets fixed. */
-			weak uint[] ids = (uint[]) sel.data;
-			ids.length = (int)(sel.length / sizeof(uint));
+			if (_target_entries[info].info == DragDropTargetType.MID) {
+				/* This should be removed as #515408 gets fixed. */
+				weak uint[] ids = (uint[]) sel.data;
+				ids.length = (int)(sel.length / sizeof(uint));
 
-			for(int i = ids.length -1; i >= 0; i--) {
-				c.xmms.playlist_add_id(name, ids[i]);
+				for(int i = ids.length -1; i >= 0; i--) {
+					c.xmms.playlist_add_id(name, ids[i]);
+				}
+			} else if (_target_entries[info].info == DragDropTargetType.COLL) {
+				string[] collection_data;
+				string coll_ns, coll_name;
+				Xmms.Collection coll;
+
+				collection_data = ((string) sel.data).split("/");
+				coll_ns = collection_data[0];
+				coll_name = collection_data[1];
+
+				coll = new Xmms.Collection(Xmms.CollectionType.REFERENCE);
+				coll.attribute_set("reference", coll_name);
+				coll.attribute_set("namespace", coll_ns);
+
+				c.xmms.playlist_add_collection(name, coll, null);
 			}
 		}
 
