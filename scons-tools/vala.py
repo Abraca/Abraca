@@ -29,6 +29,9 @@ def vala_emitter(target, source, env):
 def generate(env):
 	env['VALAC'] = env.get('VALAC', 'valac')
 	env['VALACOM'] = '$VALAC --quiet -C -d $TARGET.dir $VALAFLAGS $_VALAPKGPATHS $_VALAPKGS $SOURCES'
+
+	env['HAVE_VALAC'] = env.Detect(env['VALAC'])
+
 	env['VALAFLAGS'] = SCons.Util.CLVar('')
 
 	env['VALAPKGS'] = SCons.Util.CLVar('')
@@ -60,4 +63,4 @@ def generate(env):
 	env.AddMethod(_vala_wrapper, 'Vala')
 
 def exists(env):
-	return env.Detect('valac')
+	return env.Detect(env.get('VALAC', 'valac'))

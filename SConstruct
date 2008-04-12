@@ -1,6 +1,6 @@
 from abracaenv import AbracaEnvironment
 
-env = AbracaEnvironment()
+env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.4')
 
 env.VariantDir('build', '.')
 
@@ -10,14 +10,15 @@ conf = env.Configure('build/build-config.h')
 conf.CheckVala()
 conf.CheckCCompiler()
 conf.CheckPkgConfig()
+conf.CheckApp('msgfmt')
 
 for pkg in ['gtk+-2.0', 'xmms2-client', 'xmms2-client-glib']:
 	if conf.CheckPkg(pkg):
 		env.AppendPkg(pkg)
 		env.Append(VALAPKGS = [pkg])
 
-conf.Define('APPNAME', '"Abraca"')
-conf.Define('VERSION', '"0.3"')
+conf.Define('APPNAME', '"$APPNAME"')
+conf.Define('VERSION', '"$VERSION"')
 conf.Define('DATADIR', '"' + env.subst(env['DATADIR']) + '"')
 
 conf.Finish()
@@ -34,4 +35,6 @@ else:
 
 env.SConscript('build/src/SConscript', exports='env', duplicate=0)
 env.SConscript('build/data/SConscript', exports='env', duplicate=0)
-env.SConscript('build/po/SConscript', exports='env', duplicate=0)
+
+if env['HAVE_MSGFMT']:
+	env.SConscript('build/po/SConscript', exports='env', duplicate=0)

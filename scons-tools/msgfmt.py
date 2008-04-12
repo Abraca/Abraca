@@ -18,6 +18,10 @@ import os
 def msgfmt_emitter(target, source, env):
 	base, ext = SCons.Util.splitext(source[0].name)
 
+	if not env.subst('$MSGFMT_NAME'):
+		err = '$MSGFMT_NAME not set, (default is $APPNAME)'
+		raise SCons.Errors.UserError(err)
+
 	path = os.path.join(base, 'LC_MESSAGES', env.subst('${MSGFMT_NAME}.mo'))
 
 	target[0].attributes.install_path = path
@@ -25,8 +29,10 @@ def msgfmt_emitter(target, source, env):
 	return target, source
 
 def generate(env):
-	env['MSGFMT'] = 'msgfmt'
+	env['MSGFMT'] = env.get('MSGFMT', 'msgfmt')
 	env['MSGFMTCOM'] = '$MSGFMT -o $TARGET $SOURCE'
+
+	env['HAVE_MSGFMT'] = env.Detect(env['MSGFMT'])
 
 	msgfmt_action = SCons.Action.Action(
 		'$MSGFMTCOM',
@@ -42,7 +48,9 @@ def generate(env):
 	)
 	env['BUILDERS']['MsgFmt'] = msgfmt_builder
 
-	env.Append(CPPDEFINES = [('GETTEXT_PACKAGE','\\"abraca\\"')])
+	env['MSGFMT_NAME'] = '$APPNAME'
+
+	env.Append(CPPDEFINES = [('GETTEXT_PACKAGE','\\"$MSGFMT_NAME\\"')])
 
 def exists(env):
-	return env.Detect('msgfmt')
+	return env.Detect(env.get('MSGFMT', 'msgfmt'))

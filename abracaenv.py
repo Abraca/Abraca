@@ -26,7 +26,8 @@ SCons.Defaults.DefaultEnvironment(tools = [])
 class AbracaEnvironment(SConsEnvironment):
 	def __init__(self, *args, **kwargs):
 		variables = [
-			'VALAC', 'CC', 'LINKFLAGS', 'PKG_CONFIG_FLAGS', 'PROGSUFFIX'
+			'VALAC', 'CC', 'LINKFLAGS', 'PKG_CONFIG_FLAGS',
+			'PROGSUFFIX', 'CPPPATH', 'MSGFMT',
 		]
 		for key in variables:
 			val = self._import_variable(key)
@@ -96,6 +97,7 @@ class AbracaEnvironment(SConsEnvironment):
 				'CheckPkg' : AbracaEnvironment.CheckPkg,
 				'CheckVala' : AbracaEnvironment.CheckVala,
 				'CheckCCompiler' : AbracaEnvironment.CheckCCompiler,
+				'CheckApp' : AbracaEnvironment.CheckApp,
 			}
 		)
 		return conf
@@ -146,3 +148,14 @@ class AbracaEnvironment(SConsEnvironment):
 			raise SCons.Errors.UserError('The valac compiler is required to build')
 		return exit_code
 	CheckVala = staticmethod(CheckVala)
+
+	def CheckApp(ctx, app, fail=False):
+		ctx.Message('Checking for %s... ' % app)
+		key = 'HAVE_' + app.upper()
+		if ctx.env.Detect(app):
+			ctx.env[key] = True
+		else:
+			ctx.env[key] = False
+		ctx.Result(ctx.env[key])
+		return ctx.env[key]
+	CheckApp = staticmethod(CheckApp)

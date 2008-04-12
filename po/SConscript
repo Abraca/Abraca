@@ -6,7 +6,7 @@ sources = Split("""
 """)
 
 for po in sources:
-	mo = env.MsgFmt(po, MSGFMT_NAME='abraca')
+	mo = env.MsgFmt(po)
 
 	env.Alias('install',
 		env.InstallAs('$LOCALEDIR/' + mo[0].attributes.install_path, mo)
