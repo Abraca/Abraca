@@ -57,13 +57,19 @@ namespace Abraca {
 			"artist", "album", "title", "duration"
 		};
 
-		/** allowed drag-n-drop variants */
+		/** drag-n-drop targets */
 		private const Gtk.TargetEntry[] _target_entries = {
 			DragDropTarget.PlaylistRow,
 			DragDropTarget.Collection,
 			DragDropTarget.TrackId,
 			DragDropTarget.UriList,
 			DragDropTarget.Internet
+		};
+
+		/** drag-n-drop sources */
+		private const Gtk.TargetEntry[] _source_entries = {
+			DragDropTarget.PlaylistRow,
+			DragDropTarget.TrackId
 		};
 
 		construct {
@@ -389,7 +395,7 @@ namespace Abraca {
 			                       Gdk.DragAction.MOVE);
 
 			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-			                         _target_entries,
+			                         _source_entries,
 			                         Gdk.DragAction.MOVE);
 
 			drag_data_received += on_drag_data_receive;
@@ -403,6 +409,7 @@ namespace Abraca {
 			weak Gtk.TreeSelection sel = get_selection();
 			weak GLib.List<weak Gtk.TreePath> lst = sel.get_selected_rows(null);
 			GLib.List<uint> pos_list = new GLib.List<uint>();
+			Gdk.Atom dnd_atom;
 
 			string buf = null;
 
@@ -410,6 +417,7 @@ namespace Abraca {
 				foreach (weak Gtk.TreePath p in lst) {
 					pos_list.prepend(p.get_indices()[0]);
 				}
+				dnd_atom = Gdk.Atom.intern(_source_entries[0].target, true);
 			} else {
 				Gtk.TreeIter iter;
 				uint mid;
@@ -418,6 +426,7 @@ namespace Abraca {
 					model.get(iter, PlaylistColumn.ID, out mid);
 					pos_list.prepend(mid);
 				}
+				dnd_atom = Gdk.Atom.intern(_source_entries[1].target, true);
 			}
 
 			uint len = pos_list.length();
@@ -432,10 +441,7 @@ namespace Abraca {
 			weak uchar[] data = (uchar[]) pos_array;
 			data.length = (int)(pos_array.length * sizeof(uint));
 
-			selection_data.set(
-					Gdk.Atom.intern(_target_entries[0].target, true),
-					8, data
-			);
+			selection_data.set(dnd_atom, 8, data);
 
 			return true;
 		}

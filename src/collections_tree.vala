@@ -37,9 +37,14 @@ namespace Abraca {
 
 	public class CollectionsTree : Gtk.TreeView {
 
-		/** allowed drag-n-drop variants */
+		/** drag-n-drop targets */
 		private const Gtk.TargetEntry[] _target_entries = {
 			DragDropTarget.TrackId,
+			DragDropTarget.Collection
+		};
+
+		/** drag-n-drop sources */
+		private const Gtk.TargetEntry[] _source_entries = {
 			DragDropTarget.Collection
 		};
 
@@ -78,7 +83,7 @@ namespace Abraca {
 			row_activated += on_row_activated;
 
 			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-			                         _target_entries,
+			                         _source_entries,
 			                         Gdk.DragAction.MOVE);
 
 			drag_motion += on_drag_motion;
@@ -316,7 +321,7 @@ namespace Abraca {
 		                                       Gtk.SelectionData sel) {
 			Client c = Client.instance();
 
-			if (_target_entries[info].info == DragDropTargetType.MID) {
+			if (info == (uint) DragDropTargetType.MID) {
 				/* This should be removed as #515408 gets fixed. */
 				weak uint[] ids = (uint[]) sel.data;
 				ids.length = (int)(sel.length / sizeof(uint));
@@ -324,7 +329,7 @@ namespace Abraca {
 				for(int i = ids.length -1; i >= 0; i--) {
 					c.xmms.playlist_add_id(name, ids[i]);
 				}
-			} else if (_target_entries[info].info == DragDropTargetType.COLL) {
+			} else if (info == (uint) DragDropTargetType.COLL) {
 				string[] collection_data;
 				string coll_ns, coll_name;
 				Xmms.Collection coll;
