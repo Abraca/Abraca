@@ -17,6 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+using GLib;
+
 namespace Abraca {
 	public enum CollectionType {
 		Invalid = 0,
@@ -181,7 +183,7 @@ namespace Abraca {
 				}
 
 				parts = name.split("-", 2);
-				if (parts[0] == GLib._("New Playlist")) {
+				if (parts[0] == _("New Playlist")) {
 					if (parts[1] != null) {
 						current = parts[1].to_int();
 					} else {
@@ -199,9 +201,9 @@ namespace Abraca {
 			}
 
 			if (highest > 0) {
-				return GLib._("New Playlist") + highest.to_string("-%i");
+				return _("New Playlist") + highest.to_string("-%i");
 			} else {
-				return GLib._("New Playlist");
+				return _("New Playlist");
 			}
 		}
 
@@ -701,7 +703,7 @@ namespace Abraca {
 				CollColumn.Icon, null,
 				CollColumn.Style, Pango.Style.NORMAL,
 				CollColumn.Weight, Pango.Weight.BOLD,
-				CollColumn.Name, GLib._("Collections"),
+				CollColumn.Name, _("Collections"),
 				-1
 			);
 
@@ -711,7 +713,7 @@ namespace Abraca {
 				CollColumn.Icon, null,
 				CollColumn.Style, Pango.Style.NORMAL,
 				CollColumn.Weight, Pango.Weight.BOLD,
-				CollColumn.Name, GLib._("Playlists"),
+				CollColumn.Name, _("Playlists"),
 				-1
 			);
 
@@ -723,14 +725,14 @@ namespace Abraca {
 
 			_collection_menu = new Gtk.Menu();
 
-			item = new Gtk.ImageMenuItem.with_mnemonic(GLib._("_Rename"));
+			item = new Gtk.ImageMenuItem.with_mnemonic(_("_Rename"));
 			item.image = new Gtk.Image.from_stock(
 				Gtk.STOCK_EDIT, Gtk.IconSize.MENU
 			);
 			item.activate += on_menu_collection_rename;
 			_collection_menu.append(item);
 
-			item = new Gtk.ImageMenuItem.with_mnemonic(GLib._("Delete"));
+			item = new Gtk.ImageMenuItem.with_mnemonic(_("Delete"));
 			item.image = new Gtk.Image.from_stock(
 				Gtk.STOCK_DELETE, Gtk.IconSize.MENU
 			);

@@ -17,6 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+using GLib;
+
 namespace Abraca {
 	public class Client : GLib.Object {
 		static Client _instance;
@@ -357,22 +359,22 @@ namespace Abraca {
 			m.insert("id", mid.to_pointer());
 
 			if (!res.get_dict_entry_string("artist", out tmp)) {
-				tmp = GLib._("Unknown");
+				tmp = _("Unknown");
 			}
 			m.insert("artist", (pointer) tmp);
 
 			if (!res.get_dict_entry_string("album", out tmp)) {
-				tmp = GLib._("Unknown");
+				tmp = _("Unknown");
 			}
 			m.insert("album", (pointer) tmp);
 
 			if (!res.get_dict_entry_string("genre", out tmp)) {
-				tmp = GLib._("Unknown");
+				tmp = _("Unknown");
 			}
 			m.insert("genre", (pointer) tmp);
 
 			if (!res.get_dict_entry_string("title", out tmp)) {
-				tmp = GLib._("Unknown");
+				tmp = _("Unknown");
 			}
 			m.insert("title", (pointer) tmp);
 

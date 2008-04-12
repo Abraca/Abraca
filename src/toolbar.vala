@@ -17,6 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+using GLib;
+
 namespace Abraca {
 	public class ToolBar : Gtk.HBox {
 		private Gtk.Button play_pause;
@@ -142,7 +144,7 @@ namespace Abraca {
 
 		private void create_track_label() {
 			_track_label = new Gtk.Label(
-				GLib._("No Track")
+				_("No Track")
 			);
 
 			pack_start(_track_label, false, true, 4);
@@ -179,7 +181,7 @@ namespace Abraca {
 			pos_sec = (_pos % 60000) / 1000;
 
 			info = GLib.Markup.printf_escaped(
-				GLib._("%3d:%02d  of %3d:%02d"),
+				_("%3d:%02d  of %3d:%02d"),
 				pos_min, pos_sec, dur_min, dur_sec
 			);
 
@@ -207,15 +209,15 @@ namespace Abraca {
 
 
 			if (!res.get_dict_entry_string("artist", out artist)) {
-				artist = GLib._("Unknown");
+				artist = _("Unknown");
 			}
 
 			if (!res.get_dict_entry_string("title", out title)) {
-				title = GLib._("Unknown");
+				title = _("Unknown");
 			}
 
 			if (!res.get_dict_entry_string("album", out album)) {
-				album = GLib._("Unknown");
+				album = _("Unknown");
 			}
 
 			if (!res.get_dict_entry_string("picture_front", out cover)) {
@@ -231,7 +233,7 @@ namespace Abraca {
 			}
 
 			info = GLib.Markup.printf_escaped(
-				GLib._("<b>%s</b>\n" +
+				_("<b>%s</b>\n" +
 				"<small>by</small> %s <small>from</small> %s"),
 				title, artist, album
 			);

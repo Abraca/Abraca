@@ -17,6 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+using GLib;
+
 namespace Abraca {
 	public class RightHPaned : Gtk.HPaned {
 		private Gtk.Entry _filter_entry;
@@ -98,7 +100,7 @@ namespace Abraca {
 
 			Gtk.HBox hbox = new Gtk.HBox(false, 6);
 
-			Gtk.Label label = new Gtk.Label(GLib._("Filter:"));
+			Gtk.Label label = new Gtk.Label(_("Filter:"));
 			hbox.pack_start(label, false, false, 0);
 
 			_filter_entry = new Gtk.Entry();

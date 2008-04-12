@@ -17,6 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+using GLib;
+
 namespace Abraca {
 	enum PlaylistColumn {
 		ID = 0,
@@ -227,37 +229,37 @@ namespace Abraca {
 
 			/* Sorting submenu */
 			submenu = new Gtk.Menu();
-			item = new Gtk.MenuItem.with_label(GLib._("Artist"));
+			item = new Gtk.MenuItem.with_label(_("Artist"));
 			item.activate += i => {
 				on_menu_playlist_sort(Abraca.instance().config.sorting_artist);
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label(GLib._("Album"));
+			item = new Gtk.MenuItem.with_label(_("Album"));
 			item.activate += i => {
 				on_menu_playlist_sort(Abraca.instance().config.sorting_album);
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label(GLib._("Title"));
+			item = new Gtk.MenuItem.with_label(_("Title"));
 			item.activate += i => {
 				on_menu_playlist_sort(Abraca.instance().config.sorting_title);
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label(GLib._("Year"));
+			item = new Gtk.MenuItem.with_label(_("Year"));
 			item.activate += i => {
 				on_menu_playlist_sort(Abraca.instance().config.sorting_year);
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label(GLib._("Path"));
+			item = new Gtk.MenuItem.with_label(_("Path"));
 			item.activate += i => {
 				on_menu_playlist_sort(Abraca.instance().config.sorting_path);
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label(GLib._("Custom"));
+			item = new Gtk.MenuItem.with_label(_("Custom"));
 			item.activate += i => {
 				on_menu_playlist_sort(Abraca.instance().config.sorting_custom);
 			};
@@ -267,7 +269,7 @@ namespace Abraca {
 				Gtk.STOCK_SORT_ASCENDING, Gtk.IconSize.MENU
 			);
 
-			img_item = new Gtk.ImageMenuItem.with_label(GLib._("Sort"));
+			img_item = new Gtk.ImageMenuItem.with_label(_("Sort"));
 			img_item.set_image(img);
 			img_item.set_submenu(submenu);
 			_playlist_menu.append(img_item);
@@ -275,19 +277,19 @@ namespace Abraca {
 			/* Filter submenu */
 			submenu = new Gtk.Menu();
 
-			item = new Gtk.MenuItem.with_label(GLib._("By Artist"));
+			item = new Gtk.MenuItem.with_label(_("By Artist"));
 			item.activate += i => {
 				on_menu_playlist_filter("artist");
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label(GLib._("By Album"));
+			item = new Gtk.MenuItem.with_label(_("By Album"));
 			item.activate += i => {
 				on_menu_playlist_filter("album");
 			};
 			submenu.append(item);
 
-			item = new Gtk.MenuItem.with_label(GLib._("By Genre"));
+			item = new Gtk.MenuItem.with_label(_("By Genre"));
 			item.activate += i => {
 				on_menu_playlist_filter("genre");
 			};
@@ -299,7 +301,7 @@ namespace Abraca {
 			img_item.set_submenu(submenu);
 			_playlist_menu.append(img_item);
 
-			item = new Gtk.MenuItem.with_label(GLib._("Shuffle"));
+			item = new Gtk.MenuItem.with_label(_("Shuffle"));
 			item.activate += i => {
 				Client c = Client.instance();
 				c.xmms.playlist_shuffle(_playlist);
@@ -871,7 +873,7 @@ namespace Abraca {
 			dur_sec = (duration % 60000) / 1000;
 
 			info = GLib.Markup.printf_escaped(
-				GLib._("<b>%s</b> - <small>%d:%02d</small>\n" +
+				_("<b>%s</b> - <small>%d:%02d</small>\n" +
 				"<small>by</small> %s <small>from</small> %s"),
 				title, dur_min, dur_sec, artist, album
 			);

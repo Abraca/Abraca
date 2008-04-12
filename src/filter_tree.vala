@@ -17,6 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+using GLib;
+
 namespace Abraca {
 	enum FilterColumn {
 		ID = 0,
@@ -292,7 +294,7 @@ namespace Abraca {
 			cell.ellipsize = Pango.EllipsizeMode.END;
 
 			column = new Gtk.TreeViewColumn.with_attributes(
-				GLib._("Artist"), cell, "text", FilterColumn.Artist, null
+				_("Artist"), cell, "text", FilterColumn.Artist, null
 			);
 			column.resizable = true;
 			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
@@ -300,7 +302,7 @@ namespace Abraca {
 			insert_column(column, -1);
 
 			column = new Gtk.TreeViewColumn.with_attributes(
-				GLib._("Title"), cell, "text", FilterColumn.Title, null
+				_("Title"), cell, "text", FilterColumn.Title, null
 			);
 			column.resizable = true;
 			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
@@ -308,7 +310,7 @@ namespace Abraca {
 			insert_column(column, -1);
 
 			column = new Gtk.TreeViewColumn.with_attributes(
-				GLib._("Album"), cell, "text", FilterColumn.Album, null
+				_("Album"), cell, "text", FilterColumn.Album, null
 			);
 			column.resizable = true;
 			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
@@ -345,7 +347,7 @@ namespace Abraca {
 			item.activate += on_menu_add;
 			filter_menu.append(item);
 
-			item = new Gtk.MenuItem.with_mnemonic(GLib._("_Replace"));
+			item = new Gtk.MenuItem.with_mnemonic(_("_Replace"));
 			item.activate += on_menu_replace;
 			filter_menu.append(item);
 
