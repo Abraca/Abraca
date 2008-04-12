@@ -38,6 +38,9 @@ namespace Abraca {
 		/** current playlist displayed */
 		private string _playlist;
 
+		/** have we scrolled to current position? */
+		private bool _have_scrolled;
+
 		/** current sorting order */
 		private string[] _sort;
 
@@ -689,6 +692,7 @@ namespace Abraca {
 
 			/* Add the new position indicator */
 			if (store.iter_nth_child (out iter, null, (int) pos)) {
+				Gtk.TreePath path;
 				uint mid;
 
 				/* Notify the Client of the current medialib id */
@@ -701,9 +705,14 @@ namespace Abraca {
 					Gtk.STOCK_GO_FORWARD
 				);
 
-				_position = new Gtk.TreeRowReference (
-					model, model.get_path(iter)
-				);
+				path = model.get_path(iter);
+
+				_position = new Gtk.TreeRowReference(model, path);
+
+				if (!_have_scrolled) {
+					scroll_to_cell(path, null, true, (float) 0.25, (float) 0);
+					_have_scrolled = true;
+				}
 			}
 		}
 
@@ -750,6 +759,7 @@ namespace Abraca {
 		 */
 		private void on_playlist_loaded(Client c, string name) {
 			_playlist = name;
+			_have_scrolled = false;
 
 			c.xmms.playlist_list_entries(name).notifier_set(
 				on_playlist_list_entries
