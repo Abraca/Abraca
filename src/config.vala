@@ -60,6 +60,7 @@ namespace Abraca {
 
 		construct {
 			configurables = new GLib.SList<IConfigurable>();
+			register(this);
 		}
 
 		public void register(IConfigurable obj) {
