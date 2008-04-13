@@ -243,6 +243,8 @@ namespace Abraca {
 
 			d.website = "http://abraca.xmms.se/";
 
+			d.version = Build.Config.VERSION;
+
 			d.run();
 			d.hide();
 		}

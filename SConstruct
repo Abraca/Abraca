@@ -1,6 +1,6 @@
 from abracaenv import AbracaEnvironment
 
-env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.4')
+env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.4-WiP')
 
 env.VariantDir('build', '.')
 
@@ -17,8 +17,8 @@ for pkg in ['gtk+-2.0', 'xmms2-client', 'xmms2-client-glib']:
 		env.AppendPkg(pkg)
 		env.Append(VALAPKGS = [pkg])
 
-conf.Define('APPNAME', '"$APPNAME"')
-conf.Define('VERSION', '"$VERSION"')
+conf.Define('APPNAME', env.subst('"$APPNAME"'))
+conf.Define('VERSION', env.subst('"$VERSION"'))
 conf.Define('DATADIR', '"' + env.subst(env['DATADIR']) + '"')
 
 conf.Finish()
