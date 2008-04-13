@@ -117,33 +117,26 @@ namespace Abraca {
 		}
 
 		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
-			string tmp;
-
-			tmp = file.get_string("sorting", "artist");
-			if (tmp != null && tmp != "")
-				sorting_artist = tmp;
-
-			tmp = file.get_string("sorting", "album");
-			if (tmp != null && tmp != "")
-				sorting_album = tmp;
-
-			tmp = file.get_string("sorting", "title");
-			if (tmp != null && tmp != "")
-				sorting_title = tmp;
-
-			tmp = file.get_string("sorting", "year");
-			if (tmp != null && tmp != "")
-				sorting_year = tmp;
-
-			tmp = file.get_string("sorting", "path");
-			if (tmp != null && tmp != "")
-				sorting_path = tmp;
-
-			tmp = file.get_string("sorting", "custom");
-			if (tmp != null || tmp != "")
-				sorting_custom = tmp;
-
-
+			if (file.has_group("sorting")) {
+				if (file.has_key("sorting", "artist")) {
+					sorting_artist = file.get_string("sorting", "artist");
+				}
+				if (file.has_key("sorting", "album")) {
+					sorting_album = file.get_string("sorting", "album");
+				}
+				if (file.has_key("sorting", "title")) {
+					sorting_title = file.get_string("sorting", "title");
+				}
+				if (file.has_key("sorting", "year")) {
+					sorting_year = file.get_string("sorting", "year");
+				}
+				if (file.has_key("sorting", "path")) {
+					sorting_path = file.get_string("sorting", "path");
+				}
+				if (file.has_key("sorting", "custom")) {
+					sorting_custom = file.get_string("sorting", "custom");
+				}
+			}
 		}
 
 		public void get_configuration(GLib.KeyFile file) {
