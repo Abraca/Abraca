@@ -197,7 +197,7 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_medialib_get_info(Xmms.Result #res) {
-			weak string artist, title, album, cover;
+			weak string title, cover;
 			string info;
 			int id;
 			int duration, dur_min, dur_sec, pos;
@@ -205,19 +205,6 @@ namespace Abraca {
 			res.get_dict_entry_int("id", out id);
 			if (!res.get_dict_entry_int("duration", out duration)) {
 				duration = 0;
-			}
-
-
-			if (!res.get_dict_entry_string("artist", out artist)) {
-				artist = _("Unknown");
-			}
-
-			if (!res.get_dict_entry_string("title", out title)) {
-				title = _("Unknown");
-			}
-
-			if (!res.get_dict_entry_string("album", out album)) {
-				album = _("Unknown");
 			}
 
 			if (!res.get_dict_entry_string("picture_front", out cover)) {
@@ -232,14 +219,33 @@ namespace Abraca {
 				);
 			}
 
-			info = GLib.Markup.printf_escaped(
-				_("<b>%s</b>\n" +
-				"<small>by</small> %s <small>from</small> %s"),
-				title, artist, album
-			);
+			if (res.get_dict_entry_string("title", out title)) {
+				weak string artist, album, cover;
+				if (!res.get_dict_entry_string("artist", out artist)) {
+					artist = _("Unknown");
+				}
+
+				if (!res.get_dict_entry_string("album", out album)) {
+					album = _("Unknown");
+				}
+
+				info = GLib.Markup.printf_escaped(
+					_("<b>%s</b>\n" +
+					"<small>by</small> %s <small>from</small> %s"),
+					title, artist, album
+				);
+			} else {
+				weak string url;
+
+				res.get_dict_entry_string("url", out url);
+				info = GLib.Markup.printf_escaped(_("<b>%s</b>"), url);
+			}
+
 
 			_track_label.set_markup(info);
+
 			_duration = duration;
+
 			update_time_label();
 		}
 

@@ -373,10 +373,12 @@ namespace Abraca {
 			}
 			m.insert("genre", (pointer) tmp);
 
-			if (!res.get_dict_entry_string("title", out tmp)) {
-				tmp = _("Unknown");
+			if (res.get_dict_entry_string("title", out tmp)) {
+				m.insert("title", (pointer) tmp);
+			} else {
+				res.get_dict_entry_string("url", out tmp);
+				m.insert("url", (pointer) tmp);
 			}
-			m.insert("title", (pointer) tmp);
 
 			if (!res.get_dict_entry_int("duration", out duration)) {
 				duration = 0;

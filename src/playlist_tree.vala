@@ -870,19 +870,29 @@ namespace Abraca {
 
 			duration = m.lookup("duration").to_int();
 
-			artist = (string) m.lookup("artist");
-			album = (string) m.lookup("album");
-			genre = (string) m.lookup("genre");
-			title = (string) m.lookup("title");
-
 			dur_min = duration / 60000;
 			dur_sec = (duration % 60000) / 1000;
 
-			info = GLib.Markup.printf_escaped(
-				_("<b>%s</b> - <small>%d:%02d</small>\n" +
-				"<small>by</small> %s <small>from</small> %s"),
-				title, dur_min, dur_sec, artist, album
-			);
+			title = (string) m.lookup("title");
+			if (title != null) {
+				artist = (string) m.lookup("artist");
+				album = (string) m.lookup("album");
+				genre = (string) m.lookup("genre");
+
+				info = GLib.Markup.printf_escaped(
+					_("<b>%s</b> - <small>%d:%02d</small>\n" +
+					"<small>by</small> %s <small>from</small> %s"),
+					title, dur_min, dur_sec, artist, album
+				);
+			} else {
+				weak string url = (string) m.lookup("url");
+
+				info = GLib.Markup.printf_escaped(
+					_("<b>%s</b> - <small>%d:%02d</small>"),
+					url, dur_min, dur_sec
+				);
+			}
+
 
 			foreach (weak Gtk.TreeRowReference row in lst) {
 				weak Gtk.TreePath path;
