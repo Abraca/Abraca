@@ -23,6 +23,7 @@ namespace Abraca {
 	public class MenuBar : Gtk.MenuBar {
 
 		private const string[] _authors = {
+				"Christopher Rosell <chrippa@tanuki.se>",
 				"Martin Salzer <stoky@gmx.net>",
 				"Sebastian Sareyko <smoon@nooms.de>",
 				"Tilman Sauerbeck <tilman@xmms.org>",
