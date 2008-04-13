@@ -15,6 +15,7 @@ vala_sources = """
 	abraca.vala
 	dragdroptarget.vala
 	collection_cellrenderer.vala
+	configurable.vala
 """.split()
 
 sources = env.Vala(vala_sources)

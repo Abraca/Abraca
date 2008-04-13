@@ -209,7 +209,7 @@ namespace Abraca {
 				right_hpaned.filter_tree.playlist_add_filter_results();
 		}
 		private void on_configure_sorting(Gtk.MenuItem item) {
-			Abraca.instance().config.show_sorting_dialog();
+			Config.instance().show_sorting_dialog();
 		}
 		private void on_playlist_clear(Gtk.MenuItem item) {
 			Client.instance().xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);

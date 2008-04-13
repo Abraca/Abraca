@@ -18,7 +18,7 @@
  */
 
 namespace Abraca {
-	public class MainHPaned : Gtk.HPaned {
+	public class MainHPaned : Gtk.HPaned, IConfigurable {
 		private CollectionsTree _coll_tree;
 		private RightHPaned _right_hpaned;
 
@@ -39,16 +39,24 @@ namespace Abraca {
 			position_set = false;
 
 			create_widgets();
+
+			Config conf = Config.instance();
+			conf.register(this);
 		}
 
-		public void eval_config() {
-			int pos = Abraca.instance().config.panes_pos1;
 
-			position = pos.clamp(120, 800);
-
-			/* other widgets */
-			_right_hpaned.eval_config();
+		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+			int pos = file.get_integer("panes", "pos1");
+			if (pos > 0) {
+				position = pos;
+			}
 		}
+
+
+		public void get_configuration(GLib.KeyFile file) {
+			file.set_integer("panes", "pos1", position);
+		}
+
 
 		private void create_widgets() {
 			Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(

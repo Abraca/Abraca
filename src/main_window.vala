@@ -18,7 +18,7 @@
  */
 
 namespace Abraca {
-	public class MainWindow : Gtk.Window {
+	public class MainWindow : Gtk.Window, IConfigurable {
 		private MenuBar menubar;
 		private ToolBar _toolbar;
 		private MainHPaned _main_hpaned;
@@ -65,32 +65,45 @@ namespace Abraca {
 				main_hpaned.set_sensitive(true);
 				toolbar.set_sensitive(true);
 			};
+
+			Config conf = Config.instance();
+			conf.register(this);
 		}
 
-		public void eval_config() {
-			/* window size */
-			int w = Abraca.instance().config.main_window_width;
-			int h = Abraca.instance().config.main_window_height;
+		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+			int xpos, ypos, width, height;
+			bool is_maximized;
 
-			if (w > 0 && h > 0)
-				resize(w, h);
+			gravity = file.get_integer("main_win", "gravity");
+			xpos = file.get_integer("main_win", "x");
+			ypos = file.get_integer("main_win", "y");
 
-			/* maximized state */
-			if (Abraca.instance().config.main_window_maximized)
-				maximize();
+			move(xpos, ypos);
 
-			/* gravity */
-			gravity = Abraca.instance().config.main_window_gravity;
+			width =  file.get_integer("main_win", "width");
+			height = file.get_integer("main_win", "height");
 
-			/* window position */
-			int x = Abraca.instance().config.main_window_x;
-			int y = Abraca.instance().config.main_window_y;
-
-			move(x, y);
-
-			/* other widgets */
-			_main_hpaned.eval_config();
+			if (width > 0 && height > 0) {
+				resize(width, height);
+			}
 		}
+
+		public void get_configuration(GLib.KeyFile file) {
+			int xpos, ypos, width, height;
+
+			file.set_integer("main_win", "gravity", gravity);
+
+			get_position(out xpos, out ypos);
+
+			file.set_integer("main_win", "x", xpos);
+			file.set_integer("main_win", "y", ypos);
+
+			get_size(out width, out height);
+
+			file.set_integer("main_win", "width", width);
+			file.set_integer("main_win", "height", height);
+		}
+
 
 		private void create_widgets() {
 			Gtk.VBox vbox6 = new Gtk.VBox(false, 0);

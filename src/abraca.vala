@@ -21,26 +21,16 @@ namespace Abraca {
 	public class Abraca : GLib.Object {
 		static Abraca _instance;
 		private MainWindow _main_window;
-		private Config _config;
 		private Medialib _medialib;
 
 		construct {
 			_main_window = new MainWindow();
-
-			_config = new Config();
-			_config.load();
 			_medialib = new Medialib();
 		}
 
 		public MainWindow main_window {
 			get {
 				return _main_window;
-			}
-		}
-
-		public Config config {
-			get {
-				return _config;
 			}
 		}
 
@@ -58,7 +48,7 @@ namespace Abraca {
 		}
 
 		public void quit() {
-			_config.save();
+			Config.instance().save();
 
 			Gtk.main_quit();
 		}
@@ -70,9 +60,11 @@ namespace Abraca {
 
 			GLib.Environment.set_application_name("Abraca");
 
+			Config conf = Config.instance();
 			Abraca a = Abraca.instance();
 
-			a.main_window.eval_config();
+			conf.load();
+
 			a.main_window.show_all();
 
 			/**

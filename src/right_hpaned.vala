@@ -20,7 +20,7 @@
 using GLib;
 
 namespace Abraca {
-	public class RightHPaned : Gtk.HPaned {
+	public class RightHPaned : Gtk.HPaned, IConfigurable {
 		private Gtk.Entry _filter_entry;
 		private FilterTree _filter_tree;
 		private PlaylistTree _playlist_tree;
@@ -39,13 +39,24 @@ namespace Abraca {
 
 			_filter_entry.changed += on_filter_entry_changed;
 			_filter_entry.activate += on_filter_entry_activate;
+
+			Config conf = Config.instance();
+			conf.register(this);
 		}
 
-		public void eval_config() {
-			int pos = Abraca.instance().config.panes_pos1;
 
-			position = pos.clamp(433, 800);
+		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+			int pos = file.get_integer("panes", "pos2");
+			if (pos > 0) {
+				position = pos;
+			}
 		}
+
+
+		public void get_configuration(GLib.KeyFile file) {
+			file.set_integer("panes", "pos2", position);
+		}
+
 
 		private void on_filter_entry_changed(Gtk.Editable editable) {
 			Xmms.Collection coll;

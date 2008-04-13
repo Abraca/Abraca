@@ -18,46 +18,14 @@
  */
 
 namespace Abraca {
-	public class Config : GLib.Object {
+	public class Config : GLib.Object, IConfigurable {
+		private static Config _instance;
+
+		private GLib.SList<IConfigurable> configurables;
+
 		const string[] _sort_keys = {
 			"Artist", "Album", "Title", "Year", "Path", "Custom"
 		};
-
-		public int main_window_gravity {
-			get; set;
-		}
-
-		public int main_window_x {
-			get; set;
-		}
-
-		public int main_window_y {
-			get; set;
-		}
-
-		public int main_window_width {
-			get; set;
-		}
-
-		public int main_window_height {
-			get; set;
-		}
-
-		public bool main_window_maximized {
-			get; set;
-		}
-
-		public int panes_pos1 {
-			get; set;
-		}
-
-		public int panes_pos2 {
-			get; set;
-		}
-
-		public bool playlist_expanded {
-			get; set;
-		}
 
 		public string sorting_artist {
 			get; set; default("artist,title");
@@ -83,6 +51,21 @@ namespace Abraca {
 			get; set; default("artist,date,album,tracknr,title,url");
 		}
 
+		public static Config instance() {
+			if (_instance == null)
+				_instance = new Config();
+
+			return _instance;
+		}
+
+		construct {
+			configurables = new GLib.SList<IConfigurable>();
+		}
+
+		public void register(IConfigurable obj) {
+			configurables.prepend(obj);
+		}
+
 		private string build_filename() {
 			char[] buf = new char[255];
 
@@ -96,77 +79,79 @@ namespace Abraca {
 		}
 
 		public void load() {
-			GLib.KeyFile f = new GLib.KeyFile();
-			string filename = build_filename();
-			string tmp;
+			GLib.KeyFile file;
+
+			file = new GLib.KeyFile();
 
 			try {
-				f.load_from_file(filename, GLib.KeyFileFlags.NONE);
+				string filename = build_filename();
+				file.load_from_file(filename, GLib.KeyFileFlags.NONE);
 			} catch (GLib.Error ex) {
 				/* First time abraca is launched, no config exists. */
 				return;
 			}
 
-			main_window_gravity = f.get_integer("main_win", "gravity");
-			main_window_x = f.get_integer("main_win", "x");
-			main_window_y = f.get_integer("main_win", "y");
-			main_window_width =  f.get_integer("main_win", "width");
-			main_window_height = f.get_integer("main_win", "height");
-			main_window_maximized = f.get_boolean("main_win", "maximized");
-
-			panes_pos1 = f.get_integer("panes", "pos1");
-			panes_pos2 = f.get_integer("panes", "pos2");
-
-			playlist_expanded = f.get_boolean("playlist", "expanded");
-
-			tmp = f.get_string("sorting", "artist");
-			if (tmp != null && tmp != "")
-				sorting_artist = tmp;
-
-			tmp = f.get_string("sorting", "album");
-			if (tmp != null && tmp != "")
-				sorting_album = tmp;
-
-			tmp = f.get_string("sorting", "title");
-			if (tmp != null && tmp != "")
-				sorting_title = tmp;
-
-			tmp = f.get_string("sorting", "year");
-			if (tmp != null && tmp != "")
-				sorting_year = tmp;
-
-			tmp = f.get_string("sorting", "path");
-			if (tmp != null && tmp != "")
-				sorting_path = tmp;
-
-			tmp = f.get_string("sorting", "custom");
-			if (tmp != null || tmp != "")
-				sorting_custom = tmp;
+			foreach (weak IConfigurable conf in configurables) {
+				try {
+					conf.set_configuration(file);
+				} catch (GLib.KeyFileError e) {
+				}
+			}
 		}
 
 		public void save() {
-			GLib.KeyFile f = new GLib.KeyFile();
-
-			f.set_integer("main_win", "gravity", main_window_gravity);
-			f.set_integer("main_win", "x", main_window_x);
-			f.set_integer("main_win", "y", main_window_y);
-			f.set_integer("main_win", "width", main_window_width);
-			f.set_integer("main_win", "height", main_window_height);
-			f.set_boolean("main_win", "maximized", main_window_maximized);
-			f.set_integer("panes", "pos1", panes_pos1);
-			f.set_integer("panes", "pos2", panes_pos2);
-			f.set_boolean("playlist", "expanded", playlist_expanded);
-			f.set_string("sorting", "artist", sorting_artist);
-			f.set_string("sorting", "album", sorting_album);
-			f.set_string("sorting", "title", sorting_title);
-			f.set_string("sorting", "year", sorting_year);
-			f.set_string("sorting", "path", sorting_path);
-			f.set_string("sorting", "custom", sorting_custom);
-
-			GLib.FileStream stream = GLib.FileStream.open(build_filename(), "w");
-
+			GLib.FileStream stream;
+			GLib.KeyFile file;
+			/* TODO: Should be gsize */
 			uint length;
-			stream.puts(f.to_data(out length));
+
+			file = new GLib.KeyFile();
+
+			foreach (weak IConfigurable conf in configurables) {
+					conf.get_configuration(file);
+			}
+
+			stream = GLib.FileStream.open(build_filename(), "w");
+			stream.puts(file.to_data(out length));
+		}
+
+		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+			string tmp;
+
+			tmp = file.get_string("sorting", "artist");
+			if (tmp != null && tmp != "")
+				sorting_artist = tmp;
+
+			tmp = file.get_string("sorting", "album");
+			if (tmp != null && tmp != "")
+				sorting_album = tmp;
+
+			tmp = file.get_string("sorting", "title");
+			if (tmp != null && tmp != "")
+				sorting_title = tmp;
+
+			tmp = file.get_string("sorting", "year");
+			if (tmp != null && tmp != "")
+				sorting_year = tmp;
+
+			tmp = file.get_string("sorting", "path");
+			if (tmp != null && tmp != "")
+				sorting_path = tmp;
+
+			tmp = file.get_string("sorting", "custom");
+			if (tmp != null || tmp != "")
+				sorting_custom = tmp;
+
+
+		}
+
+		public void get_configuration(GLib.KeyFile file) {
+			file.set_string("sorting", "artist", sorting_artist);
+			file.set_string("sorting", "album", sorting_album);
+			file.set_string("sorting", "title", sorting_title);
+			file.set_string("sorting", "year", sorting_year);
+			file.set_string("sorting", "path", sorting_path);
+			file.set_string("sorting", "custom", sorting_custom);
 		}
 
 		public void show_sorting_dialog() {
