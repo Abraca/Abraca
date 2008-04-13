@@ -20,7 +20,36 @@
 using GLib;
 
 namespace Abraca {
-	public class Medialib : GLib.Object {
+	public class Medialib : GLib.Object, IConfigurable {
+		public string add_dialog_file {
+			get; set; default("");
+		}
+
+		public string add_dialog_url {
+			get; set; default("");
+		}
+
+		construct {
+			Config conf = Config.instance();
+			conf.register(this);
+		}
+
+		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+			if (file.has_group("add_dialog")) {
+				if (file.has_key("add_dialog", "file")) {
+					add_dialog_file = file.get_string("add_dialog", "file");
+				}
+				if (file.has_key("add_dialog", "url")) {
+					add_dialog_url = file.get_string("add_dialog", "url");
+				}
+			}
+		}
+
+		public void get_configuration(GLib.KeyFile file) {
+			file.set_string("add_dialog", "file", add_dialog_file);
+			file.set_string("add_dialog", "url", add_dialog_url);
+		}
+
 		public void create_add_url_dialog() {
 
 			Gtk.Dialog dialog = new Gtk.Dialog.with_buttons(
@@ -32,6 +61,7 @@ namespace Abraca {
 					);
 
 			Gtk.Entry entry = new Gtk.Entry();
+			entry.text = add_dialog_url;
 
 			((Gtk.VBox)dialog.vbox).pack_start_defaults(entry);
 			dialog.show_all();
@@ -40,6 +70,7 @@ namespace Abraca {
 				Client c = Client.instance();
 
 				c.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, entry.text);
+				add_dialog_url = entry.text;
 			}
 
 			dialog.close();
@@ -53,7 +84,12 @@ namespace Abraca {
 					Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
 					Gtk.STOCK_ADD, Gtk.ResponseType.OK
 					);
+
 			dialog.select_multiple = true;
+
+			if (add_dialog_file != "") {
+				dialog.set_current_folder(add_dialog_file);
+			}
 
 			Gtk.CheckButton button = new Gtk.CheckButton.with_label(
 					_("don't add to active playlist"));
@@ -85,6 +121,7 @@ namespace Abraca {
 						}
 					}
 				}
+				add_dialog_file = dialog.get_current_folder();
 			}
 			dialog.close();
 		}
