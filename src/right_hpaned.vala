@@ -21,7 +21,9 @@ using GLib;
 
 namespace Abraca {
 	public class RightHPaned : Gtk.HPaned, IConfigurable {
+		private Gtk.ComboBoxEntry _filter_combo;
 		private Gtk.Entry _filter_entry;
+		private Gtk.ListStore _filter_patterns;
 		private FilterTree _filter_tree;
 		private PlaylistTree _playlist_tree;
 
@@ -50,13 +52,34 @@ namespace Abraca {
 			if (pos > 0) {
 				position = pos;
 			}
-		}
 
+			if (file.has_key("filter", "patterns")) {
+				string[] list = file.get_string_list("filter", "patterns");
+				Gtk.TreeIter iter;
+
+				for (int i = 0; i < list.length; i++) {
+					_filter_patterns.insert_with_values(out iter, i, 0, list[i]);
+				}
+			}
+		}
 
 		public void get_configuration(GLib.KeyFile file) {
-			file.set_integer("panes", "pos2", position);
-		}
+			Gtk.TreeIter iter;
+			string current;
+			string[] list = new string[25];
+			int i;
 
+			file.set_integer("panes", "pos2", position);
+
+			if (_filter_patterns.iter_children(out iter, null)) {
+				do {
+					_filter_patterns.get(iter, 0, out current);
+					list[i++] = current;
+				} while (_filter_patterns.iter_next(ref iter) && i < 25);
+			}
+
+			file.set_string_list("filter", "patterns", list);
+		}
 
 		private void on_filter_entry_changed(Gtk.Editable editable) {
 			Xmms.Collection coll;
@@ -83,6 +106,23 @@ namespace Abraca {
 				_filter_entry.modify_base(Gtk.StateType.NORMAL, null);
 		}
 
+		private void _filter_save (weak string pattern) {
+			Gtk.TreeIter iter;
+			string current;
+
+			if (_filter_patterns.iter_children(out iter, null)) {
+				do {
+					_filter_patterns.get(iter, 0, out current);
+					if (current == pattern) {
+						_filter_patterns.remove(iter);
+						break;
+					}
+				} while (_filter_patterns.iter_next(ref iter));
+			}
+
+			_filter_patterns.insert_with_values(out iter, 0, 0, pattern);
+		}
+
 		private void on_filter_entry_activate(Gtk.Entry entry) {
 			Xmms.Collection coll;
 			weak string pattern;
@@ -91,6 +131,7 @@ namespace Abraca {
 
 			if (Xmms.Collection.parse(pattern, out coll)) {
 				_filter_tree.query_collection(coll);
+				_filter_save(pattern);
 			}
 		}
 
@@ -111,8 +152,17 @@ namespace Abraca {
 			Gtk.Label label = new Gtk.Label(_("Filter:"));
 			hbox.pack_start(label, false, false, 0);
 
-			_filter_entry = new Gtk.Entry();
-			hbox.pack_start(_filter_entry, true, true, 0);
+			_filter_patterns = new Gtk.ListStore(1, typeof(string));
+			_filter_combo = new Gtk.ComboBoxEntry.with_model(_filter_patterns, 0);
+			_filter_entry = (Gtk.Entry) _filter_combo.child;
+
+			Gtk.EntryCompletion comp = new Gtk.EntryCompletion();
+			comp.model = _filter_patterns;
+			comp.set_text_column(0);
+
+			_filter_entry.set_completion(comp);
+
+			hbox.pack_start(_filter_combo, true, true, 0);
 
 			box.pack_start(hbox, false, false, 2);
 
