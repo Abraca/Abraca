@@ -109,6 +109,8 @@ namespace Abraca {
 
 			c.playback_status += on_playback_status;
 
+			c.collection_rename += on_collection_rename;
+
 			c.media_info += on_media_info;
 
 			create_context_menu();
@@ -759,6 +761,18 @@ namespace Abraca {
 
 				c.set_playlist_id(mid);
 			}
+		}
+
+		/**
+		 * Keep track of the name of the current playlist so we can filter out
+		 * non-interesting playlist related updates.
+		 */
+		private void on_collection_rename(Client c, string name, string newname, string ns) {
+			if (name != _playlist) {
+				return;
+			}
+
+			_playlist = newname;
 		}
 
 		/**
