@@ -22,11 +22,11 @@ using GLib;
 namespace Abraca {
 	public class Medialib : GLib.Object, IConfigurable {
 		public string add_dialog_file {
-			get; set; default("");
+			get; set; default = "";
 		}
 
 		public string add_dialog_url {
-			get; set; default("");
+			get; set; default = "";
 		}
 
 		construct {

@@ -162,8 +162,7 @@ namespace Abraca {
 
 			pos_map.for_each((k,v,u) => {
 				Client c = Client.instance();
-				/* TODO: Cast shouldn't be needed here */
-				c.get_media_info(k.to_int(), (string[]) _properties);
+				c.get_media_info((int) k, _properties);
 			}, null);
 		}
 
@@ -172,7 +171,7 @@ namespace Abraca {
 		 *       update the rows accordingly.
 		 *       Should also update the current coverart image.
 		 */
-		private void on_media_info(Client c, weak GLib.HashTable<string,pointer> m) {
+		private void on_media_info(Client c, weak GLib.HashTable<string,void *> m) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
 			int mid, pos, id;
 			weak string artist, album, title;
@@ -181,7 +180,7 @@ namespace Abraca {
 			Gtk.TreeIter iter;
 			weak Gtk.TreePath path;
 
-			mid = m.lookup("id").to_int();
+			mid = (int) m.lookup("id");
 
 			row = (Gtk.TreeRowReference) pos_map.lookup(mid.to_pointer());
 			if (row == null || !row.valid()) {
@@ -238,23 +237,23 @@ namespace Abraca {
 
 		private void on_menu_add(Gtk.MenuItem item) {
 			Client c = Client.instance();
-			weak GLib.List<Gtk.TreePath> list;
+			GLib.List<Gtk.TreePath> list;
 			weak Gtk.TreeModel mod;
 			Gtk.TreeIter iter;
 			uint id;
 
 			list = get_selection().get_selected_rows(out mod);
-			while (list != null) {
-				model.get_iter(out iter, list.data);
+			foreach (weak Gtk.TreePath path in list) {
+				model.get_iter(out iter, path);
 				model.get(iter, FilterColumn.ID, out id);
+
 				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
-				list = list.next;
 			}
 		}
 
 		private void on_menu_replace(Gtk.MenuItem item) {
 			Client c = Client.instance();
-			weak GLib.List<Gtk.TreePath> list;
+			GLib.List<Gtk.TreePath> list;
 			weak Gtk.TreeModel mod;
 			Gtk.TreeIter iter;
 			uint id;
@@ -262,29 +261,14 @@ namespace Abraca {
 			c.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
 
 			list = get_selection().get_selected_rows(out mod);
-			while (list != null) {
-				model.get_iter(out iter, list.data);
+			foreach (weak Gtk.TreePath path in list) {
+				model.get_iter(out iter, path);
 				model.get(iter, FilterColumn.ID, out id);
+
 				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
-				list = list.next;
 			}
 
 		}
-
-		/*
-		[InstanceLast]
-		private void add_to_playlist(
-			Gtk.TreeModel model, Gtk.TreePath path,
-			out Gtk.TreeIter iter
-		) {
-			Client c = Client.instance();
-			uint id;
-
-			model.get(iter, FilterColumn.ID, ref id);
-
-			c.xmms.playlist_add_id("_active", id);
-		}
-		*/
 
 		private void create_columns() {
 			Gtk.TreeViewColumn column;
@@ -342,7 +326,6 @@ namespace Abraca {
 
 			filter_menu = new Gtk.Menu();
 
-			
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
 			item.activate += on_menu_add;
 			filter_menu.append(item);
@@ -367,7 +350,7 @@ namespace Abraca {
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			weak Gtk.TreeSelection sel = get_selection();
-			weak GLib.List<weak Gtk.TreePath> lst = sel.get_selected_rows(null);
+			GLib.List<Gtk.TreePath> lst = sel.get_selected_rows(null);
 			GLib.List<uint> mid_list = new GLib.List<uint>();
 
 			string buf = null;

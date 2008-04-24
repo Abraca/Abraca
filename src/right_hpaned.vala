@@ -67,9 +67,7 @@ namespace Abraca {
 			text = _filter_entry.get_text();
 
 			if (text.size() > 0) {
-				Xmms.Collection.parse(text, out coll);
-
-				if (coll == null) {
+				if (!Xmms.Collection.parse(text, out coll)) {
 					is_error = true;
 
 					/* set color to a bright red */
@@ -91,10 +89,9 @@ namespace Abraca {
 
 			pattern = _filter_entry.get_text();
 
-			Xmms.Collection.parse(pattern, out coll);
-
-			if (coll != null)
+			if (Xmms.Collection.parse(pattern, out coll)) {
 				_filter_tree.query_collection(coll);
+			}
 		}
 
 		public void filter_entry_set_text(string text) {

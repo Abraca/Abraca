@@ -28,27 +28,27 @@ namespace Abraca {
 		};
 
 		public string sorting_artist {
-			get; set; default("artist,title");
+			get; set; default = "artist,title";
 		}
 
 		public string sorting_album {
-			get; set; default("album,tracknr");
+			get; set; default = "album,tracknr";
 		}
 
 		public string sorting_title {
-			get; set; default("title,url");
+			get; set; default = "title,url";
 		}
 
 		public string sorting_year {
-			get; set; default("date,artist,album,title,tracknr");
+			get; set; default = "date,artist,album,title,tracknr";
 		}
 
 		public string sorting_path {
-			get; set; default("url");
+			get; set; default = "url";
 		}
 
 		public string sorting_custom {
-			get; set; default("artist,date,album,tracknr,title,url");
+			get; set; default = "artist,date,album,tracknr,title,url";
 		}
 
 		public static Config instance() {
@@ -103,8 +103,7 @@ namespace Abraca {
 		public void save() {
 			GLib.FileStream stream;
 			GLib.KeyFile file;
-			/* TODO: Should be gsize */
-			uint length;
+			size_t length;
 
 			file = new GLib.KeyFile();
 

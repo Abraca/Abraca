@@ -104,7 +104,7 @@ namespace Abraca {
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			weak Gtk.TreeSelection sel = get_selection();
-			weak GLib.List<weak Gtk.TreePath> lst = sel.get_selected_rows(null);
+			GLib.List<Gtk.TreePath> lst = sel.get_selected_rows(null);
 			Gtk.TreeIter iter;
 			string name;
 			int type;
@@ -542,6 +542,8 @@ namespace Abraca {
 			expand_all();
 		}
 		private bool needs_quoting (string str) {
+			bool ret = false;
+
 			for(int i = 0; i < str.len(); i++) {
 				switch(str[i]) {
 					case ' ':
@@ -550,13 +552,14 @@ namespace Abraca {
 					case '\'':
 					case '(':
 					case ')':
-							return true;
+							ret = true;
 							break;
 					default:
 							break;
 				}
 			}
-			return false;
+
+			return ret;
 		}
 
 		[InstanceLast]
@@ -655,10 +658,10 @@ namespace Abraca {
 		private void on_coll_get(Xmms.Result #res) {
 			Xmms.Collection coll;
 
-			res.get_collection(out coll);
-
-			Abraca.instance().main_window.main_hpaned.
-				right_hpaned.filter_tree.query_collection(coll);
+			if (res.get_collection(out coll)) {
+				Abraca.instance().main_window.main_hpaned.
+					right_hpaned.filter_tree.query_collection(coll);
+			}
 		}
 
 		private void create_columns() {

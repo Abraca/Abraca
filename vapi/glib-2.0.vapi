@@ -24,20 +24,8 @@
  */
 
 [SimpleType]
-[CCode (cname = "gboolean", cheader_filename = "glib.h", type_id = "G_TYPE_BOOLEAN", marshaller_type_name = "BOOLEAN", get_value_function = "g_value_get_boolean", set_value_function = "g_value_set_boolean", default_value = "FALSE")]
+[CCode (cname = "gboolean", cheader_filename = "glib.h", type_id = "G_TYPE_BOOLEAN", marshaller_type_name = "BOOLEAN", get_value_function = "g_value_get_boolean", set_value_function = "g_value_set_boolean", default_value = "FALSE", type_signature = "b")]
 public struct bool {
-}
-
-[SimpleType]
-[CCode (cname = "gpointer", cheader_filename = "glib.h", type_id = "G_TYPE_POINTER", marshaller_type_name = "POINTER", get_value_function = "g_value_get_pointer", set_value_function = "g_value_set_pointer", default_value = "NULL")]
-[PointerType]
-public struct pointer {
-	[CCode (cname = "GPOINTER_TO_INT")]
-	public int to_int ();
-	[CCode (cname = "GPOINTER_TO_UINT")]
-	public uint to_uint ();
-	[CCode (cname = "GPOINTER_TO_SIZE")]
-	public size_t to_size ();
 }
 
 [SimpleType]
@@ -46,12 +34,12 @@ public struct constpointer {
 }
 
 [SimpleType]
-[CCode (cname = "gchar", cprefix = "g_ascii_", cheader_filename = "glib.h", type_id = "G_TYPE_CHAR", marshaller_type_name = "CHAR", get_value_function = "g_value_get_char", set_value_function = "g_value_set_char", default_value = "\'\\0\'")]
+[CCode (cname = "gchar", cprefix = "g_ascii_", cheader_filename = "glib.h", type_id = "G_TYPE_CHAR", marshaller_type_name = "CHAR", get_value_function = "g_value_get_char", set_value_function = "g_value_set_char", default_value = "\'\\0\'", type_signature = "y")]
 [IntegerType (rank = 2, min = 0, max = 127)]
 public struct char {
 	[InstanceLast ()]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%hhi");
+	public string to_string (string format = "%hhi");
 	public bool isalnum ();
 	public bool isalpha ();
 	public bool iscntrl ();
@@ -75,11 +63,11 @@ public struct char {
 public struct uchar {
 	[InstanceLast ()]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%hhu");
+	public string to_string (string format = "%hhu");
 }
 
 [SimpleType]
-[CCode (cname = "gint", cheader_filename = "glib.h", type_id = "G_TYPE_INT", marshaller_type_name = "INT", get_value_function = "g_value_get_int", set_value_function = "g_value_set_int", default_value = "0")]
+[CCode (cname = "gint", cheader_filename = "glib.h", type_id = "G_TYPE_INT", marshaller_type_name = "INT", get_value_function = "g_value_get_int", set_value_function = "g_value_set_int", default_value = "0", type_signature = "i")]
 [IntegerType (rank = 6)]
 public struct int {
 	[CCode (cname = "G_MININT")]
@@ -89,17 +77,17 @@ public struct int {
 
 	[InstanceLast ()]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%i");
+	public string to_string (string format = "%i");
 
 	[CCode (cname = "CLAMP")]
 	public int clamp (int low, int high);
 
 	[CCode (cname = "GINT_TO_POINTER")]
-	public pointer to_pointer ();
+	public void* to_pointer ();
 }
 
 [SimpleType]
-[CCode (cname = "guint", cheader_filename = "glib.h", type_id = "G_TYPE_UINT", marshaller_type_name = "UINT", get_value_function = "g_value_get_uint", set_value_function = "g_value_set_uint", default_value = "0U")]
+[CCode (cname = "guint", cheader_filename = "glib.h", type_id = "G_TYPE_UINT", marshaller_type_name = "UINT", get_value_function = "g_value_get_uint", set_value_function = "g_value_set_uint", default_value = "0U", type_signature = "u")]
 [IntegerType (rank = 7)]
 public struct uint {
 	[CCode (cname = "0")]
@@ -109,17 +97,17 @@ public struct uint {
 
 	[InstanceLast ()]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%u");
+	public string to_string (string format = "%u");
 
 	[CCode (cname = "CLAMP")]
 	public uint clamp (uint low, uint high);
 
 	[CCode (cname = "GUINT_TO_POINTER")]
-	public pointer to_pointer ();
+	public void* to_pointer ();
 }
 
 [SimpleType]
-[CCode (cname = "gshort", cheader_filename = "glib.h", default_value = "0")]
+[CCode (cname = "gshort", cheader_filename = "glib.h", default_value = "0", type_signature = "n")]
 [IntegerType (rank = 4, min = -32768, max = 32767)]
 public struct short {
 	[CCode (cname = "G_MINSHORT")]
@@ -129,11 +117,11 @@ public struct short {
 
 	[InstanceLast ()]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%hi");
+	public string to_string (string format = "%hi");
 }
 
 [SimpleType]
-[CCode (cname = "gushort", cheader_filename = "glib.h", default_value = "0U")]
+[CCode (cname = "gushort", cheader_filename = "glib.h", default_value = "0U", type_signature = "q")]
 [IntegerType (rank = 5, min = 0, max = 65535)]
 public struct ushort {
 	[CCode (cname = "0U")]
@@ -143,7 +131,7 @@ public struct ushort {
 
 	[InstanceLast ()]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%hu");
+	public string to_string (string format = "%hu");
 }
 
 [SimpleType]
@@ -157,7 +145,7 @@ public struct long {
 
 	[InstanceLast ()]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%li");
+	public string to_string (string format = "%li");
 }
 
 [SimpleType]
@@ -171,7 +159,7 @@ public struct ulong {
 
 	[InstanceLast ()]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%lu");
+	public string to_string (string format = "%lu");
 }
 
 [SimpleType]
@@ -185,10 +173,10 @@ public struct size_t {
 
 	[InstanceLast]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%zu");
+	public string to_string (string format = "%zu");
 
 	[CCode (cname = "GSIZE_TO_POINTER")]
-	public pointer to_pointer ();
+	public void* to_pointer ();
 }
 
 [SimpleType]
@@ -202,11 +190,11 @@ public struct ssize_t {
 
 	[InstanceLast]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%zi");
+	public string to_string (string format = "%zi");
 }
 
 [SimpleType]
-[CCode (cname = "gint8", cheader_filename = "glib.h", type_id = "G_TYPE_CHAR", marshaller_type_name = "CHAR", get_value_function = "g_value_get_char", set_value_function = "g_value_set_char", default_value = "0")]
+[CCode (cname = "gint8", cheader_filename = "glib.h", type_id = "G_TYPE_CHAR", marshaller_type_name = "CHAR", get_value_function = "g_value_get_char", set_value_function = "g_value_set_char", default_value = "0", type_signature = "y")]
 [IntegerType (rank = 1, min = -128, max = 127)]
 public struct int8 {
 	[CCode (cname = "G_MININT8")]
@@ -215,11 +203,11 @@ public struct int8 {
 	public static int8 MAX;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1), InstanceLast]
-	public string! to_string (string! format = "%hhi");
+	public string to_string (string format = "%hhi");
 }
 
 [SimpleType]
-[CCode (cname = "guint8", cheader_filename = "glib.h", type_id = "G_TYPE_UCHAR", marshaller_type_name = "UCHAR", get_value_function = "g_value_get_uchar", set_value_function = "g_value_set_uchar", default_value = "0U")]
+[CCode (cname = "guint8", cheader_filename = "glib.h", type_id = "G_TYPE_UCHAR", marshaller_type_name = "UCHAR", get_value_function = "g_value_get_uchar", set_value_function = "g_value_set_uchar", default_value = "0U", type_signature = "y")]
 [IntegerType (rank = 3, min = 0, max = 255)]
 public struct uint8 {
 	[CCode (cname = "0U")]
@@ -228,11 +216,11 @@ public struct uint8 {
 	public static uint8 MAX;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1), InstanceLast]
-	public string! to_string (string! format = "%hhu");
+	public string to_string (string format = "%hhu");
 }
 
 [SimpleType]
-[CCode (cname = "gint16", cheader_filename = "glib.h", default_value = "0")]
+[CCode (cname = "gint16", cheader_filename = "glib.h", default_value = "0", type_signature = "n")]
 [IntegerType (rank = 4, min = -32768, max = 32767)]
 public struct int16 {
 	[CCode (cname = "G_MININT16")]
@@ -241,11 +229,11 @@ public struct int16 {
 	public static int16 MAX;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1), InstanceLast]
-	public string! to_string (string! format = "%hi");
+	public string to_string (string format = "%hi");
 }
 
 [SimpleType]
-[CCode (cname = "guint16", cheader_filename = "glib.h", default_value = "0U")]
+[CCode (cname = "guint16", cheader_filename = "glib.h", default_value = "0U", type_signature = "q")]
 [IntegerType (rank = 5, min = 0, max = 65535)]
 public struct uint16 {
 	[CCode (cname = "0U")]
@@ -254,11 +242,11 @@ public struct uint16 {
 	public static uint16 MAX;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1), InstanceLast]
-	public string! to_string (string! format = "%hu");
+	public string to_string (string format = "%hu");
 }
 
 [SimpleType]
-[CCode (cname = "gint32", cheader_filename = "glib.h", default_value = "0")]
+[CCode (cname = "gint32", cheader_filename = "glib.h", default_value = "0", type_signature = "i")]
 [IntegerType (rank = 6)]
 public struct int32 {
 	[CCode (cname = "G_MININT32")]
@@ -267,11 +255,11 @@ public struct int32 {
 	public static int32 MAX;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1), InstanceLast]
-	public string! to_string (string! format = "%i");
+	public string to_string (string format = "%i");
 }
 
 [SimpleType]
-[CCode (cname = "guint32", cheader_filename = "glib.h", default_value = "0U")]
+[CCode (cname = "guint32", cheader_filename = "glib.h", default_value = "0U", type_signature = "u")]
 [IntegerType (rank = 7)]
 public struct uint32 {
 	[CCode (cname = "0U")]
@@ -281,11 +269,11 @@ public struct uint32 {
 
 	[InstanceLast ()]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%u");
+	public string to_string (string format = "%u");
 }
 
 [SimpleType]
-[CCode (cname = "gint64", cheader_filename = "glib.h", type_id = "G_TYPE_INT64", marshaller_type_name = "INT64", get_value_function = "g_value_get_int64", set_value_function = "g_value_set_int64", default_value = "0LL")]
+[CCode (cname = "gint64", cheader_filename = "glib.h", type_id = "G_TYPE_INT64", marshaller_type_name = "INT64", get_value_function = "g_value_get_int64", set_value_function = "g_value_set_int64", default_value = "0LL", type_signature = "x")]
 [IntegerType (rank = 10)]
 public struct int64 {
 	[CCode (cname = "G_MININT64")]
@@ -295,11 +283,11 @@ public struct int64 {
 
 	[InstanceLast ()]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%lli");
+	public string to_string (string format = "%lli");
 }
 
 [SimpleType]
-[CCode (cname = "guint64", cheader_filename = "glib.h", type_id = "G_TYPE_UINT64", marshaller_type_name = "UINT64", get_value_function = "g_value_get_uint64", set_value_function = "g_value_set_uint64", default_value = "0ULL")]
+[CCode (cname = "guint64", cheader_filename = "glib.h", type_id = "G_TYPE_UINT64", marshaller_type_name = "UINT64", get_value_function = "g_value_get_uint64", set_value_function = "g_value_set_uint64", default_value = "0ULL", type_signature = "t")]
 [IntegerType (rank = 11)]
 public struct uint64 {
 	[CCode (cname = "0ULL")]
@@ -309,7 +297,7 @@ public struct uint64 {
 
 	[InstanceLast ()]
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string! to_string (string! format = "%llu");
+	public string to_string (string format = "%llu");
 }
 
 [SimpleType]
@@ -353,11 +341,11 @@ public struct float {
 	public int is_infinity ();
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1), InstanceLast]
-	public string! to_string (string! format = "%g");
+	public string to_string (string format = "%g");
 }
 
 [SimpleType]
-[CCode (cname = "double", cheader_filename = "glib.h,float.h,math.h", type_id = "G_TYPE_DOUBLE", marshaller_type_name = "DOUBLE", get_value_function = "g_value_get_double", set_value_function = "g_value_set_double", default_value = "0.0")]
+[CCode (cname = "double", cheader_filename = "glib.h,float.h,math.h", type_id = "G_TYPE_DOUBLE", marshaller_type_name = "DOUBLE", get_value_function = "g_value_get_double", set_value_function = "g_value_set_double", default_value = "0.0", type_signature = "d")]
 [FloatingType (rank = 2)]
 public struct double {
 	[CCode (cname = "DBL_MANT_DIG")]
@@ -397,7 +385,7 @@ public struct double {
 	public int is_infinity ();
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1), InstanceLast]
-	public string! to_string (string! format = "%g");
+	public string to_string (string format = "%g");
 }
 
 [SimpleType]
@@ -429,7 +417,7 @@ public struct unichar {
 	public UnicodeType type ();
 	public UnicodeBreakType break_type ();
 
-	public int to_utf8 (string outbuf);
+	public int to_utf8 (string? outbuf);
 }
 
 [CCode (cprefix = "G_UNICODE_")]
@@ -506,17 +494,17 @@ public enum UnicodeBreakType {
 	HANGUL_LVT_SYLLABLE
 }
 
-[CCode (cname = "char", const_cname = "const char", copy_function = "g_strdup", free_function = "g_free", cheader_filename = "stdlib.h,string.h,glib.h", type_id = "G_TYPE_STRING", marshaller_type_name = "STRING", get_value_function = "g_value_get_string", set_value_function = "g_value_set_string")]
+[CCode (cname = "char", const_cname = "const char", copy_function = "g_strdup", free_function = "g_free", cheader_filename = "stdlib.h,string.h,glib.h", type_id = "G_TYPE_STRING", marshaller_type_name = "STRING", get_value_function = "g_value_get_string", set_value_function = "g_value_set_string", type_signature = "s")]
 public class string {
 	[CCode (cname = "strstr")]
-	public weak string str (string! needle);
+	public weak string? str (string needle);
 	[CCode (cname = "g_str_has_prefix")]
-	public bool has_prefix (string! prefix);
+	public bool has_prefix (string prefix);
 	[CCode (cname = "g_str_has_suffix")]
-	public bool has_suffix (string! suffix);
+	public bool has_suffix (string suffix);
 	[CCode (cname = "g_strdup_printf"), PrintfFormat]
 	public string printf (...);
-	[CCode (cname = "sscanf")]
+	[CCode (cname = "sscanf", cheader_filename = "stdio.h")]
 	public int scanf (...);
 	[CCode (cname = "g_strconcat")]
 	public string concat (string string2, ...);
@@ -528,15 +516,15 @@ public class string {
 	public string compress ();
 	[CCode (cname = "g_strsplit")]
 	[NoArrayLength]
-	public string[] split (string! delimiter, int max_tokens = 0);
+	public string[] split (string delimiter, int max_tokens = 0);
 	[CCode (cname = "g_strsplit_set")]
 	[NoArrayLength]
-	public string[] split_set (string! delimiters, int max_tokens = 0);
+	public string[] split_set (string delimiters, int max_tokens = 0);
 	[CCode (cname = "g_strjoinv")]
 	[NoArrayLength]
-	public static string joinv (string! separator, string[] str_array);
+	public static string joinv (string separator, string[] str_array);
 	[CCode (cname = "g_strnfill")]
-	public static string! nfill (ulong length, char fill_char);
+	public static string nfill (ulong length, char fill_char);
 
 	[CCode (cname = "g_utf8_next_char")]
 	public weak string next_char ();
@@ -558,7 +546,7 @@ public class string {
 	[CCode (cname = "g_utf8_strrchr")]
 	public weak string rchr (long len, unichar c);
 	[CCode (cname = "g_utf8_strreverse")]
-	public string! reverse (int len = -1);
+	public string reverse (int len = -1);
 	[CCode (cname = "g_utf8_validate")]
 	public bool validate (long max_len = -1, out string end = null);
 	
@@ -572,7 +560,7 @@ public class string {
 	public int collate (string str2);
 
 	[CCode (cname = "g_locale_to_utf8")]
-	public string! locale_to_utf8 (long len, out ulong bytes_read, out ulong bytes_written, out GLib.Error error = null);
+	public string locale_to_utf8 (long len, out ulong bytes_read, out ulong bytes_written, out GLib.Error error = null);
   
 	[CCode (cname = "g_strchomp")]
 	public weak string chomp();
@@ -600,7 +588,7 @@ public class string {
 	[CCode (cname = "g_utf8_skip")]
 	public static char[] skip;
 
-	public string! substring (long offset, long len);
+	public string substring (long offset, long len);
 }
 
 [Import ()]
@@ -631,10 +619,10 @@ namespace GLib {
 		
 		public Type[] children ();
 		public uint depth ();
-		public static Type from_name (string! name);
+		public static Type from_name (string name);
 		public Type[] interfaces ();
 		public bool is_a (Type is_a_type);
-		public weak string! name ();
+		public weak string name ();
 		public Quark qname ();
 		public Type parent ();
 
@@ -656,6 +644,8 @@ namespace GLib {
 
 	[CCode (has_type_id = true)]
 	public class TypeInstance {
+		[CCode (cname = "G_TYPE_FROM_INSTANCE")]
+		public Type get_type ();
 	}
 
 	[CCode (ref_function = "g_type_class_ref", unref_function = "g_type_class_unref")]
@@ -678,7 +668,7 @@ namespace GLib {
 	public class TypeModule : TypePlugin {
 		public bool use ();
 		public void unuse ();
-		public void set_name (string! name);
+		public void set_name (string name);
 	}
 
 	[CCode (ref_function = "g_param_spec_ref", unref_function = "g_param_spec_unref")]
@@ -704,7 +694,7 @@ namespace GLib {
 
 	[CCode (lower_case_csuffix = "object_class")]
 	public class ObjectClass : TypeClass {
-		public weak ParamSpec find_property (string! property_name);
+		public weak ParamSpec find_property (string property_name);
 		public weak ParamSpec[] list_properties ();
 	}
 	
@@ -725,22 +715,22 @@ namespace GLib {
 		public Object ref_sink ();
 		public void get (...);
 		public void set (...);
-		public void get_property (string! property_name, Value value);
-		public pointer get_data (string! key);
-		public void set_data (string! key, pointer data);
-		public void set_data_full (string! key, pointer data, DestroyNotify destroy);
-		public pointer steal_data (string! key);
-		public pointer get_qdata (Quark quark);
-		public void set_qdata (Quark quark, pointer data);
-		public void set_qdata_full (Quark quark, pointer data, DestroyNotify destroy);
-		public pointer steal_qdata (Quark quark);
+		public void get_property (string property_name, Value value);
+		public void* get_data (string key);
+		public void set_data (string key, void* data);
+		public void set_data_full (string key, void* data, DestroyNotify? destroy);
+		public void* steal_data (string key);
+		public void* get_qdata (Quark quark);
+		public void set_qdata (Quark quark, void* data);
+		public void set_qdata_full (Quark quark, void* data, DestroyNotify? destroy);
+		public void* steal_qdata (Quark quark);
 		public virtual void dispose ();
 		public virtual void finalize ();
 		public virtual void constructed ();
 
 		public signal void notify (ParamSpec pspec);
 
-		public weak Object connect (string! signal_spec, ...);
+		public weak Object connect (string signal_spec, ...);
 	}
 
 	public struct Parameter {
@@ -751,9 +741,37 @@ namespace GLib {
 	public class InitiallyUnowned : Object {
 	}
 
+	[CCode (lower_case_csuffix = "enum")]
+	public class EnumClass : TypeClass {
+		public weak EnumValue? get_value (int value);
+		public weak EnumValue? get_value_by_name (string name);
+		public weak EnumValue? get_value_by_nick (string name);
+	}
+
+	public class EnumValue {
+		public int value;
+		public weak string value_name;
+		public weak string value_nick;
+	}
+
+	[CCode (lower_case_csuffix = "flags")]
+	public class FlagsClass : TypeClass {
+		public weak FlagsValue? get_first_value ();
+		public weak FlagsValue? get_value_by_name (string name);
+		public weak FlagsValue? get_value_by_nick (string name);
+	}
+
+	public class FlagsValue {
+		public int value;
+		public weak string value_name;
+		public weak string value_nick;
+	}
+
 	[CCode (cname = "gpointer", has_type_id = true, type_id = "G_TYPE_BOXED", marshaller_type_name = "BOXED", get_value_function = "g_value_get_boxed", set_value_function = "g_value_set_boxed")]
 	public abstract class Boxed {
 	}
+
+	public static delegate void ValueTransform (Value src_value, out Value dest_value);
 
 	[CCode (type_id = "G_TYPE_VALUE")]
 	public struct Value {
@@ -767,15 +785,17 @@ namespace GLib {
 		public Value (Type g_type);
 		public void copy (out Value dest_value);
 		public weak Value reset ();
+		public void init (Type g_type);
 		public void unset ();
-		public void set_instance (pointer instance);
+		public void set_instance (void* instance);
 		public bool fits_pointer ();
-		public pointer peek_pointer ();
+		public void* peek_pointer ();
 		public static bool type_compatible (Type src_type, Type dest_type);
 		public static bool type_transformable (Type src_type, Type dest_type);
 		public bool transform (Value dest_value);
 		[CCode (cname = "g_strdup_value_contents")]
 		public string strdup_contents ();
+		public static void register_transform_func (Type src_type, Type dest_type, ValueTransform transform);
 		public void set_boolean (bool v_boolean);
 		public bool get_boolean ();
 		public void set_char (char v_char);
@@ -807,8 +827,12 @@ namespace GLib {
 		public void take_string (string# v_string);
 		public weak string get_string ();
 		public string dup_string ();
-		public void set_pointer (pointer v_pointer);
-		public pointer get_pointer ();
+		public void set_pointer (void* v_pointer);
+		public void* get_pointer ();
+		public void set_boxed (Boxed v_boxed);
+		public void take_boxed (Boxed# v_boxed);
+		public weak Boxed get_boxed ();
+		public Boxed dup_boxed ();
 		public void set_object (Object v_object);
 		public void take_object (Object# v_object);
 		public weak Object get_object ();
@@ -846,7 +870,7 @@ namespace GLib {
 	public class Closure : Boxed {
 	}
 
-	public static delegate void ClosureNotify (pointer data, Closure closure);
+	public static delegate void ClosureNotify (void* data, Closure closure);
 
 	[CCode (type_id = "G_TYPE_VALUE_ARRAY")]
 	public struct ValueArray {
@@ -1024,16 +1048,16 @@ namespace GLib {
 	}
 
 	public static class AtomicPointer {
-		public static pointer get (ref pointer atomic);
-		public static void set (ref pointer atomic, pointer newval);
-		public static bool compare_and_exchange (ref pointer atomic, pointer oldval, pointer newval);
+		public static void* get (void** atomic);
+		public static void set (void** atomic, void* newval);
+		public static bool compare_and_exchange (void** atomic, void* oldval, void* newval);
 	}
 
 	/* The Main Event Loop */
 	
 	[CCode (ref_function = "g_main_loop_ref", unref_function = "g_main_loop_unref")]
 	public class MainLoop {
-		public MainLoop (MainContext context, bool is_running);
+		public MainLoop (MainContext? context, bool is_running);
 		public void run ();
 		public void quit ();
 		public bool is_running ();
@@ -1055,8 +1079,8 @@ namespace GLib {
 		public bool iteration (bool may_block);
 		public bool pending ();
 		public weak Source find_source_by_id (uint source_id);
-		public weak Source find_source_by_user_data (pointer user_data);
-		public weak Source find_source_by_funcs_user_data (SourceFuncs funcs, pointer user_data);
+		public weak Source find_source_by_user_data (void* user_data);
+		public weak Source find_source_by_funcs_user_data (SourceFuncs funcs, void* user_data);
 		public void wakeup ();
 		public bool acquire ();
 		public void release ();
@@ -1084,9 +1108,9 @@ namespace GLib {
 
 	public static class Timeout {
 		public static uint add (uint interval, SourceFunc function);
-		public static uint add_full (int priority, uint interval, SourceFunc function, DestroyNotify notify);
+		public static uint add_full (int priority, uint interval, SourceFunc function, DestroyNotify? notify);
 		public static uint add_seconds (uint interval, SourceFunc function);
-		public static uint add_seconds_full (int priority, uint interval, SourceFunc function, DestroyNotify notify);
+		public static uint add_seconds_full (int priority, uint interval, SourceFunc function, DestroyNotify? notify);
 	}
 
 	[CCode (cname = "GSource")]
@@ -1096,8 +1120,8 @@ namespace GLib {
 
 	public static class Idle {
 		public static uint add (SourceFunc function);
-		public static uint add_full (int priority, SourceFunc function, DestroyNotify notify);
-		public static bool remove_by_data (pointer data);
+		public static uint add_full (int priority, SourceFunc function, DestroyNotify? notify);
+		public static bool remove_by_data (void* data);
 	}
 
 	[SimpleType]
@@ -1108,12 +1132,12 @@ namespace GLib {
 	public delegate void ChildWatchFunc (Pid pid, int status);
 	
 	public class ChildWatchSource : Source {
-		public ChildWatchSource (Pid pid, int status, pointer data);
+		public ChildWatchSource (Pid pid, int status, void* data);
 	}
 	
 	public static class ChildWatch {
 		public static uint add (Pid pid, ChildWatchFunc function);
-		public static uint add_full (int priority, Pid pid, ChildWatchFunc function, DestroyNotify notify);
+		public static uint add_full (int priority, Pid pid, ChildWatchFunc function, DestroyNotify? notify);
 	}
 	
 	public struct PollFD {
@@ -1135,14 +1159,14 @@ namespace GLib {
 		public bool get_can_recurse ();
 		public uint get_id ();
 		public weak MainContext get_context ();
-		public void set_callback (SourceFunc func, DestroyNotify notify);
-		public void set_callback_indirect (pointer callback_data, SourceCallbackFuncs callback_funcs);
+		public void set_callback (SourceFunc func, DestroyNotify? notify);
+		public void set_callback_indirect (void* callback_data, SourceCallbackFuncs callback_funcs);
 		public void add_poll (ref PollFD fd);
 		public void remove_poll (ref PollFD fd);
 		public void get_current_time (out TimeVal timeval);
 		public static void remove (uint id);
-		public static bool remove_by_funcs_user_data (pointer user_data);
-		public static bool remove_by_user_data (pointer user_data);
+		public static bool remove_by_funcs_user_data (void* user_data);
+		public static bool remove_by_user_data (void* user_data);
 	}
 	
 	public static delegate void SourceDummyMarshal ();
@@ -1159,9 +1183,9 @@ namespace GLib {
 		public SourceFinalizeFunc finalize;
 	}
 	
-	public static delegate void SourceCallbackRefFunc (pointer cb_data);
-	public static delegate void SourceCallbackUnrefFunc (pointer cb_data);
-	public static delegate void SourceCallbackGetFunc (pointer cb_data, Source source, SourceFunc func);
+	public static delegate void SourceCallbackRefFunc (void* cb_data);
+	public static delegate void SourceCallbackUnrefFunc (void* cb_data);
+	public static delegate void SourceCallbackGetFunc (void* cb_data, Source source, SourceFunc func);
 	
 	public class SourceCallbackFuncs {
 		public SourceCallbackRefFunc @ref;
@@ -1171,8 +1195,7 @@ namespace GLib {
 	
 	public delegate bool SourceFunc ();
 
-	[ErrorDomain]
-	public enum ThreadError {
+	public errordomain ThreadError {
 		AGAIN
 	}
 
@@ -1191,15 +1214,15 @@ namespace GLib {
 	}
 	
 	public class Thread {
-		public static void init (ThreadFunctions vtable = null);
+		public static void init (ThreadFunctions? vtable = null);
 		public static bool supported ();
 		public static weak Thread create (ThreadFunc func, bool joinable) throws ThreadError;
 		public static weak Thread create_full (ThreadFunc func, ulong stack_size, bool joinable, bool bound, ThreadPriority priority) throws ThreadError;
 		public static weak Thread self ();
-		public pointer join ();
+		public void* join ();
 		public void set_priority (ThreadPriority priority);
 		public static void yield ();
-		public static void exit (pointer retval);
+		public static void exit (void* retval);
 		public static void @foreach (Func thread_func);
 		
 		[CCode (cname = "g_usleep")]
@@ -1227,8 +1250,8 @@ namespace GLib {
 	
 	[CCode (free_function = "g_thread_pool_free")]
 	public class ThreadPool {
-		public ThreadPool (Func func, pointer user_data, int max_threads, bool exclusive) throws ThreadError;
-		public void push (pointer data) throws ThreadError;
+		public ThreadPool (Func func, void* user_data, int max_threads, bool exclusive) throws ThreadError;
+		public void push (void* data) throws ThreadError;
 		public void set_max_threads (int max_threads) throws ThreadError;
 		public int get_max_threads ();
 		public uint get_num_threads ();
@@ -1237,7 +1260,7 @@ namespace GLib {
 		public static int get_max_unused_threads ();
 		public static uint get_num_unused_threads ();
 		public static void stop_unused_threads ();
-		public void set_sort_function (CompareDataFunc func, pointer user_data);
+		public void set_sort_function (CompareDataFunc func, void* user_data);
 		public static void set_max_idle_time (uint interval);
 		public static uint get_max_idle_time ();
 	}
@@ -1247,24 +1270,24 @@ namespace GLib {
 	[CCode (ref_function = "g_async_queue_ref", unref_function = "g_async_queue_unref")]
 	public class AsyncQueue {
 		public AsyncQueue ();
-		public void push (pointer data);
-		public void push_sorted (pointer data, CompareDataFunc func, pointer user_data);
-		public pointer pop ();
-		public pointer try_pop ();
-		public pointer timed_pop (ref TimeVal end_time);
+		public void push (void* data);
+		public void push_sorted (void* data, CompareDataFunc func, void* user_data);
+		public void* pop ();
+		public void* try_pop ();
+		public void* timed_pop (ref TimeVal end_time);
 		public int length ();
-		public void sort (CompareDataFunc func, pointer user_data);
+		public void sort (CompareDataFunc func, void* user_data);
 		public void @lock ();
 		public void unlock ();
 		public void ref_unlocked ();
 		public void unref_and_unlock ();
-		public void push_unlocked (pointer data);
-		public void push_sorted_unlocked (pointer data, CompareDataFunc func, pointer user_data);
-		public pointer pop_unlocked ();
-		public pointer try_pop_unlocked ();
-		public pointer timed_pop_unlocked (ref TimeVal end_time);
+		public void push_unlocked (void* data);
+		public void push_sorted_unlocked (void* data, CompareDataFunc func, void* user_data);
+		public void* pop_unlocked ();
+		public void* try_pop_unlocked ();
+		public void* timed_pop_unlocked (ref TimeVal end_time);
 		public int length_unlocked ();
-		public void sort_unlocked (CompareDataFunc func, pointer user_data);
+		public void sort_unlocked (CompareDataFunc func, void* user_data);
 	}
 	
 	/* Dynamic Loading of Modules */
@@ -1274,7 +1297,7 @@ namespace GLib {
 		public static bool supported ();
 		public static string build_path (string directory, string module_name);
 		public static Module open (string file_name, ModuleFlags @flags);
-		public bool symbol (string! symbol_name, out pointer symbol);
+		public bool symbol (string symbol_name, void** symbol);
 		public weak string name ();
 		public void make_resident ();
 		public static weak string error ();
@@ -1289,26 +1312,26 @@ namespace GLib {
 	
 	/* Memory Allocation */
 	
-	public static pointer malloc (ulong n_bytes);
-	public static pointer malloc0 (ulong n_bytes);
-	public static pointer realloc (pointer mem, ulong n_bytes);
+	public static void* malloc (ulong n_bytes);
+	public static void* malloc0 (ulong n_bytes);
+	public static void* realloc (void* mem, ulong n_bytes);
 
-	public static pointer try_malloc (ulong n_bytes);
-	public static pointer try_malloc0 (ulong n_bytes);
-	public static pointer try_realloc (pointer mem, ulong n_bytes);
+	public static void* try_malloc (ulong n_bytes);
+	public static void* try_malloc0 (ulong n_bytes);
+	public static void* try_realloc (void* mem, ulong n_bytes);
 	
-	public static void free (pointer mem);
+	public static void free (void* mem);
 
 	[CCode (cheader_filename = "string.h")]
 	public static class Memory {
 		[CCode (cname = "memcmp")]
-		public static int cmp (pointer s1, pointer s2, size_t n);
+		public static int cmp (void* s1, void* s2, size_t n);
 		[CCode (cname = "memcpy")]
-		public static pointer copy (pointer dest, pointer src, size_t n);
+		public static void* copy (void* dest, void* src, size_t n);
 		[CCode (cname = "g_memmove")]
-		public static pointer move (pointer dest, pointer src, size_t n);
+		public static void* move (void* dest, void* src, size_t n);
 		[CCode (cname = "g_memdup")]
-		public static pointer dup (pointer mem, uint n);
+		public static void* dup (void* mem, uint n);
 	}
 
 	/* IO Channels */
@@ -1325,7 +1348,7 @@ namespace GLib {
 		public IOStatus read_chars (char[] buf, out size_t bytes_read) throws ConvertError, IOChannelError;
 		public IOStatus read_unichar (out unichar thechar) throws ConvertError, IOChannelError;
 		public IOStatus read_line (out string str_return, out size_t length, out size_t terminator_pos) throws ConvertError, IOChannelError;
-		public IOStatus read_line_string (String buffer, out size_t terminator_pos) throws ConvertError, IOChannelError;
+		public IOStatus read_line_string (StringBuilder buffer, out size_t terminator_pos) throws ConvertError, IOChannelError;
 		public IOStatus read_to_end (out string str_return, out size_t length) throws ConvertError, IOChannelError;
 		public IOStatus write_chars (char[] buf, out size_t bytes_written) throws ConvertError, IOChannelError;
 		public IOStatus write_unichar (unichar thechar) throws ConvertError, IOChannelError;
@@ -1406,7 +1429,7 @@ namespace GLib {
 	[ErrorBase]
 	[CCode (copy_function = "g_error_copy", free_function = "g_error_free")]
 	public class Error {
-		public Error (Quark domain, int code, string! format, ...);
+		public Error (Quark domain, int code, string format, ...);
 		public Error copy ();
 		public bool matches (Quark domain, int code);
 
@@ -1470,7 +1493,7 @@ namespace GLib {
 	
 	/* Character Set Conversions */
 	
-	public static string convert (string! str, long len, string! to_codeset, string! from_codeset, out int bytes_read = null, out int bytes_written = null) throws ConvertError;
+	public static string convert (string str, long len, string to_codeset, string from_codeset, out int bytes_read = null, out int bytes_written = null) throws ConvertError;
 
 	public struct IConv {
 		[CCode (cname = "g_iconv_open")]
@@ -1481,16 +1504,15 @@ namespace GLib {
 	}
 
 	public static class Filename {
-		public static string to_utf8 (string! opsysstring, out ulong bytes_read, out ulong bytes_written) throws ConvertError;
-		public static string from_utf8 (string! utf8string, long len, out ulong bytes_read, out ulong bytes_written) throws ConvertError;
-		public static string from_uri (string! uri, out string hostname = null) throws ConvertError;
-		public static string to_uri (string! filename, string hostname = null) throws ConvertError;
-		public static string display_name (string! filename);
-		public static string display_basename (string! filename);
+		public static string to_utf8 (string opsysstring, out ulong bytes_read, out ulong bytes_written) throws ConvertError;
+		public static string from_utf8 (string utf8string, long len, out ulong bytes_read, out ulong bytes_written) throws ConvertError;
+		public static string from_uri (string uri, out string hostname = null) throws ConvertError;
+		public static string to_uri (string filename, string? hostname = null) throws ConvertError;
+		public static string display_name (string filename);
+		public static string display_basename (string filename);
 	}
 
-	[ErrorDomain]
-	public enum ConvertError {
+	public errordomain ConvertError {
 		NO_CONVERSION,
 		ILLEGAL_SEQUENCE,
 		FAILED,
@@ -1547,7 +1569,7 @@ namespace GLib {
 		[CCode (instance_pos = -1)]
 		public bool from_iso8601 (string iso_date);
 		[InstanceByReference]
-		public string! to_iso8601 ();
+		public string to_iso8601 ();
 	}
 
 	public struct DateDay : uchar {
@@ -1621,17 +1643,17 @@ namespace GLib {
 		public void set_dmy (DateDay day, DateMonth month, DateYear y);
 		public void set_julian (uint julian_day);
 		public void set_time_val (TimeVal timeval);
-		public void set_parse (string! str);
+		public void set_parse (string str);
 		public void add_days (uint n_days);
 		public void subtract_days (uint n_days);
 		public void add_months (uint n_months);
 		public void subtract_months (uint n_months);
 		public void add_years (uint n_years);
 		public void subtract_years (uint n_years);
-		public int days_between (Date! date2);
-		public int compare (Date! rhs);
+		public int days_between (Date date2);
+		public int compare (Date rhs);
 		public void clamp (Date min_date, Date max_date);
-		public void order (Date! date2);
+		public void order (Date date2);
 		public DateDay get_day ();
 		public DateMonth get_month ();
 		public DateYear get_year ();
@@ -1687,7 +1709,7 @@ namespace GLib {
 	
 	public static class Environment {
 		[CCode (cname = "g_get_application_name")]
-		public static weak string get_application_name ();
+		public static weak string? get_application_name ();
 		[CCode (cname = "g_set_application_name")]
 		public static void set_application_name (string application_name);
 		[CCode (cname = "g_get_prgname")]
@@ -1695,22 +1717,28 @@ namespace GLib {
 		[CCode (cname = "g_set_prgname")]
 		public static void set_prgname (string application_name);
 		[CCode (cname = "g_getenv")]
-		public static weak string get_variable (string! variable);
+		public static weak string? get_variable (string variable);
 		[CCode (cname = "g_setenv")]
-		public static bool set_variable (string! variable, string! value, bool overwrite);
+		public static bool set_variable (string variable, string value, bool overwrite);
 		[CCode (cname = "g_listenv")]
 		[NoArrayLength]
 		public static string[] list_variables ();
 		[CCode (cname = "g_get_user_name")]
 		public static weak string get_user_name ();
+		[CCode (cname = "g_get_user_cache_dir")]
+		public static weak string get_user_cache_dir ();
 		[CCode (cname = "g_get_user_data_dir")]
 		public static weak string get_user_data_dir ();
+		[CCode (cname = "g_get_user_config_dir")]
+		public static weak string get_user_config_dir ();
+		[CCode (cname = "g_get_user_special_dir")]
+		public static weak string get_user_special_dir (UserDirectory directory);
 		[CCode (cname = "g_get_system_data_dirs"), NoArrayLength]
 		public static weak string[] get_system_data_dirs ();
 		[CCode (cname = "g_get_system_config_dirs"), NoArrayLength]
 		public static weak string[] get_system_config_dirs ();
 		[CCode (cname = "g_get_host_name")]
-		public static weak string! get_host_name ();
+		public static weak string get_host_name ();
 		[CCode (cname = "g_get_home_dir")]
 		public static weak string get_home_dir ();
 		[CCode (cname = "g_get_current_dir")]
@@ -1718,10 +1746,21 @@ namespace GLib {
 		[CCode (cname = "g_find_program_in_path")]
 		public static string find_program_in_path (string program);
 	}
-	
+
+	public enum UserDirectory {
+		DESKTOP,
+		DOCUMENTS,
+		DOWNLOAD,
+		MUSIC,
+		PICTURES,
+		PUBLIC_SHARE,
+		TEMPLATES,
+		VIDEOS
+	}
+
 	public static class Path {
-		public static bool is_absolute (string! file_name);
-		public static weak string skip_root (string! file_name);
+		public static bool is_absolute (string file_name);
+		public static weak string skip_root (string file_name);
 		public static string get_basename (string file_name);
 		public static string get_dirname (string file_name);
 		[CCode (cname = "g_build_filename")]
@@ -1745,7 +1784,7 @@ namespace GLib {
 		public static uint closest (uint num);
 	}
 
-	public static delegate void FreeFunc (pointer data);
+	public static delegate void FreeFunc (void* data);
 
 	/* Lexical Scanner */
 
@@ -1763,11 +1802,11 @@ namespace GLib {
 		public TokenType cur_token ();
 		public TokenValue cur_value ();
 		public uint set_scope (uint scope_id);
-		public void scope_add_symbol (uint scope_id, string symbol, pointer value);
-		public void scope_foreach_symbol (uint scope_id, HFunc func, pointer user_data);
-		public pointer scope_lookup_symbol (uint scope_id, string symbol);
+		public void scope_add_symbol (uint scope_id, string symbol, void* value);
+		public void scope_foreach_symbol (uint scope_id, HFunc func, void* user_data);
+		public void* scope_lookup_symbol (uint scope_id, string symbol);
 		public void scope_remove_symbol (uint scope_id, string symbol);
-		public pointer lookup_symbol (string symbol);
+		public void* lookup_symbol (string symbol);
 		[PrintfFormat]
 		public void warn (string format, ...);
 		[PrintfFormat]
@@ -1848,7 +1887,7 @@ namespace GLib {
 
 	[SimpleType]
 	public struct TokenValue {
-		public pointer v_symbol;
+		public void* v_symbol;
 		public string v_identifier;
 		public ulong v_binary;
 		public ulong v_octal;
@@ -1889,8 +1928,7 @@ namespace GLib {
 
 	/* Spawning Processes */
 
-	[ErrorDomain]
-	public enum SpawnError {
+	public errordomain SpawnError {
 		FORK,
 		READ,
 		CHDIR,
@@ -1924,18 +1962,18 @@ namespace GLib {
 		FILE_AND_ARGV_ZERO
 	}
 
-	public static delegate void SpawnChildSetupFunc (pointer user_data);
+	public delegate void SpawnChildSetupFunc ();
 
 	[CCode (cprefix = "g_")]
 	public static class Process {
 		[NoArrayLength ()]
-		public static bool spawn_async_with_pipes (string working_directory, string[] argv, string[] envp, SpawnFlags _flags, SpawnChildSetupFunc child_setup, pointer user_data, out Pid child_pid, out int standard_input = null, out int standard_output = null, out int standard_error = null) throws SpawnError;
+		public static bool spawn_async_with_pipes (string? working_directory, string[] argv, string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out Pid child_pid, out int standard_input = null, out int standard_output = null, out int standard_error = null) throws SpawnError;
 		[NoArrayLength ()]
-		public static bool spawn_async (string working_directory, string[] argv, string[] envp, SpawnFlags _flags, SpawnChildSetupFunc child_setup, pointer user_data, out Pid child_pid) throws SpawnError;
+		public static bool spawn_async (string? working_directory, string[] argv, string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out Pid child_pid) throws SpawnError;
 		[NoArrayLength ()]
-		public static bool spawn_sync (string working_directory, string[] argv, string[] envp, SpawnFlags _flags, SpawnChildSetupFunc child_setup, pointer user_data, out string standard_output = null, out string standard_error = null, out int exit_status = null) throws SpawnError;
-		public static bool spawn_command_line_async (string! command_line) throws SpawnError;
-		public static bool spawn_command_line_sync (string! command_line, out string standard_output = null, out string standard_error = null, out int exit_status = null) throws SpawnError;
+		public static bool spawn_sync (string? working_directory, string[] argv, string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out string standard_output = null, out string standard_error = null, out int exit_status = null) throws SpawnError;
+		public static bool spawn_command_line_async (string command_line) throws SpawnError;
+		public static bool spawn_command_line_sync (string command_line, out string standard_output = null, out string standard_error = null, out int exit_status = null) throws SpawnError;
 		[CCode (cname = "g_spawn_close_pid")]
 		public static void close_pid (Pid pid);
 		
@@ -1985,8 +2023,7 @@ namespace GLib {
 	
 	/* File Utilities */
 
-	[ErrorDomain]
-	public enum FileError {
+	public errordomain FileError {
 		EXIST,
 		ISDIR,
 		ACCES,
@@ -2052,8 +2089,8 @@ namespace GLib {
 
 	[CCode (cprefix = "g_file_", cheader_filename = "glib/gstdio.h")]
 	public static class FileUtils {
-		public static bool get_contents (string! filename, out string contents, out ulong length = null) throws FileError;
-		public static bool set_contents (string! filename, string contents, long length = -1) throws FileError;
+		public static bool get_contents (string filename, out string contents, out ulong length = null) throws FileError;
+		public static bool set_contents (string filename, string contents, long length = -1) throws FileError;
 		public static bool test (string filename, FileTest test);
 		public static int open_tmp (string tmpl, out string name_used) throws FileError;
 		public static string read_link (string filename) throws FileError;
@@ -2068,7 +2105,7 @@ namespace GLib {
 		public static int chmod (string filename, int mode);
 		
 		[CCode (cname = "symlink")]
-		public static int symlink (string! oldpath, string! newpath);
+		public static int symlink (string oldpath, string newpath);
 	}
 
 	[CCode (cname = "stat")]
@@ -2125,23 +2162,21 @@ namespace GLib {
 
 	/* Shell-related Utilities */
 
-	[ErrorDomain]
-	public enum ShellError {
+	public errordomain ShellError {
 		BAD_QUOTING,
 		EMPTY_STRING,
 		FAILED
 	}
 
 	public static class Shell {
-		public static bool parse_argv (string! command_line, [CCode (array_length_pos = 1.9)] out string[] argvp) throws ShellError;
-		public static string! quote (string! unquoted_string);
-		public static string! unquote (string! quoted_string) throws ShellError;
+		public static bool parse_argv (string command_line, [CCode (array_length_pos = 1.9)] out string[] argvp) throws ShellError;
+		public static string quote (string unquoted_string);
+		public static string unquote (string quoted_string) throws ShellError;
 	}
 
 	/* Commandline option parser */
 
-	[ErrorDomain]
-	public enum OptionError {
+	public errordomain OptionError {
 		UNKNOWN_OPTION,
 		BAD_VALUE,
 		FAILED
@@ -2154,7 +2189,7 @@ namespace GLib {
 		public weak string get_summary ();
 		public void set_description (string description);
 		public void get_description ();
-		public void set_translate_func (TranslateFunc func, DestroyNotify destroy_notify);
+		public void set_translate_func (TranslateFunc func, DestroyNotify? destroy_notify);
 		public void set_translation_domain (string domain);
 		public bool parse ([CCode (array_length_pos = 0.9)] ref string[] argv) throws OptionError;
 		public void set_help_enabled (bool help_enabled);
@@ -2163,7 +2198,7 @@ namespace GLib {
 		public bool get_ignore_unknown_options ();
 		public string get_help (bool main_help, OptionGroup group);
 		[NoArrayLength]
-		public void add_main_entries (OptionEntry[] entries, string translation_domain);
+		public void add_main_entries (OptionEntry[] entries, string? translation_domain);
 		public void add_group (OptionGroup# group);
 		public void set_main_group (OptionGroup# group);
 		public weak OptionGroup get_main_group ();
@@ -2209,12 +2244,12 @@ namespace GLib {
 
 	[CCode (free_function = "g_option_group_free")]
 	public class OptionGroup {
-		public OptionGroup (string name, string description, string help_description, void* user_data, DestroyNotify destroy);
+		public OptionGroup (string name, string description, string help_description, void* user_data, DestroyNotify? destroy);
 		[NoArrayLength]
 		public void add_entries (OptionEntry[] entries);
 		public void set_parse_hooks (OptionParseFunc pre_parse_func, OptionParseFunc post_parse_hook);
 		public void set_error_hook (OptionErrorFunc error_func);
-		public void set_translate_func (TranslateFunc func, DestroyNotify destroy_notify);
+		public void set_translate_func (TranslateFunc func, DestroyNotify? destroy_notify);
 		public void set_translation_domain (string domain);
 	}
 
@@ -2223,8 +2258,7 @@ namespace GLib {
 
 	/* Perl-compatible regular expressions */
 
-	[ErrorDomain]
-	public enum RegexError {
+	public errordomain RegexError {
 		COMPILE,
 		OPTIMIZE,
 		REPLACE,
@@ -2264,30 +2298,30 @@ namespace GLib {
 
 	[CCode (ref_function = "g_regex_ref", unref_function = "g_regex_unref")]
 	public class Regex : Boxed {
-		public Regex (string! pattern, RegexCompileFlags compile_options = 0, RegexMatchFlags match_options = 0) throws RegexError;
-		public string! get_pattern ();
+		public Regex (string pattern, RegexCompileFlags compile_options = 0, RegexMatchFlags match_options = 0) throws RegexError;
+		public string get_pattern ();
 		public int get_max_backref ();
 		public int get_capture_count ();
-		public int get_string_number (string! name);
-		public static string! escape_string (string! str, int length = -1);
-		public static bool match_simple (string! pattern, string! str, RegexCompileFlags compile_options = 0, RegexMatchFlags match_options = 0);
-		public bool match (string! str, RegexMatchFlags match_options = 0, out MatchInfo match_info = null);
-		public bool match_full (string! str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, out MatchInfo match_info = null) throws RegexError;
-		public bool match_all (string! str, RegexMatchFlags match_options = 0, out MatchInfo match_info = null);
-		public bool match_all_full (string! str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, out MatchInfo match_info = null) throws RegexError;
+		public int get_string_number (string name);
+		public static string escape_string (string str, int length = -1);
+		public static bool match_simple (string pattern, string str, RegexCompileFlags compile_options = 0, RegexMatchFlags match_options = 0);
+		public bool match (string str, RegexMatchFlags match_options = 0, out MatchInfo match_info = null);
+		public bool match_full (string str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, out MatchInfo match_info = null) throws RegexError;
+		public bool match_all (string str, RegexMatchFlags match_options = 0, out MatchInfo match_info = null);
+		public bool match_all_full (string str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, out MatchInfo match_info = null) throws RegexError;
 		[NoArrayLength]
-		public static string[] split_simple (string! pattern, string! str, RegexCompileFlags compile_options = 0, RegexMatchFlags match_options = 0);
+		public static string[] split_simple (string pattern, string str, RegexCompileFlags compile_options = 0, RegexMatchFlags match_options = 0);
 		[NoArrayLength]
-		public string[] split (string! str, RegexMatchFlags match_options = 0);
+		public string[] split (string str, RegexMatchFlags match_options = 0);
 		[NoArrayLength]
-		public bool split_full (string! str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, int max_tokens = 0) throws RegexError;
-		public string replace (string! str, long string_len, int start_position, string! replacement, RegexMatchFlags match_options = 0) throws RegexError;
-		public string replace_literal (string! str, long string_len, int start_position, string! replacement, RegexMatchFlags match_options = 0) throws RegexError;
-		public string replace_eval (string! str, long string_len, int start_position, RegexMatchFlags match_options = 0, RegexEvalCallback eval, pointer user_data) throws RegexError;
+		public bool split_full (string str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, int max_tokens = 0) throws RegexError;
+		public string replace (string str, long string_len, int start_position, string replacement, RegexMatchFlags match_options = 0) throws RegexError;
+		public string replace_literal (string str, long string_len, int start_position, string replacement, RegexMatchFlags match_options = 0) throws RegexError;
+		public string replace_eval (string str, long string_len, int start_position, RegexMatchFlags match_options = 0, RegexEvalCallback eval, void* user_data) throws RegexError;
 		public static bool check_replacement (out bool has_references = null) throws RegexError;
 	}
 
-	public static delegate bool RegexEvalCallback (MatchInfo match_info, String result, pointer user_data);
+	public static delegate bool RegexEvalCallback (MatchInfo match_info, StringBuilder result, void* user_data);
 
 	[CCode (free_function = "g_match_info_free")]
 	public class MatchInfo {
@@ -2297,19 +2331,18 @@ namespace GLib {
 		public bool next () throws RegexError;
 		public int get_match_count ();
 		public bool is_partial_match ();
-		public string! expand_references (string! string_to_expand) throws RegexError;
+		public string expand_references (string string_to_expand) throws RegexError;
 		public string fetch (int match_num);
 		public bool fetch_pos (int match_num, out int start_pos, out int end_pos);
-		public string fetch_named (string! name);
-		public bool fetch_named_pos (string! name, out int start_pos, out int end_pos);
+		public string fetch_named (string name);
+		public bool fetch_named_pos (string name, out int start_pos, out int end_pos);
 		[NoArrayLength]
 		public string[] fetch_all ();
 	}
 
 	/* Simple XML Subset Parser */
 
-	[ErrorDomain]
-	public enum MarkupError {
+	public errordomain MarkupError {
 		BAD_UTF8,
 		EMPTY,
 		PARSE,
@@ -2325,22 +2358,22 @@ namespace GLib {
 	
 	[CCode (free_function = "g_markup_parse_context_free")]
 	public class MarkupParseContext {
-		public MarkupParseContext (MarkupParser parser, MarkupParseFlags _flags, pointer user_data, DestroyNotify user_data_dnotify);
+		public MarkupParseContext (MarkupParser parser, MarkupParseFlags _flags, void* user_data, DestroyNotify? user_data_dnotify);
 		public bool parse (string text, long text_len) throws MarkupError;
 		public weak string get_element ();
 		public weak SList<string> get_element_stack ();
 	}
 	
 	[NoArrayLength]
-	public static delegate void MarkupParserStartElementFunc (MarkupParseContext context, string element_name, string[] attribute_names, string[] attribute_values, pointer user_data) throws MarkupError;
+	public static delegate void MarkupParserStartElementFunc (MarkupParseContext context, string element_name, string[] attribute_names, string[] attribute_values, void* user_data) throws MarkupError;
 	
-	public static delegate void MarkupParserEndElementFunc (MarkupParseContext context, string element_name, pointer user_data) throws MarkupError;
+	public static delegate void MarkupParserEndElementFunc (MarkupParseContext context, string element_name, void* user_data) throws MarkupError;
 	
-	public static delegate void MarkupParserTextFunc (MarkupParseContext context, string text, ulong text_len, pointer user_data) throws MarkupError;
+	public static delegate void MarkupParserTextFunc (MarkupParseContext context, string text, ulong text_len, void* user_data) throws MarkupError;
 	
-	public static delegate void MarkupParserPassthroughFunc (MarkupParseContext context, string passthrough_text, ulong text_len, pointer user_data) throws MarkupError;
+	public static delegate void MarkupParserPassthroughFunc (MarkupParseContext context, string passthrough_text, ulong text_len, void* user_data) throws MarkupError;
 	
-	public static delegate void MarkupParserErrorFunc (MarkupParseContext context, Error error, pointer user_data);
+	public static delegate void MarkupParserErrorFunc (MarkupParseContext context, Error error, void* user_data);
 	
 	public struct MarkupParser {
 		public MarkupParserStartElementFunc start_element;
@@ -2351,15 +2384,14 @@ namespace GLib {
 	}
 
 	public static class Markup {
-		public static string! escape_text (string! text, long length = -1);
+		public static string escape_text (string text, long length = -1);
 		[PrintfFormat]
-		public static string! printf_escaped (string! format, ...);
+		public static string printf_escaped (string format, ...);
 	}
 
 	/* Key-value file parser */
 
-	[ErrorDomain]
-	public enum KeyFileError {
+	public errordomain KeyFileError {
 		UNKNOWN_ENCODING,
 		PARSE,
 		NOT_FOUND,
@@ -2372,49 +2404,49 @@ namespace GLib {
 	public class KeyFile {
 		public KeyFile ();
 		public void set_list_separator (char separator);
-		public bool load_from_file (string! file, KeyFileFlags @flags) throws KeyFileError;
-		public bool load_from_data (string! data, ulong length, KeyFileFlags @flags) throws KeyFileError;
-		public bool load_from_data_dirs (string! file, out string full_path, KeyFileFlags @flags) throws KeyFileError;
-		public string to_data (out ulong length) throws KeyFileError;
+		public bool load_from_file (string file, KeyFileFlags @flags) throws KeyFileError;
+		public bool load_from_data (string data, ulong length, KeyFileFlags @flags) throws KeyFileError;
+		public bool load_from_data_dirs (string file, out string full_path, KeyFileFlags @flags) throws KeyFileError;
+		public string to_data (out size_t length) throws KeyFileError;
 		public string get_start_group ();
 		[CCode (array_length_type = "gsize")]
 		public string[] get_groups ();
 		[CCode (array_length_type = "gsize")]
-		public string[] get_keys (string! group_name) throws KeyFileError;
-		public bool has_group (string! group_name);
-		public bool has_key (string! group_name, string! key) throws KeyFileError;
-		public string get_value (string! group_name, string! key) throws KeyFileError;
-		public string get_string (string! group_name, string! key) throws KeyFileError;
-		public string get_locale_string (string! group_name, string! key, string! locale) throws KeyFileError;
-		public bool get_boolean (string! group_name, string! key) throws KeyFileError;
-		public int get_integer (string! group_name, string! key) throws KeyFileError;
-		public double get_double (string! group_name, string! key) throws KeyFileError;
+		public string[] get_keys (string group_name) throws KeyFileError;
+		public bool has_group (string group_name);
+		public bool has_key (string group_name, string key) throws KeyFileError;
+		public string get_value (string group_name, string key) throws KeyFileError;
+		public string get_string (string group_name, string key) throws KeyFileError;
+		public string get_locale_string (string group_name, string key, string locale) throws KeyFileError;
+		public bool get_boolean (string group_name, string key) throws KeyFileError;
+		public int get_integer (string group_name, string key) throws KeyFileError;
+		public double get_double (string group_name, string key) throws KeyFileError;
 		[CCode (array_length_type = "gsize")]
-		public string[] get_string_list (string! group_name, string! key) throws KeyFileError;
+		public string[] get_string_list (string group_name, string key) throws KeyFileError;
 		[CCode (array_length_type = "gsize")]
-		public string[] get_locale_string_list (string! group_name, string! key, string! locale) throws KeyFileError;
+		public string[] get_locale_string_list (string group_name, string key, string locale) throws KeyFileError;
 		[CCode (array_length_type = "gsize")]
-		public bool[] get_boolean_list (string! group_name, string! key) throws KeyFileError;
+		public bool[] get_boolean_list (string group_name, string key) throws KeyFileError;
 		[CCode (array_length_type = "gsize")]
-		public int[] get_integer_list (string! group_name, string! key) throws KeyFileError;
+		public int[] get_integer_list (string group_name, string key) throws KeyFileError;
 		[CCode (array_length_type = "gsize")]
-		public double[] get_double_list (string! group_name, string! key) throws KeyFileError;
-		public string get_comment (string! group_name, string! key) throws KeyFileError;
-		public void set_value (string! group_name, string! key, string! value);
-		public void set_string (string! group_name, string! key, string! str);
-		public void set_locale_string (string! group_name, string! key, string! locale, string! str);
-		public void set_boolean (string! group_name, string! key, bool value);
-		public void set_integer (string! group_name, string! key, int value);
-		public void set_double (string! group_name, string! key, double value);
-		public void set_string_list (string! group_name, string! key, string[] list);
-		public void set_locale_string_list (string! group_name, string! key, string! locale, string[] list);
-		public void set_boolean_list (string! group_name, string! key, bool[] list);
-		public void set_integer_list (string! group_name, string! key, int[] list);
-		public void set_double_list (string! group_name, string! key, double[] list);
-		public void set_comment (string! group_name, string! key, string! comment);
-		public void remove_group (string! group_name) throws KeyFileError;
-		public void remove_key (string! group_name, string! key) throws KeyFileError;
-		public void remove_comment (string! group_name, string! key) throws KeyFileError;
+		public double[] get_double_list (string group_name, string key) throws KeyFileError;
+		public string get_comment (string group_name, string key) throws KeyFileError;
+		public void set_value (string group_name, string key, string value);
+		public void set_string (string group_name, string key, string str);
+		public void set_locale_string (string group_name, string key, string locale, string str);
+		public void set_boolean (string group_name, string key, bool value);
+		public void set_integer (string group_name, string key, int value);
+		public void set_double (string group_name, string key, double value);
+		public void set_string_list (string group_name, string key, string[] list);
+		public void set_locale_string_list (string group_name, string key, string locale, string[] list);
+		public void set_boolean_list (string group_name, string key, bool[] list);
+		public void set_integer_list (string group_name, string key, int[] list);
+		public void set_double_list (string group_name, string key, double[] list);
+		public void set_comment (string group_name, string key, string comment);
+		public void remove_group (string group_name) throws KeyFileError;
+		public void remove_key (string group_name, string key) throws KeyFileError;
+		public void remove_comment (string group_name, string key) throws KeyFileError;
 	}
 	
 	[CCode (cprefix = "G_KEY_FILE_")]
@@ -2429,47 +2461,46 @@ namespace GLib {
 	[CCode (free_function = "g_bookmark_file_free")]
 	public class BookmarkFile {
 		public BookmarkFile ();
-		public bool load_from_file (string! file) throws BookmarkFileError;
-		public bool load_from_data (string! data, size_t length) throws BookmarkFileError;
-		public bool load_from_data_dirs (string! file, out string full_path) throws BookmarkFileError;
+		public bool load_from_file (string file) throws BookmarkFileError;
+		public bool load_from_data (string data, size_t length) throws BookmarkFileError;
+		public bool load_from_data_dirs (string file, out string full_path) throws BookmarkFileError;
 		public string to_data (out size_t length) throws BookmarkFileError;
-		public bool to_file (string! filename) throws BookmarkFileError;
-		public bool has_item (string! uri);
-		public bool has_group (string! uri, string! group) throws BookmarkFileError;
-		public bool has_application (string! uri, string! name) throws BookmarkFileError;
+		public bool to_file (string filename) throws BookmarkFileError;
+		public bool has_item (string uri);
+		public bool has_group (string uri, string group) throws BookmarkFileError;
+		public bool has_application (string uri, string name) throws BookmarkFileError;
 		public int get_size ();
 		public string[] get_uris ();
 		public string get_title (string uri) throws BookmarkFileError;
 		public string get_description (string uri) throws BookmarkFileError;
 		public string get_mime_type (string uri) throws BookmarkFileError;
-		public bool get_is_private (string! uri) throws BookmarkFileError;
-		public bool get_icon (string! uri, out string href, out string mime_type) throws BookmarkFileError;
-		public long get_added (string! uri) throws BookmarkFileError;
-		public long get_modified (string! uri) throws BookmarkFileError;
-		public long get_visited (string! uri) throws BookmarkFileError;
-		public string[] get_groups (string! uri) throws BookmarkFileError;
-		public string[] get_applications (string! uri) throws BookmarkFileError;
-		public bool get_app_info (string! uri, string! name, out string exec, out uint count, out long stamp) throws BookmarkFileError;
+		public bool get_is_private (string uri) throws BookmarkFileError;
+		public bool get_icon (string uri, out string href, out string mime_type) throws BookmarkFileError;
+		public long get_added (string uri) throws BookmarkFileError;
+		public long get_modified (string uri) throws BookmarkFileError;
+		public long get_visited (string uri) throws BookmarkFileError;
+		public string[] get_groups (string uri) throws BookmarkFileError;
+		public string[] get_applications (string uri) throws BookmarkFileError;
+		public bool get_app_info (string uri, string name, out string exec, out uint count, out long stamp) throws BookmarkFileError;
 		public void set_title (string uri, string title);
 		public void set_description (string uri, string description);
 		public void set_mime_type (string uri, string mime_type);
-		public void set_is_private (string! uri, bool is_private);
-		public void set_icon (string! uri, string href, string mime_type);
-		public void set_added (string! uri, long time_);
-		public void set_groups (string! uri, string[] groups);
-		public void set_modified (string! uri, long time_);
-		public void set_visited (string! uri, long time_);
-		public bool set_app_info (string! uri, string! name, string! exec, int count, long time_) throws BookmarkFileError;
-		public void add_group (string! uri, string! group);
-		public void add_application (string! uri, string! name, string! exec);
-		public bool remove_group (string! uri, string! group) throws BookmarkFileError;
-		public bool remove_application (string! uri, string! name) throws BookmarkFileError;
-		public bool remove_item (string! uri) throws BookmarkFileError;
-		public bool move_item (string! old_uri, string! new_uri) throws BookmarkFileError;
+		public void set_is_private (string uri, bool is_private);
+		public void set_icon (string uri, string href, string mime_type);
+		public void set_added (string uri, long time_);
+		public void set_groups (string uri, string[] groups);
+		public void set_modified (string uri, long time_);
+		public void set_visited (string uri, long time_);
+		public bool set_app_info (string uri, string name, string exec, int count, long time_) throws BookmarkFileError;
+		public void add_group (string uri, string group);
+		public void add_application (string uri, string name, string exec);
+		public bool remove_group (string uri, string group) throws BookmarkFileError;
+		public bool remove_application (string uri, string name) throws BookmarkFileError;
+		public bool remove_item (string uri) throws BookmarkFileError;
+		public bool move_item (string old_uri, string new_uri) throws BookmarkFileError;
 	}
 
-	[ErrorDomain]
-	public enum BookmarkFileError {
+	public errordomain BookmarkFileError {
 		INVALID_URI,
 		INVALID_VALUE,
 		APP_NOT_REGISTERED,
@@ -2653,7 +2684,7 @@ namespace GLib {
 		public Queue copy ();
 		public weak List<G> find (G data);
 		public weak List<G> find_custom (G data, CompareFunc func);
-		public void sort (CompareDataFunc compare_func, pointer user_data);
+		public void sort (CompareDataFunc compare_func, void* user_data);
 		public void push_head (G# data);
 		public void push_tail (G# data);
 		public void push_nth (G# data);
@@ -2668,14 +2699,14 @@ namespace GLib {
 		public void remove_all (G data);
 		public void insert_before (List<G> sibling, G# data);
 		public void insert_after (List<G> sibling, G# data);
-		public void insert_sorted (List<G> sibling, G# data, CompareDataFunc func, pointer user_data);
+		public void insert_sorted (List<G> sibling, G# data, CompareDataFunc func, void* user_data);
 	}
 
 	/* Sequences */
 
 	[CCode (free_function = "g_sequence_free")]
 	public class Sequence<G> {
-		public Sequence (DestroyNotify data_destroy);
+		public Sequence (DestroyNotify? data_destroy);
 		public int get_length ();
 		public void @foreach (Func func);
 		public static void foreach_range (SequenceIter<G> begin, SequenceIter<G> end, Func func);
@@ -2722,23 +2753,24 @@ namespace GLib {
 	[CCode (ref_function = "g_hash_table_ref", unref_function = "g_hash_table_unref")]
 	public class HashTable<K,V> : Boxed {
 		public HashTable (HashFunc hash_func, EqualFunc key_equal_func);
-		public HashTable.full (HashFunc hash_func, EqualFunc key_equal_func, DestroyNotify key_destroy_func, DestroyNotify value_destroy_func);
+		public HashTable.full (HashFunc hash_func, EqualFunc key_equal_func, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
 		public void insert (K# key, V# value);
 		public void replace (K# key, V# value);
 		public weak V lookup (K key);
 		public bool remove (K key);
+		public void remove_all ();
 		public List<weak K> get_keys ();
 		public List<weak V> get_values ();
 		[CCode (cname = "g_hash_table_foreach")]
-		public void for_each (HFunc func, pointer user_data);
+		public void for_each (HFunc func, void* user_data);
 		public uint size ();
 	}
 	
-	public static delegate uint HashFunc (pointer key);
-	public static delegate bool EqualFunc (pointer a, pointer b);
-	public static delegate void HFunc (pointer key, pointer value, pointer user_data);
+	public static delegate uint HashFunc (void* key);
+	public static delegate bool EqualFunc (void* a, void* b);
+	public static delegate void HFunc (void* key, void* value, void* user_data);
 
-	public static delegate void DestroyNotify (pointer data);
+	public static delegate void DestroyNotify (void* data);
 	
 	[CCode (cname = "g_direct_hash")]
 	public static GLib.HashFunc direct_hash;
@@ -2766,56 +2798,32 @@ namespace GLib {
 		public StringBuilder (string init = "");
 		[CCode (cname = "g_string_sized_new")]
 		public StringBuilder.sized (ulong dfl_size);
-		public weak StringBuilder assign (string! rval);
-		public weak StringBuilder append (string! val);
+		public weak StringBuilder assign (string rval);
+		public weak StringBuilder append (string val);
 		public weak StringBuilder append_c (char c);
 		public weak StringBuilder append_unichar (unichar wc);
-		public weak StringBuilder append_len (string! val, long len);
-		public weak StringBuilder prepend (string! val);
+		public weak StringBuilder append_len (string val, long len);
+		public weak StringBuilder prepend (string val);
 		public weak StringBuilder prepend_c (char c);
 		public weak StringBuilder prepend_unichar (unichar wc);
-		public weak StringBuilder prepend_len (string! val, long len);
-		public weak StringBuilder insert (long pos, string! val);
+		public weak StringBuilder prepend_len (string val, long len);
+		public weak StringBuilder insert (long pos, string val);
 		public weak StringBuilder erase (long pos, long len);
 
 		[PrintfFormat]
-		public void printf (string! format, ...);
+		public void printf (string format, ...);
 		[PrintfFormat]
-		public void append_printf (string! format, ...);
+		public void append_printf (string format, ...);
 
 		public string str;
 		public long len;
 		public long allocated_len;
 	}
 
-	// will be removed in Vala 0.1.8
-	[CCode (free_function = "g_string_free", type_id = "G_TYPE_GSTRING")]
-	public class String : Boxed {
-		public String (string init = "");
-		[CCode (cname = "g_string_sized_new")]
-		public String.sized (ulong dfl_size);
-		public weak String assign (string! rval);
-		public weak String append (string! val);
-		public weak String append_c (char c);
-		public weak String append_unichar (unichar wc);
-		public weak String append_len (string! val, long len);
-		public weak String prepend (string! val);
-		public weak String prepend_c (char c);
-		public weak String prepend_unichar (unichar wc);
-		public weak String prepend_len (string! val, long len);
-		public weak String insert (long pos, string! val);
-		public weak String erase (long pos, long len);
-
-		[PrintfFormat]
-		public void printf (string! format, ...);
-		[PrintfFormat]
-		public void append_printf (string! format, ...);
-
-		public string str;
-		public long len;
-		public long allocated_len;
+	// will be removed in Vala 0.3.2
+	public class String {
 	}
-	
+
 	/* Pointer Arrays */
 	
 	[CCode (free_function = "g_ptr_array_free")]
@@ -2848,8 +2856,24 @@ namespace GLib {
 
 	/* Keyed Data Lists */
 
-	public class Data {
+	[CCode (cname = "GData*")]
+	public struct Datalist<G> {
+		public Datalist ();
+		public void clear ();
+		public G id_get_data (Quark key_id);
+		public void id_set_data (Quark key_id, G# data);
+		public void id_set_data_full (Quark key_id, G# data, DestroyNotify? destroy_func);
+		public void id_remove_data (Quark key_id);
+		public G id_remove_no_notify (Quark key_id);
+		public void @foreach (DataForeachFunc func);
+		public G get_data (string key);
+		public void set_data_full (string key, G# data, DestroyNotify? destry_func);
+		public G remove_no_notify (string key);
+		public void set_data (string key, G# data);
+		public void remove_data (string key);
 	}
+
+	public delegate void DataForeachFunc<G> (Quark key_id, G data);
 
 	/* GArray */
 	
@@ -2876,7 +2900,7 @@ namespace GLib {
 		[ReturnsModifiedPointer ()]
 		public void remove_range (uint index, uint length);
 		public void sort (CompareFunc compare_func);
-		public void sort_with_data (CompareDataFunc compare_func, pointer user_data);
+		public void sort_with_data (CompareDataFunc compare_func, void* user_data);
 		[ReturnsModifiedPointer ()]
 		public void set_size (uint length);
 		public string free (bool free_segment);
@@ -2884,7 +2908,7 @@ namespace GLib {
 	
 	/* GTree */
 	
-	public static delegate int TraverseFunc (pointer key, pointer value, pointer data);
+	public static delegate int TraverseFunc (void* key, void* value, void* data);
 	
 	[CCode (c_prefix="C_")]
 	public enum TraverseType {
@@ -2897,16 +2921,16 @@ namespace GLib {
 	[CCode (free_function = "g_tree_destroy")]
 	public class Tree<K,V> {
 		public Tree (CompareFunc key_compare_func);
-		public Tree.with_data (CompareFunc key_compare_func, pointer key_compare_data);
-		public Tree.full (CompareFunc key_compare_func, pointer key_compare_data, DestroyNotify key_destroy_func, DestroyNotify value_destroy_func);
+		public Tree.with_data (CompareFunc key_compare_func, void* key_compare_data);
+		public Tree.full (CompareFunc key_compare_func, void* key_compare_data, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
 		public void insert (K key, V value);
 		public void replace (K key, V value);
 		public int nnodes ();
 		public int height ();
 		public weak V lookup (K key);
 		public bool lookup_extended (K lookup_key, K orig_key, V value);
-		public void tree_foreach (TraverseFunc traverse_func, TraverseType traverse_type, pointer user_data);
-		public weak V tree_search (CompareFunc search_func, pointer user_data);
+		public void tree_foreach (TraverseFunc traverse_func, TraverseType traverse_type, void* user_data);
+		public weak V tree_search (CompareFunc search_func, void* user_data);
 		public bool remove (K key);
 		public bool steal (K key);
 	}
@@ -2942,48 +2966,48 @@ namespace GLib {
 
 	public static class Signal {
 		public static void query (uint signal_id, out SignalQuery query);
-		public static uint lookup (string! name, Type itype);
+		public static uint lookup (string name, Type itype);
 		public static weak string name (uint signal_id);
 		public static uint[] list_ids (Type itype);
-		public static void emit (pointer instance, uint signal_id, Quark detail, ...);
-		public static void emit_by_name (pointer instance, string! detailed_signal, ...);
-		public static ulong connect (pointer instance, string! detailed_signal, Callback! handler, pointer data);
-		public static ulong connect_after (pointer instance, string! detailed_signal, Callback! handler, pointer data);
-		public static ulong connect_swapped (pointer instance, string! detailed_signal, Callback! handler, pointer data);
-		public static ulong connect_object (pointer instance, string! detailed_signal, Callback! handler, Object gobject, ConnectFlags flags);
-		public static ulong connect_data (pointer instance, string! detailed_signal, Callback! handler, pointer data, ClosureNotify destroy_data, ConnectFlags flags);
-		public static ulong connect_closure (pointer instance, string! detailed_signal, Closure! closure, bool after);
-		public static ulong connect_closure_by_id (pointer instance, uint signal_id, Quark detail, Closure! closure, bool after);
-		public static bool has_handler_pending (pointer instance, uint signal_id, Quark detail, bool may_be_blocked);
-		public static void stop_emission (pointer instance, uint signal_id, Quark detail);
-		public static void stop_emission_by_name (pointer instance, string !detailed_signal);
-		public static void override_class_closure (uint signal_id, Type instance_type, Closure! class_closure);
+		public static void emit (void* instance, uint signal_id, Quark detail, ...);
+		public static void emit_by_name (void* instance, string detailed_signal, ...);
+		public static ulong connect (void* instance, string detailed_signal, Callback handler, void* data);
+		public static ulong connect_after (void* instance, string detailed_signal, Callback handler, void* data);
+		public static ulong connect_swapped (void* instance, string detailed_signal, Callback handler, void* data);
+		public static ulong connect_object (void* instance, string detailed_signal, Callback handler, Object gobject, ConnectFlags flags);
+		public static ulong connect_data (void* instance, string detailed_signal, Callback handler, void* data, ClosureNotify destroy_data, ConnectFlags flags);
+		public static ulong connect_closure (void* instance, string detailed_signal, Closure closure, bool after);
+		public static ulong connect_closure_by_id (void* instance, uint signal_id, Quark detail, Closure closure, bool after);
+		public static bool has_handler_pending (void* instance, uint signal_id, Quark detail, bool may_be_blocked);
+		public static void stop_emission (void* instance, uint signal_id, Quark detail);
+		public static void stop_emission_by_name (void* instance, string detailed_signal);
+		public static void override_class_closure (uint signal_id, Type instance_type, Closure class_closure);
 		[NoArrayLength]
 		public static void chain_from_overridden (Value[] instance_and_params, out Value return_value);
-		public static ulong add_emission_hook (uint signal_id, Quark detail, SignalEmissionHook! hook_func, DestroyNotify data_destroy);
+		public static ulong add_emission_hook (uint signal_id, Quark detail, SignalEmissionHook hook_func, DestroyNotify? data_destroy);
 		public static void remove_emission_hook (uint signal_id, ulong hook_id);
-		public static bool parse_name (string !detailed_signal, Type itype, out uint signal_id, out Quark detail, bool force_detail_quark);
+		public static bool parse_name (string detailed_signal, Type itype, out uint signal_id, out Quark detail, bool force_detail_quark);
 	}
 
 	public static class SignalHandler {
-		public static void block (pointer instance, ulong handler_id);
-		public static void unblock (pointer instance, ulong handler_id);
-		public static void disconnect (pointer instance, ulong handler_id);
-		public static ulong find (pointer instance, SignalMatchType mask, uint signal_id, Quark detail, Closure closure, pointer func, pointer data);
-		public static bool is_connected (pointer instance, ulong handler_id);
+		public static void block (void* instance, ulong handler_id);
+		public static void unblock (void* instance, ulong handler_id);
+		public static void disconnect (void* instance, ulong handler_id);
+		public static ulong find (void* instance, SignalMatchType mask, uint signal_id, Quark detail, Closure closure, void* func, void* data);
+		public static bool is_connected (void* instance, ulong handler_id);
 
 		[CCode (cname = "g_signal_handlers_block_matched")]
-		public static uint block_matched (pointer instance, SignalMatchType mask, uint signal_id, Quark detail, Closure closure, pointer func, pointer data);
+		public static uint block_matched (void* instance, SignalMatchType mask, uint signal_id, Quark detail, Closure closure, void* func, void* data);
 		[CCode (cname = "g_signal_handlers_unblock_matched")]
-		public static uint unblock_matched (pointer instance, SignalMatchType mask, uint signal_id, Quark detail, Closure closure, pointer func, pointer data);
+		public static uint unblock_matched (void* instance, SignalMatchType mask, uint signal_id, Quark detail, Closure closure, void* func, void* data);
 		[CCode (cname = "g_signal_handlers_disconnect_matched")]
-		public static uint disconnect_matched (pointer instance, SignalMatchType mask, uint signal_id, Quark detail, Closure closure, pointer func, pointer data);
+		public static uint disconnect_matched (void* instance, SignalMatchType mask, uint signal_id, Quark detail, Closure closure, void* func, void* data);
 		[CCode (cname = "g_signal_handlers_block_by_func")]
-		public static uint block_by_func (pointer instance, pointer func, pointer data);
+		public static uint block_by_func (void* instance, void* func, void* data);
 		[CCode (cname = "g_signal_handlers_unblock_by_func")]
-		public static uint unblock_by_func (pointer instance, pointer func, pointer data);
+		public static uint unblock_by_func (void* instance, void* func, void* data);
 		[CCode (cname = "g_signal_handlers_disconnect_by_func")]
-		public static uint disconnect_by_func (pointer instance, pointer func, pointer data);
+		public static uint disconnect_by_func (void* instance, void* func, void* data);
 	}
 
 	public struct SignalQuery {
@@ -3008,14 +3032,14 @@ namespace GLib {
 	}
 
 	public class PatternSpec {
-		public PatternSpec (string! pattern);
+		public PatternSpec (string pattern);
 		public void free ();
-		public bool equal (PatternSpec! pspec);
+		public bool equal (PatternSpec pspec);
 		[CCode (cname = "g_pattern_match")]
-		public bool match (uint string_length, string! str, string! str_reversed);
+		public bool match (uint string_length, string str, string str_reversed);
 		[CCode (cname = "g_pattern_match_string")]
-		public bool match_string (string! str);
+		public bool match_string (string str);
 		[CCode (cname = "g_pattern_match_simple")]
-		public static bool match_simple (string! pattern, string! str);
+		public static bool match_simple (string pattern, string str);
 	}
 }

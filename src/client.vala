@@ -23,7 +23,7 @@ namespace Abraca {
 	public class Client : GLib.Object {
 		static Client _instance;
 		private Xmms.Client _xmms;
-		private pointer _gmain;
+		private void *_gmain;
 
 		private uint _status;
 		private string _playlist = null;
@@ -47,7 +47,7 @@ namespace Abraca {
 		public signal void collection_rename(weak string name, weak string newname, weak string ns);
 		public signal void collection_remove(weak string name, weak string ns);
 
-		public signal void media_info(GLib.HashTable<string,pointer> hash);
+		public signal void media_info(GLib.HashTable<string,void *> hash);
 
 		private Xmms.Result _result_playback_status;
 		private Xmms.Result _result_playback_current_id;
@@ -97,7 +97,7 @@ namespace Abraca {
 			}
 		}
 
-		public bool try_connect(string path = null) {
+		public bool try_connect(string? path = null) {
 			if (path == null) {
 				path = GLib.Environment.get_variable("XMMS_PATH");
 			}
@@ -353,31 +353,31 @@ namespace Abraca {
 			/* TODO: Dispatch as a hash so the delegate can handle
 			 *       both stuff from here, and stuff from cache hits.
 			 */
-			GLib.HashTable<string,pointer> m =
-				new GLib.HashTable<string,pointer>(GLib.str_hash, GLib.str_equal);
+			GLib.HashTable<string,void *> m =
+				new GLib.HashTable<string,void *>(GLib.str_hash, GLib.str_equal);
 
 			m.insert("id", mid.to_pointer());
 
 			if (!res.get_dict_entry_string("artist", out tmp)) {
 				tmp = _("Unknown");
 			}
-			m.insert("artist", (pointer) tmp);
+			m.insert("artist", (void *)tmp);
 
 			if (!res.get_dict_entry_string("album", out tmp)) {
 				tmp = _("Unknown");
 			}
-			m.insert("album", (pointer) tmp);
+			m.insert("album", (void *) tmp);
 
 			if (!res.get_dict_entry_string("genre", out tmp)) {
 				tmp = _("Unknown");
 			}
-			m.insert("genre", (pointer) tmp);
+			m.insert("genre", (void *) tmp);
 
 			if (res.get_dict_entry_string("title", out tmp)) {
-				m.insert("title", (pointer) tmp);
+				m.insert("title", (void *) tmp);
 			} else {
 				res.get_dict_entry_string("url", out tmp);
-				m.insert("url", (pointer) tmp);
+				m.insert("url", (void *) tmp);
 			}
 
 			if (!res.get_dict_entry_int("duration", out duration)) {

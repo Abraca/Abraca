@@ -139,7 +139,7 @@ namespace Abraca {
 			int KEY_DELETE = 65535;
 
 			if (e.keyval == KEY_DELETE) {
-				weak GLib.List<weak Gtk.TreePath> paths;
+				GLib.List<Gtk.TreePath> paths;
 				weak Gtk.TreeSelection sel;
 				GLib.List<uint> lst;
 
@@ -336,7 +336,7 @@ namespace Abraca {
 
 		private void on_menu_playlist_filter(string key) {
 			Client c = Client.instance();
-			weak GLib.List<Gtk.TreePath> list;
+			GLib.List<Gtk.TreePath> list;
 			Gtk.TreeSelection sel;
 			Gtk.TreeIter iter;
 			string val;
@@ -407,7 +407,7 @@ namespace Abraca {
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			weak Gtk.TreeSelection sel = get_selection();
-			weak GLib.List<weak Gtk.TreePath> lst = sel.get_selected_rows(null);
+			GLib.List<Gtk.TreePath> lst = sel.get_selected_rows(null);
 			GLib.List<uint> pos_list = new GLib.List<uint>();
 			Gdk.Atom dnd_atom;
 
@@ -850,7 +850,7 @@ namespace Abraca {
 		 *       update the rows accordingly.
 		 *       Should also update the current coverart image.
 		 */
-		private void on_media_info(Client c, weak GLib.HashTable<string,pointer> m) {
+		private void on_media_info(Client c, weak GLib.HashTable<string,void *> m) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
 
 			weak GLib.SList<Gtk.TreeRowReference> lst;
@@ -860,7 +860,7 @@ namespace Abraca {
 			int duration, dur_min, dur_sec, pos, id;
 			uint mid;
 
-			mid = m.lookup("id").to_int();
+			mid = (int) m.lookup("id");
 
 			lst = playlist_map.lookup(mid);
 			if (lst == null) {
@@ -868,7 +868,7 @@ namespace Abraca {
 				return;
 			}
 
-			duration = m.lookup("duration").to_int();
+			duration = (int) m.lookup("duration");
 
 			dur_min = duration / 60000;
 			dur_sec = (duration % 60000) / 1000;
