@@ -35,8 +35,8 @@ namespace Abraca {
 		}
 
 		construct {
-			position = 120;
-			position_set = false;
+			position = 135;
+			position_set = true;
 
 			create_widgets();
 
