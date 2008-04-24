@@ -47,7 +47,7 @@ namespace Abraca {
 		public signal void collection_rename(weak string name, weak string newname, weak string ns);
 		public signal void collection_remove(weak string name, weak string ns);
 
-		public signal void media_info(GLib.HashTable<string,void *> hash);
+		public signal void medialib_entry_changed(Xmms.Result res);
 
 		private Xmms.Result _result_playback_status;
 		private Xmms.Result _result_playback_current_id;
@@ -315,14 +315,6 @@ namespace Abraca {
 			_result_collection_changed = res;
 			_result_collection_changed.ref();
 		}
-		/**
-		 * TODO: Lookup in cache and return if found instead of requesting.
-		 */
-		public void get_media_info(uint mid, weak string[] keys) {
-			xmms.medialib_get_info(mid).notifier_set(
-				on_medialib_get_info
-			);
-		}
 
 		[InstanceLast]
 		public void on_medialib_entry_changed(Xmms.Result #res) {
@@ -338,62 +330,16 @@ namespace Abraca {
 			_result_medialib_entry_changed.ref();
 		}
 
-		/**
-		 * TODO: Update cache here.
-		 */
 		[InstanceLast]
 		private void on_medialib_get_info(Xmms.Result #res) {
 			weak string tmp;
 			int mid, duration;
 
-			if (!res.get_dict_entry_int("id", out mid)) {
+			if (res.iserror()) {
 				return;
 			}
 
-			/* TODO: Dispatch as a hash so the delegate can handle
-			 *       both stuff from here, and stuff from cache hits.
-			 */
-			GLib.HashTable<string,void *> m =
-				new GLib.HashTable<string,void *>(GLib.str_hash, GLib.str_equal);
-
-			m.insert("id", mid.to_pointer());
-
-			if (!res.get_dict_entry_string("artist", out tmp)) {
-				tmp = _("Unknown");
-			}
-			m.insert("artist", (void *)tmp);
-
-			if (!res.get_dict_entry_string("album", out tmp)) {
-				tmp = _("Unknown");
-			}
-			m.insert("album", (void *) tmp);
-
-			if (!res.get_dict_entry_string("genre", out tmp)) {
-				tmp = _("Unknown");
-			}
-			m.insert("genre", (void *) tmp);
-
-			if (res.get_dict_entry_string("title", out tmp)) {
-				m.insert("title", (void *) tmp);
-			} else {
-				res.get_dict_entry_string("url", out tmp);
-				m.insert("url", (void *) tmp);
-			}
-
-			if (!res.get_dict_entry_int("duration", out duration)) {
-				duration = 0;
-			}
-			m.insert("duration", duration.to_pointer());
-
-			media_info(m);
-
-			/* destroy hashtable properly here */
-
-			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
-				/* does this ever happen? */
-				GLib.stdout.printf("this probably never happens, to be removed?\n");
-				res.ref();
-			}
+			medialib_entry_changed(res);
 		}
 	}
 }

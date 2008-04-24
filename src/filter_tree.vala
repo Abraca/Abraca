@@ -73,7 +73,9 @@ namespace Abraca {
 
 			pos_map = new GLib.HashTable<int,Gtk.TreeRowReference>(GLib.direct_hash, GLib.direct_equal);
 			Client c = Client.instance();
-			c.media_info += on_media_info;
+			c.medialib_entry_changed += (client, res) => {
+				on_media_info(res);
+			};
 
 			button_press_event += on_button_press_event;
 			row_activated += on_row_activated;
@@ -122,6 +124,7 @@ namespace Abraca {
 		[InstanceLast]
 		private void on_coll_query_ids(Xmms.Result #res) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
+			Client c = Client.instance();
 			Gtk.TreeIter iter, sibling;
 			bool first = true;
 
@@ -160,37 +163,37 @@ namespace Abraca {
 			/* reconnect the model again */
 			set_model(store);
 
-			pos_map.for_each((k,v,u) => {
-				Client c = Client.instance();
-				c.get_media_info((int) k, _properties);
-			}, null);
+			foreach (uint mid in pos_map.get_keys()) {
+				c.xmms.medialib_get_info(mid).notifier_set(on_media_info);
+			}
 		}
 
-		/**
-		 * TODO: Should check the future hash[mid] = [row1, row2, row3] and
-		 *       update the rows accordingly.
-		 *       Should also update the current coverart image.
-		 */
-		private void on_media_info(Client c, weak GLib.HashTable<string,void *> m) {
+		private void on_media_info(Xmms.Result #res) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
-			int mid, pos, id;
 			weak string artist, album, title;
 			weak Gtk.TreeRowReference row;
-			string info;
-			Gtk.TreeIter iter;
 			weak Gtk.TreePath path;
+			Gtk.TreeIter iter;
+			int mid, pos, id;
+			string info;
 
-			mid = (int) m.lookup("id");
+
+			res.get_dict_entry_int("id", out mid);
 
 			row = (Gtk.TreeRowReference) pos_map.lookup(mid.to_pointer());
 			if (row == null || !row.valid()) {
-				/* the given mid doesn't match any of our rows */
 				return;
 			}
 
-			artist = (string) m.lookup("artist");
-			album = (string) m.lookup("album");
-			title = (string) m.lookup("title");
+			if (!res.get_dict_entry_string("artist", out artist)) {
+				artist = _("Unknown");
+			}
+			if (!res.get_dict_entry_string("album", out album)) {
+				album = _("Unknown");
+			}
+			if (!res.get_dict_entry_string("title", out title)) {
+				title = _("Unknown");
+			}
 
 			path = row.get_path();
 

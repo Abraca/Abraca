@@ -111,7 +111,9 @@ namespace Abraca {
 
 			c.collection_rename += on_collection_rename;
 
-			c.media_info += on_media_info;
+			c.medialib_entry_changed += (client,res) => {
+				on_media_info(res);
+			};
 
 			create_context_menu();
 			create_dragndrop();
@@ -460,13 +462,10 @@ namespace Abraca {
 			bool success = false;
 
 			if (info == (uint) DragDropTargetType.ROW) {
-				GLib.stdout.printf("apan1\n");
 				success = on_drop_playlist_entries(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.MID) {
-				GLib.stdout.printf("apan2\n");
 				success = on_drop_medialib_id(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.COLL) {
-				GLib.stdout.printf("apan3\n");
 				success = on_drop_collection(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.URI) {
 				GLib.stdout.printf("Drop from filesystem not implemented\n");
@@ -637,8 +636,7 @@ namespace Abraca {
 				Gtk.TreeRowReference row = new Gtk.TreeRowReference(store, path);
 				playlist_map.insert(mid, row);
 
-				/* TODO: Cast shouldn't be needed here */
-				c.get_media_info(mid, (string[]) _properties);
+				c.xmms.medialib_get_info(mid).notifier_set(on_media_info);
 			}
 		}
 
@@ -805,8 +803,7 @@ namespace Abraca {
 
 			playlist_map.insert(mid, row);
 
-			/* TODO: Cast shouldn't be needed here */
-			c.get_media_info(mid, (string[]) _properties);
+			c.xmms.medialib_get_info(mid).notifier_set(on_media_info);
 		}
 
 		/**
@@ -855,26 +852,19 @@ namespace Abraca {
 			set_model(store);
 
 			foreach (uint mid in playlist_map.get_ids()) {
-				c.get_media_info(mid, (string[]) _properties);
+				c.xmms.medialib_get_info(mid).notifier_set(on_media_info);
 			}
 		}
 
-		/**
-		 * TODO: Should check the future hash[mid] = [row1, row2, row3] and
-		 *       update the rows accordingly.
-		 *       Should also update the current coverart image.
-		 */
-		private void on_media_info(Client c, weak GLib.HashTable<string,void *> m) {
+		private void on_media_info(Xmms.Result #res) {
 			Gtk.ListStore store = (Gtk.ListStore) model;
-
 			weak GLib.SList<Gtk.TreeRowReference> lst;
-
-			string info;
 			weak string artist, album, title, genre;
 			int duration, dur_min, dur_sec, pos, id;
-			uint mid;
+			string info;
+			int mid;
 
-			mid = (int) m.lookup("id");
+			res.get_dict_entry_int("id", out mid);
 
 			lst = playlist_map.lookup(mid);
 			if (lst == null) {
@@ -882,29 +872,54 @@ namespace Abraca {
 				return;
 			}
 
-			duration = (int) m.lookup("duration");
+			if (!res.get_dict_entry_int("duration", out duration)) {
+				duration = 0;
+			}
 
 			dur_min = duration / 60000;
 			dur_sec = (duration % 60000) / 1000;
 
-			title = (string) m.lookup("title");
-			if (title != null) {
-				artist = (string) m.lookup("artist");
-				album = (string) m.lookup("album");
-				genre = (string) m.lookup("genre");
+			if (!res.get_dict_entry_string("album", out album)) {
+				album = _("Unknown");
+			}
+			if (!res.get_dict_entry_string("genre", out genre)) {
+				genre = _("Unknown");
+			}
 
-				info = GLib.Markup.printf_escaped(
-					_("<b>%s</b> - <small>%d:%02d</small>\n" +
-					"<small>by</small> %s <small>from</small> %s"),
-					title, dur_min, dur_sec, artist, album
-				);
+			if (res.get_dict_entry_string("title", out title)) {
+				if (!res.get_dict_entry_string("artist", out artist)) {
+					artist = _("Unknown");
+				}
+
+				if (dur_min > 0 || dur_sec > 0) {
+					info = GLib.Markup.printf_escaped(
+						_("<b>%s</b> - <small>%d:%02d</small>\n" +
+						"<small>by</small> %s <small>from</small> %s"),
+						title, dur_min, dur_sec, artist, album
+					);
+				} else {
+					info = GLib.Markup.printf_escaped(
+						_("<b>%s</b>\n" +
+						"<small>by</small> %s <small>from</small> %s"),
+						title, artist, album
+					);
+				}
 			} else {
-				weak string url = (string) m.lookup("url");
+				weak string url;
 
-				info = GLib.Markup.printf_escaped(
-					_("<b>%s</b> - <small>%d:%02d</small>"),
-					url, dur_min, dur_sec
-				);
+				res.get_dict_entry_string("url", out url);
+
+				if (dur_min > 0 || dur_sec > 0) {
+					info = GLib.Markup.printf_escaped(
+						_("<b>%s</b> - <small>%d:%02d</small>"),
+						url, dur_min, dur_sec
+					);
+				} else {
+					info = GLib.Markup.printf_escaped(
+						_("<b>%s</b>"),
+						url
+					);
+				}
 			}
 
 

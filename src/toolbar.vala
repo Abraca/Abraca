@@ -63,6 +63,10 @@ namespace Abraca {
 			c.playback_status += on_playback_status_change;
 			c.playback_current_id += on_playback_current_id;
 			c.playback_playtime += on_playback_playtime;
+
+			c.medialib_entry_changed += (client, res) => {
+				on_media_info(res);
+			};
 		}
 
 		private Gtk.Button create_playback_button(weak string s) {
@@ -152,7 +156,7 @@ namespace Abraca {
 
 		private void on_playback_current_id(Client c, uint mid) {
 			c.xmms.medialib_get_info(mid).notifier_set(
-				on_medialib_get_info
+				on_media_info
 			);
 		}
 
@@ -196,7 +200,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private void on_medialib_get_info(Xmms.Result #res) {
+		private void on_media_info(Xmms.Result #res) {
 			weak string title, cover;
 			string info;
 			int id;
