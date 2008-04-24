@@ -18,6 +18,8 @@ from SCons.Script.SConscript import SConsEnvironment
 from SCons.Options import Options, PathOption, BoolOption
 
 import os
+import re
+import subprocess
 
 # We don't care about having Program for example
 # accessible detached from an environment.
@@ -139,14 +141,20 @@ class AbracaEnvironment(SConsEnvironment):
 		return exit_code
 	CheckCCompiler = staticmethod(CheckCCompiler)
 
-	def CheckVala(ctx, fail=True):
-		ctx.Message('Checking for valac... ')
-		code = 'public class Test { public static void main (string[] args) { } }'
-		exit_code = ctx.TryBuild(ctx.env._Vala, code, '.vala')
-		ctx.Result(exit_code)
-		if not exit_code and fail:
-			raise SCons.Errors.UserError('The valac compiler is required to build')
-		return exit_code
+	def CheckVala(ctx, min_version, fail=True):
+		if not SCons.Util.is_String(min_version):
+			raise SCons.Errors.UserError('valac min version needs to be a string')
+		ctx.Message('Checking for valac >= %s... ' % min_version)
+		proc = subprocess.Popen(['valac', '--version'], stdout=subprocess.PIPE)
+		proc.wait()
+		res = re.findall('([0-9](\.[0-9])*)$', proc.stdout.read())
+		if res and res[0] and res[0][0] >= min_version:
+			ctx.Result(1)
+		else:
+			ctx.Result(0)
+			if fail:
+				raise SCons.Errors.UserError('The vala compiler needs to be of version %s or newer' % min_version)
+		return False
 	CheckVala = staticmethod(CheckVala)
 
 	def CheckApp(ctx, app, fail=False):

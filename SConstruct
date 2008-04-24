@@ -7,7 +7,7 @@ env.VariantDir('build', '.')
 env.Append(VALAPKGPATH = ['vapi'])
 
 conf = env.Configure('build/build-config.h')
-conf.CheckVala()
+conf.CheckVala('0.3.1')
 conf.CheckCCompiler()
 conf.CheckPkgConfig()
 conf.CheckApp('msgfmt')
