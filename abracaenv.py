@@ -145,7 +145,8 @@ class AbracaEnvironment(SConsEnvironment):
 		if not SCons.Util.is_String(min_version):
 			raise SCons.Errors.UserError('valac min version needs to be a string')
 		ctx.Message('Checking for valac >= %s... ' % min_version)
-		proc = subprocess.Popen(['valac', '--version'], stdout=subprocess.PIPE)
+		cmd = ctx.env.subst('$VALAC')
+		proc = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE)
 		proc.wait()
 		res = re.findall('([0-9](\.[0-9])*)$', proc.stdout.read())
 		if res and res[0] and res[0][0] >= min_version:
