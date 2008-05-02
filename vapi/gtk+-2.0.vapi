@@ -1650,6 +1650,7 @@ namespace Gtk {
 		public TreeRowReference.proxy (GLib.Object proxy, Gtk.TreeModel model, Gtk.TreePath path);
 		public static void reordered (GLib.Object proxy, Gtk.TreePath path, Gtk.TreeIter iter, int[] new_order);
 		public bool valid ();
+		public void free();
 	}
 	[CCode (cheader_filename = "gtk/gtk.h")]
 	public class AboutDialog : Gtk.Dialog, Atk.Implementor, Gtk.Buildable {

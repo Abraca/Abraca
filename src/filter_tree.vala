@@ -20,8 +20,10 @@
 using GLib;
 
 namespace Abraca {
+	/* TODO: Remove and introduce dynamic colums */
 	enum FilterColumn {
-		ID = 0,
+		Status,
+		ID,
 		Artist,
 		Title,
 		Album,
@@ -49,11 +51,6 @@ namespace Abraca {
 		};
 
 
-		/* TODO: This is bogous, use a Hash<uint,List<uint>> instead
-		 *       to allow for multiple rows <-> same medialib id.
-		 */
-		private GLib.HashTable<int,Gtk.TreeRowReference> pos_map;
-
 		construct {
 			show_expanders = true;
 			fixed_height_mode = true;
@@ -62,20 +59,10 @@ namespace Abraca {
 
 			get_selection().set_mode(Gtk.SelectionMode.MULTIPLE);
 
-			model = new Gtk.ListStore(
-				FilterColumn.Total,
-				typeof(int), typeof(string), typeof(string),
-				typeof(string), typeof(string), typeof(string)
-			);
+			model = new FilterListModel();
 
 			create_context_menu();
 			create_drag_n_drop();
-
-			pos_map = new GLib.HashTable<int,Gtk.TreeRowReference>(GLib.direct_hash, GLib.direct_equal);
-			Client c = Client.instance();
-			c.medialib_entry_changed += (client, res) => {
-				on_media_info(res);
-			};
 
 			button_press_event += on_button_press_event;
 			row_activated += on_row_activated;
@@ -123,91 +110,16 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_coll_query_ids(Xmms.Result #res) {
-			Gtk.ListStore store = (Gtk.ListStore) model;
-			Client c = Client.instance();
-			Gtk.TreeIter iter, sibling;
-			bool first = true;
-
-
-			store.clear();
+			FilterListModel store = (FilterListModel) model;
 
 			/* disconnect our model while the shit hits the fan */
 			set_model(null);
 
-			for (res.list_first(); res.list_valid(); res.list_next()) {
-				Gtk.TreeRowReference row;
-				Gtk.TreePath path;
-				uint id;
-				int pos;
-
-				if (!res.get_uint(out id))
-					continue;
-
-				if (first) {
-					store.insert_after(out iter, null);
-					first = !first;
-				} else {
-					store.insert_after(out iter, sibling);
-				}
-
-				store.set(iter, FilterColumn.ID, id);
-
-				sibling = iter;
-
-				path = store.get_path(iter);
-				row = new Gtk.TreeRowReference(store, path);
-
-				pos_map.insert(id.to_pointer(), #row);
-			}
+			store.replace_content (res);
 
 			/* reconnect the model again */
 			set_model(store);
-
-			foreach (uint mid in pos_map.get_keys()) {
-				c.xmms.medialib_get_info(mid).notifier_set(on_media_info);
-			}
 		}
-
-		private void on_media_info(Xmms.Result #res) {
-			Gtk.ListStore store = (Gtk.ListStore) model;
-			weak string artist, album, title;
-			weak Gtk.TreeRowReference row;
-			weak Gtk.TreePath path;
-			Gtk.TreeIter iter;
-			int mid, pos, id;
-			string info;
-
-
-			res.get_dict_entry_int("id", out mid);
-
-			row = (Gtk.TreeRowReference) pos_map.lookup(mid.to_pointer());
-			if (row == null || !row.valid()) {
-				return;
-			}
-
-			if (!res.get_dict_entry_string("artist", out artist)) {
-				artist = _("Unknown");
-			}
-			if (!res.get_dict_entry_string("album", out album)) {
-				album = _("Unknown");
-			}
-			if (!res.get_dict_entry_string("title", out title)) {
-				title = _("Unknown");
-			}
-
-			path = row.get_path();
-
-			if (!model.get_iter(out iter, path)) {
-				GLib.stdout.printf("couldn't get iter!!!\n");
-			} else {
-				store.set(iter,
-					FilterColumn.Artist, artist,
-					FilterColumn.Title, title,
-					FilterColumn.Album, album
-				);
-			}
-		}
-
 		[InstanceLast]
 		private bool on_button_press_event(Gtk.Widget widget, Gdk.Event e) {
 			weak Gdk.EventButton event_button = (Gdk.EventButton) e;
@@ -273,6 +185,7 @@ namespace Abraca {
 
 		}
 
+		/* TODO: Remove and introduce dynamic colums */
 		private void create_columns() {
 			Gtk.TreeViewColumn column;
 			Gtk.CellRendererText cell;
