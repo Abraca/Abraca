@@ -21,7 +21,8 @@ using GLib;
 
 namespace Abraca {
 	enum PlaylistColumn {
-		ID = 0,
+		STATUS,
+		ID,
 		PositionIndicator,
 		Artist,
 		Album,
@@ -33,29 +34,6 @@ namespace Abraca {
 	public class PlaylistTree : Gtk.TreeView {
 		/** context menu */
 		private Gtk.Menu _playlist_menu;
-
-		/** current playback status */
-		private int _status;
-
-		/** current playlist displayed */
-		private string _playlist;
-
-		/** have we scrolled to current position? */
-		private bool _have_scrolled;
-
-		/** current sorting order */
-		private string[] _sort;
-
-		/** keep track of current playlist position */
-		private Gtk.TreeRowReference _position = null;
-
-		/** keep track of playlist position <-> medialib id */
-		private PlaylistMap playlist_map;
-
-		/* metadata properties we're interested in */
-		private const string[] _properties = {
-			"artist", "album", "title", "duration"
-		};
 
 		/** drag-n-drop targets */
 		private const Gtk.TargetEntry[] _target_entries = {
@@ -72,6 +50,9 @@ namespace Abraca {
 			DragDropTarget.TrackId
 		};
 
+		/** current sorting order */
+		private string[] _sort;
+
 		construct {
 			Client c = Client.instance();
 
@@ -85,35 +66,13 @@ namespace Abraca {
 			weak Gtk.TreeSelection sel = get_selection();
 			sel.set_mode(Gtk.SelectionMode.MULTIPLE);
 
-			playlist_map = new PlaylistMap();
-
 			create_columns ();
 
-			model = new Gtk.ListStore(
-				PlaylistColumn.Total,
-				typeof(int), typeof(string), typeof(string),
-				typeof(string), typeof(string), typeof(string)
-			);
+			model = new PlaylistModel();
 
 			row_activated += on_row_activated;
 			key_press_event += on_key_press_event;
 			button_press_event += on_button_press_event;
-
-			c.playlist_loaded += on_playlist_loaded;
-
-			c.playlist_add += on_playlist_add;
-			c.playlist_move += on_playlist_move;
-			c.playlist_insert += on_playlist_insert;
-			c.playlist_remove += on_playlist_remove;
-			c.playlist_position += on_playlist_position;
-
-			c.playback_status += on_playback_status;
-
-			c.collection_rename += on_collection_rename;
-
-			c.medialib_entry_changed += (client,res) => {
-				on_media_info(res);
-			};
 
 			create_context_menu();
 			create_dragndrop();
@@ -140,6 +99,7 @@ namespace Abraca {
 
 
 		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e) {
+			PlaylistModel store = (PlaylistModel) model;
 			int KEY_DELETE = 65535;
 
 			if (e.keyval == KEY_DELETE) {
@@ -159,7 +119,7 @@ namespace Abraca {
 				Client c = Client.instance();
 
 				foreach (uint id in lst) {
-					c.xmms.playlist_remove_entry(_playlist, id);
+					c.xmms.playlist_remove_entry(store.active_playlist, id);
 				}
 
 				return true;
@@ -313,8 +273,10 @@ namespace Abraca {
 
 			item = new Gtk.MenuItem.with_label(_("Shuffle"));
 			item.activate += i => {
+				PlaylistModel store = (PlaylistModel) model;
 				Client c = Client.instance();
-				c.xmms.playlist_shuffle(_playlist);
+
+				c.xmms.playlist_shuffle(store.active_playlist);
 			};
 			_playlist_menu.append(item);
 
@@ -323,7 +285,8 @@ namespace Abraca {
 			);
 			img_item.activate += i => {
 				Client c = Client.instance();
-				c.xmms.playlist_clear(_playlist);
+				PlaylistModel store = (PlaylistModel) model;
+				c.xmms.playlist_clear(store.active_playlist);
 			};
 			_playlist_menu.append(img_item);
 
@@ -332,10 +295,11 @@ namespace Abraca {
 
 
 		private void on_menu_playlist_sort(string type) {
+			PlaylistModel store = (PlaylistModel) model;
 			Client c = Client.instance();
 			_sort = type.split(",");
 
-			c.xmms.playlist_sort(_playlist, (string[]) _sort);
+			c.xmms.playlist_sort(store.active_playlist, (string[]) _sort);
 		}
 
 		private void on_menu_playlist_filter(string key) {
@@ -485,6 +449,7 @@ namespace Abraca {
 		 */
 
 		private bool on_drop_playlist_entries(Gtk.SelectionData sel, int x, int y) {
+			PlaylistModel store = (PlaylistModel) model;
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
 
@@ -507,10 +472,10 @@ namespace Abraca {
 
 				for (int i = source.length - 1; i >= 0; i--) {
 					if (source[i] < dest) {
-						c.xmms.playlist_move_entry(_playlist, source[i]-downward, (uint) dest-1);
+						c.xmms.playlist_move_entry(store.active_playlist, source[i]-downward, (uint) dest-1);
 						downward++;
 					} else {
-						c.xmms.playlist_move_entry(_playlist, source[i], (uint) dest+upward);
+						c.xmms.playlist_move_entry(store.active_playlist, source[i], (uint) dest+upward);
 						upward++;
 					}
 				}
@@ -522,6 +487,7 @@ namespace Abraca {
 		 * Handle dropping of medialib ids.
 		 */
 		private bool on_drop_medialib_id(Gtk.SelectionData sel, int x, int y) {
+			PlaylistModel store = (PlaylistModel) model;
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
 
@@ -534,11 +500,11 @@ namespace Abraca {
 			if (get_dest_row_at_pos(x, y, out path, out align)) {
 				int pos = path.get_indices()[0];
 				foreach (uint id in ids) {
-					c.xmms.playlist_insert_id(_playlist, pos, id);
+					c.xmms.playlist_insert_id(store.active_playlist, pos, id);
 				}
 			} else {
 				foreach (uint id in ids) {
-					c.xmms.playlist_add_id(_playlist, id);
+					c.xmms.playlist_add_id(store.active_playlist, id);
 				}
 			}
 
@@ -585,6 +551,7 @@ namespace Abraca {
 		}
 
 		private bool on_drop_collection(Gtk.SelectionData sel, int x, int y) {
+			PlaylistModel store = (PlaylistModel) model;
 			Client c = Client.instance();
 			Xmms.Collection coll;
 			Gtk.TreeViewDropPosition align;
@@ -606,122 +573,12 @@ namespace Abraca {
 				    align ==  Gtk.TreeViewDropPosition.INTO_OR_AFTER) {
 					pos++;
 				}
-				c.xmms.playlist_insert_collection(_playlist, pos, coll, _sort);
+				c.xmms.playlist_insert_collection(store.active_playlist, pos, coll, _sort);
 			} else {
-				c.xmms.playlist_add_collection(_playlist, coll, _sort);
+				c.xmms.playlist_add_collection(store.active_playlist, coll, _sort);
 			}
 
 			return true;
-		}
-
-		/**
-		 * Insert a row when a new entry has been inserted in the playlist.
-		 */
-		private void on_playlist_insert(Client c, string playlist, uint mid, int pos) {
-			Gtk.ListStore store = (Gtk.ListStore) model;
-			Gtk.TreePath path;
-			Gtk.TreeIter iter;
-
-			if (playlist != _playlist) {
-				return;
-			}
-
-			path = new Gtk.TreePath.from_indices(pos, -1);
-			if (model.get_iter(out iter, path)) {
-				Gtk.TreeIter added;
-
-				store.insert_before (out added, iter);
-
-				Gtk.TreePath path = store.get_path(added);
-				Gtk.TreeRowReference row = new Gtk.TreeRowReference(store, path);
-				playlist_map.insert(mid, row);
-
-				c.xmms.medialib_get_info(mid).notifier_set(on_media_info);
-			}
-		}
-
-		/**
-		 * Removes the row when an entry has been removed from the playlist.
-		 */
-		private void on_playlist_remove(Client c, string playlist, int pos) {
-			Gtk.ListStore store = (Gtk.ListStore) model;
-			Gtk.TreePath path;
-			Gtk.TreeIter iter;
-
-			if (playlist != _playlist) {
-				return;
-			}
-
-			path = new Gtk.TreePath.from_indices(pos, -1);
-			if (model.get_iter(out iter, path)) {
-				uint mid;
-
-				model.get(iter, PlaylistColumn.ID, out mid);
-
-				playlist_map.remove(mid, path);
-				store.remove(iter);
-			}
-		}
-
-		/**
-		 * TODO: Move row x to pos y.
-		 */
-		private void on_playlist_move(Client c, string playlist, int pos, int npos) {
-			Gtk.ListStore store = (Gtk.ListStore) model;
-			Gtk.TreeIter iter, niter;
-			if (store.iter_nth_child (out iter, null, pos) &&
-			    store.iter_nth_child(out niter, null, npos)) {
-				if (pos < npos) {
-					store.move_after (iter, niter);
-				} else {
-					store.move_before (iter, niter);
-				}
-			}
-		}
-
-
-		/**
-		 * Update the position indicator to point at the
-		 * current playing entry.
-		 */
-		private void on_playlist_position(Client c, string playlist, int pos) {
-			Gtk.ListStore store = (Gtk.ListStore) model;
-			Gtk.TreeIter iter;
-
-			/* Remove the old position indicator */
-			if (_position.valid()) {
-				model.get_iter(out iter, _position.get_path());
-				store.set(iter, PlaylistColumn.PositionIndicator, 0);
-			}
-
-			/* Playlist is probably empty */
-			if (pos < 0)
-				return;
-
-			/* Add the new position indicator */
-			if (store.iter_nth_child (out iter, null, (int) pos)) {
-				Gtk.TreePath path;
-				uint mid;
-
-				/* Notify the Client of the current medialib id */
-				model.get(iter, PlaylistColumn.ID, out mid);
-				c.set_playlist_id(mid);
-
-				store.set(
-					iter,
-					PlaylistColumn.PositionIndicator,
-					Gtk.STOCK_GO_FORWARD
-				);
-
-				path = model.get_path(iter);
-
-				_position = new Gtk.TreeRowReference(model, path);
-
-				if (!_have_scrolled) {
-					scroll_to_cell(path, null, true, (float) 0.25, (float) 0);
-					_have_scrolled = true;
-				}
-			}
 		}
 
 
@@ -732,212 +589,15 @@ namespace Abraca {
 		[InstanceLast]
 		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path,
 		                              Gtk.TreeViewColumn column) {
+			PlaylistModel store = (PlaylistModel) model;
 			Client c = Client.instance();
 			int pos = path.get_indices()[0];
 
 			c.xmms.playlist_set_next(pos);
 			c.xmms.playback_tickle();
 
-			if (_status != Xmms.PlaybackStatus.PLAY) {
+			if (store.playback_status != Xmms.PlaybackStatus.PLAY) {
 				c.xmms.playback_start();
-			}
-		}
-
-		/**
-		 * Keep track of status so we know what to do when an item has been clicked.
-		 */
-		private void on_playback_status(Client c, int status) {
-			_status = status;
-
-			/* Notify the Client of the current medialib id */
-			if (_position.valid()) {
-				Gtk.TreeIter iter;
-				uint mid;
-
-				model.get_iter(out iter, _position.get_path());
-				model.get(iter, PlaylistColumn.ID, out mid);
-
-				c.set_playlist_id(mid);
-			}
-		}
-
-		/**
-		 * Keep track of the name of the current playlist so we can filter out
-		 * non-interesting playlist related updates.
-		 */
-		private void on_collection_rename(Client c, string name, string newname, string ns) {
-			if (name != _playlist) {
-				return;
-			}
-
-			_playlist = newname;
-		}
-
-		/**
-		 * Called when xmms2 has loaded a new playlist, simply requests
-		 * the mids of that playlist.
-		 */
-		private void on_playlist_loaded(Client c, string name) {
-			_playlist = name;
-			_have_scrolled = false;
-
-			c.xmms.playlist_list_entries(name).notifier_set(
-				on_playlist_list_entries
-			);
-		}
-
-		private void on_playlist_add(Client c, string playlist, uint mid) {
-			Gtk.ListStore store = (Gtk.ListStore) model;
-			Gtk.TreeRowReference row;
-			Gtk.TreePath path;
-			Gtk.TreeIter iter;
-
-			if (playlist != _playlist) {
-				return;
-			}
-
-			store.append(out iter);
-
-			path = store.get_path(iter);
-			row = new Gtk.TreeRowReference(store, path);
-
-			playlist_map.insert(mid, row);
-
-			c.xmms.medialib_get_info(mid).notifier_set(on_media_info);
-		}
-
-		/**
-		 * Refresh the whole playlist.
-		 */
-		[InstanceLast]
-		private void on_playlist_list_entries(Xmms.Result #res) {
-			Client c = Client.instance();
-			Gtk.ListStore store = (Gtk.ListStore) model;
-			Gtk.TreeIter iter, sibling;
-			bool first = true;
-
-			playlist_map.clear();
-			store.clear();
-
-			/* disconnect our model while the shit hits the fan */
-			set_model(null);
-
-			for (res.list_first(); res.list_valid(); res.list_next()) {
-				Gtk.TreeRowReference row;
-				Gtk.TreePath path;
-				uint mid;
-				int pos;
-
-				if (!res.get_uint(out mid))
-					continue;
-
-				if (first) {
-					store.insert_after(out iter, null);
-					first = !first;
-				} else {
-					store.insert_after(out iter, sibling);
-				}
-
-				store.set(iter, PlaylistColumn.ID, mid);
-
-				sibling = iter;
-
-				path = store.get_path(iter);
-				row = new Gtk.TreeRowReference(store, path);
-
-				playlist_map.insert(mid, row);
-			}
-
-			/* reconnect the model again */
-			set_model(store);
-
-			foreach (uint mid in playlist_map.get_ids()) {
-				c.xmms.medialib_get_info(mid).notifier_set(on_media_info);
-			}
-		}
-
-		private void on_media_info(Xmms.Result #res) {
-			Gtk.ListStore store = (Gtk.ListStore) model;
-			weak GLib.SList<Gtk.TreeRowReference> lst;
-			weak string artist, album, title, genre;
-			int duration, dur_min, dur_sec, pos, id;
-			string info;
-			int mid;
-
-			res.get_dict_entry_int("id", out mid);
-
-			lst = playlist_map.lookup(mid);
-			if (lst == null) {
-				/* the given mid doesn't match any of our rows */
-				return;
-			}
-
-			if (!res.get_dict_entry_int("duration", out duration)) {
-				duration = 0;
-			}
-
-			dur_min = duration / 60000;
-			dur_sec = (duration % 60000) / 1000;
-
-			if (!res.get_dict_entry_string("album", out album)) {
-				album = _("Unknown");
-			}
-			if (!res.get_dict_entry_string("genre", out genre)) {
-				genre = _("Unknown");
-			}
-
-			if (res.get_dict_entry_string("title", out title)) {
-				if (!res.get_dict_entry_string("artist", out artist)) {
-					artist = _("Unknown");
-				}
-
-				if (dur_min > 0 || dur_sec > 0) {
-					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b> - <small>%d:%02d</small>\n" +
-						"<small>by</small> %s <small>from</small> %s"),
-						title, dur_min, dur_sec, artist, album
-					);
-				} else {
-					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b>\n" +
-						"<small>by</small> %s <small>from</small> %s"),
-						title, artist, album
-					);
-				}
-			} else {
-				weak string url;
-
-				res.get_dict_entry_string("url", out url);
-
-				if (dur_min > 0 || dur_sec > 0) {
-					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b> - <small>%d:%02d</small>"),
-						url, dur_min, dur_sec
-					);
-				} else {
-					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b>"),
-						url
-					);
-				}
-			}
-
-
-			foreach (weak Gtk.TreeRowReference row in lst) {
-				weak Gtk.TreePath path;
-				Gtk.TreeIter iter;
-
-				path = row.get_path();
-
-				if (!row.valid() || !model.get_iter(out iter, path)) {
-					GLib.stdout.printf("row not valid\n");
-					continue;
-				}
-
-				store.set(iter, PlaylistColumn.Info, info,
-						PlaylistColumn.Artist, artist,
-						PlaylistColumn.Album, album,
-						PlaylistColumn.Genre, genre);
 			}
 		}
 	}
