@@ -99,7 +99,6 @@ namespace Abraca {
 
 
 		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e) {
-			PlaylistModel store = (PlaylistModel) model;
 			int KEY_DELETE = 65535;
 
 			if (e.keyval == KEY_DELETE) {
@@ -119,7 +118,7 @@ namespace Abraca {
 				Client c = Client.instance();
 
 				foreach (uint id in lst) {
-					c.xmms.playlist_remove_entry(store.active_playlist, id);
+					c.xmms.playlist_remove_entry(Xmms.ACTIVE_PLAYLIST, id);
 				}
 
 				return true;
@@ -273,10 +272,8 @@ namespace Abraca {
 
 			item = new Gtk.MenuItem.with_label(_("Shuffle"));
 			item.activate += i => {
-				PlaylistModel store = (PlaylistModel) model;
 				Client c = Client.instance();
-
-				c.xmms.playlist_shuffle(store.active_playlist);
+				c.xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
 			};
 			_playlist_menu.append(item);
 
@@ -285,8 +282,7 @@ namespace Abraca {
 			);
 			img_item.activate += i => {
 				Client c = Client.instance();
-				PlaylistModel store = (PlaylistModel) model;
-				c.xmms.playlist_clear(store.active_playlist);
+				c.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
 			};
 			_playlist_menu.append(img_item);
 
@@ -295,11 +291,10 @@ namespace Abraca {
 
 
 		private void on_menu_playlist_sort(string type) {
-			PlaylistModel store = (PlaylistModel) model;
 			Client c = Client.instance();
 			_sort = type.split(",");
 
-			c.xmms.playlist_sort(store.active_playlist, (string[]) _sort);
+			c.xmms.playlist_sort(Xmms.ACTIVE_PLAYLIST, (string[]) _sort);
 		}
 
 		private void on_menu_playlist_filter(string key) {
@@ -449,7 +444,6 @@ namespace Abraca {
 		 */
 
 		private bool on_drop_playlist_entries(Gtk.SelectionData sel, int x, int y) {
-			PlaylistModel store = (PlaylistModel) model;
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
 
@@ -472,10 +466,10 @@ namespace Abraca {
 
 				for (int i = source.length - 1; i >= 0; i--) {
 					if (source[i] < dest) {
-						c.xmms.playlist_move_entry(store.active_playlist, source[i]-downward, (uint) dest-1);
+						c.xmms.playlist_move_entry(Xmms.ACTIVE_PLAYLIST, source[i]-downward, (uint) dest-1);
 						downward++;
 					} else {
-						c.xmms.playlist_move_entry(store.active_playlist, source[i], (uint) dest+upward);
+						c.xmms.playlist_move_entry(Xmms.ACTIVE_PLAYLIST, source[i], (uint) dest+upward);
 						upward++;
 					}
 				}
@@ -487,7 +481,6 @@ namespace Abraca {
 		 * Handle dropping of medialib ids.
 		 */
 		private bool on_drop_medialib_id(Gtk.SelectionData sel, int x, int y) {
-			PlaylistModel store = (PlaylistModel) model;
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
 
@@ -500,11 +493,11 @@ namespace Abraca {
 			if (get_dest_row_at_pos(x, y, out path, out align)) {
 				int pos = path.get_indices()[0];
 				foreach (uint id in ids) {
-					c.xmms.playlist_insert_id(store.active_playlist, pos, id);
+					c.xmms.playlist_insert_id(Xmms.ACTIVE_PLAYLIST, pos, id);
 				}
 			} else {
 				foreach (uint id in ids) {
-					c.xmms.playlist_add_id(store.active_playlist, id);
+					c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 				}
 			}
 
@@ -551,7 +544,6 @@ namespace Abraca {
 		}
 
 		private bool on_drop_collection(Gtk.SelectionData sel, int x, int y) {
-			PlaylistModel store = (PlaylistModel) model;
 			Client c = Client.instance();
 			Xmms.Collection coll;
 			Gtk.TreeViewDropPosition align;
@@ -573,9 +565,9 @@ namespace Abraca {
 				    align ==  Gtk.TreeViewDropPosition.INTO_OR_AFTER) {
 					pos++;
 				}
-				c.xmms.playlist_insert_collection(store.active_playlist, pos, coll, _sort);
+				c.xmms.playlist_insert_collection(Xmms.ACTIVE_PLAYLIST, pos, coll, _sort);
 			} else {
-				c.xmms.playlist_add_collection(store.active_playlist, coll, _sort);
+				c.xmms.playlist_add_collection(Xmms.ACTIVE_PLAYLIST, coll, _sort);
 			}
 
 			return true;
@@ -589,16 +581,16 @@ namespace Abraca {
 		[InstanceLast]
 		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path,
 		                              Gtk.TreeViewColumn column) {
-			PlaylistModel store = (PlaylistModel) model;
 			Client c = Client.instance();
 			int pos = path.get_indices()[0];
 
 			c.xmms.playlist_set_next(pos);
-			c.xmms.playback_tickle();
 
-			if (store.playback_status != Xmms.PlaybackStatus.PLAY) {
+			if (c.current_playback_status != Xmms.PlaybackStatus.PLAY) {
 				c.xmms.playback_start();
 			}
+
+			c.xmms.playback_tickle();
 		}
 	}
 }

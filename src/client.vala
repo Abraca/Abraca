@@ -25,9 +25,6 @@ namespace Abraca {
 		private Xmms.Client _xmms;
 		private void *_gmain;
 
-		private uint _status;
-		private string _playlist = null;
-
 		public signal void connected();
 		public signal void disconnected();
 
@@ -57,6 +54,16 @@ namespace Abraca {
 		private Xmms.Result _result_playlist_position;
 
 		private Xmms.Result _result_collection_changed;
+
+		/** current playback status */
+		public int current_playback_status {
+			get; set; default = Xmms.PlaybackStatus.STOP;
+		}
+
+		/** current playlist displayed */
+		public string current_playlist {
+			get; set; default = "";
+		}
 
 		construct {
 			_xmms = new Xmms.Client("Abraca");
@@ -92,7 +99,7 @@ namespace Abraca {
 		}
 
 		public void set_playlist_id (uint mid) {
-			if (_status == Xmms.PlaybackStatus.STOP) {
+			if (current_playback_status == Xmms.PlaybackStatus.STOP) {
 				playback_current_id(mid);
 			}
 		}
@@ -171,8 +178,10 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_playback_status(Xmms.Result #res) {
-			if (res.get_uint(out _status)) {
-				playback_status((int) _status);
+			uint status;
+			if (res.get_uint(out status)) {
+				playback_status((int) status);
+				current_playback_status = status;
 			}
 
 			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
@@ -216,7 +225,7 @@ namespace Abraca {
 			weak string name;
 
 			if (res.get_string(out name)) {
-				_playlist = name;
+				current_playlist = name;
 				playlist_loaded(name);
 
 				_xmms.playlist_current_pos (name).notifier_set(
@@ -235,7 +244,7 @@ namespace Abraca {
 			uint pos;
 
 			if (res.get_uint(out pos)) {
-				playlist_position(_playlist, pos);
+				playlist_position(current_playlist, pos);
 			}
 
 			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
@@ -303,6 +312,9 @@ namespace Abraca {
 					break;
 				case Xmms.CollectionChanged.RENAME:
 					res.get_dict_entry_string("newname", out newname);
+					if (name == current_playlist) {
+						current_playlist = newname;
+					}
 					collection_rename(name, newname, ns);
 					break;
 				case Xmms.CollectionChanged.REMOVE:
@@ -315,6 +327,7 @@ namespace Abraca {
 			_result_collection_changed = res;
 			_result_collection_changed.ref();
 		}
+
 
 		[InstanceLast]
 		public void on_medialib_entry_changed(Xmms.Result #res) {

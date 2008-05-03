@@ -20,16 +20,6 @@ namespace Abraca {
 			INFO
 		}
 
-		/** current playback status */
-		public int playback_status {
-			get; set; default = Xmms.PlaybackStatus.STOP;
-		}
-
-		/** current playlist displayed */
-		public string active_playlist {
-			get; set; default = "";
-		}
-
 		/** have we scrolled to current position? */
 		private bool _have_scrolled;
 
@@ -64,8 +54,6 @@ namespace Abraca {
 			c.playlist_position += on_playlist_position;
 
 			c.playback_status += on_playback_status;
-
-			c.collection_rename += on_collection_rename;
 
 			c.medialib_entry_changed += (client,res) => {
 				on_medialib_info(res);
@@ -104,7 +92,7 @@ namespace Abraca {
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 
-			if (playlist != active_playlist) {
+			if (playlist != c.current_playlist) {
 				return;
 			}
 
@@ -188,7 +176,7 @@ namespace Abraca {
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 
-			if (playlist != active_playlist) {
+			if (playlist != c.current_playlist) {
 				return;
 			}
 
@@ -210,8 +198,6 @@ namespace Abraca {
 		 * Keep track of status so we know what to do when an item has been clicked.
 		 */
 		private void on_playback_status(Client c, int status) {
-			playback_status = status;
-
 			/* Notify the Client of the current medialib id */
 			if (_position.valid()) {
 				Gtk.TreeIter iter;
@@ -224,24 +210,12 @@ namespace Abraca {
 			}
 		}
 
-		/**
-		 * Keep track of the name of the current playlist so we can filter out
-		 * non-interesting playlist related updates.
-		 */
-		private void on_collection_rename(Client c, string name, string newname, string ns) {
-			if (name != active_playlist) {
-				return;
-			}
-
-			active_playlist = newname;
-		}
 
 		/**
 		 * Called when xmms2 has loaded a new playlist, simply requests
 		 * the mids of that playlist.
 		 */
 		private void on_playlist_loaded(Client c, string name) {
-			active_playlist = name;
 			_have_scrolled = false;
 
 			c.xmms.playlist_list_entries(name).notifier_set(
@@ -254,7 +228,7 @@ namespace Abraca {
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 
-			if (playlist != active_playlist) {
+			if (playlist != c.current_playlist) {
 				return;
 			}
 
