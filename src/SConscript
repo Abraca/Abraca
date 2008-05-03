@@ -5,7 +5,7 @@ vala_sources = """
 	collections_tree.vala
 	config.vala
 	filter_tree.vala
-	filter_list_model.vala
+	filter_model.vala
 	medialib.vala
 	main_hpaned.vala
 	main_window.vala

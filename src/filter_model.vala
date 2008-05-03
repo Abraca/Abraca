@@ -20,7 +20,7 @@
 using GLib;
 
 namespace Abraca {
-	public class FilterListModel : Gtk.ListStore, Gtk.TreeModel {
+	public class FilterModel : Gtk.ListStore, Gtk.TreeModel {
 		/* Metadata resolve status */
 
 		enum Status {

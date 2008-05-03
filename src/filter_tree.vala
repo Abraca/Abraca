@@ -59,7 +59,7 @@ namespace Abraca {
 
 			get_selection().set_mode(Gtk.SelectionMode.MULTIPLE);
 
-			model = new FilterListModel();
+			model = new FilterModel();
 
 			create_context_menu();
 			create_drag_n_drop();
@@ -110,7 +110,7 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_coll_query_ids(Xmms.Result #res) {
-			FilterListModel store = (FilterListModel) model;
+			FilterModel store = (FilterModel) model;
 
 			/* disconnect our model while the shit hits the fan */
 			set_model(null);
