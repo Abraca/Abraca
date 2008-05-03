@@ -157,6 +157,7 @@ namespace Abraca {
 
 		private void on_playback_current_id(Client c, uint mid) {
 			_current_id = mid;
+			_pos = 0;
 
 			c.xmms.medialib_get_info(mid).notifier_set(
 				on_media_info
