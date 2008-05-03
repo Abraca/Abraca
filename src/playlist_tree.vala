@@ -20,17 +20,6 @@
 using GLib;
 
 namespace Abraca {
-	enum PlaylistColumn {
-		STATUS,
-		ID,
-		PositionIndicator,
-		Artist,
-		Album,
-		Genre,
-		Info,
-		Total
-	}
-
 	public class PlaylistTree : Gtk.TreeView {
 		/** context menu */
 		private Gtk.Menu _playlist_menu;
@@ -148,7 +137,7 @@ namespace Abraca {
 
 			column = new Gtk.TreeViewColumn.with_attributes (
 				null, pbuf_renderer,
-				"stock-id", PlaylistColumn.PositionIndicator,
+				"stock-id", PlaylistModel.Column.POSITION_INDICATOR,
 				null
 			);
 
@@ -183,7 +172,7 @@ namespace Abraca {
 
  			insert_column_with_attributes(
 				-1, null, text_renderer,
-				"markup", PlaylistColumn.Info, null
+				"markup", PlaylistModel.Column.INFO, null
 			);
 		}
 
@@ -307,11 +296,11 @@ namespace Abraca {
 			bool empty = true;
 
 			if (key == "artist") {
-				column = PlaylistColumn.Artist;
+				column = PlaylistModel.Column.ARTIST;
 			} else if (key == "album") {
-				column = PlaylistColumn.Album;
+				column = PlaylistModel.Column.ALBUM;
 			} else if (key == "genre") {
-				column = PlaylistColumn.Genre;
+				column = PlaylistModel.Column.GENRE;
 			} else {
 				return;
 			}
@@ -386,7 +375,7 @@ namespace Abraca {
 				uint mid;
 				foreach (weak Gtk.TreePath p in lst) {
 					model.get_iter(out iter, p);
-					model.get(iter, PlaylistColumn.ID, out mid);
+					model.get(iter, PlaylistModel.Column.ID, out mid);
 					pos_list.prepend(mid);
 				}
 				dnd_atom = Gdk.Atom.intern(_source_entries[1].target, true);

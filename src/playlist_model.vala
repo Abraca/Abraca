@@ -22,14 +22,13 @@ using GLib;
 namespace Abraca {
 	public class PlaylistModel : Gtk.ListStore, Gtk.TreeModel {
 		/* Metadata resolve status */
-
-		enum Status {
+		private enum Status {
 			UNRESOLVED,
 			RESOLVING,
 			RESOLVED
 		}
 
-		enum Column {
+		public enum Column {
 			STATUS,
 			ID,
 			POSITION_INDICATOR,
@@ -54,7 +53,7 @@ namespace Abraca {
 			set_column_types(new GLib.Type[8] {
 					typeof(int),
 					typeof(uint),
-					typeof(int),
+					typeof(string),
 					typeof(string),
 					typeof(string),
 					typeof(string),
@@ -92,7 +91,6 @@ namespace Abraca {
 				Client c = Client.instance();
 
 				base.get_value(iter, Column.ID, ref tmp2);
-				//GLib.stdout.printf("unresolved crap %d\n", tmp2.get_uint());
 
 				set(iter, Column.STATUS, Status.RESOLVING);
 
@@ -154,7 +152,6 @@ namespace Abraca {
 				get_iter(out iter, _position.get_path());
 				set(iter, Column.POSITION_INDICATOR, 0);
 			}
-
 
 			/* Playlist is probably empty */
 			if (pos < 0)
