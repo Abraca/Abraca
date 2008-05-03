@@ -23,6 +23,7 @@ namespace Abraca {
 	public class ToolBar : Gtk.HBox {
 		private Gtk.Button play_pause;
 
+		private uint _current_id;
 		private int _status;
 		private int _duration;
 		private uint _pos;
@@ -155,6 +156,8 @@ namespace Abraca {
 		}
 
 		private void on_playback_current_id(Client c, uint mid) {
+			_current_id = mid;
+
 			c.xmms.medialib_get_info(mid).notifier_set(
 				on_media_info
 			);
@@ -207,6 +210,10 @@ namespace Abraca {
 			int duration, dur_min, dur_sec, pos;
 
 			res.get_dict_entry_int("id", out id);
+			if (_current_id != id) {
+				return;
+			}
+
 			if (!res.get_dict_entry_int("duration", out duration)) {
 				duration = 0;
 			}
