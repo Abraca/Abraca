@@ -690,6 +690,7 @@ namespace Xmms {
 			out Collection val
 		);
 		public bool get_bin (
+			[CCode(array_length_type="uint")]
 			out uchar[] val
 		);
 		public ResultType get_dict_entry_type (
