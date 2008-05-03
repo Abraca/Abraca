@@ -99,7 +99,7 @@ namespace Abraca {
 		}
 
 		public void set_playlist_id (uint mid) {
-			if (current_playback_status != Xmms.PlaybackStatus.PLAY) {
+			if (current_playback_status == Xmms.PlaybackStatus.STOP) {
 				playback_current_id(mid);
 			}
 		}
