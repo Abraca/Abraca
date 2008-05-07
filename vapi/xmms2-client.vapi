@@ -663,6 +663,8 @@ namespace Xmms {
 		);
 		public ResultClass get_class (
 		);
+		public ResultType get_type (
+		);
 		public void disconnect (
 		);
 		public void notifier_set (

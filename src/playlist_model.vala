@@ -158,7 +158,7 @@ namespace Abraca {
 				return;
 
 			/* Add the new position indicator */
-			if (iter_nth_child (out iter, null, (int) pos)) {
+			if (iter_nth_child (out iter, null, pos)) {
 				Gtk.TreePath path;
 				uint mid;
 

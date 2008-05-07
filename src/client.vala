@@ -226,6 +226,7 @@ namespace Abraca {
 
 			if (res.get_string(out name)) {
 				current_playlist = name;
+
 				playlist_loaded(name);
 
 				_xmms.playlist_current_pos (name).notifier_set(
@@ -243,7 +244,16 @@ namespace Abraca {
 		private void on_playlist_position(Xmms.Result #res) {
 			uint pos;
 
-			if (res.get_uint(out pos)) {
+			if (res.get_type() == Xmms.ResultType.DICT) {
+				weak string name;
+
+				res.get_dict_entry_uint("position", out pos);
+				res.get_dict_entry_string("name", out name);
+
+				playlist_position(name, pos);
+			} else {
+				res.get_uint(out pos);
+
 				playlist_position(current_playlist, pos);
 			}
 
