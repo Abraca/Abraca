@@ -20,6 +20,11 @@ To clean the build directory:
     ./scons -c
 
 
+To uninstall abraca:
+
+    ./scons install -c
+
+
 Project related options:
 
     ./scons -h
