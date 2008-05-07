@@ -45,7 +45,7 @@ namespace Abraca {
 		construct {
 			Client c = Client.instance();
 
-			enable_search = true;
+			enable_search = false;
 			search_column = 1;
 			headers_visible = false;
 			show_expanders = false;
