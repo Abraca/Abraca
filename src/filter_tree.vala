@@ -151,6 +151,22 @@ namespace Abraca {
 			c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 		}
 
+		private void on_menu_info(Gtk.MenuItem item) {
+			Client c = Client.instance();
+			GLib.List<Gtk.TreePath> list;
+			weak Gtk.TreeModel mod;
+			Gtk.TreeIter iter;
+			uint id;
+
+			list = get_selection().get_selected_rows(out mod);
+			foreach (weak Gtk.TreePath path in list) {
+				model.get_iter(out iter, path);
+				model.get(iter, FilterColumn.ID, out id);
+
+				Abraca.instance().medialib.info_dialog_add_id(id);
+			}
+		}
+
 		private void on_menu_add(Gtk.MenuItem item) {
 			Client c = Client.instance();
 			GLib.List<Gtk.TreePath> list;
@@ -242,6 +258,10 @@ namespace Abraca {
 			Gtk.ImageMenuItem img_item;
 
 			filter_menu = new Gtk.Menu();
+
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_INFO, null);
+			item.activate += on_menu_info;
+			filter_menu.append(item);
 
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
 			item.activate += on_menu_add;

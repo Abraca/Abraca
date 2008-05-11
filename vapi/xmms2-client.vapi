@@ -126,6 +126,7 @@ namespace Xmms {
 
 	[CCode(
 		cprefix = "XMMSC_RESULT_VALUE_TYPE_",
+		cname = "xmmsc_result_type_t",
 		cheader_filename = "xmmsclient/xmmsclient.h"
 	)]
 	public enum ResultType {

@@ -20,7 +20,487 @@
 using GLib;
 
 namespace Abraca {
+	public class MedialibInfoDialog : Gtk.Dialog {
+		private GLib.List<uint> ids;
+		private weak GLib.List<uint> current;
+
+		private string artist;
+		private string album;
+		private string title;
+		private string genre;
+		private string tracknr;
+		private string date;
+		private string rating;
+
+		private Gtk.TreeView view;
+		private Gtk.TreeStore store;
+		private Gtk.Table overviewTable;
+		private Gtk.Notebook notebook;
+		private Gtk.Button prev_button;
+		private Gtk.Button next_button;
+		private Gtk.Entry artist_entry;
+		private Gtk.Entry album_entry;
+		private Gtk.Entry title_entry;
+		private Gtk.SpinButton date_button;
+		private Gtk.SpinButton tracknr_button;
+		private Gtk.SpinButton rating_button;
+		private Gtk.ComboBox genre_combo_box_entry;
+
+		private const string[] genres = { "Acid Jazz", "Acid Punk", "Acid",
+			"Alternative Rock", "Alternative", "Ambient", "Bass", "Blues",
+			"Cabaret", "Christian Rap", "Classic Rock", "Classical",
+			"Comedy", "Country", "Cult", "Dance", "Darkwave", "Death Metal",
+			"Disco", "Dream", "Electronic", "Ethnic", "Euro-Techno",
+			"Eurodance", "Folk", "Funk", "Fusion", "Game", "Gangsta", "Gospel",
+			"Gothic", "Grunge", "Hard Rock", "Hip-Hop", "House", "Industrial",
+			"Instrumental Pop", "Instrumental Rock", "Instrumental", "Jazz",
+			"Jazz&Funk", "Jungle", "Lo-Fi", "Meditative", "Metal", "Musical",
+			"Native US", "New Age", "New Wave", "Noise", "Oldies", "Other",
+			"Polka", "Pop", "Pop-Folk", "Pop/Funk", "Pranks", "Psychedelic",
+			"Punk", "R&B", "Rap", "Rave", "Reggae", "Retro", "Rock & Roll",
+			"Rock", "Showtunes", "Ska", "Soul", "Sound Clip", "Soundtrack",
+			"Southern Rock", "Space", "Techno", "Techno-Industrial", "Top 40",
+			"Trailer", "Trance", "Tribal", "Trip-Hop", "Vocal"};
+
+		construct {
+			Gtk.Alignment align;
+			Gtk.Button button;
+
+			set_title ("Info");
+			ids = new GLib.List<uint>();
+			delete_event += on_delete_event;
+
+			resize(500, 430);
+
+			border_width = 5;
+			transient_for = Abraca.instance().main_window;
+			has_separator = false;
+			resizable = false;
+			((Gtk.Box) vbox).spacing = 10;
+
+
+			// Buttons
+			prev_button = new Gtk.Button.from_stock(Gtk.STOCK_GO_BACK);
+			prev_button.clicked += on_prev_button_clicked;
+			((Gtk.Box) action_area).pack_start_defaults(prev_button);
+
+			next_button = new Gtk.Button.from_stock(Gtk.STOCK_GO_FORWARD);
+			next_button.clicked += on_next_button_clicked;
+			((Gtk.Box) action_area).pack_start_defaults(next_button);
+
+			button = new Gtk.Button.from_stock(Gtk.STOCK_CLOSE);
+			button.clicked += on_close_button_clicked;
+			((Gtk.Box) action_area).pack_start_defaults(button);
+
+			button = new Gtk.Button.from_stock(Gtk.STOCK_OK);
+			button.clicked += on_close_all_button_clicked;
+			((Gtk.Box) action_area).pack_start_defaults(button);
+
+			notebook = new Gtk.Notebook();
+
+			int row = 0;
+
+			// overview
+			overviewTable = new Gtk.Table(7, 2, false);
+
+			overviewTable.set_row_spacings(0);
+			overviewTable.border_width = 10;
+
+			Gtk.Label label;
+			label = new Gtk.Label("Title:");
+			label.xalign = 0;
+			overviewTable.attach(label, 0, 1, row, row + 1,
+			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			title_entry = new Gtk.Entry();
+			title_entry.changed += on_title_entry_changed;
+			title_entry.activate += on_title_entry_activated;
+			overviewTable.attach_defaults(title_entry, 1, 2, row, row+1);
+			row++;
+
+			label = new Gtk.Label("Artist:");
+			label.xalign = 0;
+			overviewTable.attach(label, 0, 1, row, row + 1,
+			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			artist_entry = new Gtk.Entry();
+			artist_entry.changed += on_artist_entry_changed;
+			artist_entry.activate += on_artist_entry_activated;
+			overviewTable.attach_defaults(artist_entry, 1, 2, row, row+1);
+			row++;
+
+			label = new Gtk.Label("Album:");
+			label.xalign = 0;
+			overviewTable.attach(label, 0, 1, row, row + 1,
+			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			album_entry = new Gtk.Entry();
+			album_entry.changed += on_album_entry_changed;
+			album_entry.activate += on_album_entry_activated;
+			overviewTable.attach_defaults(album_entry, 1, 2, row, row+1);
+			row++;
+
+			label = new Gtk.Label("Track number:");
+			label.xalign = 0;
+			overviewTable.attach(label, 0, 1, row, row + 1,
+			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			tracknr_button = new Gtk.SpinButton.with_range(0, 9999, 1);
+			tracknr_button.changed += on_tracknr_button_changed;
+			tracknr_button.activate += on_tracknr_button_activated;
+			overviewTable.attach_defaults(tracknr_button, 1, 2, row, row+1);
+			row++;
+
+			label = new Gtk.Label("Year:");
+			label.xalign = 0;
+			overviewTable.attach(label, 0, 1, row, row + 1,
+			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			date_button = new Gtk.SpinButton.with_range(0, 9999, 1);
+			date_button.changed += on_date_button_changed;
+			date_button.activate += on_date_button_activated;
+			overviewTable.attach_defaults(date_button, 1, 2, row, row+1);
+			row++;
+
+			/* TODO: color-updating doesn't work properly yet, therefore disabled */
+			label = new Gtk.Label("Genre:");
+			label.xalign = 0;
+			overviewTable.attach(label, 0, 1, row, row + 1,
+			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			genre_combo_box_entry = new Gtk.ComboBoxEntry.text();
+			genre_combo_box_entry.changed += on_genre_combo_box_entry_changed;
+			((Gtk.Entry) (genre_combo_box_entry.get_child())).activate += on_genre_box_button_activated;
+			foreach(weak string genre in genres) {
+				genre_combo_box_entry.append_text(genre);
+			}
+			align = new Gtk.Alignment(0, (float) 0.5, 1, 1);
+			align.add(genre_combo_box_entry);
+			overviewTable.attach_defaults(align, 1, 2, row, row + 1);
+			row++;
+
+			label = new Gtk.Label("Rating:");
+			label.xalign = 0;
+			overviewTable.attach(label, 0, 1, row, row + 1,
+			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			rating_button = new Gtk.SpinButton.with_range(0, 5, 1);
+			rating_button.changed += on_rating_button_changed;
+			rating_button.activate += on_rating_button_activated;
+			overviewTable.attach_defaults(rating_button, 1, 2, row, row+1 );
+			row++;
+
+			notebook.append_page(overviewTable, new Gtk.Label("Overview"));
+
+			// details
+			Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(null, null);
+			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
+			                    Gtk.PolicyType.AUTOMATIC);
+
+			store = new Gtk.TreeStore(2, typeof(string), typeof(string));
+			view = new Gtk.TreeView.with_model(store);
+			view.headers_visible = false;
+
+			view.insert_column_with_attributes(
+				-1, null, new Gtk.CellRendererText(),
+				"markup", 0
+			);
+			view.insert_column_with_attributes(
+				-1, null, new Gtk.CellRendererText(),
+				"markup", 1
+			);
+
+			align = new Gtk.Alignment(
+				(float) 0.5, (float) 0.5, (float) 0.85, (float) 1.0
+			);
+			align.add(notebook);
+
+			scrolled.add_with_viewport(view);
+			notebook.append_page(scrolled, new Gtk.Label("Details"));
+
+			((Gtk.Box) vbox).pack_start_defaults(align);
+
+			show_all();
+		}
+
+		bool on_delete_event(Gtk.Widget dialog) {
+			Abraca.instance().medialib.info_dialog = null;
+			return false;
+		}
+
+		void change_color(Gtk.Entry editable, string origin) {
+			if (origin == editable.get_text()) {
+				editable.modify_base(Gtk.StateType.NORMAL, null);
+			} else {
+				Gdk.Color color;
+				color.red = (ushort) 0xffff;
+				color.green = (ushort) 0xffff;
+				color.blue = (ushort) 0x6666;
+				editable.modify_base(Gtk.StateType.NORMAL, color);
+			}
+
+		}
+
+		/*
+		void change_color_int(Gtk.SpinButton editable, string origin) {
+			if (origin == editable.get_text()) {
+				editable.modify_base(Gtk.StateType.NORMAL, null);
+			} else {
+				Gdk.Color color;
+				color.red = (ushort) 0xffff;
+				color.green = (ushort) 0xffff;
+				color.blue = (ushort) 0x6666;
+				editable.modify_base(Gtk.StateType.NORMAL, color);
+			}
+
+		}
+		*/
+
+		void on_title_entry_changed(Gtk.Editable editable) {
+			change_color((Gtk.Entry) editable, title);
+		}
+
+		void on_artist_entry_changed(Gtk.Editable editable) {
+			change_color((Gtk.Entry) editable, artist);
+		}
+
+		void on_album_entry_changed(Gtk.Editable editable) {
+			change_color((Gtk.Entry) editable, album);
+		}
+
+		void on_tracknr_button_changed(Gtk.Editable editable) {
+			change_color((Gtk.Entry) editable, tracknr);
+		}
+
+		void on_date_button_changed(Gtk.Editable editable) {
+			change_color((Gtk.Entry) editable, date);
+		}
+
+		void on_rating_button_changed(Gtk.Editable editable) {
+			change_color((Gtk.Entry) editable, rating);
+		}
+
+		void on_genre_combo_box_entry_changed(Gtk.ComboBox editable) {
+			Gtk.Widget widget = genre_combo_box_entry.get_child();
+			change_color((Gtk.Entry) widget, genre);
+		}
+
+		private void set_str(Gtk.Editable editable, string key) {
+			Client c = Client.instance();
+			weak string val = editable.get_chars(0, -1);
+
+			c.xmms.medialib_entry_property_set_str(
+				current.data, key, val
+			).notifier_set( on_value_wrote);
+		}
+
+		private void set_int(Gtk.SpinButton editable, string key) {
+			Client c = Client.instance();
+			int val = editable.get_value_as_int();
+
+			c.xmms.medialib_entry_property_set_int(
+				current.data, key, val
+			).notifier_set( on_value_wrote);
+		}
+
+		void on_title_entry_activated(Gtk.Entry entry) {
+			set_str(entry, "title");
+		}
+
+		void on_artist_entry_activated(Gtk.Entry entry) {
+			set_str(entry, "artist");
+		}
+
+		void on_album_entry_activated(Gtk.Entry entry) {
+			set_str(entry, "album");
+		}
+
+		void on_tracknr_button_activated(Gtk.Entry entry) {
+			set_int((Gtk.SpinButton) entry, "tracknr");
+		}
+
+		void on_date_button_activated(Gtk.Entry entry) {
+			set_str(entry, "date");
+		}
+
+		void on_genre_box_button_activated(Gtk.Entry entry) {
+			set_str(entry, "genre");
+		}
+
+		void on_rating_button_activated(Gtk.Entry entry) {
+			Client c = Client.instance();
+			c.xmms.medialib_entry_property_set_int_with_source(
+				current.data, "client/generic", "rating",
+				((Gtk.SpinButton) entry).get_value_as_int()
+			).notifier_set(on_value_wrote);
+		}
+
+		private void on_value_wrote(Xmms.Result #res) {
+			refresh_content();
+		}
+
+		private void on_prev_button_clicked(Gtk.Button btn) {
+			if (current.prev != null) {
+				current = current.prev;
+				refresh();
+			}
+		}
+
+		private void on_next_button_clicked(Gtk.Button btn) {
+			if (current.next != null) {
+				current = current.next;
+				refresh();
+			}
+		}
+
+		private void on_close_button_clicked(Gtk.Button btn) {
+			uint id = current.data;
+
+			if (current.next != null) {
+				current = current.next;
+				ids.remove(id);
+				refresh();
+			} else if (current.prev != null) {
+				current = current.prev;
+				ids.remove(id);
+				refresh();
+			} else {
+				close();
+			}
+		}
+
+		private void on_close_all_button_clicked(Gtk.Button btn) {
+			close();
+		}
+
+		private void on_medialib_get_info(Xmms.Result #res) {
+			show_overview(res);
+			store.clear();
+			res.propdict_foreach(dict_foreach);
+		}
+
+		private void refresh_border() {
+			string info = "Info #%d (%d/%d)".printf(
+				current.data, ids.position(current) + 1, ids.length()
+			);
+
+			set_title (info);
+
+			next_button.sensitive = (current.next != null);
+			prev_button.sensitive = (current.prev != null);
+		}
+
+		private void refresh_content() {
+			Client c = Client.instance();
+
+			c.xmms.medialib_get_info(
+				current.data
+			).notifier_set(on_medialib_get_info);
+		}
+
+		private void refresh() {
+			refresh_content();
+			refresh_border();
+		}
+
+		public void add(uint id) {
+			ids.append(id);
+			if (current == null) {
+				current = ids;
+				refresh_content();
+			}
+			refresh_border();
+		}
+
+		private void show_overview(Xmms.Result res) {
+			weak string tmp;
+			int itmp;
+			if (!res.get_dict_entry_string("artist", out tmp)) {
+				tmp = "";
+			}
+			artist = tmp;
+			artist_entry.text = tmp;
+			artist_entry.modify_base(Gtk.StateType.NORMAL, null);
+
+			if (!res.get_dict_entry_string("album", out tmp)) {
+				tmp = "";
+			}
+			album = tmp;
+			album_entry.text = tmp;
+			album_entry.modify_base(Gtk.StateType.NORMAL, null);
+
+			if (!res.get_dict_entry_string("title", out tmp)) {
+				tmp = "";
+			}
+			title = tmp;
+			title_entry.text = tmp;
+			title_entry.modify_base(Gtk.StateType.NORMAL, null);
+
+			if (!res.get_dict_entry_int("tracknr", out itmp)) {
+				itmp = 0;
+			}
+			tracknr = itmp.to_string("%i");
+			tracknr_button.set_value(itmp);
+			tracknr_button.modify_base(Gtk.StateType.NORMAL, null);
+
+			if (!res.get_dict_entry_string("date", out tmp)) {
+				itmp = 0;
+			} else {
+				itmp = tmp.to_int();
+			}
+			date = tmp;
+			date_button.set_value(itmp);
+			date_button.modify_base(Gtk.StateType.NORMAL, null);
+
+			if (!res.get_dict_entry_string("genre", out tmp)) {
+				tmp = "";
+			}
+			genre = tmp;
+			((Gtk.Entry) (genre_combo_box_entry.get_child())).text = tmp;
+			((Gtk.Entry) (genre_combo_box_entry.get_child())).modify_base(Gtk.StateType.NORMAL, null);
+
+			if (!res.get_dict_entry_int("rating", out itmp)) {
+				itmp = 0;
+			}
+			rating = itmp.to_string("%i");
+			rating_button.set_value(itmp);
+			rating_button.modify_base(Gtk.StateType.NORMAL, null);
+		}
+
+		private void dict_foreach(weak string key, Xmms.ResultType type,
+		                          void *val, weak string source) {
+			string parent_source, val_str;
+			Gtk.TreeIter parent, iter;
+
+			switch (type) {
+				case Xmms.ResultType.UINT32:
+					val_str = ((uint) val).to_string("%u");;
+					break;
+				case Xmms.ResultType.INT32:
+					val_str = ((int) val).to_string("%i");;
+					break;
+				case Xmms.ResultType.STRING:
+					val_str  = (string) val;
+					break;
+				default:
+					return;
+			}
+
+			/* looking for parent iter */
+			if (store.iter_children(out parent, null)) {
+				do {
+					store.get(parent, 0, out parent_source);
+					if (source == parent_source)
+						break;
+				} while (store.iter_next(ref parent)) ;
+			}
+
+			if(source != parent_source) {
+				store.append(out parent, null);
+				store.set(parent, 0, source);
+			}
+
+			store.append(out iter, parent);
+			store.set(iter, 0, key, 1, val_str);
+		}
+	}
+
 	public class Medialib : GLib.Object, IConfigurable {
+		public MedialibInfoDialog info_dialog;
+
 		private string _add_file = "";
 
 		private Gtk.ListStore _add_urls;
@@ -31,6 +511,14 @@ namespace Abraca {
 
 			_add_urls = new Gtk.ListStore(1, typeof(string));
 		}
+
+		public void info_dialog_add_id(uint mid) {
+			if (info_dialog == null) {
+				info_dialog = new MedialibInfoDialog();
+			}
+			info_dialog.add(mid);
+		}
+
 
 		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
 			if (file.has_group("add_dialog")) {
