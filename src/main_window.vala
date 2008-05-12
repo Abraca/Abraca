@@ -50,7 +50,7 @@ namespace Abraca {
 			height_request = 600;
 			allow_shrink = true;
 
-			destroy += on_quit;
+			delete_event += on_quit;
 
 			main_hpaned.set_sensitive(false);
 			toolbar.set_sensitive(false);
@@ -121,9 +121,10 @@ namespace Abraca {
 
 			add(vbox6);
 		}
-
-		private void on_quit(Gtk.Object w) {
+		private bool on_quit(Gtk.Object w) {
 			Abraca.instance().quit();
+
+			return false;
 		}
 	}
 }
