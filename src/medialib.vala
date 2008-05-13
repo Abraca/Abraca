@@ -34,13 +34,14 @@ namespace Abraca {
 
 		private Gtk.TreeView view;
 		private Gtk.TreeStore store;
-		private Gtk.Table overviewTable;
-		private Gtk.Notebook notebook;
+
 		private Gtk.Button prev_button;
 		private Gtk.Button next_button;
+
 		private Gtk.Entry artist_entry;
 		private Gtk.Entry album_entry;
 		private Gtk.Entry title_entry;
+
 		private Gtk.SpinButton date_button;
 		private Gtk.SpinButton tracknr_button;
 		private Gtk.SpinButton rating_button;
@@ -63,129 +64,143 @@ namespace Abraca {
 			"Trailer", "Trance", "Tribal", "Trip-Hop", "Vocal"};
 
 		construct {
-			Gtk.Alignment align;
-			Gtk.Button button;
+			Gtk.Widget overview, details;
+			Gtk.Notebook notebook;
 
 			set_title ("Info");
 			ids = new GLib.List<uint>();
 			delete_event += on_delete_event;
 
-			resize(500, 430);
+			set_default_size(200, 330);
 
 			border_width = 5;
 			transient_for = Abraca.instance().main_window;
 			has_separator = false;
 			resizable = false;
-			((Gtk.Box) vbox).spacing = 10;
 
+			create_buttons();
 
-			// Buttons
+			overview = create_page_overview();
+			details = create_page_details();
+
+			notebook = new Gtk.Notebook();
+			notebook.append_page(overview, new Gtk.Label("Overview"));
+			notebook.append_page(details, new Gtk.Label("Details"));
+			notebook.border_width = 6;
+
+			vbox.pack_start(notebook, true, true, 0);
+
+			show_all();
+		}
+
+		private void create_buttons() {
+			Gtk.Button button;
+
+			vbox.border_width = 0;
+			action_area.border_width = 0;
+			action_area.spacing = 0;
+
+			vbox.set_child_packing(action_area, false, false, 0, Gtk.PackType.END);
+
 			prev_button = new Gtk.Button.from_stock(Gtk.STOCK_GO_BACK);
 			prev_button.clicked += on_prev_button_clicked;
-			((Gtk.Box) action_area).pack_start_defaults(prev_button);
+			action_area.add(prev_button);
+			action_area.set_child_secondary(prev_button, true);
 
 			next_button = new Gtk.Button.from_stock(Gtk.STOCK_GO_FORWARD);
 			next_button.clicked += on_next_button_clicked;
-			((Gtk.Box) action_area).pack_start_defaults(next_button);
-
-			button = new Gtk.Button.from_stock(Gtk.STOCK_CLOSE);
-			button.clicked += on_close_button_clicked;
-			((Gtk.Box) action_area).pack_start_defaults(button);
+			action_area.add(next_button);
+			action_area.set_child_secondary(next_button, true);
 
 			button = new Gtk.Button.from_stock(Gtk.STOCK_OK);
 			button.clicked += on_close_all_button_clicked;
-			((Gtk.Box) action_area).pack_start_defaults(button);
+			action_area.add(button);
+		}
 
-			notebook = new Gtk.Notebook();
-
+		private Gtk.Widget create_page_overview() {
+			Gtk.Alignment align;
+			Gtk.Table table;
 			int row = 0;
 
-			// overview
-			overviewTable = new Gtk.Table(7, 2, false);
-
-			overviewTable.set_row_spacings(0);
-			overviewTable.border_width = 10;
+			table = new Gtk.Table(7, 2, false);
+			table.set_row_spacings(7);
+			table.border_width = 10;
 
 			Gtk.Label label;
 			label = new Gtk.Label("Title:");
 			label.xalign = 0;
-			overviewTable.attach(label, 0, 1, row, row + 1,
-			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			table.attach_defaults(label, 0, 1, row, row + 1);
 			title_entry = new Gtk.Entry();
 			title_entry.changed += on_title_entry_changed;
 			title_entry.activate += on_title_entry_activated;
-			overviewTable.attach_defaults(title_entry, 1, 2, row, row+1);
+			table.attach_defaults(title_entry, 1, 2, row, row + 1);
 			row++;
 
 			label = new Gtk.Label("Artist:");
 			label.xalign = 0;
-			overviewTable.attach(label, 0, 1, row, row + 1,
-			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			table.attach_defaults(label, 0, 1, row, row + 1);
 			artist_entry = new Gtk.Entry();
 			artist_entry.changed += on_artist_entry_changed;
 			artist_entry.activate += on_artist_entry_activated;
-			overviewTable.attach_defaults(artist_entry, 1, 2, row, row+1);
+			table.attach_defaults(artist_entry, 1, 2, row, row + 1);
 			row++;
 
 			label = new Gtk.Label("Album:");
 			label.xalign = 0;
-			overviewTable.attach(label, 0, 1, row, row + 1,
-			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			table.attach_defaults(label, 0, 1, row, row + 1);
 			album_entry = new Gtk.Entry();
 			album_entry.changed += on_album_entry_changed;
 			album_entry.activate += on_album_entry_activated;
-			overviewTable.attach_defaults(album_entry, 1, 2, row, row+1);
+			table.attach_defaults(album_entry, 1, 2, row, row + 1);
 			row++;
 
 			label = new Gtk.Label("Track number:");
 			label.xalign = 0;
-			overviewTable.attach(label, 0, 1, row, row + 1,
-			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			table.attach_defaults(label, 0, 1, row, row + 1);
 			tracknr_button = new Gtk.SpinButton.with_range(0, 9999, 1);
 			tracknr_button.changed += on_tracknr_button_changed;
 			tracknr_button.activate += on_tracknr_button_activated;
-			overviewTable.attach_defaults(tracknr_button, 1, 2, row, row+1);
+			table.attach_defaults(tracknr_button, 1, 2, row, row + 1);
 			row++;
 
 			label = new Gtk.Label("Year:");
 			label.xalign = 0;
-			overviewTable.attach(label, 0, 1, row, row + 1,
-			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			table.attach_defaults(label, 0, 1, row, row + 1);
 			date_button = new Gtk.SpinButton.with_range(0, 9999, 1);
 			date_button.changed += on_date_button_changed;
 			date_button.activate += on_date_button_activated;
-			overviewTable.attach_defaults(date_button, 1, 2, row, row+1);
+			table.attach_defaults(date_button, 1, 2, row, row + 1);
 			row++;
 
-			/* TODO: color-updating doesn't work properly yet, therefore disabled */
 			label = new Gtk.Label("Genre:");
 			label.xalign = 0;
-			overviewTable.attach(label, 0, 1, row, row + 1,
-			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			table.attach_defaults(label, 0, 1, row, row + 1);
 			genre_combo_box_entry = new Gtk.ComboBoxEntry.text();
 			genre_combo_box_entry.changed += on_genre_combo_box_entry_changed;
-			((Gtk.Entry) (genre_combo_box_entry.get_child())).activate += on_genre_box_button_activated;
+			Gtk.Entry entry = (Gtk.Entry) genre_combo_box_entry.get_child();
+			entry.activate += on_genre_box_button_activated;
 			foreach(weak string genre in genres) {
 				genre_combo_box_entry.append_text(genre);
 			}
-			align = new Gtk.Alignment(0, (float) 0.5, 1, 1);
+			align = new Gtk.Alignment(0, (float) 0.5, (float) 1.0, 0);
 			align.add(genre_combo_box_entry);
-			overviewTable.attach_defaults(align, 1, 2, row, row + 1);
+			table.attach_defaults(align, 1, 2, row, row + 1);
 			row++;
 
 			label = new Gtk.Label("Rating:");
 			label.xalign = 0;
-			overviewTable.attach(label, 0, 1, row, row + 1,
-			                     Gtk.AttachOptions.FILL, 0, 0, 0);
+			table.attach_defaults(label, 0, 1, row, row + 1);
 			rating_button = new Gtk.SpinButton.with_range(0, 5, 1);
 			rating_button.changed += on_rating_button_changed;
 			rating_button.activate += on_rating_button_activated;
-			overviewTable.attach_defaults(rating_button, 1, 2, row, row+1 );
+			table.attach_defaults(rating_button, 1, 2, row, row + 1);
 			row++;
 
-			notebook.append_page(overviewTable, new Gtk.Label("Overview"));
+			return table;
+		}
 
-			// details
+
+		private Gtk.Widget create_page_details() {
 			Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(null, null);
 			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
 			                    Gtk.PolicyType.AUTOMATIC);
@@ -203,18 +218,11 @@ namespace Abraca {
 				"markup", 1
 			);
 
-			align = new Gtk.Alignment(
-				(float) 0.5, (float) 0.5, (float) 0.85, (float) 1.0
-			);
-			align.add(notebook);
-
 			scrolled.add_with_viewport(view);
-			notebook.append_page(scrolled, new Gtk.Label("Details"));
 
-			((Gtk.Box) vbox).pack_start_defaults(align);
-
-			show_all();
+			return scrolled;
 		}
+
 
 		bool on_delete_event(Gtk.Widget dialog) {
 			Abraca.instance().medialib.info_dialog = null;
@@ -373,8 +381,8 @@ namespace Abraca {
 		}
 
 		private void refresh_border() {
-			string info = "Info #%d (%d/%d)".printf(
-				current.data, ids.position(current) + 1, ids.length()
+			string info = "Metadata for song %d of %d".printf(
+				ids.position(current) + 1, ids.length()
 			);
 
 			set_title (info);
