@@ -719,7 +719,7 @@ namespace Abraca {
 				"pixbuf", CollColumn.Icon,
 				"style", CollColumn.Style,
 				"weight", CollColumn.Weight,
-				"markup", CollColumn.Name, null
+				"text", CollColumn.Name, null
 			);
 			column.set_sizing(Gtk.TreeViewColumnSizing.FIXED);
 
