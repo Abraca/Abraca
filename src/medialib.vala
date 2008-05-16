@@ -44,7 +44,7 @@ namespace Abraca {
 
 		private Gtk.SpinButton date_button;
 		private Gtk.SpinButton tracknr_button;
-		private Gtk.SpinButton rating_button;
+		private RatingEntry rating_entry;
 		private Gtk.ComboBox genre_combo_box_entry;
 
 		private const string[] genres = { "Acid Jazz", "Acid Punk", "Acid",
@@ -190,10 +190,9 @@ namespace Abraca {
 			label = new Gtk.Label("Rating:");
 			label.xalign = 0;
 			table.attach_defaults(label, 0, 1, row, row + 1);
-			rating_button = new Gtk.SpinButton.with_range(0, 5, 1);
-			rating_button.changed += on_rating_button_changed;
-			rating_button.activate += on_rating_button_activated;
-			table.attach_defaults(rating_button, 1, 2, row, row + 1);
+			rating_entry = new RatingEntry();
+			rating_entry.changed += on_rating_entry_changed;
+			table.attach_defaults(rating_entry, 1, 2, row, row + 1);
 			row++;
 
 			return table;
@@ -277,10 +276,6 @@ namespace Abraca {
 			change_color((Gtk.Entry) editable, date);
 		}
 
-		void on_rating_button_changed(Gtk.Editable editable) {
-			change_color((Gtk.Entry) editable, rating);
-		}
-
 		void on_genre_combo_box_entry_changed(Gtk.ComboBox editable) {
 			Gtk.Widget widget = genre_combo_box_entry.get_child();
 			change_color((Gtk.Entry) widget, genre);
@@ -328,12 +323,17 @@ namespace Abraca {
 			set_str(entry, "genre");
 		}
 
-		void on_rating_button_activated(Gtk.Entry entry) {
+		void on_rating_entry_changed(RatingEntry entry) {
 			Client c = Client.instance();
-			c.xmms.medialib_entry_property_set_int_with_source(
-				current.data, "client/generic", "rating",
-				((Gtk.SpinButton) entry).get_value_as_int()
-			).notifier_set(on_value_wrote);
+			if (entry.rating <= 0) {
+				c.xmms.medialib_entry_property_remove_with_source(
+					current.data, "client/generic", "rating"
+				).notifier_set(on_value_wrote);
+			} else {
+				c.xmms.medialib_entry_property_set_int_with_source(
+					current.data, "client/generic", "rating", entry.rating
+				).notifier_set(on_value_wrote);
+			}
 		}
 
 		private void on_value_wrote(Xmms.Result #res) {
@@ -464,8 +464,7 @@ namespace Abraca {
 				itmp = 0;
 			}
 			rating = itmp.to_string("%i");
-			rating_button.set_value(itmp);
-			rating_button.modify_base(Gtk.StateType.NORMAL, null);
+			rating_entry.rating = itmp;
 		}
 
 		private void dict_foreach(weak string key, Xmms.ResultType type,

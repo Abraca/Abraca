@@ -5,6 +5,8 @@ images = Split("""
 	abraca-128.png
 	abraca-playlist-22.png
 	abraca-collection-22.png
+	abraca-rating-rated.png
+	abraca-rating-unrated.png
 """)
 
 env.Alias('install',

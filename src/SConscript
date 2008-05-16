@@ -12,6 +12,7 @@ vala_sources = """
 	menubar.vala
 	playlist_tree.vala
 	playlist_model.vala
+	rating_entry.vala
 	right_hpaned.vala
 	toolbar.vala
 	abraca.vala
