@@ -259,6 +259,12 @@ namespace Abraca {
 			img_item.set_submenu(submenu);
 			_playlist_menu.append(img_item);
 
+			item = new Gtk.ImageMenuItem.from_stock(
+				Gtk.STOCK_INFO, null
+			);
+			item.activate += on_menu_playlist_info;
+			_playlist_menu.append(item);
+
 			item = new Gtk.MenuItem.with_label(_("Shuffle"));
 			item.activate += i => {
 				Client c = Client.instance();
@@ -338,6 +344,22 @@ namespace Abraca {
 					right_hpaned.filter_tree.query_collection(union);
 			}
 		}
+
+		private void on_menu_playlist_info(Gtk.MenuItem item) {
+			Client c = Client.instance();
+			GLib.List<Gtk.TreePath> list;
+			weak Gtk.TreeModel mod;
+			Gtk.TreeIter iter;
+			uint id;
+
+			list = get_selection().get_selected_rows(out mod);
+			foreach (weak Gtk.TreePath path in list) {
+				model.get_iter(out iter, path);
+				model.get(iter, PlaylistModel.Column.ID, out id);
+				Abraca.instance().medialib.info_dialog_add_id(id);
+			}
+		}
+
 
 		/**
 		 * Setup dragndrop for the playlist.
