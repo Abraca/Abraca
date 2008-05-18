@@ -596,32 +596,22 @@ namespace Abraca {
 		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path,
 		                              Gtk.TreeViewColumn column) {
 			Client c = Client.instance();
-			Gtk.TreeIter iter;
+			int pos = path.get_indices()[0];
 
-			if (model.get_iter(out iter, path)) {
-				bool available;
-
-				model.get(iter, PlaylistModel.Column.AVAILABLE, out available);
-
-				if (available) {
-					int pos = path.get_indices()[0];
-
-					c.xmms.playlist_set_next(pos).notifier_set((res) => {
+			c.xmms.playlist_set_next(pos).notifier_set((res) => {
+				Client c = Client.instance();
+				c.xmms.playback_tickle().notifier_set((res) => {
+					Client c = Client.instance();
+					c.xmms.playback_status().notifier_set((res) => {
 						Client c = Client.instance();
-						c.xmms.playback_tickle().notifier_set((res) => {
-							Client c = Client.instance();
-							c.xmms.playback_status().notifier_set((res) => {
-								Client c = Client.instance();
-								uint status;
-								res.get_uint(out status);
-								if (status != Xmms.PlaybackStatus.PLAY) {
-									c.xmms.playback_start();
-								}
-							});
-						});
+						uint status;
+						res.get_uint(out status);
+						if (status != Xmms.PlaybackStatus.PLAY) {
+							c.xmms.playback_start();
+						}
 					});
-				}
-			}
+				});
+			});
 		}
 	}
 }
