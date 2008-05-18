@@ -13,6 +13,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import SCons
+import os
 
 def vala_emitter(target, source, env):
 	target = []
@@ -23,6 +24,22 @@ def vala_emitter(target, source, env):
 
 		tmp = src.target_from_source('', '.h')
 		target.append(tmp)
+
+	local_vapi = []
+
+	# Scan for local .vapi files to depend on.
+	for pkg in env['VALAPKGS']:
+		for path in env['VALAPKGPATH']:
+			if SCons.Util.is_String(path):
+				path = env.Dir('#').Dir(path)
+
+			if not isinstance(path, SCons.Node.FS.Dir):
+				continue
+
+			vapi_file = path.File(str(pkg) + '.vapi')
+			if vapi_file.exists():
+				env.Depends(target, vapi_file)
+				break
 
 	return target, source
 

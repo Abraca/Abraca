@@ -53,6 +53,7 @@ class AbracaEnvironment(SConsEnvironment):
 		# Load the custom vala builder
 		self.Tool('vala', toolpath=['scons-tools'])
 		self.Tool('msgfmt', toolpath=['scons-tools'])
+		self.Tool('gdkpixbufcsource', toolpath=['scons-tools'])
 
 		# Beef up performance a bit by caching implicit deps
 		self.SetOption('implicit_cache', True)
@@ -160,7 +161,7 @@ class AbracaEnvironment(SConsEnvironment):
 
 	def CheckApp(ctx, app, fail=False):
 		ctx.Message('Checking for %s... ' % app)
-		key = 'HAVE_' + app.upper()
+		key = 'HAVE_' + app.replace('-', '_').upper()
 		if ctx.env.Detect(app):
 			ctx.env[key] = True
 		else:

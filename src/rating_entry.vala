@@ -62,19 +62,21 @@ namespace Abraca {
 			string filename;
 
 			try {
-				filename = Build.Config.DATADIR + "/pixmaps/abraca-rating-unrated.png";
-				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_file(filename);
+				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
+					-1, Resources.abraca_rating_unrated, false
+				);
 				unrated_icon = tmp;
 			} catch (GLib.Error e) {
-				GLib.stdout.printf("Unable to load unrated icon. %s\n", e.message);
+				GLib.stderr.printf("ERROR: %s\n", e.message);
 			}
 
 			try {
-				filename = Build.Config.DATADIR + "/pixmaps/abraca-rating-rated.png";
-				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_file(filename);
+				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
+					-1, Resources.abraca_rating_rated, false
+				);
 				rated_icon = tmp;
 			} catch (GLib.Error e) {
-				GLib.stdout.printf("Unable to load rated icon. %s\n", e.message);
+				GLib.stderr.printf("ERROR: %s\n", e.message);
 			}
 
 			_width =  rated_icon.width * (max_rating - min_rating + 1);

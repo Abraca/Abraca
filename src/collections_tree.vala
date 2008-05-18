@@ -686,23 +686,23 @@ namespace Abraca {
 			/* Load the playlist icon */
 			try {
 				/* TODO: Remove tmp variable once Vala bug has been fixed */
-				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_file(
-					Build.Config.DATADIR + "/pixmaps/abraca-playlist-22.png"
+				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
+					-1, Resources.abraca_playlist_22, false
 				);
 				_playlist_pixbuf = tmp;
 			} catch (GLib.Error e) {
-				GLib.stdout.printf("Unable to load playlist icon. %s\n", e.message);
+				GLib.stderr.printf("ERROR: %s\n", e.message);
 			}
 
 			/* ..and the collection icon */
 			try {
 				/* TODO: Remove tmp variable once Vala bug has been fixed */
-				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_file(
-					Build.Config.DATADIR + "/pixmaps/abraca-collection-22.png"
+				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
+					-1, Resources.abraca_collection_22, false
 				);
 				_collection_pixbuf = tmp;
 			} catch (GLib.Error e) {
-				GLib.stdout.printf("Unable to load collection icon. %s\n", e.message);
+				GLib.stderr.printf("ERROR: %s\n", e.message);
 			}
 
 			renderer = new CollCellRenderer();

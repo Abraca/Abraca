@@ -1,6 +1,6 @@
 Import('env')
 
-images = Split("""
+lst = Split("""
 	abraca.svg
 	abraca-128.png
 	abraca-playlist-22.png
@@ -9,10 +9,10 @@ images = Split("""
 	abraca-rating-unrated.png
 """)
 
-env.Alias('install',
-	env.Install('$DATADIR/pixmaps', images)
-)
+images, header, vapi = env.GdkPixBufCSource('abraca_images', lst)
 
-env.Alias('install',
-	env.Install('$DATADIR/applications', 'abraca.desktop')
-)
+env.Append(CPPPATH = Dir('.'))
+env.Append(VALAPKGPATH = Dir('.'))
+env.Append(VALAPKGS = ['abraca_images'])
+
+Export('images')

@@ -41,9 +41,12 @@ namespace Abraca {
 			create_widgets();
 
 			try {
-				set_icon_from_file(Build.Config.DATADIR + "/pixmaps/abraca.svg");
+				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
+					-1, Resources.abraca, false
+				);
+				set_icon(tmp);
 			} catch (GLib.Error e) {
-				GLib.stdout.printf("Abraca not properly installed, missing icon.");
+				GLib.stderr.printf("ERROR: %s\n", e.message);
 			}
 
 			width_request = 800;

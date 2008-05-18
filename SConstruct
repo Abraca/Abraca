@@ -11,6 +11,7 @@ conf.CheckVala('0.3.1')
 conf.CheckCCompiler()
 conf.CheckPkgConfig()
 conf.CheckApp('msgfmt')
+conf.CheckApp('gdk-pixbuf-csource')
 
 for pkg in ['gtk+-2.0', 'xmms2-client', 'xmms2-client-glib']:
 	if conf.CheckPkg(pkg):
@@ -33,8 +34,8 @@ else:
 	env.Append(CCFLAGS = ['-O2'])
 
 
-env.SConscript('build/src/SConscript', exports='env', duplicate=0)
 env.SConscript('build/data/SConscript', exports='env', duplicate=0)
+env.SConscript('build/src/SConscript', exports='env', duplicate=0)
 
 if env['HAVE_MSGFMT']:
 	env.SConscript('build/po/SConscript', exports='env', duplicate=0)

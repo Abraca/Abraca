@@ -224,8 +224,14 @@ namespace Abraca {
 			Gtk.AboutDialog d;
 			Gdk.Pixbuf buf;
 
-			filename = Build.Config.DATADIR + "/pixmaps/abraca.svg";
-			buf = new Gdk.Pixbuf.from_file_at_scale(filename, 180, 180, true);
+			try {
+				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
+					-1, Resources.abraca, false
+				);
+				buf = tmp;
+			} catch (GLib.Error e) {
+				GLib.stderr.printf("ERROR: %s\n", e.message);
+			}
 
 			d = new Gtk.AboutDialog();
 			d.set_logo(buf);
