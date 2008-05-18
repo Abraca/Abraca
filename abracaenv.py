@@ -80,6 +80,8 @@ class AbracaEnvironment(SConsEnvironment):
 			self['CCCOMSTR']          = '  Building: $TARGET'
 			self['LINKCOMSTR']        = '   Linking: $TARGET'
 			self['MSGFMTCOMSTR']      = '  Localize: $TARGET'
+			self['STRIPCOMSTR']       = ' Stripping: $TARGET'
+			self['GDKPBUFCOMSTR']     = ' Embedding: $SOURCES'
 
 	def _import_variable(self, name):
 		if ARGUMENTS.has_key(name):
@@ -169,3 +171,9 @@ class AbracaEnvironment(SConsEnvironment):
 		ctx.Result(ctx.env[key])
 		return ctx.env[key]
 	CheckApp = staticmethod(CheckApp)
+
+	def Strip(source, target, env):
+		proc = subprocess.Popen(['strip', target[0].path])
+		proc.wait()
+	Strip = SCons.Action.Action(Strip, '$STRIPCOMSTR')
+
