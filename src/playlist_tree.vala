@@ -138,6 +138,7 @@ namespace Abraca {
 			column = new Gtk.TreeViewColumn.with_attributes (
 				null, pbuf_renderer,
 				"stock-id", PlaylistModel.Column.POSITION_INDICATOR,
+				"sensitive", PlaylistModel.Column.AVAILABLE,
 				null
 			);
 
@@ -172,7 +173,9 @@ namespace Abraca {
 
  			insert_column_with_attributes(
 				-1, null, text_renderer,
-				"markup", PlaylistModel.Column.INFO, null
+				"markup", PlaylistModel.Column.INFO,
+				"sensitive", PlaylistModel.Column.AVAILABLE,
+				null
 			);
 		}
 
@@ -593,14 +596,27 @@ namespace Abraca {
 		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path,
 		                              Gtk.TreeViewColumn column) {
 			Client c = Client.instance();
-			int pos = path.get_indices()[0];
+			Gtk.TreeIter iter;
 
-			c.xmms.playlist_set_next(pos);
+			if (model.get_iter(out iter, path)) {
+				bool available;
 
-			c.xmms.playback_tickle().notifier_set((res) => {
-				Client c = Client.instance();
-				c.xmms.playback_start();
-			});
+				model.get(iter, PlaylistModel.Column.AVAILABLE, out available);
+
+				if (available) {
+					int pos = path.get_indices()[0];
+
+					c.xmms.playlist_set_next(pos).notifier_set((res) => {
+						Client c = Client.instance();
+						c.xmms.playback_tickle().notifier_set((res) => {
+							Client c = Client.instance();
+							if (c.current_playback_status != Xmms.PlaybackStatus.PLAY) {
+								c.xmms.playback_start();
+							}
+						});
+					});
+				}
+			}
 		}
 	}
 }

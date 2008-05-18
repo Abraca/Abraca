@@ -32,6 +32,7 @@ namespace Abraca {
 			STATUS,
 			ID,
 			POSITION_INDICATOR,
+			AVAILABLE,
 			ARTIST,
 			ALBUM,
 			GENRE,
@@ -54,6 +55,7 @@ namespace Abraca {
 					typeof(int),
 					typeof(uint),
 					typeof(string),
+					typeof(bool),
 					typeof(string),
 					typeof(string),
 					typeof(string),
@@ -309,7 +311,7 @@ namespace Abraca {
 		private void on_medialib_info(Xmms.Result #res) {
 			weak GLib.SList<Gtk.TreeRowReference> lst;
 			weak string artist, album, title, genre;
-			int duration, dur_min, dur_sec, pos, id;
+			int duration, dur_min, dur_sec, pos, id, status;
 			string info;
 			int mid;
 
@@ -320,6 +322,8 @@ namespace Abraca {
 				// the given mid doesn't match any of our rows 
 				return;
 			}
+
+			res.get_dict_entry_int("status", out status);
 
 			if (!res.get_dict_entry_int("duration", out duration)) {
 				duration = 0;
@@ -384,6 +388,7 @@ namespace Abraca {
 				}
 
 				set(iter,
+					Column.AVAILABLE, (bool)(status != 3),
 					Column.INFO, info,
 					Column.ARTIST, artist,
 					Column.ALBUM, album,
