@@ -42,7 +42,7 @@ namespace Abraca {
 
 			try {
 				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
-					-1, Resources.abraca, false
+					-1, Resources.abraca_32, false
 				);
 				set_icon(tmp);
 			} catch (GLib.Error e) {

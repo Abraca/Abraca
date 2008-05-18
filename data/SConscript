@@ -1,8 +1,8 @@
 Import('env')
 
 lst = Split("""
-	abraca.svg
-	abraca-128.png
+	abraca-32.png
+	abraca-192.png
 	abraca-playlist-22.png
 	abraca-collection-22.png
 	abraca-rating-rated.png
@@ -11,8 +11,8 @@ lst = Split("""
 
 images, header, vapi = env.GdkPixBufCSource('abraca_images', lst)
 
-env.Append(CPPPATH = Dir('.'))
-env.Append(VALAPKGPATH = Dir('.'))
+env.Append(CPPPATH = [Dir('.')])
+env.Append(VALAPKGPATH = [Dir('.')])
 env.Append(VALAPKGS = ['abraca_images'])
 
 Export('images')
