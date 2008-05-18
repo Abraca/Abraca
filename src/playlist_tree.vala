@@ -610,9 +610,14 @@ namespace Abraca {
 						Client c = Client.instance();
 						c.xmms.playback_tickle().notifier_set((res) => {
 							Client c = Client.instance();
-							if (c.current_playback_status != Xmms.PlaybackStatus.PLAY) {
-								c.xmms.playback_start();
-							}
+							c.xmms.playback_status().notifier_set((res) => {
+								Client c = Client.instance();
+								uint status;
+								res.get_uint(out status);
+								if (status != Xmms.PlaybackStatus.PLAY) {
+									c.xmms.playback_start();
+								}
+							});
 						});
 					});
 				}
