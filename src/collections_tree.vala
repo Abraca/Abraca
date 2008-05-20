@@ -91,6 +91,7 @@ namespace Abraca {
 			drag_data_received += on_drag_data_received;
 			drag_data_get += on_drag_data_get;
 			button_press_event += on_button_press_event;
+			key_press_event += on_key_press_event;
 
 			c.playlist_loaded += on_playlist_loaded;
 			c.collection_add += on_collection_add;
@@ -163,6 +164,23 @@ namespace Abraca {
 			/* Prevent selection-handling when right-clicking on an already
 			   selection entry */
 			return selection.path_is_selected(path);
+		}
+
+		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e) {
+			int KEY_F2 = 65471;
+			int KEY_DELETE = 65535;
+
+			switch (e.keyval) {
+				case KEY_F2:
+					selected_collection_rename();
+					return true;
+
+				case KEY_DELETE:
+					selected_collection_delete();
+					return true;
+			}
+
+			return false;
 		}
 
 		/**
@@ -669,7 +687,7 @@ namespace Abraca {
 			}
 		}
 
-		private void on_menu_collection_rename(Gtk.MenuItem item) {
+		private void selected_collection_rename() {
 			Gtk.TreeIter iter;
 			Gtk.TreePath path;
 			Gtk.TreeViewColumn col;
@@ -699,7 +717,7 @@ namespace Abraca {
 			}
 		}
 
-		private void on_menu_collection_delete(Gtk.MenuItem item) {
+		private void selected_collection_delete() {
 			weak Gtk.TreeSelection selection;
 			Gtk.TreeIter iter;
 
@@ -726,6 +744,14 @@ namespace Abraca {
 					c.xmms.coll_remove(name, ns);
 				}
 			}
+		}
+
+		private void on_menu_collection_rename(Gtk.MenuItem item) {
+			selected_collection_rename();
+		}
+
+		private void on_menu_collection_delete(Gtk.MenuItem item) {
+			selected_collection_delete();
 		}
 
 		[InstanceLast]
