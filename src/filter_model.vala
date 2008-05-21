@@ -29,7 +29,7 @@ namespace Abraca {
 			RESOLVED
 		}
 
-		enum Column {
+		public enum Column {
 			STATUS,
 			ID
 		}

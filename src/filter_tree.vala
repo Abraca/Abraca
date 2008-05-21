@@ -297,7 +297,7 @@ namespace Abraca {
 				uint mid;
 
 				model.get_iter(out iter, p);
-				model.get(iter, 0, out mid, -1);
+				model.get(iter, FilterModel.Column.ID, out mid, -1);
 
 				mid_list.prepend(mid);
 			}
