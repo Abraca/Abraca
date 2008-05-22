@@ -76,7 +76,7 @@ namespace Abraca {
 			border_width = 5;
 			transient_for = Abraca.instance().main_window;
 			has_separator = false;
-			resizable = false;
+			resizable = true;
 
 			create_buttons();
 
