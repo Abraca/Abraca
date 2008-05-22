@@ -557,6 +557,7 @@ namespace Abraca {
 		}
 		private bool needs_quoting (string str) {
 			bool ret = false;
+			bool numeric = true;
 
 			for(int i = 0; i < str.len(); i++) {
 				switch(str[i]) {
@@ -568,12 +569,24 @@ namespace Abraca {
 					case ')':
 							ret = true;
 							break;
+					case '0':
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '5':
+					case '6':
+					case '7':
+					case '8':
+					case '9':
+							break;
 					default:
+							numeric = false;
 							break;
 				}
 			}
 
-			return ret;
+			return ret || numeric;
 		}
 
 		[InstanceLast]
