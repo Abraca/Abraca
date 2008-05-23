@@ -310,6 +310,7 @@ namespace Abraca {
 			string val;
 			int column;
 			bool empty = true;
+			string query = "";
 
 			if (key == "artist") {
 				column = PlaylistModel.Column.ARTIST;
@@ -347,9 +348,16 @@ namespace Abraca {
 				coll.add_operand(universe);
 
 				union.add_operand(coll);
+
+				if (query != "") {
+					query += " OR ";
+				}
+				query += key + ":\"" + val + "\"";
 			}
 
 			if (!empty) {
+				Abraca.instance().main_window.main_hpaned.
+					right_hpaned.filter_entry_set_text(query);
 				Abraca.instance().main_window.main_hpaned.
 					right_hpaned.filter_tree.query_collection(union);
 			}
