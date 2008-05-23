@@ -138,26 +138,31 @@ namespace Abraca {
 				return false;
 			}
 
-			weak Gtk.TreeSelection selection;
 			Gtk.TreeIter iter;
 			Gtk.TreePath path;
+			weak Gtk.TreeSelection selection;
 
 			selection = get_selection();
 
-			if (selection.get_selected(null, out iter)) {
+			if (get_path_at_pos((int)button_event.x, (int)button_event.y,
+			                    out path, null, null, null)) {
+				/* nop */
+			} else if (selection.get_selected(null, out iter)) {
 				path = model.get_path(iter);
-
-				if (path.get_depth() == 2) {
-					_collection_menu.popup(
-							null, null, null, button_event.button,
-							Gtk.get_current_event_time()
-							);
-
-					return true;
-				}
+			} else {
+				return false;
 			}
 
-			return false;
+			if (path.get_depth() == 2) {
+				_collection_menu.popup(
+						null, null, null, button_event.button,
+						Gtk.get_current_event_time()
+						);
+			}
+
+			/* Prevent selection-handling when right-clicking on an already
+			   selection entry */
+			return selection.path_is_selected(path);
 		}
 
 		/**

@@ -124,21 +124,24 @@ namespace Abraca {
 		[InstanceLast]
 		private bool on_button_press_event(Gtk.Widget widget, Gdk.Event e) {
 			weak Gdk.EventButton event_button = (Gdk.EventButton) e;
+			Gtk.TreePath path;
 
 			/* we're only interested in the 3rd mouse button */
 			if (event_button.button != 3)
 				return false;
 
-			/* bail if the user didn't select any items */
-			if (get_selection().count_selected_rows() == 0)
-				return false;
+			if (get_path_at_pos((int)event_button.x, (int)event_button.y,
+			                    out path, null, null, null)
+			    || get_selection().count_selected_rows() > 0) {
 
-			filter_menu.popup(
-				null, null, null, event_button.button,
-				Gtk.get_current_event_time()
-			);
+				filter_menu.popup(
+					null, null, null, event_button.button,
+					Gtk.get_current_event_time()
+				);
+				return get_selection().path_is_selected(path);
+			}
 
-			return true;
+			return false;
 		}
 
 		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {

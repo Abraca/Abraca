@@ -5401,7 +5401,7 @@ namespace Gtk {
 		public bool get_hover_selection ();
 		public int get_level_indentation ();
 		public weak Gtk.TreeModel get_model ();
-		public bool get_path_at_pos (int x, int y, out weak Gtk.TreePath path, out weak Gtk.TreeViewColumn column, int cell_x, int cell_y);
+		public bool get_path_at_pos (int x, int y, out weak Gtk.TreePath path, out weak Gtk.TreeViewColumn column, out int cell_x, out int cell_y);
 		public bool get_reorderable ();
 		public Gtk.TreeViewRowSeparatorFunc get_row_separator_func ();
 		public bool get_rubber_banding ();

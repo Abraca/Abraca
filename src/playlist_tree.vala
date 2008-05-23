@@ -72,6 +72,7 @@ namespace Abraca {
 
 		private bool on_button_press_event(Gtk.Widget w, Gdk.Event e) {
 			weak Gdk.EventButton button_event = (Gdk.EventButton) e;
+			Gtk.TreePath path;
 
 			/* we're only interested in the 3rd mouse button */
 			if (button_event.button != 3) {
@@ -83,7 +84,13 @@ namespace Abraca {
 				Gtk.get_current_event_time()
 			);
 
-			return true;
+			/* Prevent selection-handling when right-clicking on an already
+			   selected entry */
+			return (get_path_at_pos((int)button_event.x,
+			                              (int)button_event.y,
+			                              out path, null, null, null)
+			        && get_selection().path_is_selected(path));
+
 		}
 
 
