@@ -195,6 +195,44 @@ namespace Abraca {
 
 			_playlist_menu = new Gtk.Menu();
 
+			/* Information */
+			item = new Gtk.ImageMenuItem.from_stock(
+				Gtk.STOCK_INFO, null
+			);
+			item.activate += on_menu_playlist_info;
+			_playlist_menu.append(item);
+
+			/* Filter submenu */
+			submenu = new Gtk.Menu();
+
+			item = new Gtk.MenuItem.with_label(_("By Artist"));
+			item.activate += i => {
+				on_menu_playlist_filter("artist");
+			};
+			submenu.append(item);
+
+			item = new Gtk.MenuItem.with_label(_("By Album"));
+			item.activate += i => {
+				on_menu_playlist_filter("album");
+			};
+			submenu.append(item);
+
+			item = new Gtk.MenuItem.with_label(_("By Genre"));
+			item.activate += i => {
+				on_menu_playlist_filter("genre");
+			};
+			submenu.append(item);
+
+			img_item = new Gtk.ImageMenuItem.from_stock(
+				Gtk.STOCK_FIND, null
+			);
+			img_item.set_submenu(submenu);
+			_playlist_menu.append(img_item);
+
+			/* Separator */
+			item = new Gtk.SeparatorMenuItem();
+			_playlist_menu.append(item);
+
 			/* Sorting submenu */
 			submenu = new Gtk.Menu();
 			item = new Gtk.MenuItem.with_label(_("Artist"));
@@ -242,39 +280,7 @@ namespace Abraca {
 			img_item.set_submenu(submenu);
 			_playlist_menu.append(img_item);
 
-			/* Filter submenu */
-			submenu = new Gtk.Menu();
-
-			item = new Gtk.MenuItem.with_label(_("By Artist"));
-			item.activate += i => {
-				on_menu_playlist_filter("artist");
-			};
-			submenu.append(item);
-
-			item = new Gtk.MenuItem.with_label(_("By Album"));
-			item.activate += i => {
-				on_menu_playlist_filter("album");
-			};
-			submenu.append(item);
-
-			item = new Gtk.MenuItem.with_label(_("By Genre"));
-			item.activate += i => {
-				on_menu_playlist_filter("genre");
-			};
-			submenu.append(item);
-
-			img_item = new Gtk.ImageMenuItem.from_stock(
-				Gtk.STOCK_FIND, null
-			);
-			img_item.set_submenu(submenu);
-			_playlist_menu.append(img_item);
-
-			item = new Gtk.ImageMenuItem.from_stock(
-				Gtk.STOCK_INFO, null
-			);
-			item.activate += on_menu_playlist_info;
-			_playlist_menu.append(item);
-
+			/* Shuffle */
 			item = new Gtk.MenuItem.with_label(_("Shuffle"));
 			item.activate += i => {
 				Client c = Client.instance();
@@ -282,6 +288,7 @@ namespace Abraca {
 			};
 			_playlist_menu.append(item);
 
+			/* Clear */
 			img_item = new Gtk.ImageMenuItem.from_stock(
 				Gtk.STOCK_CLEAR, null
 			);
