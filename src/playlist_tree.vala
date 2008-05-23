@@ -93,29 +93,33 @@ namespace Abraca {
 
 		}
 
+		private void delete_selected() {
+			GLib.List<Gtk.TreePath> paths;
+			weak Gtk.TreeSelection sel;
+			GLib.List<uint> lst;
+
+			sel = get_selection();
+			paths = sel.get_selected_rows(null);
+			lst = new GLib.List<uint>();
+
+			foreach (weak Gtk.TreePath path in paths) {
+				lst.prepend(path.get_indices()[0]);
+			}
+
+			Client c = Client.instance();
+
+			foreach (uint id in lst) {
+				c.xmms.playlist_remove_entry(Xmms.ACTIVE_PLAYLIST, id);
+			}
+		}
+
 
 		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e) {
 			int KEY_DELETE = 65535;
 
 			if (e.keyval == KEY_DELETE) {
-				GLib.List<Gtk.TreePath> paths;
-				weak Gtk.TreeSelection sel;
-				GLib.List<uint> lst;
 
-
-				sel = get_selection();
-				paths = sel.get_selected_rows(null);
-				lst = new GLib.List<uint>();
-
-				foreach (weak Gtk.TreePath path in paths) {
-					lst.prepend(path.get_indices()[0]);
-				}
-
-				Client c = Client.instance();
-
-				foreach (uint id in lst) {
-					c.xmms.playlist_remove_entry(Xmms.ACTIVE_PLAYLIST, id);
-				}
+				delete_selected();
 
 				return true;
 			}
@@ -228,6 +232,13 @@ namespace Abraca {
 			);
 			img_item.set_submenu(submenu);
 			_playlist_menu.append(img_item);
+
+			/* Delete */
+			item = new Gtk.ImageMenuItem.from_stock(
+				Gtk.STOCK_DELETE, null
+			);
+			item.activate += delete_selected;
+			_playlist_menu.append(item);
 
 			/* Separator */
 			item = new Gtk.SeparatorMenuItem();
