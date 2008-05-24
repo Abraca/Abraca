@@ -181,12 +181,15 @@ namespace Abraca {
 			/* Two rows, plus some extra height */
 			text_renderer.height = h * 2 + 4;
 
- 			insert_column_with_attributes(
-				-1, null, text_renderer,
+			column = new Gtk.TreeViewColumn.with_attributes (
+				null, text_renderer,
 				"markup", PlaylistModel.Column.INFO,
 				"sensitive", PlaylistModel.Column.AVAILABLE,
 				null
 			);
+			column.set_sizing(Gtk.TreeViewColumnSizing.FIXED);
+
+			append_column (column);
 		}
 
 
