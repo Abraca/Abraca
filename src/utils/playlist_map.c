@@ -26,6 +26,23 @@ struct playlist_map_St {
 };
 
 static void
+_get_keys_callback (gpointer key, gpointer value, gpointer user_data)
+{
+	GList **keys = (GList **) user_data;
+	*keys = g_list_prepend (*keys, key);
+}
+
+static GList *
+_get_keys (GHashTable *hash_table)
+{
+	GList *keys = NULL;
+
+	g_hash_table_foreach (hash_table, _get_keys_callback, &keys);
+
+	return keys;
+}
+
+static void
 _delete_list (GSList *lst)
 {
 	GtkTreeRowReference *row = (GtkTreeRowReference *) lst->data;
@@ -161,5 +178,5 @@ playlist_map_get_ids (playlist_map_t *map)
 {
 	g_return_val_if_fail (map, NULL);
 
-	return g_hash_table_get_keys (map->hash);
+	return _get_keys (map->hash);
 }
