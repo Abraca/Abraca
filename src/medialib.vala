@@ -76,7 +76,7 @@ namespace Abraca {
 			border_width = 5;
 			transient_for = Abraca.instance().main_window;
 			has_separator = false;
-			resizable = true;
+			resizable = false;
 
 			create_buttons();
 
@@ -200,8 +200,11 @@ namespace Abraca {
 
 
 		private Gtk.Widget create_page_details() {
-			Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(null, null);
-			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
+			Gtk.ScrolledWindow scrolled;
+			Gtk.CellRendererText renderer;
+			
+			scrolled = new Gtk.ScrolledWindow(null, null);
+			scrolled.set_policy(Gtk.PolicyType.NEVER,
 			                    Gtk.PolicyType.AUTOMATIC);
 
 			store = new Gtk.TreeStore(2, typeof(string), typeof(string));
@@ -209,13 +212,19 @@ namespace Abraca {
 			view.headers_visible = false;
 			view.tooltip_column = 1;
 
+
 			view.insert_column_with_attributes(
 				-1, null, new Gtk.CellRendererText(),
-				"markup", 0
+				"text", 0
 			);
+
+			renderer = new Gtk.CellRendererText();
+			renderer.ellipsize = Pango.EllipsizeMode.END;
+			renderer.ellipsize_set = true;
+
 			view.insert_column_with_attributes(
-				-1, null, new Gtk.CellRendererText(),
-				"markup", 1
+				-1, null, renderer,
+				"text", 1
 			);
 
 			scrolled.add_with_viewport(view);
