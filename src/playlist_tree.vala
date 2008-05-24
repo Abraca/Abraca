@@ -180,6 +180,8 @@ namespace Abraca {
 
 			/* Two rows, plus some extra height */
 			text_renderer.height = h * 2 + 4;
+			text_renderer.ellipsize = Pango.EllipsizeMode.END;
+			text_renderer.ellipsize_set = true;
 
 			column = new Gtk.TreeViewColumn.with_attributes (
 				null, text_renderer,
