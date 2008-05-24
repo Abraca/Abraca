@@ -52,7 +52,6 @@ namespace Abraca {
 
 
 		construct {
-			show_expanders = true;
 			fixed_height_mode = true;
 			enable_search = false;
 

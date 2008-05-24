@@ -48,7 +48,6 @@ namespace Abraca {
 			enable_search = false;
 			search_column = 1;
 			headers_visible = false;
-			show_expanders = false;
 			rules_hint = true;
 			fixed_height_mode = true;
 
