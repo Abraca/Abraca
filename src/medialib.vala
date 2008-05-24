@@ -207,6 +207,7 @@ namespace Abraca {
 			store = new Gtk.TreeStore(2, typeof(string), typeof(string));
 			view = new Gtk.TreeView.with_model(store);
 			view.headers_visible = false;
+			view.tooltip_column = 1;
 
 			view.insert_column_with_attributes(
 				-1, null, new Gtk.CellRendererText(),
@@ -239,22 +240,8 @@ namespace Abraca {
 				editable.modify_base(Gtk.StateType.NORMAL, color);
 			}
 
+			editable.set_tooltip_text(editable.get_text());
 		}
-
-		/*
-		void change_color_int(Gtk.SpinButton editable, string origin) {
-			if (origin == editable.get_text()) {
-				editable.modify_base(Gtk.StateType.NORMAL, null);
-			} else {
-				Gdk.Color color;
-				color.red = (ushort) 0xffff;
-				color.green = (ushort) 0xffff;
-				color.blue = (ushort) 0x6666;
-				editable.modify_base(Gtk.StateType.NORMAL, color);
-			}
-
-		}
-		*/
 
 		void on_title_entry_changed(Gtk.Editable editable) {
 			change_color((Gtk.Entry) editable, title);
