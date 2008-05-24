@@ -746,14 +746,6 @@ namespace Abraca {
 			}
 		}
 
-		private void on_menu_collection_rename(Gtk.MenuItem item) {
-			selected_collection_rename();
-		}
-
-		private void on_menu_collection_delete(Gtk.MenuItem item) {
-			selected_collection_delete();
-		}
-
 		[InstanceLast]
 		private void on_coll_get(Xmms.Result #res) {
 			Xmms.Collection coll;
@@ -860,14 +852,18 @@ namespace Abraca {
 			item.image = new Gtk.Image.from_stock(
 				Gtk.STOCK_EDIT, Gtk.IconSize.MENU
 			);
-			item.activate += on_menu_collection_rename;
+			item.activate += (menu) => {
+				selected_collection_rename();
+			};
 			_collection_menu.append(item);
 
 			item = new Gtk.ImageMenuItem.with_mnemonic(_("Delete"));
 			item.image = new Gtk.Image.from_stock(
 				Gtk.STOCK_DELETE, Gtk.IconSize.MENU
 			);
-			item.activate += on_menu_collection_delete;
+			item.activate += (menu) => {
+				selected_collection_delete();
+			};
 			_collection_menu.append(item);
 
 			_collection_menu.show_all();
