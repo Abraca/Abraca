@@ -24,6 +24,14 @@ namespace Abraca {
 		/** context menu */
 		private Gtk.Menu _playlist_menu;
 
+		/* sensitivity conditions of _playlist_menu-items */
+		private GLib.List<Gtk.MenuItem>
+			_playlist_menu_item_when_one_selected = null;
+		private GLib.List<Gtk.MenuItem>
+			_playlist_menu_item_when_some_selected = null;
+		private GLib.List<Gtk.MenuItem>
+			_playlist_menu_item_when_none_selected = null;
+
 		/** drag-n-drop targets */
 		private const Gtk.TargetEntry[] _target_entries = {
 			DragDropTarget.PlaylistRow,
@@ -63,15 +71,39 @@ namespace Abraca {
 			button_press_event += on_button_press_event;
 
 			create_context_menu();
+			get_selection().changed += on_selection_changed_update_menu;
+			on_selection_changed_update_menu(get_selection());
+
 			create_dragndrop();
 
 			show_all();
 		}
 
 
+		private bool on_selection_changed_update_menu(Gtk.TreeSelection s) {
+			int n = s.count_selected_rows();
+
+			foreach (weak Gtk.MenuItem i
+			         in _playlist_menu_item_when_none_selected) {
+				i.sensitive = (n == 0);
+			}
+
+			foreach (weak Gtk.MenuItem i
+			         in _playlist_menu_item_when_one_selected) {
+				i.sensitive = (n == 1);
+			}
+
+			foreach (weak Gtk.MenuItem i
+			         in _playlist_menu_item_when_some_selected) {
+				i.sensitive = (n > 0);
+			}
+
+			return false;
+		}
+
 		private bool on_button_press_event(Gtk.Widget w, Gdk.Event e) {
 			weak Gdk.EventButton button_event = (Gdk.EventButton) e;
-			Gtk.TreePath path;
+			weak Gtk.TreePath path;
 
 			/* we're only interested in the 3rd mouse button */
 			if (button_event.button != 3) {
@@ -85,9 +117,8 @@ namespace Abraca {
 
 			/* Prevent selection-handling when right-clicking on an already
 			   selected entry */
-			return (get_path_at_pos((int)button_event.x,
-			                              (int)button_event.y,
-			                              out path, null, null, null)
+			return (get_path_at_pos((int)button_event.x, (int)button_event.y,
+			                        out path, null, null, null)
 			        && get_selection().path_is_selected(path));
 
 		}
@@ -203,11 +234,22 @@ namespace Abraca {
 
 			_playlist_menu = new Gtk.Menu();
 
+			/* Jump */
+			item = new Gtk.MenuItem.with_label(_("Jump"));
+			item.activate += jump_to_selected;
+			_playlist_menu_item_when_one_selected.prepend(item);
+			_playlist_menu.append(item);
+
+			/* Separator */
+			item = new Gtk.SeparatorMenuItem();
+			_playlist_menu.append(item);
+
 			/* Information */
 			item = new Gtk.ImageMenuItem.from_stock(
 				Gtk.STOCK_INFO, null
 			);
 			item.activate += on_menu_playlist_info;
+			_playlist_menu_item_when_some_selected.prepend(item);
 			_playlist_menu.append(item);
 
 			/* Filter submenu */
@@ -235,6 +277,7 @@ namespace Abraca {
 				Gtk.STOCK_FIND, null
 			);
 			img_item.set_submenu(submenu);
+			_playlist_menu_item_when_some_selected.prepend(img_item);
 			_playlist_menu.append(img_item);
 
 			/* Delete */
@@ -242,6 +285,7 @@ namespace Abraca {
 				Gtk.STOCK_DELETE, null
 			);
 			item.activate += delete_selected;
+			_playlist_menu_item_when_some_selected.prepend(item);
 			_playlist_menu.append(item);
 
 			/* Separator */
@@ -624,16 +668,12 @@ namespace Abraca {
 			return true;
 		}
 
-
 		/**
-		 * When clicking a row, perform a jump to that song and start
-		 * playback if not already playing.
+		 * Perform a jump to that song and start playback if not already
+		 * playing.
 		 */
-		[InstanceLast]
-		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path,
-		                              Gtk.TreeViewColumn column) {
+		private void jump_to_pos(int pos) {
 			Client c = Client.instance();
-			int pos = path.get_indices()[0];
 
 			c.xmms.playlist_set_next(pos).notifier_set((res) => {
 				Client c = Client.instance();
@@ -649,6 +689,22 @@ namespace Abraca {
 					});
 				});
 			});
+		}
+
+		private bool jump_to_selected() {
+			jump_to_pos(get_selection().get_selected_rows(null).first().data
+			            .get_indices()[0]);
+			return false;
+		}
+
+		/**
+		 * When clicking a row, perform a jump to that song and start
+		 * playback if not already playing.
+		 */
+		[InstanceLast]
+		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path,
+		                              Gtk.TreeViewColumn column) {
+			jump_to_pos(path.get_indices()[0]);
 		}
 	}
 }

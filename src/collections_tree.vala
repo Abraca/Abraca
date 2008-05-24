@@ -51,6 +51,12 @@ namespace Abraca {
 		/** context menu */
 		private Gtk.Menu _collection_menu;
 
+		/* sensitivity conditions of _collection_menu-items */
+		private GLib.List<Gtk.MenuItem>
+			_collection_menu_item_when_coll_selected = null;
+		private GLib.List<Gtk.MenuItem>
+			_collection_menu_item_when_ns_selected = null;
+
 		private string _playlist;
 		private Gtk.TreeIter _playlist_iter;
 		private Gtk.TreeIter _collection_iter;
@@ -75,6 +81,8 @@ namespace Abraca {
 			model = create_model();
 
 			create_context_menu();
+			get_selection().changed += on_selection_changed_update_menu;
+			on_selection_changed_update_menu(get_selection());
 
 			enable_model_drag_dest(_target_entries,
 			                       Gdk.DragAction.COPY);
@@ -97,6 +105,29 @@ namespace Abraca {
 			c.collection_rename += on_collection_rename;
 			c.collection_remove += on_collection_remove;
 			c.connected += query_collections;
+		}
+
+		private bool on_selection_changed_update_menu(Gtk.TreeSelection s) {
+			int n;
+			Gtk.TreeIter iter;
+
+			if (!s.get_selected(null, out iter)) {
+				n = 0;
+			} else {
+				n = model.get_path(iter).get_depth();
+			}
+
+			foreach (weak Gtk.MenuItem i
+			         in _collection_menu_item_when_coll_selected) {
+				i.sensitive = (n == 2);
+			}
+
+			foreach (weak Gtk.MenuItem i
+			         in _collection_menu_item_when_ns_selected) {
+				i.sensitive = (n == 1);
+			}
+
+			return false;
 		}
 
 		[InstanceLast]
@@ -132,37 +163,23 @@ namespace Abraca {
 
 		private bool on_button_press_event(Gtk.Widget w, Gdk.Event e) {
 			weak Gdk.EventButton button_event = (Gdk.EventButton) e;
+			weak Gtk.TreePath path;
 
 			/* we're only interested in the 3rd mouse button */
 			if (button_event.button != 3) {
 				return false;
 			}
 
-			Gtk.TreeIter iter;
-			Gtk.TreePath path;
-			weak Gtk.TreeSelection selection;
-
-			selection = get_selection();
-
-			if (get_path_at_pos((int)button_event.x, (int)button_event.y,
-			                    out path, null, null, null)) {
-				/* nop */
-			} else if (selection.get_selected(null, out iter)) {
-				path = model.get_path(iter);
-			} else {
-				return false;
-			}
-
-			if (path.get_depth() == 2) {
-				_collection_menu.popup(
-						null, null, null, button_event.button,
-						Gtk.get_current_event_time()
-						);
-			}
+			_collection_menu.popup(
+					null, null, null, button_event.button,
+					Gtk.get_current_event_time()
+					);
 
 			/* Prevent selection-handling when right-clicking on an already
-			   selection entry */
-			return selection.path_is_selected(path);
+			   selected entry */
+			return (get_path_at_pos((int)button_event.x, (int)button_event.y,
+			                        out path, null, null, null)
+			        && get_selection().path_is_selected(path));
 		}
 
 		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e) {
@@ -845,6 +862,7 @@ namespace Abraca {
 				Gtk.STOCK_FIND, Gtk.IconSize.MENU
 			);
 			item.activate += on_menu_collection_get;
+			_collection_menu_item_when_coll_selected.prepend(item);
 			_collection_menu.append(item);
 
 			item = new Gtk.ImageMenuItem.with_mnemonic(_("_Rename"));
@@ -854,6 +872,7 @@ namespace Abraca {
 			item.activate += (menu) => {
 				selected_collection_rename();
 			};
+			_collection_menu_item_when_coll_selected.prepend(item);
 			_collection_menu.append(item);
 
 			item = new Gtk.ImageMenuItem.with_mnemonic(_("Delete"));
@@ -863,6 +882,7 @@ namespace Abraca {
 			item.activate += (menu) => {
 				selected_collection_delete();
 			};
+			_collection_menu_item_when_coll_selected.prepend(item);
 			_collection_menu.append(item);
 
 			_collection_menu.show_all();

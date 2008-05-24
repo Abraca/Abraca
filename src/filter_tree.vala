@@ -36,6 +36,14 @@ namespace Abraca {
 		/** context menu */
 		private Gtk.Menu filter_menu;
 
+		/* sensitivity conditions of filter_menu-items */
+		private GLib.List<Gtk.MenuItem>
+			filter_menu_item_when_one_selected = null;
+		private GLib.List<Gtk.MenuItem>
+			filter_menu_item_when_some_selected = null;
+		private GLib.List<Gtk.MenuItem>
+			filter_menu_item_when_none_selected = null;
+
 		private const string[]? _sort_order = {
 			"artist", "album", "tracknr"
 		};
@@ -62,10 +70,34 @@ namespace Abraca {
 			model = new FilterModel();
 
 			create_context_menu();
+			get_selection().changed += on_selection_changed_update_menu;
+			on_selection_changed_update_menu(get_selection());
+
 			create_drag_n_drop();
 
 			button_press_event += on_button_press_event;
 			row_activated += on_row_activated;
+		}
+
+		private bool on_selection_changed_update_menu(Gtk.TreeSelection s) {
+			int n = s.count_selected_rows();
+
+			foreach (weak Gtk.MenuItem i
+			         in filter_menu_item_when_none_selected) {
+				i.sensitive = (n == 0);
+			}
+
+			foreach (weak Gtk.MenuItem i
+			         in filter_menu_item_when_one_selected) {
+				i.sensitive = (n == 1);
+			}
+
+			foreach (weak Gtk.MenuItem i
+			         in filter_menu_item_when_some_selected) {
+				i.sensitive = (n > 0);
+			}
+
+			return false;
 		}
 
 		public void query_collection(Xmms.Collection coll) {
@@ -129,18 +161,16 @@ namespace Abraca {
 			if (event_button.button != 3)
 				return false;
 
-			if (get_path_at_pos((int)event_button.x, (int)event_button.y,
-			                    out path, null, null, null)
-			    || get_selection().count_selected_rows() > 0) {
+			filter_menu.popup(
+				null, null, null, event_button.button,
+				Gtk.get_current_event_time()
+			);
 
-				filter_menu.popup(
-					null, null, null, event_button.button,
-					Gtk.get_current_event_time()
-				);
-				return get_selection().path_is_selected(path);
-			}
-
-			return false;
+			/* Prevent selection-handling when right-clicking on an already
+			   selected entry */
+			return (get_path_at_pos((int)event_button.x, (int)event_button.y,
+			                        out path, null, null, null)
+			        && get_selection().path_is_selected(path));
 		}
 
 		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
@@ -263,14 +293,17 @@ namespace Abraca {
 
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_INFO, null);
 			item.activate += on_menu_info;
+			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
 			item.activate += on_menu_add;
+			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
 			item = new Gtk.MenuItem.with_mnemonic(_("_Replace"));
 			item.activate += on_menu_replace;
+			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
 			filter_menu.show_all();
