@@ -159,12 +159,16 @@ namespace Abraca {
 					"Configure Sorting",
 					(Gtk.Window) (Abraca.instance().main_window),
 					Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.MODAL,
-					Gtk.STOCK_OK, Gtk.ResponseType.OK,
-					Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL
+					Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+					Gtk.STOCK_OK, Gtk.ResponseType.OK
 			);
+			dialog.border_width = 5;
+			dialog.resizable = false;
 
-			table = new Gtk.Table(6, 2, true);
-			table.homogeneous = false;
+			table = new Gtk.Table(6, 2, false);
+			table.set_row_spacings(7);
+			table.set_col_spacings(5);
+			table.border_width = 5;
 			entrys = new Gtk.Entry[6];
 
 			values = new string[] {
@@ -174,22 +178,17 @@ namespace Abraca {
 			};
 
 			for(i = 0; i < 6; i++) {
-				if (i == 5) {
-					label = new Gtk.Label("<b>"+_sort_keys[i]+"</b>");
-					label.use_markup = true;
-				} else {
-					label = new Gtk.Label(_sort_keys[i]);
-				}
-
-				table.attach(label, 0, 1, i + 0, i + 1, 0, 0, 10, 5);
+				label = new Gtk.Label("<b>" + _sort_keys[i] + "</b>");
+				label.xalign = 0;
+				label.use_markup = true;
+				table.attach_defaults(label, 0, 1, i + 0, i + 1);
 
 				entrys[i] = new Gtk.Entry();
 				entrys[i].text = values[i];
-
 				table.attach_defaults(entrys[i], 1, 2, i + 0, i + 1);
 			}
 
-			((Gtk.VBox)dialog.vbox).pack_start_defaults(table);
+			dialog.vbox.pack_start_defaults(table);
 			dialog.show_all();
 
 			response_id = dialog.run();
