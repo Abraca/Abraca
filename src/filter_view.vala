@@ -195,6 +195,9 @@ namespace Abraca {
 			c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 		}
 
+		private void on_menu_select_all(Gtk.MenuItem item) {
+			get_selection().select_all();
+		}
 
 		private void on_menu_info(Gtk.MenuItem item) {
 			Client c = Client.instance();
@@ -308,8 +311,21 @@ namespace Abraca {
 
 			filter_menu = new Gtk.Menu();
 
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_SELECT_ALL, null);
+			item.activate += on_menu_select_all;
+			filter_menu_item_when_some_selected.prepend(item);
+			filter_menu.append(item);
+
+			item = new Gtk.SeparatorMenuItem();
+			filter_menu_item_when_some_selected.prepend(item);
+			filter_menu.append(item);
+
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_INFO, null);
 			item.activate += on_menu_info;
+			filter_menu_item_when_some_selected.prepend(item);
+			filter_menu.append(item);
+
+			item = new Gtk.SeparatorMenuItem();
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 

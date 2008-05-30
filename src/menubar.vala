@@ -126,25 +126,6 @@ namespace Abraca {
 
 			sub.append(new Gtk.SeparatorMenuItem());
 
-			img = new Gtk.Image.from_stock(
-				Gtk.STOCK_ADD, Gtk.IconSize.MENU
-			);
-
-			img_item = new Gtk.ImageMenuItem.with_mnemonic(
-				_("_Add filter results")
-			);
-			img_item.set_image(img);
-			img_item.activate += on_playlist_add_filter_results;
-			sub.append(img_item);
-
-			item = new Gtk.ImageMenuItem.with_mnemonic(
-				_("_Replace with filter results")
-			);
-			item.activate += on_playlist_replace_with_filter_results;
-			sub.append(item);
-
-			sub.append(new Gtk.SeparatorMenuItem());
-
 			item = new Gtk.ImageMenuItem.with_mnemonic(
 				_("Configure Sorting")
 			);
