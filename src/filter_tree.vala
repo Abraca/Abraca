@@ -153,7 +153,9 @@ namespace Abraca {
 
 		[InstanceLast]
 		private bool on_button_press_event(FilterTree w, Gdk.Event e) {
-			Gtk.TreePath path;
+			weak Gtk.TreePath path;
+			int x, y;
+
 			/* we're only interested in the 3rd mouse button */
 			if (e.button.button != 3)
 				return false;
@@ -163,11 +165,19 @@ namespace Abraca {
 				Gtk.get_current_event_time()
 			);
 
+			x = (int) e.button.x;
+			y = (int) e.button.y;
+
 			/* Prevent selection-handling when right-clicking on an already
 			   selected entry */
-			return (get_path_at_pos((int)e.button.x, (int)e.button.y,
-			                        out path, null, null, null)
-			        && get_selection().path_is_selected(path));
+			if (get_path_at_pos(x, y, out path, null, null, null)) {
+				weak Gtk.TreeSelection sel = get_selection();
+				if (sel.path_is_selected(path)) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private void on_row_activated(FilterTree tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
