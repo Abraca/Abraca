@@ -10,7 +10,7 @@ namespace Abraca {
 		public PlaylistMap (
 		);
 		public void insert (
-			uint id, weak Gtk.TreeRowReference row
+			uint id, Gtk.TreeRowReference row
 		);
 		public void remove (
 			uint id, Gtk.TreePath path

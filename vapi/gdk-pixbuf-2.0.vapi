@@ -56,6 +56,7 @@ namespace Gdk {
 		ENCODING_RLE,
 		ENCODING_MASK
 	}
+	[Compact]
 	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public class PixbufFormat {
 		public weak string get_description ();
@@ -68,6 +69,7 @@ namespace Gdk {
 		public bool is_writable ();
 		public void set_disabled (bool disabled);
 	}
+	[Compact]
 	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public class PixbufSimpleAnimClass {
 	}
@@ -96,7 +98,7 @@ namespace Gdk {
 		public int get_rowstride ();
 		public int get_width ();
 		public Pixbuf (Gdk.Colorspace colorspace, bool has_alpha, int bits_per_sample, int width, int height);
-		public Pixbuf.from_data (uchar[] data, Gdk.Colorspace colorspace, bool has_alpha, int bits_per_sample, int width, int height, int rowstride, Gdk.PixbufDestroyNotify destroy_fn, void* destroy_fn_data);
+		public Pixbuf.from_data (uchar[] data, Gdk.Colorspace colorspace, bool has_alpha, int bits_per_sample, int width, int height, int rowstride, Gdk.PixbufDestroyNotify? destroy_fn);
 		public Pixbuf.from_file (string filename) throws GLib.Error;
 		public Pixbuf.from_file_at_scale (string filename, int width, int height, bool preserve_aspect_ratio) throws GLib.Error;
 		public Pixbuf.from_file_at_size (string filename, int width, int height) throws GLib.Error;
@@ -105,7 +107,7 @@ namespace Gdk {
 		public Pixbuf.subpixbuf (Gdk.Pixbuf src_pixbuf, int src_x, int src_y, int width, int height);
 		public weak Gdk.Pixbuf rotate_simple (Gdk.PixbufRotation angle);
 		public void saturate_and_pixelate (Gdk.Pixbuf dest, float saturation, bool pixelate);
-		public bool save (string filename, string type) throws GLib.Error;
+		public bool save (string filename, string type, ...) throws GLib.Error;
 		public bool save_to_buffer (string buffer, ulong buffer_size, string type) throws GLib.Error;
 		public bool save_to_bufferv (string buffer, ulong buffer_size, string type, string[] option_keys, string[] option_values) throws GLib.Error;
 		public bool save_to_callback (Gdk.PixbufSaveFunc save_func, string type) throws GLib.Error;
@@ -114,21 +116,21 @@ namespace Gdk {
 		public void scale (Gdk.Pixbuf dest, int dest_x, int dest_y, int dest_width, int dest_height, double offset_x, double offset_y, double scale_x, double scale_y, Gdk.InterpType interp_type);
 		public weak Gdk.Pixbuf scale_simple (int dest_width, int dest_height, Gdk.InterpType interp_type);
 		[NoAccessorMethod]
-		public weak int bits_per_sample { get; construct; }
+		public int bits_per_sample { get; construct; }
 		[NoAccessorMethod]
-		public weak Gdk.Colorspace colorspace { get; construct; }
+		public Gdk.Colorspace colorspace { get; construct; }
 		[NoAccessorMethod]
-		public weak bool has_alpha { get; construct; }
+		public bool has_alpha { get; construct; }
 		[NoAccessorMethod]
-		public weak int height { get; construct; }
+		public int height { get; construct; }
 		[NoAccessorMethod]
-		public weak int n_channels { get; construct; }
+		public int n_channels { get; construct; }
 		[NoAccessorMethod]
-		public weak void* pixels { get; construct; }
+		public void* pixels { get; construct; }
 		[NoAccessorMethod]
-		public weak int rowstride { get; construct; }
+		public int rowstride { get; construct; }
 		[NoAccessorMethod]
-		public weak int width { get; construct; }
+		public int width { get; construct; }
 	}
 	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public class PixbufAnimation : GLib.Object {
@@ -157,10 +159,10 @@ namespace Gdk {
 		public PixbufLoader.with_type (string image_type) throws GLib.Error;
 		public void set_size (int width, int height);
 		public bool write (uchar[] buf) throws GLib.Error;
-		public signal void area_prepared ();
-		public signal void area_updated (int x, int y, int width, int height);
-		public signal void closed ();
-		public signal void size_prepared (int width, int height);
+		public virtual signal void area_prepared ();
+		public virtual signal void area_updated (int x, int y, int width, int height);
+		public virtual signal void closed ();
+		public virtual signal void size_prepared (int width, int height);
 	}
 	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public class PixbufSimpleAnim : Gdk.PixbufAnimation {
@@ -179,7 +181,7 @@ namespace Gdk {
 		public uint width;
 		public uint height;
 		[NoArrayLength]
-		public uchar[] pixel_data;
+		public weak uchar[] pixel_data;
 		public bool deserialize ([CCode (array_length_pos = 0.9)] uchar[] stream) throws GLib.Error;
 		public void* from_pixbuf (Gdk.Pixbuf pixbuf, bool use_rle);
 		public weak uchar[] serialize ();
@@ -189,11 +191,18 @@ namespace Gdk {
 	public delegate void PixbufDestroyNotify (uchar[] pixels);
 	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public delegate bool PixbufSaveFunc (string buf, ulong count, GLib.Error error);
+	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public const int PIXBUF_FEATURES_H;
+	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public const int PIXBUF_MAGIC_NUMBER;
+	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public const int PIXBUF_MAJOR;
+	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public const int PIXBUF_MICRO;
+	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public const int PIXBUF_MINOR;
+	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public const string PIXBUF_VERSION;
+	[CCode (cheader_filename = "gdk-pixbuf/gdk-pixdata.h")]
 	public const int PIXDATA_HEADER_LENGTH;
 }

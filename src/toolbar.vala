@@ -70,7 +70,7 @@ namespace Abraca {
 			};
 		}
 
-		private Gtk.Button create_playback_button(weak string s) {
+		private Gtk.Button create_playback_button(string s) {
 			Gtk.Button button = new Gtk.Button();
 
 			button.relief = Gtk.ReliefStyle.NONE;
@@ -103,7 +103,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private bool on_time_slider_press(Gtk.Widget widget, Gdk.Event e) {
+		private bool on_time_slider_press(Gtk.HScale widget, Gdk.Event e) {
 			_seek = true;
 			_time_slider.motion_notify_event += on_time_slider_motion_notify;
 
@@ -111,7 +111,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private bool on_time_slider_release(Gtk.Widget widget, Gdk.Event e) {
+		private bool on_time_slider_release(Gtk.HScale widget, Gdk.Event e) {
 			weak Gtk.HScale scale = (Gtk.HScale) widget;
 			Client c = Client.instance();
 
@@ -128,7 +128,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private bool on_time_slider_motion_notify(Gtk.Widget widget, Gdk.Event e) {
+		private bool on_time_slider_motion_notify(Gtk.HScale widget, Gdk.Event e) {
 			weak Gtk.HScale scale = (Gtk.HScale) widget;
 
 			double percent = scale.get_value();

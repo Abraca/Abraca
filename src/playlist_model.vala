@@ -146,7 +146,7 @@ namespace Abraca {
 		 * Update the position indicator to point at the
 		 * current playing entry.
 		 */
-		private void on_playlist_position(Client c, string playlist, int pos) {
+		private void on_playlist_position(Client c, string playlist, uint pos) {
 			Gtk.TreeIter iter;
 
 			/* Remove the old position indicator */
@@ -160,7 +160,7 @@ namespace Abraca {
 				return;
 
 			/* Add the new position indicator */
-			if (iter_nth_child (out iter, null, pos)) {
+			if (iter_nth_child (out iter, null, (int) pos)) {
 				Gtk.TreePath path;
 				uint mid;
 

@@ -126,7 +126,7 @@ namespace Xmms {
 
 	[CCode(
 		cprefix = "XMMSC_RESULT_VALUE_TYPE_",
-		cname = "xmmsc_result_type_t",
+		cname = "xmmsc_result_value_type_t",
 		cheader_filename = "xmmsclient/xmmsclient.h"
 	)]
 	public enum ResultType {
@@ -153,7 +153,7 @@ namespace Xmms {
 		cheader_filename = "xmmsclient/xmmsclient.h"
 	)]
 	public delegate void DictForEachFunc (
-		weak string key, Xmms.ResultType t, void *val
+		void *key, Xmms.ResultType t, void *val
 	);
 
 	[CCode(
@@ -161,8 +161,8 @@ namespace Xmms {
 		cheader_filename = "xmmsclient/xmmsclient.h"
 	)]
 	public delegate void PropDictForEachFunc (
-		weak string key, Xmms.ResultType t, void *val,
-		weak string source
+		void *key, Xmms.ResultType t, void *val,
+		string source
 	);
 
 	[CCode(
@@ -186,7 +186,7 @@ namespace Xmms {
 		cheader_filename = "xmmsclient/xmmsclient.h"
 	)]
 	public delegate CollectionToken CollectionParseTokensFunc (
-		weak string key, weak string[] npos
+		string key, string[] npos
 	);
 
 	[CCode(
@@ -202,7 +202,7 @@ namespace Xmms {
 		cheader_filename = "xmmsclient/xmmsclient.h"
 	)]
 	public delegate void CollectionAttributeForeachFunc (
-		weak string key, weak string val
+		string key, string val
 	);
 
 	public const string ACTIVE_PLAYLIST;
@@ -217,10 +217,11 @@ namespace Xmms {
 	public struct CollectionToken {
 			public Xmms.CollectionTokenType type;
 			[CCode(cname="string")]
-			public weak string str;
+			public string str;
 			public weak CollectionToken next;
 	}
 
+	[Compact]
 	[CCode (
 		cname = "xmmsc_connection_t",
 		cprefix = "xmmsc_",
@@ -232,10 +233,10 @@ namespace Xmms {
 	{
 		[CCode (cname = "xmmsc_init")]
 		public Client (
-			weak string name
+			string name
 		);
 		public bool connect (
-			weak string path
+			string path
 		);
 
 		/*
@@ -268,7 +269,7 @@ namespace Xmms {
 		public Result playback_status (
 		);
 		public Result playback_volume_set (
-			weak string channel, uint volume
+			string channel, uint volume
 		);
 		public Result playback_volume_get (
 		);
@@ -287,46 +288,46 @@ namespace Xmms {
 		public Result playlist_list (
 		);
 		public Result playlist_create (
-			weak string playlist
+			string playlist
 		);
 		public Result playlist_shuffle (
-			weak string playlist
+			string playlist
 		);
 		public Result playlist_add_args (
-			weak string playlist, weak string url,
-			int len, weak string[] args
+			string playlist, string url,
+			int len, string[] args
 		);
 		public Result playlist_add_url (
-			weak string playlist, weak string url
+			string playlist, string url
 		);
 		public Result playlist_add_id (
-			weak string playlist, uint id
+			string playlist, uint id
 		);
 		public Result playlist_add_encoded (
-			weak string playlist, weak string url
+			string playlist, string url
 		);
 		public Result playlist_add_idlist (
-			weak string playlist, Collection coll
+			string playlist, Collection coll
 		);
 		[NoArrayLength]
 		public Result playlist_add_collection (
-			weak string playlist, Collection coll, string[]? order
+			string playlist, Collection coll, string[]? order
 		);
 		public Result playlist_remove_entry (
-			weak string playlist, uint id
+			string playlist, uint id
 		);
 		public Result playlist_clear (
-			weak string playlist
+			string playlist
 		);
 		public Result playlist_remove (
-			weak string playlist
+			string playlist
 		);
 		public Result playlist_list_entries (
-			weak string playlist = "Default"
+			string playlist = "Default"
 		);
 		[NoArrayLength]
 		public Result playlist_sort (
-			weak string playlist, weak string[] properties
+			string playlist, string[] properties
 		);
 		public Result playlist_set_next (
 			uint pos
@@ -335,39 +336,39 @@ namespace Xmms {
 			int pos
 		);
 		public Result playlist_move_entry (
-			weak string playlist, uint from, uint to
+			string playlist, uint from, uint to
 		);
 		public Result playlist_current_pos (
-			weak string playlist
+			string playlist
 		);
 		public Result playlist_current_active (
 		);
 		public Result playlist_insert_args (
-			weak string playlist, int pos, weak string url,
-			int numargs, weak string[] args
+			string playlist, int pos, string url,
+			int numargs, string[] args
 		);
 		public Result playlist_insert_url (
-			weak string playlist, int pos, weak string url
+			string playlist, int pos, string url
 		);
 		public Result playlist_insert_id (
-			weak string playlist, int pos, uint id
+			string playlist, int pos, uint id
 		);
 		public Result playlist_insert_encoded (
-			weak string playlist, int pos, weak string url
+			string playlist, int pos, string url
 		);
 		[NoArrayLength]
 		public Result playlist_insert_collection (
-			weak string playlist, int pos,
-			Collection coll, weak string[] order
+			string playlist, int pos,
+			Collection coll, string[] order
 		);
 		public Result playlist_load (
-			weak string playlist
+			string playlist
 		);
 		public Result playlist_radd (
-			weak string playlist, weak string url
+			string playlist, string url
 		);
 		public Result playlist_radd_encoded (
-			weak string playlist, weak string url
+			string playlist, string url
 		);
 		public Result broadcast_playlist_changed (
 		);
@@ -380,54 +381,54 @@ namespace Xmms {
 		 * Medialib functions
 		 */
 		public Result medialib_add_entry (
-			weak string url
+			string url
 		);
 		public Result medialib_add_entry_args (
-			weak string url, int numargs, weak string[] args
+			string url, int numargs, string[] args
 		);
 		public Result medialib_add_entry_encoded (
-			weak string url
+			string url
 		);
 		public Result medialib_get_info (
 			uint id
 		);
 		public Result medialib_path_import (
-			weak string path
+			string path
 		);
 		public Result medialib_path_import_encoded (
-			weak string path
+			string path
 		);
 		public Result medialib_rehash (
 			uint id
 		);
 		public Result medialib_get_id (
-			weak string url
+			string url
 		);
 		public Result medialib_remove_entry (
 			uint entry
 		);
 		public Result medialib_move_entry (
-			uint entry, weak string url
+			uint entry, string url
 		);
 		public Result medialib_entry_property_set_int (
-			uint id, weak string key, int val
+			uint id, string key, int val
 		);
 		public Result medialib_entry_property_set_int_with_source (
-			uint id, weak string source,
-			weak string key, int val
+			uint id, string source,
+			string key, int val
 		);
 		public Result medialib_entry_property_set_str (
-			uint id, weak string key, weak string val
+			uint id, string key, string val
 		);
 		public Result medialib_entry_property_set_str_with_source (
-			uint id, weak string source,
-			weak string key, weak string val
+			uint id, string source,
+			string key, string val
 		);
 		public Result medialib_entry_property_remove (
-			uint id, weak string key
+			uint id, string key
 		);
 		public Result medialib_entry_property_remove_with_source (
-			uint id, weak string source, weak string key
+			uint id, string source, string key
 		);
 		public Result broadcast_medialib_entry_changed (
 		);
@@ -442,15 +443,15 @@ namespace Xmms {
 		 * Config functions
 		 */
 		public Result configval_set (
-			weak string key, weak string val
+			string key, string val
 		);
 		public Result configval_list (
 		);
 		public Result configval_get (
-			weak string key
+			string key
 		);
 		public Result configval_register (
-			weak string valuename, weak string defaultvalue
+			string valuename, string defaultvalue
 		);
 		public Result broadcast_configval_changed (
 		);
@@ -459,10 +460,10 @@ namespace Xmms {
 		 * Browse functions
 		 */
 		public Result xform_media_browse (
-			weak string url
+			string url
 		);
 		public Result xform_media_browse_encoded (
-			weak string url
+			string url
 		);
 
 		/*
@@ -472,49 +473,49 @@ namespace Xmms {
 			uchar[] data
 		);
 		public Result bindata_retrieve (
-			weak string hash
+			string hash
 		);
 		public Result bindata_remove (
-			weak string hash
+			string hash
 		);
 
 		/*
 		 * Collection functions
 		 */
 		public Result coll_get (
-			weak string collname, weak string ns
+			string collname, string ns
 		);
 		public Result coll_list (
-			weak string ns
+			string ns
 		);
 		public Result coll_save (
-			Collection c, weak string name, weak string ns
+			Collection c, string name, string ns
 		);
 		public Result coll_remove (
-			weak string name, weak string ns
+			string name, string ns
 		);
 		public Result coll_find (
-			uint mediaid, weak string ns
+			uint mediaid, string ns
 		);
 		public Result coll_rename (
-			weak string from_name, weak string to_name, weak string ns
+			string from_name, string to_name, string ns
 		);
 		public Result coll_idlist_from_playlist_file (
-			weak string path
+			string path
 		);
 		public Result coll_sync (
 		);
 		[NoArrayLength]
 		public Result coll_query_ids (
-			Collection coll, weak string[]? order,
+			Collection coll, string[]? order,
 			uint limit_start = 0, uint limit_len = 0
 		);
 		[NoArrayLength]
 		public Result coll_query_infos (
-			Collection coll, weak string[]? order,
+			Collection coll, string[]? order,
 			uint limit_start = 0, uint limit_len = 0,
-			weak string[]? fetch = null,
-			weak string[]? group = null
+			string[]? fetch = null,
+			string[]? group = null
 		);
 		public Result broadcast_collection_changed (
 		);
@@ -528,7 +529,7 @@ namespace Xmms {
 		public static weak string userconfdir_get (
 			char[] buffer
 		);
-		public weak string get_last_error (
+		public string get_last_error (
 		);
 		public Result quit(
 		);
@@ -549,6 +550,7 @@ namespace Xmms {
 		);
 	}
 
+	[Compact]
 	[CCode(
 		cname = "xmmsc_coll_t",
 		cprefix = "xmmsc_coll_",
@@ -622,13 +624,13 @@ namespace Xmms {
 		public void attribute_list_next (
 		);
 		public void attribute_set (
-			weak string key, weak string val
+			string key, string val
 		);
 		public bool attribute_remove (
-			weak string key
+			string key
 		);
 		public bool attribute_get (
-			weak string key, out weak string val
+			string key, out weak string val
 		);
 		public void attribute_foreach (
 			CollectionAttributeForeachFunc func
@@ -636,21 +638,22 @@ namespace Xmms {
 		public static Collection universe (
 		);
 		public static bool parse (
-			weak string pattern, out Collection coll
+			string pattern, out Collection coll
 		);
 		public static bool parse_custom (
-			weak string pattern, CollectionParseTokensFunc tokens_func,
+			string pattern, CollectionParseTokensFunc tokens_func,
 			CollectionParseBuildFunc build_func, out Collection coll
 		);
 		public static Collection default_parse_build (
 			CollectionToken[] tokens
 		);
 		public static CollectionToken[] default_parse_tokens (
-			weak string str, out weak string newpos
+			string str, out weak string newpos
 		);
 	}
 
 
+	[Compact]
 	[CCode(
 		cname = "xmmsc_result_t",
 		cprefix = "xmmsc_result_",
@@ -678,7 +681,7 @@ namespace Xmms {
 		);
 		public bool iserror (
 		);
-		public weak string get_error (
+		public string get_error (
 		);
 		public bool get_int (
 			out int val
@@ -697,19 +700,19 @@ namespace Xmms {
 			out uchar[] val
 		);
 		public ResultType get_dict_entry_type (
-			weak string key
+			string key
 		);
 		public bool get_dict_entry_string (
-			weak string key, out weak string val
+			string key, out weak string val
 		);
 		public bool get_dict_entry_int (
-			weak string key, out int val
+			string key, out int val
 		);
 		public bool get_dict_entry_uint (
-			weak string key, out uint val
+			string key, out uint val
 		);
 		public bool get_dict_entry_collection (
-			weak string key, out Collection coll
+			string key, out weak Collection coll
 		);
 		public bool dict_foreach (
 			DictForEachFunc func
@@ -718,7 +721,7 @@ namespace Xmms {
 			PropDictForEachFunc func
 		);
 		public void source_preference_set (
-			weak string[] preference
+			string[] preference
 		);
 		public string[] source_preference_get (
 		);
@@ -731,7 +734,7 @@ namespace Xmms {
 		public bool list_valid (
 		);
 		public string decode_url (
-			weak string url
+			string url
 		);
 		public void unref (
 		);

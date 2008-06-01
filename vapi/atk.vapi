@@ -233,14 +233,17 @@ namespace Atk {
 	public enum HyperlinkStateFlags {
 		INLINE
 	}
+	[Compact]
 	[CCode (cheader_filename = "atk/atk.h")]
 	public class Attribute {
 		public weak string name;
 		public weak string value;
 	}
+	[Compact]
 	[CCode (cheader_filename = "atk/atk.h")]
 	public class AttributeSet {
 	}
+	[Compact]
 	[CCode (cheader_filename = "atk/atk.h")]
 	public class KeyEventStruct {
 		public int type;
@@ -252,18 +255,21 @@ namespace Atk {
 		public ushort keycode;
 		public uint timestamp;
 	}
+	[Compact]
 	[CCode (cheader_filename = "atk/atk.h")]
 	public class PropertyValues {
 		public weak string property_name;
 		public GLib.Value old_value;
 		public GLib.Value new_value;
 	}
+	[Compact]
 	[CCode (cheader_filename = "atk/atk.h")]
 	public class State {
 		public static Atk.StateType type_for_name (string name);
 		public static weak string type_get_name (Atk.StateType type);
 		public static Atk.StateType type_register (string name);
 	}
+	[Compact]
 	[CCode (cheader_filename = "atk/atk.h")]
 	public class TextRange {
 		public weak Atk.TextRectangle bounds;
@@ -271,6 +277,7 @@ namespace Atk {
 		public int end_offset;
 		public weak string content;
 	}
+	[Compact]
 	[CCode (cheader_filename = "atk/atk.h")]
 	public class TextRectangle {
 		public int x;
@@ -295,13 +302,13 @@ namespace Atk {
 		public virtual bool is_valid ();
 		[NoWrapper]
 		public virtual uint link_state ();
-		public weak int end_index { get; }
+		public int end_index { get; }
 		[NoAccessorMethod]
-		public weak int number_of_anchors { get; }
+		public int number_of_anchors { get; }
 		[NoAccessorMethod]
-		public weak bool selected_link { get; }
-		public weak int start_index { get; }
-		public signal void link_activated ();
+		public bool selected_link { get; }
+		public int start_index { get; }
+		public virtual signal void link_activated ();
 	}
 	[CCode (cheader_filename = "atk/atk.h")]
 	public class Misc : GLib.Object {
@@ -351,41 +358,41 @@ namespace Atk {
 		public virtual void set_parent (Atk.Object parent);
 		public virtual void set_role (Atk.Role role);
 		[NoAccessorMethod]
-		public weak int accessible_component_layer { get; }
+		public int accessible_component_layer { get; }
 		[NoAccessorMethod]
-		public weak int accessible_component_mdi_zorder { get; }
+		public int accessible_component_mdi_zorder { get; }
 		[NoAccessorMethod]
-		public weak string accessible_description { get; set; }
+		public string accessible_description { get; set; }
 		[NoAccessorMethod]
-		public weak int accessible_hypertext_nlinks { get; }
+		public int accessible_hypertext_nlinks { get; }
 		[NoAccessorMethod]
-		public weak string accessible_name { get; set; }
+		public string accessible_name { get; set; }
 		[NoAccessorMethod]
-		public weak Atk.Object accessible_parent { get; set; }
+		public Atk.Object accessible_parent { get; set; }
 		[NoAccessorMethod]
-		public weak int accessible_role { get; set; }
+		public int accessible_role { get; set; }
 		[NoAccessorMethod]
-		public weak string accessible_table_caption { get; set; }
+		public string accessible_table_caption { get; set; }
 		[NoAccessorMethod]
-		public weak Atk.Object accessible_table_caption_object { get; set; }
+		public Atk.Object accessible_table_caption_object { get; set; }
 		[NoAccessorMethod]
-		public weak string accessible_table_column_description { get; set; }
+		public string accessible_table_column_description { get; set; }
 		[NoAccessorMethod]
-		public weak Atk.Object accessible_table_column_header { get; set; }
+		public Atk.Object accessible_table_column_header { get; set; }
 		[NoAccessorMethod]
-		public weak string accessible_table_row_description { get; set; }
+		public string accessible_table_row_description { get; set; }
 		[NoAccessorMethod]
-		public weak Atk.Object accessible_table_row_header { get; set; }
+		public Atk.Object accessible_table_row_header { get; set; }
 		[NoAccessorMethod]
-		public weak Atk.Object accessible_table_summary { get; set; }
+		public Atk.Object accessible_table_summary { get; set; }
 		[NoAccessorMethod]
-		public weak double accessible_value { get; set; }
-		public signal void active_descendant_changed (void* child);
-		public signal void children_changed (uint change_index, void* changed_child);
-		public signal void focus_event (bool focus_in);
-		public signal void property_change (void* values);
-		public signal void state_change (string name, bool state_set);
-		public signal void visible_data_changed ();
+		public double accessible_value { get; set; }
+		public virtual signal void active_descendant_changed (void* child);
+		public virtual signal void children_changed (uint change_index, void* changed_child);
+		public virtual signal void focus_event (bool focus_in);
+		public virtual signal void property_change (void* values);
+		public virtual signal void state_change (string name, bool state_set);
+		public virtual signal void visible_data_changed ();
 	}
 	[CCode (cheader_filename = "atk/atk.h")]
 	public class ObjectFactory : GLib.Object {
@@ -412,9 +419,9 @@ namespace Atk {
 		public static weak string type_get_name (Atk.RelationType type);
 		public static Atk.RelationType type_register (string name);
 		[NoAccessorMethod]
-		public weak Atk.RelationType relation_type { get; set; }
+		public Atk.RelationType relation_type { get; set; }
 		[NoAccessorMethod]
-		public weak GLib.ValueArray target { get; set; }
+		public GLib.ValueArray target { get; set; }
 	}
 	[CCode (cheader_filename = "atk/atk.h")]
 	public class RelationSet : GLib.Object {
@@ -485,7 +492,7 @@ namespace Atk {
 		public abstract bool set_extents (int x, int y, int width, int height, Atk.CoordType coord_type);
 		public abstract bool set_position (int x, int y, Atk.CoordType coord_type);
 		public abstract bool set_size (int width, int height);
-		public signal void bounds_changed (Atk.Rectangle bounds);
+		public virtual signal void bounds_changed (Atk.Rectangle bounds);
 	}
 	[CCode (cheader_filename = "atk/atk.h")]
 	public interface Document {
@@ -503,9 +510,9 @@ namespace Atk {
 		public abstract weak string get_document_type ();
 		[NoWrapper]
 		public abstract bool set_document_attribute (string attribute_name, string attribute_value);
-		public signal void load_complete ();
-		public signal void load_stopped ();
-		public signal void reload ();
+		public virtual signal void load_complete ();
+		public virtual signal void load_stopped ();
+		public virtual signal void reload ();
 	}
 	[CCode (cheader_filename = "atk/atk.h")]
 	public interface EditableText {
@@ -526,7 +533,7 @@ namespace Atk {
 		public abstract weak Atk.Hyperlink get_link (int link_index);
 		public abstract int get_link_index (int char_index);
 		public abstract int get_n_links ();
-		public signal void link_selected (int link_index);
+		public virtual signal void link_selected (int link_index);
 	}
 	[CCode (cheader_filename = "atk/atk.h")]
 	public interface Image {
@@ -549,7 +556,7 @@ namespace Atk {
 		public abstract weak Atk.Object ref_selection (int i);
 		public abstract bool remove_selection (int i);
 		public abstract bool select_all_selection ();
-		public signal void selection_changed ();
+		public virtual signal void selection_changed ();
 	}
 	[CCode (cheader_filename = "atk/atk.h")]
 	public interface StreamableContent {
@@ -589,13 +596,13 @@ namespace Atk {
 		public abstract void set_row_description (int row, string description);
 		public abstract void set_row_header (int row, Atk.Object header);
 		public abstract void set_summary (Atk.Object accessible);
-		public signal void column_deleted (int column, int num_deleted);
-		public signal void column_inserted (int column, int num_inserted);
-		public signal void column_reordered ();
-		public signal void model_changed ();
-		public signal void row_deleted (int row, int num_deleted);
-		public signal void row_inserted (int row, int num_inserted);
-		public signal void row_reordered ();
+		public virtual signal void column_deleted (int column, int num_deleted);
+		public virtual signal void column_inserted (int column, int num_inserted);
+		public virtual signal void column_reordered ();
+		public virtual signal void model_changed ();
+		public virtual signal void row_deleted (int row, int num_deleted);
+		public virtual signal void row_inserted (int row, int num_inserted);
+		public virtual signal void row_reordered ();
 	}
 	[CCode (cheader_filename = "atk/atk.h")]
 	public interface Text {
@@ -623,10 +630,10 @@ namespace Atk {
 		public abstract bool remove_selection (int selection_num);
 		public abstract bool set_caret_offset (int offset);
 		public abstract bool set_selection (int selection_num, int start_offset, int end_offset);
-		public signal void text_attributes_changed ();
-		public signal void text_caret_moved (int location);
-		public signal void text_changed (int position, int length);
-		public signal void text_selection_changed ();
+		public virtual signal void text_attributes_changed ();
+		public virtual signal void text_caret_moved (int location);
+		public virtual signal void text_changed (int position, int length);
+		public virtual signal void text_selection_changed ();
 	}
 	[CCode (cheader_filename = "atk/atk.h")]
 	public interface Value {

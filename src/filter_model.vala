@@ -52,6 +52,7 @@ namespace Abraca {
 					typeof(string)
 			});
 
+			// TODO: Add proper unreffing here
 			pos_map = new GLib.HashTable<int,Gtk.TreeRowReference>(GLib.direct_hash, GLib.direct_equal);
 
 			Client c = Client.instance();
@@ -70,10 +71,6 @@ namespace Abraca {
 			bool first = true;
 
 			clear();
-
-			pos_map.for_each((key, val) => {
-				((Gtk.TreeRowReference) val).free();
-			}, null);
 
 			pos_map.remove_all();
 
@@ -103,7 +100,7 @@ namespace Abraca {
 				path = get_path(iter);
 				row = new Gtk.TreeRowReference(this, path);
 
-				pos_map.insert(id.to_pointer(), #row);
+				pos_map.insert((int) id, #row);
 			}
 		}
 
@@ -144,7 +141,7 @@ namespace Abraca {
 
 			res.get_dict_entry_int("id", out mid);
 
-			row = (Gtk.TreeRowReference) pos_map.lookup(mid.to_pointer());
+			row = (Gtk.TreeRowReference) pos_map.lookup(mid);
 			if (row == null || !row.valid()) {
 				return;
 			}

@@ -233,8 +233,10 @@ namespace Abraca {
 		}
 
 
-		bool on_delete_event(Gtk.Widget dialog) {
-			Abraca.instance().medialib.info_dialog = null;
+		bool on_delete_event(MedialibInfoDialog dialog) {
+			Abraca abraca = Abraca.instance();
+			abraca.medialib.info_dialog = null;
+
 			return false;
 		}
 
@@ -252,24 +254,24 @@ namespace Abraca {
 			editable.set_tooltip_text(editable.get_text());
 		}
 
-		void on_title_entry_changed(Gtk.Editable editable) {
-			change_color((Gtk.Entry) editable, title);
+		void on_title_entry_changed(Gtk.Entry entry) {
+			change_color(entry, title);
 		}
 
-		void on_artist_entry_changed(Gtk.Editable editable) {
-			change_color((Gtk.Entry) editable, artist);
+		void on_artist_entry_changed(Gtk.Entry entry) {
+			change_color(entry, artist);
 		}
 
-		void on_album_entry_changed(Gtk.Editable editable) {
-			change_color((Gtk.Entry) editable, album);
+		void on_album_entry_changed(Gtk.Entry entry) {
+			change_color(entry, album);
 		}
 
-		void on_tracknr_button_changed(Gtk.Editable editable) {
-			change_color((Gtk.Entry) editable, tracknr);
+		void on_tracknr_button_changed(Gtk.SpinButton entry) {
+			change_color(entry, tracknr);
 		}
 
-		void on_date_button_changed(Gtk.Editable editable) {
-			change_color((Gtk.Entry) editable, date);
+		void on_date_button_changed(Gtk.SpinButton entry) {
+			change_color(entry, date);
 		}
 
 		void on_genre_combo_box_entry_changed(Gtk.ComboBox editable) {
@@ -307,11 +309,11 @@ namespace Abraca {
 			set_str(entry, "album");
 		}
 
-		void on_tracknr_button_activated(Gtk.Entry entry) {
-			set_int((Gtk.SpinButton) entry, "tracknr");
+		void on_tracknr_button_activated(Gtk.SpinButton entry) {
+			set_int(entry, "tracknr");
 		}
 
-		void on_date_button_activated(Gtk.Entry entry) {
+		void on_date_button_activated(Gtk.SpinButton entry) {
 			set_str(entry, "date");
 		}
 
@@ -347,22 +349,6 @@ namespace Abraca {
 			if (current.next != null) {
 				current = current.next;
 				refresh();
-			}
-		}
-
-		private void on_close_button_clicked(Gtk.Button btn) {
-			uint id = current.data;
-
-			if (current.next != null) {
-				current = current.next;
-				ids.remove(id);
-				refresh();
-			} else if (current.prev != null) {
-				current = current.prev;
-				ids.remove(id);
-				refresh();
-			} else {
-				close();
 			}
 		}
 
@@ -463,8 +449,8 @@ namespace Abraca {
 			rating_entry.rating = itmp;
 		}
 
-		private void dict_foreach(weak string key, Xmms.ResultType type,
-		                          void *val, weak string source) {
+		private void dict_foreach(void *key, Xmms.ResultType type,
+		                          void *val, string source) {
 			string parent_source, val_str;
 			Gtk.TreeIter parent, iter;
 
@@ -497,7 +483,7 @@ namespace Abraca {
 			}
 
 			store.append(out iter, parent);
-			store.set(iter, 0, key, 1, val_str);
+			store.set(iter, 0, (string) key, 1, val_str);
 		}
 	}
 
@@ -556,7 +542,7 @@ namespace Abraca {
 			file.set_string_list("add_dialog", "urls", list);
 		}
 
-		private void _add_urls_save(weak string url) {
+		private void _add_urls_save(string url) {
 			Gtk.TreeIter iter;
 			string current;
 

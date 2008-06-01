@@ -80,7 +80,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_selection_changed_update_menu(Gtk.TreeSelection s) {
+		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
 			int n = s.count_selected_rows();
 
 			foreach (weak Gtk.MenuItem i
@@ -97,27 +97,23 @@ namespace Abraca {
 			         in _playlist_menu_item_when_some_selected) {
 				i.sensitive = (n > 0);
 			}
-
-			return false;
 		}
 
-		private bool on_button_press_event(Gtk.Widget w, Gdk.Event e) {
-			weak Gdk.EventButton button_event = (Gdk.EventButton) e;
+		private bool on_button_press_event(PlaylistTree w, Gdk.Event e) {
 			weak Gtk.TreePath path;
-
 			/* we're only interested in the 3rd mouse button */
-			if (button_event.button != 3) {
+			if (e.button.button != 3) {
 				return false;
 			}
 
 			_playlist_menu.popup(
-				null, null, null, button_event.button,
+				null, null, null, e.button.button,
 				Gtk.get_current_event_time()
 			);
 
 			/* Prevent selection-handling when right-clicking on an already
 			   selected entry */
-			return (get_path_at_pos((int)button_event.x, (int)button_event.y,
+			return (get_path_at_pos((int)e.button.x, (int)e.button.y,
 			                        out path, null, null, null)
 			        && get_selection().path_is_selected(path));
 
@@ -144,7 +140,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e) {
+		private bool on_key_press_event(PlaylistTree w, Gdk.EventKey e) {
 			int KEY_DELETE = 65535;
 
 			if (e.keyval == KEY_DELETE) {
@@ -461,7 +457,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private bool on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
+		private void on_drag_data_get(PlaylistTree w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			weak Gtk.TreeSelection sel = get_selection();
@@ -500,15 +496,13 @@ namespace Abraca {
 			data.length = (int)(pos_array.length * sizeof(uint));
 
 			selection_data.set(dnd_atom, 8, data);
-
-			return true;
 		}
 
 		/**
 		 * Take care of the various types of drops.
 		 */
 		[InstanceLast]
-		private void on_drag_data_receive(Gtk.Widget w, Gdk.DragContext ctx, int x, int y,
+		private void on_drag_data_receive(PlaylistTree w, Gdk.DragContext ctx, int x, int y,
 		                              Gtk.SelectionData sel, uint info,
 		                              uint time) {
 
@@ -691,10 +685,9 @@ namespace Abraca {
 			});
 		}
 
-		private bool jump_to_selected() {
+		private void jump_to_selected(Gtk.MenuItem tree) {
 			jump_to_pos(get_selection().get_selected_rows(null).first().data
 			            .get_indices()[0]);
-			return false;
 		}
 
 		/**
@@ -702,7 +695,7 @@ namespace Abraca {
 		 * playback if not already playing.
 		 */
 		[InstanceLast]
-		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path,
+		private void on_row_activated(PlaylistTree tree, Gtk.TreePath path,
 		                              Gtk.TreeViewColumn column) {
 			jump_to_pos(path.get_indices()[0]);
 		}

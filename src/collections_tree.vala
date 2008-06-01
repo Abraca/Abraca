@@ -107,7 +107,7 @@ namespace Abraca {
 			c.connected += query_collections;
 		}
 
-		private bool on_selection_changed_update_menu(Gtk.TreeSelection s) {
+		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
 			int n;
 			Gtk.TreeIter iter;
 
@@ -126,12 +126,10 @@ namespace Abraca {
 			         in _collection_menu_item_when_ns_selected) {
 				i.sensitive = (n == 1);
 			}
-
-			return false;
 		}
 
 		[InstanceLast]
-		private bool on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
+		private void on_drag_data_get(CollectionsTree w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			weak Gtk.TreeSelection sel = get_selection();
@@ -157,32 +155,28 @@ namespace Abraca {
 					Gdk.Atom.intern(_target_entries[1].target, true),
 					8, data
 			);
-
-			return true;
 		}
 
-		private bool on_button_press_event(Gtk.Widget w, Gdk.Event e) {
-			weak Gdk.EventButton button_event = (Gdk.EventButton) e;
+		private bool on_button_press_event(CollectionsTree w, Gdk.Event e) {
 			weak Gtk.TreePath path;
-
 			/* we're only interested in the 3rd mouse button */
-			if (button_event.button != 3) {
+			if (e.button.button != 3) {
 				return false;
 			}
 
 			_collection_menu.popup(
-					null, null, null, button_event.button,
-					Gtk.get_current_event_time()
-					);
+				null, null, null, e.button.button,
+				Gtk.get_current_event_time()
+			);
 
 			/* Prevent selection-handling when right-clicking on an already
 			   selected entry */
-			return (get_path_at_pos((int)button_event.x, (int)button_event.y,
+			return (get_path_at_pos((int)e.button.x, (int)e.button.y,
 			                        out path, null, null, null)
 			        && get_selection().path_is_selected(path));
 		}
 
-		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e) {
+		private bool on_key_press_event(CollectionsTree w, Gdk.EventKey e) {
 			int KEY_F2 = 65471;
 			int KEY_DELETE = 65535;
 
@@ -190,7 +184,6 @@ namespace Abraca {
 				case KEY_F2:
 					selected_collection_rename();
 					return true;
-
 				case KEY_DELETE:
 					selected_collection_delete();
 					return true;
@@ -268,7 +261,7 @@ namespace Abraca {
 		/**
 		 * Add a temporary new playlist.
 		 */
-		private bool on_drag_motion (Gtk.Widget w, Gdk.DragContext ctx,
+		private bool on_drag_motion (CollectionsTree w, Gdk.DragContext ctx,
 		                             int x, int y, uint time) {
 			Gtk.TreeStore store = (Gtk.TreeStore) model;
 			Gtk.TreeViewDropPosition pos;
@@ -313,7 +306,7 @@ namespace Abraca {
 		/**
 		 * Remove the temporary playlist.
 		 */
-		private void on_drag_leave (Gtk.Widget w, Gdk.DragContext ctx, uint time_) {
+		private void on_drag_leave (CollectionsTree w, Gdk.DragContext ctx, uint time_) {
 			Gtk.TreeViewDropPosition pos;
 			Gtk.TreeStore store;
 			Gtk.TreePath tmp;
@@ -329,7 +322,7 @@ namespace Abraca {
 			}
 		}
 
-		private void on_drag_data_received (Gtk.Widget w, Gdk.DragContext ctx, int x, int y,
+		private void on_drag_data_received (CollectionsTree w, Gdk.DragContext ctx, int x, int y,
 		                                    Gtk.SelectionData selection_data,
 		                                    uint info, uint time) {
 			Gtk.TreeStore store = (Gtk.TreeStore) model;
@@ -630,7 +623,7 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_row_activated(
-			Gtk.TreeView tree, Gtk.TreePath path,
+			CollectionsTree tree, Gtk.TreePath path,
 			Gtk.TreeViewColumn column
 		) {
 			Gtk.TreeStore store = (Gtk.TreeStore) model;
@@ -661,7 +654,7 @@ namespace Abraca {
 			}
 		}
 
-		private void on_menu_collection_get(Gtk.MenuItem item) {
+		private void on_menu_collection_get(Gtk.ImageMenuItem item) {
 			weak Gtk.TreeSelection selection;
 			Gtk.TreeIter iter;
 

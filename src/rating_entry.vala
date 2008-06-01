@@ -88,11 +88,11 @@ namespace Abraca {
 			size_request += on_size_request;
 
 			motion_notify_event += (w, e) => {
-				rating_from_position(((Gdk.EventMotion) e).x);
+				rating_from_position(e.motion.x);
 				return true;
 			};
 			button_press_event += (w, e) => {
-				rating_from_position(((Gdk.EventButton) e).x);
+				rating_from_position(e.motion.x);
 				return true;
 			};
 
@@ -145,15 +145,13 @@ namespace Abraca {
 		/**
 		 * Paint our canvas on the window.
 		 */
-		public bool on_expose_event(Gtk.Widget w, Gdk.Event evnt) {
-			weak Gdk.EventExpose e = (Gdk.EventExpose) evnt;
-
-			e.window.draw_pixbuf(
+		public bool on_expose_event(RatingEntry w, Gdk.Event e) {
+			e.expose.window.draw_pixbuf(
 				style.bg_gc[0], _canvas,
 				0, 0, 0, 0, _width, _height,
 				Gdk.RgbDither.NONE, 0, 0
 			);
-			
+
 			return true;
 		}
 
@@ -161,7 +159,7 @@ namespace Abraca {
 		/**
 		 * Update the size of the rating widget.
 		 */
-		public void on_size_request (Gtk.Widget w, Gtk.Requisition req) {
+		public void on_size_request (RatingEntry w, Gtk.Requisition req) {
 			req.width = _canvas.width;
 			req.height = _canvas.height;
 		}

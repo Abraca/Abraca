@@ -33,16 +33,16 @@ namespace Abraca {
 		public signal void playback_playtime(uint pos);
 		public signal void playlist_loaded(string name);
 
-		public signal void playlist_add(weak string playlist, uint mid);
-		public signal void playlist_move(weak string playlist, int pos, int npos);
-		public signal void playlist_insert(weak string playlist, uint mid, int pos);
-		public signal void playlist_remove(weak string playlist, int pos);
-		public signal void playlist_position(weak string playlist, uint pos);
+		public signal void playlist_add(string playlist, uint mid);
+		public signal void playlist_move(string playlist, int pos, int npos);
+		public signal void playlist_insert(string playlist, uint mid, int pos);
+		public signal void playlist_remove(string playlist, int pos);
+		public signal void playlist_position(string playlist, uint pos);
 
-		public signal void collection_add(weak string name, weak string ns);
-		public signal void collection_update(weak string name, weak string ns);
-		public signal void collection_rename(weak string name, weak string newname, weak string ns);
-		public signal void collection_remove(weak string name, weak string ns);
+		public signal void collection_add(string name, string ns);
+		public signal void collection_update(string name, string ns);
+		public signal void collection_rename(string name, string newname, string ns);
+		public signal void collection_remove(string name, string ns);
 
 		public signal void medialib_entry_changed(Xmms.Result res);
 
@@ -306,8 +306,8 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_collection_changed(Xmms.Result #res) {
-			int change;
 			weak string name, newname, ns;
+			int change;
 
 			res.get_dict_entry_string("name", out name);
 			res.get_dict_entry_string("namespace", out ns);
@@ -355,14 +355,9 @@ namespace Abraca {
 
 		[InstanceLast]
 		private void on_medialib_get_info(Xmms.Result #res) {
-			weak string tmp;
-			int mid, duration;
-
-			if (res.iserror()) {
-				return;
+			if (!res.iserror()) {
+				medialib_entry_changed(res);
 			}
-
-			medialib_entry_changed(res);
 		}
 	}
 }

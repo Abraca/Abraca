@@ -79,7 +79,7 @@ namespace Abraca {
 			row_activated += on_row_activated;
 		}
 
-		private bool on_selection_changed_update_menu(Gtk.TreeSelection s) {
+		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
 			int n = s.count_selected_rows();
 
 			foreach (weak Gtk.MenuItem i
@@ -96,8 +96,6 @@ namespace Abraca {
 			         in filter_menu_item_when_some_selected) {
 				i.sensitive = (n > 0);
 			}
-
-			return false;
 		}
 
 		public void query_collection(Xmms.Collection coll) {
@@ -152,28 +150,27 @@ namespace Abraca {
 			/* reconnect the model again */
 			set_model(store);
 		}
-		[InstanceLast]
-		private bool on_button_press_event(Gtk.Widget widget, Gdk.Event e) {
-			weak Gdk.EventButton event_button = (Gdk.EventButton) e;
-			Gtk.TreePath path;
 
+		[InstanceLast]
+		private bool on_button_press_event(FilterTree w, Gdk.Event e) {
+			Gtk.TreePath path;
 			/* we're only interested in the 3rd mouse button */
-			if (event_button.button != 3)
+			if (e.button.button != 3)
 				return false;
 
 			filter_menu.popup(
-				null, null, null, event_button.button,
+				null, null, null, e.button.button,
 				Gtk.get_current_event_time()
 			);
 
 			/* Prevent selection-handling when right-clicking on an already
 			   selected entry */
-			return (get_path_at_pos((int)event_button.x, (int)event_button.y,
+			return (get_path_at_pos((int)e.button.x, (int)e.button.y,
 			                        out path, null, null, null)
 			        && get_selection().path_is_selected(path));
 		}
 
-		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
+		private void on_row_activated(FilterTree tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
 			Client c = Client.instance();
 			Gtk.TreeIter iter;
 			uint id;
@@ -318,7 +315,7 @@ namespace Abraca {
 		}
 
 		[InstanceLast]
-		private bool on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
+		private void on_drag_data_get(FilterTree w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			weak Gtk.TreeSelection sel = get_selection();
@@ -353,8 +350,6 @@ namespace Abraca {
 				Gdk.Atom.intern(_target_entries[0].target, true),
 				8, data
 			);
-
-			return true;
 		}
 	}
 }

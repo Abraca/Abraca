@@ -182,17 +182,17 @@ namespace Abraca {
 		}
 
 		/* callbacks */
-		private void on_music_add_file(Gtk.MenuItem item) {
+		private void on_music_add_file(Gtk.ImageMenuItem item) {
 			Abraca.instance().medialib.
 				create_add_file_dialog(Gtk.FileChooserAction.OPEN);
 		}
 
-		private void on_music_add_dir(Gtk.MenuItem item) {
+		private void on_music_add_dir(Gtk.ImageMenuItem item) {
 			Abraca.instance().medialib.
 				create_add_file_dialog(Gtk.FileChooserAction.SELECT_FOLDER);
 		}
 
-		private void on_music_add_url(Gtk.MenuItem item) {
+		private void on_music_add_url(Gtk.ImageMenuItem item) {
 			Abraca.instance().medialib.create_add_url_dialog();
 		}
 
@@ -206,7 +206,7 @@ namespace Abraca {
 			Abraca.instance().main_window.main_hpaned.
 				right_hpaned.filter_tree.playlist_replace_with_filter_results();
 		}
-		private void on_playlist_add_filter_results(Gtk.MenuItem item) {
+		private void on_playlist_add_filter_results(Gtk.ImageMenuItem item) {
 			Abraca.instance().main_window.main_hpaned.
 				right_hpaned.filter_tree.playlist_add_filter_results();
 		}

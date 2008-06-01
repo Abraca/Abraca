@@ -81,7 +81,7 @@ namespace Abraca {
 			file.set_string_list("filter", "patterns", list);
 		}
 
-		private void on_filter_entry_changed(Gtk.Editable editable) {
+		private void on_filter_entry_changed(Gtk.Entry editable) {
 			Xmms.Collection coll;
 			Gdk.Color color;
 			weak string text;
@@ -106,7 +106,7 @@ namespace Abraca {
 				_filter_entry.modify_base(Gtk.StateType.NORMAL, null);
 		}
 
-		private void _filter_save (weak string pattern) {
+		private void _filter_save (string pattern) {
 			Gtk.TreeIter iter;
 			string current;
 
