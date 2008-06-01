@@ -153,7 +153,7 @@ namespace Abraca {
 
 		[InstanceLast]
 		private bool on_button_press_event(FilterTree w, Gdk.Event e) {
-			weak Gtk.TreePath path;
+			Gtk.TreePath path;
 			int x, y;
 
 			/* we're only interested in the 3rd mouse button */
