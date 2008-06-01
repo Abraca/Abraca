@@ -697,7 +697,7 @@ namespace Xmms {
 		);
 		public bool get_bin (
 			[CCode(array_length_type="uint")]
-			out uchar[] val
+			out weak uchar[] val
 		);
 		public ResultType get_dict_entry_type (
 			string key
