@@ -48,6 +48,7 @@ namespace Abraca {
 		/** keep track of playlist position <-> medialib id */
 		private PlaylistMap playlist_map;
 
+
 		construct {
 			Client c = Client.instance();
 
@@ -104,6 +105,7 @@ namespace Abraca {
 			base.get_value(iter, column, ref val);
 		}
 
+
 		/**
 		 * Removes the row when an entry has been removed from the playlist.
 		 */
@@ -125,6 +127,7 @@ namespace Abraca {
 				remove(iter);
 			}
 		}
+
 
 		/**
 		 * TODO: Move row x to pos y.
@@ -187,6 +190,7 @@ namespace Abraca {
 			}
 		}
 
+
 		/**
 		 * Insert a row when a new entry has been inserted in the playlist.
 		 */
@@ -211,6 +215,7 @@ namespace Abraca {
 				playlist_map.insert(mid, row);
 			}
 		}
+
 
 		/**
 		 * Keep track of status so we know what to do when an item has been clicked.
@@ -241,6 +246,7 @@ namespace Abraca {
 			);
 		}
 
+
 		private void on_playlist_add(Client c, string playlist, uint mid) {
 			Gtk.TreeRowReference row;
 			Gtk.TreePath path;
@@ -259,10 +265,10 @@ namespace Abraca {
 			playlist_map.insert(mid, row);
 		}
 
+
 		/**
 		 * Refresh the whole playlist.
 		 */
-		[InstanceLast]
 		private void on_playlist_list_entries(Xmms.Result #res) {
 			Client c = Client.instance();
 			Gtk.TreeIter iter, sibling;
@@ -307,6 +313,7 @@ namespace Abraca {
 			set_model(ore);
 			*/
 		}
+
 
 		private void on_medialib_info(Xmms.Result #res) {
 			weak GLib.SList<Gtk.TreeRowReference> lst;

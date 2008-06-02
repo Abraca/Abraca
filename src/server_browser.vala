@@ -35,6 +35,7 @@ namespace Abraca {
 
 		public ServerBrowser (construct Gtk.Window parent) { }
 
+
 		construct {
 			transient_for = parent;
 			modal = true;
@@ -98,6 +99,7 @@ namespace Abraca {
 			show_all();
 		}
 
+
 		private void add_entry(string name, string path) {
 			Gtk.ListStore store = (Gtk.ListStore) view.model;
 			Gtk.TreeIter iter;
@@ -112,7 +114,7 @@ namespace Abraca {
 			);
 		}
 
-		[InstanceLast]
+
 		private void on_server_connect (Gtk.Button btn) {
 			Gtk.TreeSelection sel = view.get_selection();
 			Gtk.TreeIter iter;

@@ -65,9 +65,11 @@ namespace Abraca {
 			get; set; default = "";
 		}
 
+
 		construct {
 			_xmms = new Xmms.Client("Abraca");
 		}
+
 
 		private void on_disconnect() {
 			disconnected();
@@ -85,6 +87,7 @@ namespace Abraca {
 			Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
 		}
 
+
 		public static Client instance() {
 			if (_instance == null)
 				_instance = new Client();
@@ -92,17 +95,20 @@ namespace Abraca {
 			return _instance;
 		}
 
+
 		public Xmms.Client xmms {
 			get {
 				return _xmms;
 			}
 		}
 
+
 		public void set_playlist_id (uint mid) {
 			if (current_playback_status == Xmms.PlaybackStatus.STOP) {
 				playback_current_id(mid);
 			}
 		}
+
 
 		public bool try_connect(string? path = null) {
 			if (path == null) {
@@ -122,9 +128,11 @@ namespace Abraca {
 			return false;
 		}
 
+
 		public bool reconnect() {
 			return !try_connect();
 		}
+
 
 		private void create_callbacks() {
 			_xmms.playback_status().notifier_set(
@@ -176,7 +184,7 @@ namespace Abraca {
 			);
 		}
 
-		[InstanceLast]
+
 		private void on_playback_status(Xmms.Result #res) {
 			uint status;
 			if (res.get_uint(out status)) {
@@ -190,7 +198,7 @@ namespace Abraca {
 			}
 		}
 
-		[InstanceLast]
+
 		private void on_playback_current_id(Xmms.Result #res) {
 			uint mid;
 
@@ -204,10 +212,10 @@ namespace Abraca {
 			}
 		}
 
+
 		/**
 		 * Emit the current playback position in ms.
 		 */
-		[InstanceLast]
 		private void on_playback_playtime(Xmms.Result #res) {
 			uint pos;
 
@@ -220,7 +228,7 @@ namespace Abraca {
 			}
 		}
 
-		[InstanceLast]
+
 		private void on_playlist_loaded(Xmms.Result #res) {
 			weak string name;
 
@@ -240,7 +248,7 @@ namespace Abraca {
 			}
 		}
 
-		[InstanceLast]
+
 		private void on_playlist_position(Xmms.Result #res) {
 			uint pos;
 
@@ -263,7 +271,7 @@ namespace Abraca {
 			}
 		}
 
-		[InstanceLast]
+
 		private void on_playlist_changed(Xmms.Result #res) {
 			weak string playlist;
 			int change, pos, npos;
@@ -304,7 +312,7 @@ namespace Abraca {
 			_result_playlist_changed.ref();
 		}
 
-		[InstanceLast]
+
 		private void on_collection_changed(Xmms.Result #res) {
 			weak string name, newname, ns;
 			int change;
@@ -339,7 +347,6 @@ namespace Abraca {
 		}
 
 
-		[InstanceLast]
 		public void on_medialib_entry_changed(Xmms.Result #res) {
 			uint mid;
 
@@ -353,7 +360,7 @@ namespace Abraca {
 			_result_medialib_entry_changed.ref();
 		}
 
-		[InstanceLast]
+
 		private void on_medialib_get_info(Xmms.Result #res) {
 			if (!res.iserror()) {
 				medialib_entry_changed(res);

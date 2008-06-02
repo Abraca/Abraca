@@ -35,6 +35,7 @@ namespace Abraca {
 		Total
 	}
 
+
 	public class CollectionsTree : Gtk.TreeView {
 
 		/** drag-n-drop targets */
@@ -67,6 +68,7 @@ namespace Abraca {
 
 		private Gdk.Pixbuf _playlist_pixbuf;
 		private Gdk.Pixbuf _collection_pixbuf;
+
 
 		construct {
 			Client c = Client.instance();
@@ -107,6 +109,7 @@ namespace Abraca {
 			c.connected += query_collections;
 		}
 
+
 		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
 			int n;
 			Gtk.TreeIter iter;
@@ -128,7 +131,7 @@ namespace Abraca {
 			}
 		}
 
-		[InstanceLast]
+
 		private void on_drag_data_get(CollectionsTree w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
@@ -156,6 +159,7 @@ namespace Abraca {
 					8, data
 			);
 		}
+
 
 		private bool on_button_press_event(CollectionsTree w, Gdk.Event e) {
 			Gtk.TreePath path;
@@ -186,6 +190,7 @@ namespace Abraca {
 			return false;
 		}
 
+
 		private bool on_key_press_event(CollectionsTree w, Gdk.EventKey e) {
 			int KEY_F2 = 65471;
 			int KEY_DELETE = 65535;
@@ -201,6 +206,7 @@ namespace Abraca {
 
 			return false;
 		}
+
 
 		/**
 		 * send rename-command to server, when item in collection-list was changed
@@ -226,6 +232,8 @@ namespace Abraca {
 
 			return;
 		}
+
+
 		/**
 		  * Little helper function to get a working name for a new playlist.
 		  */
@@ -267,6 +275,7 @@ namespace Abraca {
 				return _("New Playlist");
 			}
 		}
+
 
 		/**
 		 * Add a temporary new playlist.
@@ -313,6 +322,7 @@ namespace Abraca {
 			return true;
 		}
 
+
 		/**
 		 * Remove the temporary playlist.
 		 */
@@ -331,6 +341,7 @@ namespace Abraca {
 				_new_playlist_visible = false;
 			}
 		}
+
 
 		private void on_drag_data_received (CollectionsTree w, Gdk.DragContext ctx, int x, int y,
 		                                    Gtk.SelectionData selection_data,
@@ -373,6 +384,7 @@ namespace Abraca {
 			Gtk.drag_finish(ctx, true, false, time);
 		}
 
+
 		private void playlist_insert_drop_data(uint info, string name,
 		                                       Gtk.SelectionData sel) {
 			Client c = Client.instance();
@@ -401,6 +413,7 @@ namespace Abraca {
 				c.xmms.playlist_add_collection(name, coll, null);
 			}
 		}
+
 
 		/**
 		 * Called when xmms2 has loaded a new playlist, simply saves
@@ -432,6 +445,7 @@ namespace Abraca {
 			}
 		}
 
+
 		private void on_collection_add (Client c, string name, string ns) {
 			Gtk.TreeIter parent;
 			Gtk.TreeIter iter;
@@ -460,6 +474,7 @@ namespace Abraca {
 			          CollColumn.Icon, pixbuf,
 			          CollColumn.Name, name);
 		}
+
 
 		private void on_collection_rename(Client c, string name, string newname, string ns) {
 			Gtk.TreeIter parent;
@@ -500,6 +515,7 @@ namespace Abraca {
 			} while (store.iter_next(ref iter));
 		}
 
+
 		private void on_collection_remove(Client c, string name, string ns) {
 			Gtk.TreeIter parent;
 			Gtk.TreeIter iter;
@@ -523,6 +539,7 @@ namespace Abraca {
 			} while (store.iter_next(ref iter));
 		}
 
+
 		private void query_collections(Client c) {
 			c.xmms.coll_list(Xmms.COLLECTION_NS_COLLECTIONS).notifier_set(
 				on_coll_list_collections
@@ -533,15 +550,16 @@ namespace Abraca {
 			);
 		}
 
-		[InstanceLast]
+
 		private void on_coll_list_collections(Xmms.Result #res) {
 			on_coll_list(res, CollectionType.Collection);
 		}
 
-		[InstanceLast]
+
 		private void on_coll_list_playlists(Xmms.Result #res) {
 			on_coll_list(res, CollectionType.Playlist);
 		}
+
 
 		private void on_coll_list(Xmms.Result #res, CollectionType type) {
 			Gtk.TreeIter parent;
@@ -597,6 +615,8 @@ namespace Abraca {
 
 			expand_all();
 		}
+
+
 		private bool needs_quoting (string str) {
 			bool ret = false;
 			bool numeric = true;
@@ -631,7 +651,7 @@ namespace Abraca {
 			return ret || numeric;
 		}
 
-		[InstanceLast]
+
 		private void on_row_activated(
 			CollectionsTree tree, Gtk.TreePath path,
 			Gtk.TreeViewColumn column
@@ -663,6 +683,7 @@ namespace Abraca {
 				c.xmms.playlist_load(name);
 			}
 		}
+
 
 		private void on_menu_collection_get(Gtk.ImageMenuItem item) {
 			weak Gtk.TreeSelection selection;
@@ -706,6 +727,7 @@ namespace Abraca {
 			}
 		}
 
+
 		private void selected_collection_rename() {
 			Gtk.TreeIter iter;
 			Gtk.TreePath path;
@@ -736,6 +758,7 @@ namespace Abraca {
 			}
 		}
 
+
 		private void selected_collection_delete() {
 			weak Gtk.TreeSelection selection;
 			Gtk.TreeIter iter;
@@ -765,7 +788,7 @@ namespace Abraca {
 			}
 		}
 
-		[InstanceLast]
+
 		private void on_coll_get(Xmms.Result #res) {
 			Xmms.Collection coll;
 
@@ -774,6 +797,7 @@ namespace Abraca {
 					right_hpaned.filter_tree.query_collection(coll);
 			}
 		}
+
 
 		private void create_columns() {
 			Gtk.CellRendererText renderer;
@@ -823,6 +847,7 @@ namespace Abraca {
 			append_column (column);
 		}
 
+
 		private Gtk.TreeModel create_model() {
 			Gtk.TreeStore store = new Gtk.TreeStore(
 				CollColumn.Total,
@@ -854,6 +879,7 @@ namespace Abraca {
 
 			return store;
 		}
+
 
 		private void create_context_menu() {
 			Gtk.ImageMenuItem item;

@@ -50,6 +50,7 @@ namespace Abraca {
 		/** current sorting order */
 		private string[] _sort;
 
+
 		construct {
 			Client c = Client.instance();
 
@@ -99,6 +100,7 @@ namespace Abraca {
 			}
 		}
 
+
 		private bool on_button_press_event(PlaylistTree w, Gdk.Event e) {
 			Gtk.TreePath path;
 			int x, y;
@@ -127,6 +129,7 @@ namespace Abraca {
 
 			return false;
 		}
+
 
 		private void delete_selected() {
 			GLib.List<Gtk.TreePath> paths;
@@ -373,6 +376,7 @@ namespace Abraca {
 			c.xmms.playlist_sort(Xmms.ACTIVE_PLAYLIST, (string[]) _sort);
 		}
 
+
 		private void on_menu_playlist_filter(string key) {
 			Client c = Client.instance();
 			GLib.List<Gtk.TreePath> list;
@@ -434,6 +438,7 @@ namespace Abraca {
 			}
 		}
 
+
 		private void on_menu_playlist_info(Gtk.MenuItem item) {
 			Client c = Client.instance();
 			GLib.List<Gtk.TreePath> list;
@@ -465,7 +470,7 @@ namespace Abraca {
 			drag_data_get += on_drag_data_get;
 		}
 
-		[InstanceLast]
+
 		private void on_drag_data_get(PlaylistTree w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
@@ -507,10 +512,10 @@ namespace Abraca {
 			selection_data.set(dnd_atom, 8, data);
 		}
 
+
 		/**
 		 * Take care of the various types of drops.
 		 */
-		[InstanceLast]
 		private void on_drag_data_receive(PlaylistTree w, Gdk.DragContext ctx, int x, int y,
 		                              Gtk.SelectionData sel, uint info,
 		                              uint time) {
@@ -537,10 +542,10 @@ namespace Abraca {
 			Gtk.drag_finish(ctx, success, false, time);
 		}
 
+
 		/**
 		 * Handle dropping of playlist entries.
 		 */
-
 		private bool on_drop_playlist_entries(Gtk.SelectionData sel, int x, int y) {
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
@@ -575,6 +580,8 @@ namespace Abraca {
 
 			return false;
 		}
+
+
 		/**
 		 * Handle dropping of medialib ids.
 		 */
@@ -601,6 +608,7 @@ namespace Abraca {
 
 			return true;
 		}
+
 
 		/**
 		 * Handle dropping of urls.
@@ -641,6 +649,7 @@ namespace Abraca {
 			return true;
 		}
 
+
 		private bool on_drop_collection(Gtk.SelectionData sel, int x, int y) {
 			Client c = Client.instance();
 			Xmms.Collection coll;
@@ -671,6 +680,7 @@ namespace Abraca {
 			return true;
 		}
 
+
 		/**
 		 * Perform a jump to that song and start playback if not already
 		 * playing.
@@ -694,16 +704,17 @@ namespace Abraca {
 			});
 		}
 
+
 		private void jump_to_selected(Gtk.MenuItem tree) {
 			jump_to_pos(get_selection().get_selected_rows(null).first().data
 			            .get_indices()[0]);
 		}
 
+
 		/**
 		 * When clicking a row, perform a jump to that song and start
 		 * playback if not already playing.
 		 */
-		[InstanceLast]
 		private void on_row_activated(PlaylistTree tree, Gtk.TreePath path,
 		                              Gtk.TreeViewColumn column) {
 			jump_to_pos(path.get_indices()[0]);

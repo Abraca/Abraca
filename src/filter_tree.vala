@@ -79,6 +79,7 @@ namespace Abraca {
 			row_activated += on_row_activated;
 		}
 
+
 		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
 			int n = s.count_selected_rows();
 
@@ -98,6 +99,7 @@ namespace Abraca {
 			}
 		}
 
+
 		public void query_collection(Xmms.Collection coll) {
 			Client c = Client.instance();
 
@@ -105,6 +107,7 @@ namespace Abraca {
 				on_coll_query_ids
 			);
 		}
+
 
 		public void playlist_replace_with_filter_results() {
 			Client c = Client.instance();
@@ -123,6 +126,7 @@ namespace Abraca {
 			} while (model.iter_next(ref iter));
 		}
 
+
 		public void playlist_add_filter_results() {
 			Client c = Client.instance();
 			Gtk.TreeIter iter;
@@ -138,7 +142,7 @@ namespace Abraca {
 			} while (model.iter_next(ref iter));
 		}
 
-		[InstanceLast]
+
 		private void on_coll_query_ids(Xmms.Result #res) {
 			FilterModel store = (FilterModel) model;
 
@@ -151,7 +155,7 @@ namespace Abraca {
 			set_model(store);
 		}
 
-		[InstanceLast]
+
 		private bool on_button_press_event(FilterTree w, Gdk.Event e) {
 			Gtk.TreePath path;
 			int x, y;
@@ -180,6 +184,7 @@ namespace Abraca {
 			return false;
 		}
 
+
 		private void on_row_activated(FilterTree tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
 			Client c = Client.instance();
 			Gtk.TreeIter iter;
@@ -189,6 +194,7 @@ namespace Abraca {
 			model.get(iter, FilterColumn.ID, out id);
 			c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 		}
+
 
 		private void on_menu_info(Gtk.MenuItem item) {
 			Client c = Client.instance();
@@ -206,6 +212,7 @@ namespace Abraca {
 			}
 		}
 
+
 		private void on_menu_add(Gtk.MenuItem item) {
 			Client c = Client.instance();
 			GLib.List<Gtk.TreePath> list;
@@ -221,6 +228,7 @@ namespace Abraca {
 				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 			}
 		}
+
 
 		private void on_menu_replace(Gtk.MenuItem item) {
 			Client c = Client.instance();
@@ -240,6 +248,7 @@ namespace Abraca {
 			}
 
 		}
+
 
 		/* TODO: Remove and introduce dynamic colums */
 		private void create_columns() {
@@ -292,6 +301,7 @@ namespace Abraca {
 			*/
 		}
 
+
 		private void create_context_menu() {
 			Gtk.MenuItem item;
 			Gtk.ImageMenuItem img_item;
@@ -316,6 +326,7 @@ namespace Abraca {
 			filter_menu.show_all();
 		}
 
+
 		private void create_drag_n_drop() {
 			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
 			                         _target_entries,
@@ -324,7 +335,7 @@ namespace Abraca {
 			drag_data_get += on_drag_data_get;
 		}
 
-		[InstanceLast]
+
 		private void on_drag_data_get(FilterTree w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {

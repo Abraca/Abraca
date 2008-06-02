@@ -34,6 +34,7 @@ namespace Abraca {
 		private Gtk.Label _time_label;
 		private Gtk.HScale _time_slider;
 
+
 		construct {
 			Client c = Client.instance();
 			Gtk.Button btn;
@@ -70,6 +71,7 @@ namespace Abraca {
 			};
 		}
 
+
 		private Gtk.Button create_playback_button(string s) {
 			Gtk.Button button = new Gtk.Button();
 
@@ -80,6 +82,7 @@ namespace Abraca {
 
 			return button;
 		}
+
 
 		private void create_seekbar() {
 			Gtk.VBox vbox = new Gtk.VBox(false, 0);
@@ -102,7 +105,7 @@ namespace Abraca {
 			pack_start(vbox, false, true, 0);
 		}
 
-		[InstanceLast]
+
 		private bool on_time_slider_press(Gtk.HScale widget, Gdk.Event e) {
 			_seek = true;
 			_time_slider.motion_notify_event += on_time_slider_motion_notify;
@@ -110,7 +113,7 @@ namespace Abraca {
 			return false;
 		}
 
-		[InstanceLast]
+
 		private bool on_time_slider_release(Gtk.HScale widget, Gdk.Event e) {
 			weak Gtk.HScale scale = (Gtk.HScale) widget;
 			Client c = Client.instance();
@@ -127,7 +130,7 @@ namespace Abraca {
 			return false;
 		}
 
-		[InstanceLast]
+
 		private bool on_time_slider_motion_notify(Gtk.HScale widget, Gdk.Event e) {
 			weak Gtk.HScale scale = (Gtk.HScale) widget;
 
@@ -139,6 +142,7 @@ namespace Abraca {
 			return false;
 		}
 
+
 		private void create_cover_image() {
 			_coverart = new Gtk.Image.from_stock(
 				Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR
@@ -146,6 +150,7 @@ namespace Abraca {
 
 			pack_start(_coverart, false, true, 4);
 		}
+
 
 		private void create_track_label() {
 			_track_label = new Gtk.Label(
@@ -155,6 +160,7 @@ namespace Abraca {
 			pack_start(_track_label, false, true, 4);
 		}
 
+
 		private void on_playback_current_id(Client c, uint mid) {
 			_current_id = mid;
 			_pos = 0;
@@ -163,6 +169,7 @@ namespace Abraca {
 				on_media_info
 			);
 		}
+
 
 		private void update_time_label() {
 			/* This is a HACK to circumvent a bug in XMMS2 */
@@ -196,6 +203,7 @@ namespace Abraca {
 			_time_label.set_markup(info);
 		}
 
+
 		private void on_playback_playtime(Client c, uint pos) {
 			if (_seek == false) {
 				_pos = pos;
@@ -203,7 +211,7 @@ namespace Abraca {
 			}
 		}
 
-		[InstanceLast]
+
 		private void on_media_info(Xmms.Result #res) {
 			weak string title, cover;
 			string info;
@@ -261,7 +269,7 @@ namespace Abraca {
 			update_time_label();
 		}
 
-		[InstanceLast]
+
 		private void on_bindata_retrieve(Xmms.Result #res) {
 			weak uchar[] data;
 
@@ -284,7 +292,6 @@ namespace Abraca {
 		}
 
 
-		[InstanceLast]
 		private void on_media_play(Gtk.Button btn) {
 			Client c = Client.instance();
 
@@ -295,27 +302,27 @@ namespace Abraca {
 			}
 		}
 
-		[InstanceLast]
+
 		private void on_media_stop(Gtk.Button btn) {
 			Client c = Client.instance();
 			c.xmms.playback_stop();
 		}
 
-		[InstanceLast]
+
 		private void on_media_prev(Gtk.Button btn) {
 			Client c = Client.instance();
 			c.xmms.playlist_set_next_rel(-1);
 			c.xmms.playback_tickle();
 		}
 
-		[InstanceLast]
+
 		private void on_media_next(Gtk.Button btn) {
 			Client c = Client.instance();
 			c.xmms.playlist_set_next_rel(1);
 			c.xmms.playback_tickle();
 		}
 
-		[InstanceLast]
+
 		private void on_playback_status_change(Client c, int status) {
 			Gtk.Image image;
 
