@@ -32,7 +32,7 @@ namespace Abraca {
 		Total
 	}
 
-	public class FilterTree : Gtk.TreeView {
+	public class FilterView : Gtk.TreeView {
 		/** context menu */
 		private Gtk.Menu filter_menu;
 
@@ -156,7 +156,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_button_press_event(FilterTree w, Gdk.Event e) {
+		private bool on_button_press_event(FilterView w, Gdk.Event e) {
 			Gtk.TreePath path;
 			int x, y;
 
@@ -185,7 +185,7 @@ namespace Abraca {
 		}
 
 
-		private void on_row_activated(FilterTree tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
+		private void on_row_activated(FilterView tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
 			Client c = Client.instance();
 			Gtk.TreeIter iter;
 			uint id;
@@ -336,7 +336,7 @@ namespace Abraca {
 		}
 
 
-		private void on_drag_data_get(FilterTree w, Gdk.DragContext ctx,
+		private void on_drag_data_get(FilterView w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			weak Gtk.TreeSelection sel = get_selection();

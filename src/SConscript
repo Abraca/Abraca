@@ -3,16 +3,16 @@ Import('images')
 
 vala_sources = """
 	client.vala
-	collections_tree.vala
+	collections_view.vala
 	collections_model.vala
 	config.vala
-	filter_tree.vala
+	filter_view.vala
 	filter_model.vala
 	medialib.vala
 	main_hpaned.vala
 	main_window.vala
 	menubar.vala
-	playlist_tree.vala
+	playlist_view.vala
 	playlist_model.vala
 	rating_entry.vala
 	right_hpaned.vala

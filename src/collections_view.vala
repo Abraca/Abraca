@@ -21,7 +21,7 @@ using GLib;
 
 namespace Abraca {
 
-	public class CollectionsTree : Gtk.TreeView {
+	public class CollectionsView : Gtk.TreeView {
 
 		/** drag-n-drop targets */
 		private const Gtk.TargetEntry[] _target_entries = {
@@ -105,7 +105,7 @@ namespace Abraca {
 		}
 
 
-		private void on_drag_data_get (CollectionsTree w, Gdk.DragContext ctx,
+		private void on_drag_data_get (CollectionsView w, Gdk.DragContext ctx,
 		                               Gtk.SelectionData selection_data,
 		                               uint info, uint time)
 		{
@@ -140,7 +140,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_button_press_event (CollectionsTree w, Gdk.Event e)
+		private bool on_button_press_event (CollectionsView w, Gdk.Event e)
 		{
 			Gtk.TreePath path;
 			int x, y;
@@ -171,7 +171,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_key_press_event (CollectionsTree w, Gdk.EventKey e)
+		private bool on_key_press_event (CollectionsView w, Gdk.EventKey e)
 		{
 			int KEY_F2 = 65471;
 			int KEY_DELETE = 65535;
@@ -223,7 +223,7 @@ namespace Abraca {
 		 * When dragging something over the collection tree widget, show a
 		 * temporary new playlist, and update the drop paths.
 		 */
-		private bool on_drag_motion (CollectionsTree w, Gdk.DragContext ctx,
+		private bool on_drag_motion (CollectionsView w, Gdk.DragContext ctx,
 		                             int x, int y, uint time)
 		{
 			CollectionsModel store = (CollectionsModel) model;
@@ -266,7 +266,7 @@ namespace Abraca {
 		 * Save the drop path and remove the temporary playlist if it wasn't
 		 * the target of the drop operation.
 		 */
-		private void on_drag_leave (CollectionsTree widget,
+		private void on_drag_leave (CollectionsView widget,
 		                            Gdk.DragContext ctx,
 		                            uint time)
 		{
@@ -286,7 +286,7 @@ namespace Abraca {
 		/**
 		 * 
 		 */
-		private void on_drag_data_received (CollectionsTree w,
+		private void on_drag_data_received (CollectionsView w,
 		                                    Gdk.DragContext ctx,
 		                                    int x_pos, int y_pos,
 		                                    Gtk.SelectionData data,
@@ -357,7 +357,7 @@ namespace Abraca {
 
 
 
-		private void on_row_activated (CollectionsTree tree,
+		private void on_row_activated (CollectionsView tree,
 		                               Gtk.TreePath path,
 		                               Gtk.TreeViewColumn column)
 		{

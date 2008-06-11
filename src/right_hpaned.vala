@@ -21,13 +21,11 @@ using GLib;
 
 namespace Abraca {
 	public class RightHPaned : Gtk.HPaned, IConfigurable {
-		private Gtk.ComboBoxEntry _filter_combo;
 		private Gtk.Entry _filter_entry;
 		private Gtk.ListStore _filter_patterns;
-		private FilterTree _filter_tree;
-		private PlaylistTree _playlist_tree;
+		private FilterView _filter_tree;
 
-		public FilterTree filter_tree {
+		public FilterView filter_tree {
 			get {
 				return _filter_tree;
 			}
@@ -153,8 +151,12 @@ namespace Abraca {
 			hbox.pack_start(label, false, false, 0);
 
 			_filter_patterns = new Gtk.ListStore(1, typeof(string));
-			_filter_combo = new Gtk.ComboBoxEntry.with_model(_filter_patterns, 0);
-			_filter_entry = (Gtk.Entry) _filter_combo.child;
+
+			Gtk.ComboBoxEntry cbox = new Gtk.ComboBoxEntry.with_model(
+				_filter_patterns, 0
+			);
+
+			_filter_entry = (Gtk.Entry) cbox.child;
 
 			Gtk.EntryCompletion comp = new Gtk.EntryCompletion();
 			comp.model = _filter_patterns;
@@ -162,7 +164,7 @@ namespace Abraca {
 
 			_filter_entry.set_completion(comp);
 
-			hbox.pack_start(_filter_combo, true, true, 0);
+			hbox.pack_start(cbox, true, true, 0);
 
 			box.pack_start(hbox, false, false, 2);
 
@@ -174,7 +176,7 @@ namespace Abraca {
 			                    Gtk.PolicyType.AUTOMATIC);
 			scrolled.set_shadow_type(Gtk.ShadowType.IN);
 
-			_filter_tree = new FilterTree();
+			_filter_tree = new FilterView();
 			scrolled.add(_filter_tree);
 			box.pack_start(scrolled, true, true, 0);
 
@@ -192,8 +194,8 @@ namespace Abraca {
 			                    Gtk.PolicyType.AUTOMATIC);
 			scrolled.set_shadow_type(Gtk.ShadowType.IN);
 
-			_playlist_tree = new PlaylistTree();
-			scrolled.add(_playlist_tree);
+			scrolled.add(new PlaylistView());
+
 			box.pack_start(scrolled, true, true, 0);
 
 			return box;

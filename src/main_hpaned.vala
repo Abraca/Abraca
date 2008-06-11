@@ -19,14 +19,7 @@
 
 namespace Abraca {
 	public class MainHPaned : Gtk.HPaned, IConfigurable {
-		private CollectionsTree _coll_tree;
 		private RightHPaned _right_hpaned;
-
-		public CollectionsTree collections_tree {
-			get {
-				return _coll_tree;
-			}
-		}
 
 		public RightHPaned right_hpaned {
 			get {
@@ -67,8 +60,7 @@ namespace Abraca {
 			                    Gtk.PolicyType.AUTOMATIC);
 			scrolled.set_shadow_type(Gtk.ShadowType.IN);
 
-			_coll_tree = new CollectionsTree();
-			scrolled.add(_coll_tree);
+			scrolled.add(new CollectionsView());
 
 			pack1(scrolled, false, true);
 

@@ -20,7 +20,7 @@
 using GLib;
 
 namespace Abraca {
-	public class PlaylistTree : Gtk.TreeView {
+	public class PlaylistView : Gtk.TreeView {
 		/** context menu */
 		private Gtk.Menu _playlist_menu;
 
@@ -101,7 +101,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_button_press_event(PlaylistTree w, Gdk.Event e) {
+		private bool on_button_press_event(PlaylistView w, Gdk.Event e) {
 			Gtk.TreePath path;
 			int x, y;
 
@@ -152,7 +152,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_key_press_event(PlaylistTree w, Gdk.EventKey e) {
+		private bool on_key_press_event(PlaylistView w, Gdk.EventKey e) {
 			int KEY_DELETE = 65535;
 
 			if (e.keyval == KEY_DELETE) {
@@ -471,7 +471,7 @@ namespace Abraca {
 		}
 
 
-		private void on_drag_data_get(PlaylistTree w, Gdk.DragContext ctx,
+		private void on_drag_data_get(PlaylistView w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			weak Gtk.TreeSelection sel = get_selection();
@@ -516,7 +516,7 @@ namespace Abraca {
 		/**
 		 * Take care of the various types of drops.
 		 */
-		private void on_drag_data_receive(PlaylistTree w, Gdk.DragContext ctx, int x, int y,
+		private void on_drag_data_receive(PlaylistView w, Gdk.DragContext ctx, int x, int y,
 		                              Gtk.SelectionData sel, uint info,
 		                              uint time) {
 
@@ -715,7 +715,7 @@ namespace Abraca {
 		 * When clicking a row, perform a jump to that song and start
 		 * playback if not already playing.
 		 */
-		private void on_row_activated(PlaylistTree tree, Gtk.TreePath path,
+		private void on_row_activated(PlaylistView tree, Gtk.TreePath path,
 		                              Gtk.TreeViewColumn column) {
 			jump_to_pos(path.get_indices()[0]);
 		}
