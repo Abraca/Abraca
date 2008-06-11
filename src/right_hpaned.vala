@@ -21,8 +21,7 @@ using GLib;
 
 namespace Abraca {
 	public class RightHPaned : Gtk.HPaned, IConfigurable {
-		private Gtk.Entry _filter_entry;
-		private Gtk.ListStore _filter_patterns;
+		private Gtk.ComboBoxEntry _filter_cbox;
 		private FilterView _filter_tree;
 
 		public FilterView filter_tree {
@@ -35,10 +34,8 @@ namespace Abraca {
 			position = 430;
 			position_set = true;
 
-			create_widgets();
-
-			_filter_entry.changed += on_filter_entry_changed;
-			_filter_entry.activate += on_filter_entry_activate;
+			pack1(create_left_box(), true, true);
+			pack2(create_right_box(), false, true);
 
 			Config conf = Config.instance();
 			conf.register(this);
@@ -52,40 +49,42 @@ namespace Abraca {
 			}
 
 			if (file.has_key("filter", "patterns")) {
-				string[] list = file.get_string_list("filter", "patterns");
+				Gtk.ListStore store = (Gtk.ListStore) _filter_cbox.model;
 				Gtk.TreeIter iter;
+				string[] list = file.get_string_list("filter", "patterns");
 
 				for (int i = 0; i < list.length; i++) {
-					_filter_patterns.insert_with_values(out iter, i, 0, list[i]);
+					store.insert_with_values(out iter, i, 0, list[i]);
 				}
 			}
 		}
 
 		public void get_configuration(GLib.KeyFile file) {
+			Gtk.ListStore store = (Gtk.ListStore) _filter_cbox.model;
 			Gtk.TreeIter iter;
-			string current;
 			string[] list = new string[25];
+			string current;
 			int i;
 
 			file.set_integer("panes", "pos2", position);
 
-			if (_filter_patterns.iter_children(out iter, null)) {
+			if (store.iter_children(out iter, null)) {
 				do {
-					_filter_patterns.get(iter, 0, out current);
+					store.get(iter, 0, out current);
 					list[i++] = current;
-				} while (_filter_patterns.iter_next(ref iter) && i < 25);
+				} while (store.iter_next(ref iter) && i < 25);
 			}
 
 			file.set_string_list("filter", "patterns", list);
 		}
 
-		private void on_filter_entry_changed(Gtk.Entry editable) {
+		private void on_filter_entry_changed(Gtk.Entry entry) {
 			Xmms.Collection coll;
 			Gdk.Color color;
 			weak string text;
 			bool is_error = false;
 
-			text = _filter_entry.get_text();
+			text = entry.get_text();
 
 			if (text.size() > 0) {
 				if (!Xmms.Collection.parse(text, out coll)) {
@@ -98,34 +97,36 @@ namespace Abraca {
 				}
 			}
 
-			if (is_error)
-				_filter_entry.modify_base(Gtk.StateType.NORMAL, color);
-			else
-				_filter_entry.modify_base(Gtk.StateType.NORMAL, null);
+			if (is_error) {
+				entry.modify_base(Gtk.StateType.NORMAL, color);
+			} else {
+				entry.modify_base(Gtk.StateType.NORMAL, null);
+			}
 		}
 
 		private void _filter_save (string pattern) {
+			Gtk.ListStore store = (Gtk.ListStore) _filter_cbox.model;
 			Gtk.TreeIter iter;
 			string current;
 
-			if (_filter_patterns.iter_children(out iter, null)) {
+			if (store.iter_children(out iter, null)) {
 				do {
-					_filter_patterns.get(iter, 0, out current);
+					store.get(iter, 0, out current);
 					if (current == pattern) {
-						_filter_patterns.remove(iter);
+						store.remove(iter);
 						break;
 					}
-				} while (_filter_patterns.iter_next(ref iter));
+				} while (store.iter_next(ref iter));
 			}
 
-			_filter_patterns.insert_with_values(out iter, 0, 0, pattern);
+			store.insert_with_values(out iter, 0, 0, pattern);
 		}
 
 		private void on_filter_entry_activate(Gtk.Entry entry) {
 			Xmms.Collection coll;
 			weak string pattern;
 
-			pattern = _filter_entry.get_text();
+			pattern = entry.get_text();
 
 			if (Xmms.Collection.parse(pattern, out coll)) {
 				_filter_tree.query_collection(coll);
@@ -134,12 +135,8 @@ namespace Abraca {
 		}
 
 		public void filter_entry_set_text(string text) {
-			_filter_entry.text = text;
-		}
-
-		private void create_widgets() {
-			pack1(create_left_box(), true, true);
-			pack2(create_right_box(), false, true);
+			Gtk.Entry entry = (Gtk.Entry) _filter_cbox.child;
+			entry.text = text;
 		}
 
 		private Gtk.Box create_left_box() {
@@ -150,21 +147,22 @@ namespace Abraca {
 			Gtk.Label label = new Gtk.Label(_("Filter:"));
 			hbox.pack_start(label, false, false, 0);
 
-			_filter_patterns = new Gtk.ListStore(1, typeof(string));
-
-			Gtk.ComboBoxEntry cbox = new Gtk.ComboBoxEntry.with_model(
-				_filter_patterns, 0
+			_filter_cbox = new Gtk.ComboBoxEntry.with_model(
+				new Gtk.ListStore(1, typeof(string)), 0
 			);
 
-			_filter_entry = (Gtk.Entry) cbox.child;
+			Gtk.Entry entry = (Gtk.Entry) _filter_cbox.child;
+
+			entry.changed += on_filter_entry_changed;
+			entry.activate += on_filter_entry_activate;
 
 			Gtk.EntryCompletion comp = new Gtk.EntryCompletion();
-			comp.model = _filter_patterns;
+			comp.model = _filter_cbox.model;
 			comp.set_text_column(0);
 
-			_filter_entry.set_completion(comp);
+			entry.set_completion(comp);
 
-			hbox.pack_start(cbox, true, true, 0);
+			hbox.pack_start(_filter_cbox, true, true, 0);
 
 			box.pack_start(hbox, false, false, 2);
 
@@ -178,6 +176,7 @@ namespace Abraca {
 
 			_filter_tree = new FilterView();
 			scrolled.add(_filter_tree);
+
 			box.pack_start(scrolled, true, true, 0);
 
 			return box;
