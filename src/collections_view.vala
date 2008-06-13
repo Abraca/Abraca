@@ -57,7 +57,11 @@ namespace Abraca {
 
 			create_columns (out coll, out pls);
 
-			model = new CollectionsModel(coll, pls);
+			CollectionsModel store = new CollectionsModel(coll, pls);
+			store.collection_loaded += (type) => {
+				expand_all();
+			};
+			model = store;
 
 			row_activated += on_row_activated;
 

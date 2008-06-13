@@ -56,6 +56,9 @@ namespace Abraca {
 			get; private set;
 		}
 
+		/* Emited after 1..* collections has been added. */
+		public signal void collection_loaded (CollectionType type);
+
 		public CollectionsModel (Gdk.Pixbuf coll, Gdk.Pixbuf pls)
 		{
 			collection_pixbuf = coll;
@@ -299,7 +302,7 @@ namespace Abraca {
 				);
 			}
 
-			// TODO: perhaps emit something here, yeah really!
+			collection_loaded(type);
 		}
 
 
@@ -366,6 +369,8 @@ namespace Abraca {
 				Column.Icon, pixbuf,
 				Column.Name, name
 			);
+
+			collection_loaded(type);
 		}
 
 
