@@ -495,10 +495,9 @@ namespace Abraca {
 		private Gtk.ListStore _add_urls;
 
 		construct {
-			Config conf = Config.instance();
-			conf.register(this);
-
 			_add_urls = new Gtk.ListStore(1, typeof(string));
+
+			Configurable.register(this);
 		}
 
 		public void info_dialog_add_id(uint mid) {

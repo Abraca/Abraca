@@ -48,7 +48,7 @@ namespace Abraca {
 		}
 
 		public void quit() {
-			Config.instance().save();
+			Configurable.save();
 
 			Gtk.main_quit();
 		}
@@ -60,10 +60,9 @@ namespace Abraca {
 
 			GLib.Environment.set_application_name("Abraca");
 
-			Config conf = Config.instance();
 			Abraca a = Abraca.instance();
 
-			conf.load();
+			Configurable.load();
 
 			a.main_window.show_all();
 

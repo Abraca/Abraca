@@ -37,8 +37,7 @@ namespace Abraca {
 			pack1(create_left_box(), true, true);
 			pack2(create_right_box(), false, true);
 
-			Config conf = Config.instance();
-			conf.register(this);
+			Configurable.register(this);
 		}
 
 

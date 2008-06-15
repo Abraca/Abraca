@@ -33,8 +33,7 @@ namespace Abraca {
 
 			create_widgets();
 
-			Config conf = Config.instance();
-			conf.register(this);
+			Configurable.register(this);
 		}
 
 

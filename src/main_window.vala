@@ -69,8 +69,7 @@ namespace Abraca {
 				toolbar.set_sensitive(true);
 			};
 
-			Config conf = Config.instance();
-			conf.register(this);
+			Configurable.register(this);
 		}
 
 		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {

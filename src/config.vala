@@ -21,8 +21,6 @@ namespace Abraca {
 	public class Config : GLib.Object, IConfigurable {
 		private static Config _instance;
 
-		private GLib.SList<IConfigurable> configurables;
-
 		const string[] _sort_keys = {
 			"Artist", "Album", "Title", "Year", "Path", "Custom"
 		};
@@ -59,60 +57,7 @@ namespace Abraca {
 		}
 
 		construct {
-			configurables = new GLib.SList<IConfigurable>();
-			register(this);
-		}
-
-		public void register(IConfigurable obj) {
-			configurables.prepend(obj);
-		}
-
-		private string build_filename() {
-			char[] buf = new char[255];
-
-			Xmms.Client.userconfdir_get(buf);
-
-			string ret = GLib.Path.build_filename(
-				(string) buf, "clients", "abraca.conf", null
-			);
-
-			return ret;
-		}
-
-		public void load() {
-			GLib.KeyFile file;
-
-			file = new GLib.KeyFile();
-
-			try {
-				string filename = build_filename();
-				file.load_from_file(filename, GLib.KeyFileFlags.NONE);
-			} catch (GLib.Error ex) {
-				/* First time abraca is launched, no config exists. */
-				return;
-			}
-
-			foreach (weak IConfigurable conf in configurables) {
-				try {
-					conf.set_configuration(file);
-				} catch (GLib.KeyFileError e) {
-				}
-			}
-		}
-
-		public void save() {
-			GLib.FileStream stream;
-			GLib.KeyFile file;
-			size_t length;
-
-			file = new GLib.KeyFile();
-
-			foreach (weak IConfigurable conf in configurables) {
-					conf.get_configuration(file);
-			}
-
-			stream = GLib.FileStream.open(build_filename(), "w");
-			stream.puts(file.to_data(out length));
+			Configurable.register(this);
 		}
 
 		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
