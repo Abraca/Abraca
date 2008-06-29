@@ -108,6 +108,7 @@ namespace Abraca {
 			);
 			Gtk.MenuItem item;
 			Gtk.ImageMenuItem img_item;
+			Gtk.CheckMenuItem check_item;
 			Gtk.Image img;
 			Gtk.Menu sub = new Gtk.Menu();
 
@@ -159,6 +160,14 @@ namespace Abraca {
 			);
 			item.activate += on_playlist_shuffle;
 			sub.append(item);
+
+			sub.append(new Gtk.SeparatorMenuItem());
+
+			check_item = new Widget.CheckMenuItem.with_mnemonic("playlist.repeat_all", "_Repeat all");
+			sub.append(check_item);
+
+			check_item = new Widget.CheckMenuItem.with_mnemonic("playlist.repeat_one", "_Repeat one");
+			sub.append(check_item);
 
 			ret.set_submenu(sub);
 

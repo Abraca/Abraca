@@ -22,6 +22,7 @@ vala_sources = """
 	collection_cellrenderer.vala
 	configurable.vala
 	volume_button.vala
+	widgets.vala
 """.split()
 
 sources = env.Vala(vala_sources)
