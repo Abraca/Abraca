@@ -487,38 +487,76 @@ namespace Abraca {
 		}
 	}
 
-	public class Medialib : GLib.Object, IConfigurable {
-		public MedialibInfoDialog info_dialog;
 
-		private string _add_file = "";
-
-		private Gtk.ListStore _add_urls;
+	public class MedialibAddUrlDialog : Gtk.Dialog, IConfigurable {
+		public Gtk.Entry entry;
+		private Gtk.ListStore urls;
 
 		construct {
-			_add_urls = new Gtk.ListStore(1, typeof(string));
+			set_default_response(Gtk.ResponseType.OK);
+			set_default_size(300, 74);
+
+			destroy_with_parent = true;
+			modal = true;
+			title = _("Add URL");
+			transient_for = (Abraca.instance().main_window);
+			urls = new Gtk.ListStore(1, typeof(string));
+
+			add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
+			add_button(Gtk.STOCK_OK, Gtk.ResponseType.OK);
+
+			Gtk.ComboBoxEntry combo = new Gtk.ComboBoxEntry.with_model(urls, 0);
+			Gtk.EntryCompletion comp = new Gtk.EntryCompletion();
+
+			comp.model = urls;
+			comp.set_text_column(0);
+			entry = (Gtk.Entry) combo.child;
+			entry.set_completion(comp);
+			entry.activates_default = true;
+			vbox.pack_start_defaults(combo);
+
+			close += on_close;
+			response += on_response;
 
 			Configurable.register(this);
+			show_all();
 		}
 
-		public void info_dialog_add_id(uint mid) {
-			if (info_dialog == null) {
-				info_dialog = new MedialibInfoDialog();
+		private void save_url(string url) {
+			Gtk.TreeIter iter;
+			string current;
+
+			if (urls.iter_children(out iter, null)) {
+				do {
+					urls.get(iter, 0, out current);
+					if (current == url) {
+						urls.remove(iter);
+						break;
+					}
+				} while (urls.iter_next(ref iter));
 			}
-			info_dialog.add(mid);
+			urls.insert_with_values(out iter, 0, 0, url);
 		}
 
+		private void on_close(MedialibAddUrlDialog dialog) {
+			Configurable.unregister(this);
+		}
+
+		private void on_response(MedialibAddUrlDialog dialog, int response) {
+			if(response == Gtk.ResponseType.OK && entry.get_text() != "") {
+				save_url(entry.get_text());
+			}
+		}
 
 		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
 			if (file.has_group("add_dialog")) {
-				if (file.has_key("add_dialog", "file")) {
-					_add_file = file.get_string("add_dialog", "file");
-				}
 				if (file.has_key("add_dialog", "urls")) {
 					string[] list = file.get_string_list("add_dialog", "urls");
 					Gtk.TreeIter iter;
 
+					urls.clear();
 					for (int i = 0; i < list.length; i++) {
-						_add_urls.insert_with_values(out iter, i, 0, list[i]);
+						urls.insert_with_values(out iter, i, 0, list[i]);
 					}
 				}
 			}
@@ -530,91 +568,96 @@ namespace Abraca {
 			string[] list = new string[25];
 			int i;
 
-			if (_add_urls.iter_children(out iter, null)) {
+			if (urls.iter_children(out iter, null)) {
 				do {
-					_add_urls.get(iter, 0, out current);
+					urls.get(iter, 0, out current);
 					list[i++] = current;
-				} while (_add_urls.iter_next(ref iter) && i < 25);
+				} while (urls.iter_next(ref iter) && i < 25);
 			}
 
-			file.set_string("add_dialog", "file", _add_file);
 			file.set_string_list("add_dialog", "urls", list);
 		}
+	}
 
-		private void _add_urls_save(string url) {
-			Gtk.TreeIter iter;
-			string current;
+	public class MedialibFileChooserDialog : Gtk.FileChooserDialog, IConfigurable {
+		private string current_folder;
 
-			if (_add_urls.iter_children(out iter, null)) {
-				do {
-					_add_urls.get(iter, 0, out current);
-					if (current == url) {
-						_add_urls.remove(iter);
-						break;
-					}
-				} while (_add_urls.iter_next(ref iter));
+		construct {
+			Gtk.CheckButton button = new Gtk.CheckButton.with_label(
+					_("don't add to active playlist"));
+
+			extra_widget = button;
+			modal = true;
+			select_multiple = true;
+			title = _("Add File");
+			transient_for = Abraca.instance().main_window;
+
+			add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
+			add_button(Gtk.STOCK_OPEN, Gtk.ResponseType.OK);
+
+			close += on_close;
+			response += on_response;
+
+			Configurable.register(this);
+			show_all();
+		}
+
+		private void on_close(MedialibFileChooserDialog dialog) {
+			Configurable.unregister(this);
+		}
+
+		private void on_response(MedialibFileChooserDialog dialog, int response) {
+			if(response == Gtk.ResponseType.OK) {
+				current_folder = get_current_folder();
 			}
+		}
 
-			_add_urls.insert_with_values(out iter, 0, 0, url);
+		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+			if (file.has_group("add_dialog")) {
+				if (file.has_key("add_dialog", "file")) {
+					current_folder = file.get_string("add_dialog", "file");
+					set_current_folder(current_folder);
+				}
+			}
+		}
+
+		public void get_configuration(GLib.KeyFile file) {
+			if(current_folder != null) {
+				file.set_string("add_dialog", "file", current_folder);
+			}
+		}
+	}
+
+	public class Medialib : GLib.Object {
+		public MedialibInfoDialog info_dialog;
+
+		public void info_dialog_add_id(uint mid) {
+			if (info_dialog == null) {
+				info_dialog = new MedialibInfoDialog();
+			}
+			info_dialog.add(mid);
 		}
 
 		public void create_add_url_dialog() {
-			Gtk.Dialog dialog = new Gtk.Dialog.with_buttons(
-					_("Add URL"),
-					(Gtk.Window) (Abraca.instance().main_window),
-					Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.MODAL,
-					Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-					Gtk.STOCK_OK, Gtk.ResponseType.OK
-					);
-			Gtk.ComboBoxEntry combo = new Gtk.ComboBoxEntry.with_model(_add_urls, 0);
-			Gtk.EntryCompletion comp = new Gtk.EntryCompletion();
-			Gtk.Entry entry = (Gtk.Entry) combo.child;
-
-			comp.model = _add_urls;
-			comp.set_text_column(0);
-			entry.set_completion(comp);
-			entry.activates_default = true;
-
-			((Gtk.VBox)dialog.vbox).pack_start_defaults(combo);
-			dialog.set_default_response(Gtk.ResponseType.OK);
-			dialog.set_default_size(300, 74);
-			dialog.show_all();
+			MedialibAddUrlDialog dialog = new MedialibAddUrlDialog();
 
 			if (dialog.run() == Gtk.ResponseType.OK) {
 				Client c = Client.instance();
 
-				c.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, entry.get_text());
-				_add_urls_save(entry.get_text());
+				c.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, dialog.entry.get_text());
 			}
-
 			dialog.close();
 		}
 
 		public void create_add_file_dialog(Gtk.FileChooserAction action) {
-			Gtk.FileChooserDialog dialog;
-
-			dialog = new Gtk.FileChooserDialog(_("Add file"),
-					(Gtk.Window) (Abraca.instance().main_window), action,
-					Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-					Gtk.STOCK_ADD, Gtk.ResponseType.OK
-					);
-
-			dialog.select_multiple = true;
-
-			if (_add_file != "") {
-				dialog.set_current_folder(_add_file);
-			}
-
-			Gtk.CheckButton button = new Gtk.CheckButton.with_label(
-					_("don't add to active playlist"));
-			dialog.extra_widget = button;
-
-			dialog.show_all();
+			MedialibFileChooserDialog dialog = new MedialibFileChooserDialog();
+			dialog.set_action(action);
 
 			if (dialog.run() == Gtk.ResponseType.OK) {
 				Client c = Client.instance();
 				weak GLib.SList<string> filenames;
 				string url;
+				Gtk.CheckButton button = (Gtk.CheckButton) dialog.extra_widget;
 
 				filenames = dialog.get_filenames();
 
@@ -635,7 +678,6 @@ namespace Abraca {
 						}
 					}
 				}
-				_add_file = dialog.get_current_folder();
 			}
 			dialog.close();
 		}
