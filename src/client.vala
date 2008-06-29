@@ -47,6 +47,8 @@ namespace Abraca {
 
 		public signal void medialib_entry_changed(Xmms.Result res);
 
+		public signal void configval_changed(string key, string val);
+
 		private Xmms.Result _result_playback_status;
 		private Xmms.Result _result_playback_current_id;
 		private Xmms.Result _result_medialib_entry_changed;
@@ -56,6 +58,8 @@ namespace Abraca {
 		private Xmms.Result _result_playlist_position;
 
 		private Xmms.Result _result_collection_changed;
+
+		private Xmms.Result _result_configval_changed;
 
 		/** current playback status */
 		public int current_playback_status {
@@ -83,6 +87,7 @@ namespace Abraca {
 			_result_playlist_changed = null;
 			_result_playlist_position = null;
 			_result_collection_changed = null;
+			_result_configval_changed = null;
 
 			GLib.Timeout.add(500, reconnect);
 
@@ -190,6 +195,10 @@ namespace Abraca {
 
 			_xmms.broadcast_playlist_current_pos().notifier_set(
 				on_playlist_position
+			);
+
+			_xmms.broadcast_configval_changed().notifier_set(
+					on_configval_changed
 			);
 		}
 
@@ -417,6 +426,18 @@ namespace Abraca {
 			}
 
 			return ret || numeric;
+		}
+
+		private void on_configval_changed_dict_each(void *key, Xmms.ResultType type,
+		                                            void *val) {
+			configval_changed((string) key, (string) val);
+		}
+
+		private void on_configval_changed(Xmms.Result #res) {
+			res.dict_foreach(on_configval_changed_dict_each);
+
+			_result_configval_changed = res;
+			_result_configval_changed.ref();
 		}
 	}
 }
