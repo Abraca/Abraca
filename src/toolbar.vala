@@ -106,7 +106,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_time_slider_press(Gtk.HScale widget, Gdk.Event e) {
+		private bool on_time_slider_press(Gtk.HScale widget, Gdk.EventButton button) {
 			_seek = true;
 			_time_slider.motion_notify_event += on_time_slider_motion_notify;
 
@@ -114,7 +114,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_time_slider_release(Gtk.HScale widget, Gdk.Event e) {
+		private bool on_time_slider_release(Gtk.HScale widget, Gdk.EventButton button) {
 			weak Gtk.HScale scale = (Gtk.HScale) widget;
 			Client c = Client.instance();
 
@@ -131,7 +131,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_time_slider_motion_notify(Gtk.HScale widget, Gdk.Event e) {
+		private bool on_time_slider_motion_notify(Gtk.HScale widget, Gdk.EventMotion motion) {
 			weak Gtk.HScale scale = (Gtk.HScale) widget;
 
 			double percent = scale.get_value();

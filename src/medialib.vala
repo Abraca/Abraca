@@ -364,7 +364,7 @@ namespace Abraca {
 
 		private void refresh_border() {
 			string info = "Metadata for song %d of %d".printf(
-				ids.position(current) + 1, ids.length()
+				ids.position(current) + 1, (int) ids.length()
 			);
 
 			set_title (info);

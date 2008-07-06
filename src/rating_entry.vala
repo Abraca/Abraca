@@ -87,12 +87,12 @@ namespace Abraca {
 			expose_event += on_expose_event;
 			size_request += on_size_request;
 
-			motion_notify_event += (w, e) => {
-				rating_from_position(e.motion.x);
+			motion_notify_event += (w, motion) => {
+				rating_from_position(motion.x);
 				return true;
 			};
-			button_press_event += (w, e) => {
-				rating_from_position(e.motion.x);
+			button_press_event += (w, motion) => {
+				rating_from_position(motion.x);
 				return true;
 			};
 
@@ -145,8 +145,8 @@ namespace Abraca {
 		/**
 		 * Paint our canvas on the window.
 		 */
-		public bool on_expose_event(RatingEntry w, Gdk.Event e) {
-			e.expose.window.draw_pixbuf(
+		public bool on_expose_event(RatingEntry w, Gdk.EventExpose expose) {
+			expose.window.draw_pixbuf(
 				style.bg_gc[0], _canvas,
 				0, 0, 0, 0, _width, _height,
 				Gdk.RgbDither.NONE, 0, 0

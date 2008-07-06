@@ -144,23 +144,23 @@ namespace Abraca {
 		}
 
 
-		private bool on_button_press_event (CollectionsView w, Gdk.Event e)
+		private bool on_button_press_event (CollectionsView w, Gdk.EventButton button)
 		{
 			Gtk.TreePath path;
 			int x, y;
 
 			/* we're only interested in the 3rd mouse button */
-			if (e.button.button != 3) {
+			if (button.button != 3) {
 				return false;
 			}
 
 			_collection_menu.popup(
-				null, null, null, e.button.button,
+				null, null, null, button.button,
 				Gtk.get_current_event_time()
 			);
 
-			x = (int) e.button.x;
-			y = (int) e.button.y;
+			x = (int) button.x;
+			y = (int) button.y;
 
 			/* Prevent selection-handling when right-clicking on an already
 			   selected entry */

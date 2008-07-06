@@ -181,6 +181,11 @@ public struct size_t {
 	[CCode (cname = "G_MAXSIZE")]
 	public static ulong MAX;
 
+	[CCode (cname = "G_GSIZE_FORMAT")]
+	public const string FORMAT;
+	[CCode (cname = "G_GSIZE_MODIFIER")]
+	public const string FORMAT_MODIFIER;
+
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%zu");
 
@@ -199,6 +204,11 @@ public struct ssize_t {
 	public static long MIN;
 	[CCode (cname = "G_MAXSSIZE")]
 	public static long MAX;
+
+	[CCode (cname = "G_GSSIZE_FORMAT")]
+	public const string FORMAT;
+	[CCode (cname = "G_GSIZE_MODIFIER")]
+	public const string FORMAT_MODIFIER;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%zi");
@@ -248,6 +258,11 @@ public struct int16 {
 	[CCode (cname = "G_MAXINT16")]
 	public static int16 MAX;
 
+	[CCode (cname = "G_GINT16_FORMAT")]
+	public const string FORMAT;
+	[CCode (cname = "G_GINT16_MODIFIER")]
+	public const string FORMAT_MODIFIER;
+
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%hi");
 
@@ -264,6 +279,11 @@ public struct uint16 {
 	[CCode (cname = "G_MAXUINT16")]
 	public static uint16 MAX;
 
+	[CCode (cname = "G_GUINT16_FORMAT")]
+	public const string FORMAT;
+	[CCode (cname = "G_GINT16_MODIFIER")]
+	public const string FORMAT_MODIFIER;
+
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%hu");
 
@@ -272,13 +292,18 @@ public struct uint16 {
 }
 
 [SimpleType]
-[CCode (cname = "gint32", cheader_filename = "glib.h", default_value = "0", type_signature = "i")]
+[CCode (cname = "gint32", cheader_filename = "glib.h", type_id = "G_TYPE_INT", marshaller_type_name = "INT", get_value_function = "g_value_get_int", set_value_function = "g_value_set_int", default_value = "0", type_signature = "i")]
 [IntegerType (rank = 6)]
 public struct int32 {
 	[CCode (cname = "G_MININT32")]
 	public static int32 MIN;
 	[CCode (cname = "G_MAXINT32")]
 	public static int32 MAX;
+
+	[CCode (cname = "G_GINT32_FORMAT")]
+	public const string FORMAT;
+	[CCode (cname = "G_GINT32_MODIFIER")]
+	public const string FORMAT_MODIFIER;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%i");
@@ -296,6 +321,11 @@ public struct uint32 {
 	[CCode (cname = "G_MAXUINT32")]
 	public static uint32 MAX;
 
+	[CCode (cname = "G_GUINT32_FORMAT")]
+	public const string FORMAT;
+	[CCode (cname = "G_GINT32_MODIFIER")]
+	public const string FORMAT_MODIFIER;
+
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%u");
 
@@ -312,6 +342,11 @@ public struct int64 {
 	[CCode (cname = "G_MAXINT64")]
 	public static int64 MAX;
 
+	[CCode (cname = "G_GINT64_FORMAT")]
+	public const string FORMAT;
+	[CCode (cname = "G_GINT64_MODIFIER")]
+	public const string FORMAT_MODIFIER;
+
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%lli");
 
@@ -327,6 +362,11 @@ public struct uint64 {
 	public static uint64 MIN;
 	[CCode (cname = "G_MAXUINT64")]
 	public static uint64 MAX;
+
+	[CCode (cname = "G_GUINT64_FORMAT")]
+	public const string FORMAT;
+	[CCode (cname = "G_GINT64_MODIFIER")]
+	public const string FORMAT_MODIFIER;
 
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%llu");
@@ -436,7 +476,7 @@ public struct time_t {
 }
 
 [SimpleType]
-[CCode (cname = "gunichar", cprefix = "g_unichar_", cheader_filename = "glib.h", get_value_function = "g_value_get_int", set_value_function = "g_value_set_int", default_value = "0U")]
+[CCode (cname = "gunichar", cprefix = "g_unichar_", cheader_filename = "glib.h", type_id = "G_TYPE_UINT", marshaller_type_name = "UINT", get_value_function = "g_value_get_uint", set_value_function = "g_value_set_uint", default_value = "0U", type_signature = "u")]
 [IntegerType (rank = 7)]
 public struct unichar {
 	public bool validate ();
@@ -717,10 +757,15 @@ namespace GLib {
 	public interface TypePlugin {
 	}
 
+	[CCode (lower_case_csuffix = "type_module")]
 	public class TypeModule : Object, TypePlugin {
 		public bool use ();
 		public void unuse ();
 		public void set_name (string name);
+		[NoWrapper]
+		public virtual bool load ();
+		[NoWrapper]
+		public virtual void unload ();
 	}
 
 	[CCode (ref_function = "g_param_spec_ref", unref_function = "g_param_spec_unref")]
@@ -1097,6 +1142,18 @@ namespace GLib {
 		public static float scalbf (float x, float n);
 	}
 
+	/* Byte order */
+	namespace ByteOrder {
+		[CCode (cname = "G_BYTE_ORDER")]
+		public const int HOST;
+		[CCode (cname = "G_LITTLE_ENDIAN")]
+		public const int LITTLE_ENDIAN;
+		[CCode (cname = "G_BIG_ENDIAN")]
+		public const int BIG_ENDIAN;
+		[CCode (cname = "G_PDP_ENDIAN")]
+		public const int PDP_ENDIAN;
+	}
+
 	/* Atomic Operations */
 
 	namespace AtomicInt {
@@ -1215,7 +1272,7 @@ namespace GLib {
 	public class Source {
 		public Source (SourceFuncs source_funcs, uint struct_size /* = sizeof (Source) */);
 		public void set_funcs (SourceFuncs funcs);
-		public uint attach (MainContext context);
+		public uint attach (MainContext? context);
 		public void destroy ();
 		public bool is_destroyed ();
 		public void set_priority (int priority);
@@ -1941,7 +1998,7 @@ namespace GLib {
 		public TokenValue cur_value ();
 		public uint set_scope (uint scope_id);
 		public void scope_add_symbol (uint scope_id, string symbol, void* value);
-		public void scope_foreach_symbol (uint scope_id, HFunc func, void* user_data);
+		public void scope_foreach_symbol (uint scope_id, HFunc func);
 		public void* scope_lookup_symbol (uint scope_id, string symbol);
 		public void scope_remove_symbol (uint scope_id, string symbol);
 		public void* lookup_symbol (string symbol);
@@ -2336,7 +2393,7 @@ namespace GLib {
 		public bool get_help_enabled ();
 		public void set_ignore_unknown_options (bool ignore_unknown);
 		public bool get_ignore_unknown_options ();
-		public string get_help (bool main_help, OptionGroup group);
+		public string get_help (bool main_help, OptionGroup? group);
 		[NoArrayLength]
 		public void add_main_entries (OptionEntry[] entries, string? translation_domain);
 		public void add_group (OptionGroup# group);
@@ -2826,7 +2883,8 @@ namespace GLib {
 		public uint length;
 	
 		public Queue ();
-		
+
+		public void clear ();
 		public bool is_empty ();
 		public uint get_length ();
 		public void reverse ();
@@ -2864,7 +2922,7 @@ namespace GLib {
 		public void sort_iter (SequenceIterCompareFunc<G> func);
 		public weak SequenceIter<G> get_begin_iter ();
 		public weak SequenceIter<G> get_end_iter ();
-		public weak SequenceIter<G> get_iter_at_pos ();
+		public weak SequenceIter<G> get_iter_at_pos (int pos);
 		public weak SequenceIter<G> append (G# data);
 		public weak SequenceIter<G> prepend (G# data);
 		public static weak SequenceIter<G> insert_before (SequenceIter<G> iter, G# data);
@@ -2914,13 +2972,13 @@ namespace GLib {
 		public List<weak K> get_keys ();
 		public List<weak V> get_values ();
 		[CCode (cname = "g_hash_table_foreach")]
-		public void for_each (HFunc func, void* user_data);
+		public void for_each (HFunc func);
 		public uint size ();
 	}
 	
 	public static delegate uint HashFunc (void* key);
 	public static delegate bool EqualFunc (void* a, void* b);
-	public static delegate void HFunc (void* key, void* value, void* user_data);
+	public delegate void HFunc (void* key, void* value);
 
 	public static delegate void DestroyNotify (void* data);
 	
