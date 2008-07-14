@@ -134,7 +134,7 @@ namespace Abraca {
 		private void on_medialib_info(Xmms.Result #res) {
 			weak string artist, album, title;
 			weak Gtk.TreeRowReference row;
-			weak Gtk.TreePath path;
+			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 			int mid, pos, id;
 			string info;

@@ -26,6 +26,13 @@
 [SimpleType]
 [CCode (cname = "gboolean", cheader_filename = "glib.h", type_id = "G_TYPE_BOOLEAN", marshaller_type_name = "BOOLEAN", get_value_function = "g_value_get_boolean", set_value_function = "g_value_set_boolean", default_value = "FALSE", type_signature = "b")]
 public struct bool {
+	public string to_string () {
+		if (this) {
+			return "true";
+		} else {
+			return "false";
+		}
+	}
 }
 
 [SimpleType]
@@ -55,6 +62,10 @@ public struct char {
 	public char tolower ();
 	public char toupper ();
 
+	[CCode (cname = "MIN")]
+	public static char min (char a, char b);
+	[CCode (cname = "MAX")]
+	public static char max (char a, char b);
 	[CCode (cname = "CLAMP")]
 	public char clamp (char low, char high);
 }
@@ -66,6 +77,10 @@ public struct uchar {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%hhu");
 
+	[CCode (cname = "MIN")]
+	public static uchar min (uchar a, uchar b);
+	[CCode (cname = "MAX")]
+	public static uchar max (uchar a, uchar b);
 	[CCode (cname = "CLAMP")]
 	public uchar clamp (uchar low, uchar high);
 }
@@ -82,6 +97,10 @@ public struct int {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%i");
 
+	[CCode (cname = "MIN")]
+	public static int min (int a, int b);
+	[CCode (cname = "MAX")]
+	public static int max (int a, int b);
 	[CCode (cname = "CLAMP")]
 	public int clamp (int low, int high);
 
@@ -101,6 +120,10 @@ public struct uint {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%u");
 
+	[CCode (cname = "MIN")]
+	public static uint min (uint a, uint b);
+	[CCode (cname = "MAX")]
+	public static uint max (uint a, uint b);
 	[CCode (cname = "CLAMP")]
 	public uint clamp (uint low, uint high);
 
@@ -120,6 +143,10 @@ public struct short {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%hi");
 
+	[CCode (cname = "MIN")]
+	public static short min (short a, short b);
+	[CCode (cname = "MAX")]
+	public static short max (short a, short b);
 	[CCode (cname = "CLAMP")]
 	public short clamp (short low, short high);
 }
@@ -136,6 +163,10 @@ public struct ushort {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%hu");
 
+	[CCode (cname = "MIN")]
+	public static ushort min (ushort a, ushort b);
+	[CCode (cname = "MAX")]
+	public static ushort max (ushort a, ushort b);
 	[CCode (cname = "CLAMP")]
 	public ushort clamp (ushort low, ushort high);
 }
@@ -152,6 +183,10 @@ public struct long {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%li");
 
+	[CCode (cname = "MIN")]
+	public static long min (long a, long b);
+	[CCode (cname = "MAX")]
+	public static long max (long a, long b);
 	[CCode (cname = "CLAMP")]
 	public long clamp (long low, long high);
 }
@@ -168,6 +203,10 @@ public struct ulong {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%lu");
 
+	[CCode (cname = "MIN")]
+	public static ulong min (ulong a, ulong b);
+	[CCode (cname = "MAX")]
+	public static ulong max (ulong a, ulong b);
 	[CCode (cname = "CLAMP")]
 	public ulong clamp (ulong low, ulong high);
 }
@@ -192,6 +231,10 @@ public struct size_t {
 	[CCode (cname = "GSIZE_TO_POINTER")]
 	public void* to_pointer ();
 
+	[CCode (cname = "MIN")]
+	public static size_t min (size_t a, size_t b);
+	[CCode (cname = "MAX")]
+	public static size_t max (size_t a, size_t b);
 	[CCode (cname = "CLAMP")]
 	public size_t clamp (size_t low, size_t high);
 }
@@ -213,6 +256,10 @@ public struct ssize_t {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%zi");
 
+	[CCode (cname = "MIN")]
+	public static ssize_t min (ssize_t a, ssize_t b);
+	[CCode (cname = "MAX")]
+	public static ssize_t max (ssize_t a, ssize_t b);
 	[CCode (cname = "CLAMP")]
 	public ssize_t clamp (ssize_t low, ssize_t high);
 }
@@ -229,6 +276,10 @@ public struct int8 {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%hhi");
 
+	[CCode (cname = "MIN")]
+	public static int8 min (int8 a, int8 b);
+	[CCode (cname = "MAX")]
+	public static int8 max (int8 a, int8 b);
 	[CCode (cname = "CLAMP")]
 	public int8 clamp (int8 low, int8 high);
 }
@@ -245,6 +296,10 @@ public struct uint8 {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%hhu");
 
+	[CCode (cname = "MIN")]
+	public static uint8 min (uint8 a, uint8 b);
+	[CCode (cname = "MAX")]
+	public static uint8 max (uint8 a, uint8 b);
 	[CCode (cname = "CLAMP")]
 	public uint8 clamp (uint8 low, uint8 high);
 }
@@ -266,6 +321,10 @@ public struct int16 {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%hi");
 
+	[CCode (cname = "MIN")]
+	public static int16 min (int16 a, int16 b);
+	[CCode (cname = "MAX")]
+	public static int16 max (int16 a, int16 b);
 	[CCode (cname = "CLAMP")]
 	public int16 clamp (int16 low, int16 high);
 }
@@ -287,6 +346,10 @@ public struct uint16 {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%hu");
 
+	[CCode (cname = "MIN")]
+	public static uint16 min (uint16 a, uint16 b);
+	[CCode (cname = "MAX")]
+	public static uint16 max (uint16 a, uint16 b);
 	[CCode (cname = "CLAMP")]
 	public uint16 clamp (uint16 low, uint16 high);
 }
@@ -308,6 +371,10 @@ public struct int32 {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%i");
 
+	[CCode (cname = "MIN")]
+	public static int32 min (int32 a, int32 b);
+	[CCode (cname = "MAX")]
+	public static int32 max (int32 a, int32 b);
 	[CCode (cname = "CLAMP")]
 	public int32 clamp (int32 low, int32 high);
 }
@@ -329,6 +396,10 @@ public struct uint32 {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%u");
 
+	[CCode (cname = "MIN")]
+	public static uint32 min (uint32 a, uint32 b);
+	[CCode (cname = "MAX")]
+	public static uint32 max (uint32 a, uint32 b);
 	[CCode (cname = "CLAMP")]
 	public uint32 clamp (uint32 low, uint32 high);
 }
@@ -350,6 +421,10 @@ public struct int64 {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%lli");
 
+	[CCode (cname = "MIN")]
+	public static int64 min (int64 a, int64 b);
+	[CCode (cname = "MAX")]
+	public static int64 max (int64 a, int64 b);
 	[CCode (cname = "CLAMP")]
 	public int64 clamp (int64 low, int64 high);
 }
@@ -371,6 +446,10 @@ public struct uint64 {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%llu");
 
+	[CCode (cname = "MIN")]
+	public static uint64 min (uint64 a, uint64 b);
+	[CCode (cname = "MAX")]
+	public static uint64 max (uint64 a, uint64 b);
 	[CCode (cname = "CLAMP")]
 	public uint64 clamp (uint64 low, uint64 high);
 }
@@ -418,6 +497,10 @@ public struct float {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%g");
 
+	[CCode (cname = "MIN")]
+	public static float min (float a, float b);
+	[CCode (cname = "MAX")]
+	public static float max (float a, float b);
 	[CCode (cname = "CLAMP")]
 	public float clamp (float low, float high);
 }
@@ -465,6 +548,10 @@ public struct double {
 	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
 	public string to_string (string format = "%g");
 
+	[CCode (cname = "MIN")]
+	public static double min (double a, double b);
+	[CCode (cname = "MAX")]
+	public static double max (double a, double b);
 	[CCode (cname = "CLAMP")]
 	public double clamp (double low, double high);
 }
@@ -506,6 +593,10 @@ public struct unichar {
 
 	public int to_utf8 (string? outbuf);
 
+	[CCode (cname = "MIN")]
+	public static unichar min (unichar a, unichar b);
+	[CCode (cname = "MAX")]
+	public static unichar max (unichar a, unichar b);
 	[CCode (cname = "CLAMP")]
 	public unichar clamp (unichar low, unichar high);
 }
@@ -681,6 +772,10 @@ public class string {
 	public static char[] skip;
 
 	public string substring (long offset, long len);
+
+	public long length {
+		get { return this.len (); }
+	}
 }
 
 [Import ()]
@@ -776,6 +871,26 @@ namespace GLib {
 		public Type owner_type;
 	}
 
+	public class ParamSpecEnum : ParamSpec {
+		[CCode (cname = "g_param_spec_enum")]
+		public ParamSpecEnum (string name, string nick, string blurb, Type enum_type, int default_value, ParamFlags flags);
+	}
+
+	public class ParamSpecFloat : ParamSpec {
+		[CCode (cname = "g_param_spec_float")]
+		public ParamSpecFloat (string name, string nick, string blurb, float minimum, float maximum, float default_value, ParamFlags flags);
+	}
+
+	public class ParamSpecInt : ParamSpec {
+		[CCode (cname = "g_param_spec_int")]
+		public ParamSpecInt (string name, string nick, string blurb, int minimum, int maximum, int default_value, ParamFlags flags);
+	}
+
+	public class ParamSpecUInt : ParamSpec {
+		[CCode (cname = "g_param_spec_uint")]
+		public ParamSpecUInt (string name, string nick, string blurb, uint minimum, uint maximum, uint default_value, ParamFlags flags);
+	}
+
 	[CCode (cprefix = "G_PARAM_")]
 	public enum ParamFlags {
 		READABLE,
@@ -785,7 +900,9 @@ namespace GLib {
 		LAX_VALIDATION,
 		STATIC_NAME,
 		STATIC_NICK,
-		STATIC_BLURB
+		STATIC_BLURB,
+		READWRITE,
+		STATIC_STRINGS
 	}
 
 	[CCode (lower_case_csuffix = "object_class")]
@@ -1229,7 +1346,7 @@ namespace GLib {
 
 	namespace Timeout {
 		public static uint add (uint interval, SourceFunc function);
-		public static uint add_full (int priority, uint interval, SourceFunc function, DestroyNotify? notify);
+		public static uint add_full (int priority, uint interval, SourceFunc# function);
 		public static uint add_seconds (uint interval, SourceFunc function);
 		public static uint add_seconds_full (int priority, uint interval, SourceFunc function, DestroyNotify? notify);
 	}
@@ -1241,7 +1358,7 @@ namespace GLib {
 
 	namespace Idle {
 		public static uint add (SourceFunc function);
-		public static uint add_full (int priority, SourceFunc function, DestroyNotify? notify);
+		public static uint add_full (int priority, SourceFunc# function);
 		public static bool remove_by_data (void* data);
 	}
 
@@ -1258,7 +1375,7 @@ namespace GLib {
 	
 	namespace ChildWatch {
 		public static uint add (Pid pid, ChildWatchFunc function);
-		public static uint add_full (int priority, Pid pid, ChildWatchFunc function, DestroyNotify? notify);
+		public static uint add_full (int priority, Pid pid, ChildWatchFunc# function);
 	}
 	
 	public struct PollFD {
@@ -2727,7 +2844,7 @@ namespace GLib {
 		public static bool thorough ();
 		public static bool perf ();
 		public static bool verbose ();
-		public static bool quite ();
+		public static bool quiet ();
 		public static int run ();
 		public static void add_func (string testpath, Callback test_funcvoid);
 		[PrintfFormat]
@@ -3169,11 +3286,13 @@ namespace GLib {
 	
 	namespace Intl {
 		[CCode (cname = "setlocale", cheader_filename = "locale.h")]
-		public static weak string setlocale (LocaleCategory category, string locale);
+		public static weak string? setlocale (LocaleCategory category, string? locale);
 		[CCode (cname = "bindtextdomain", cheader_filename = "glib/gi18n-lib.h")]
-		public static weak string bindtextdomain (string domainname, string dirname);
+		public static weak string? bindtextdomain (string domainname, string? dirname);
 		[CCode (cname = "textdomain", cheader_filename = "glib/gi18n-lib.h")]
-		public static weak string textdomain (string domainname);
+		public static weak string? textdomain (string? domainname);
+		[CCode (cname = "bind_textdomain_codeset", cheader_filename = "glib/gi18n-lib.h")]
+		public static weak string? bind_textdomain_codeset (string domainname, string? codeset);
 	}
 
 	namespace Signal {
@@ -3246,10 +3365,9 @@ namespace GLib {
 	[Compact]
 	public class PatternSpec {
 		public PatternSpec (string pattern);
-		public void free ();
 		public bool equal (PatternSpec pspec);
 		[CCode (cname = "g_pattern_match")]
-		public bool match (uint string_length, string str, string str_reversed);
+		public bool match (uint string_length, string str, string? str_reversed);
 		[CCode (cname = "g_pattern_match_string")]
 		public bool match_string (string str);
 		[CCode (cname = "g_pattern_match_simple")]
