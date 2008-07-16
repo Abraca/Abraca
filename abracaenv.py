@@ -63,7 +63,8 @@ class AbracaEnvironment(SConsEnvironment):
 		opts.AddOptions(
 			BoolOption('verbose', 'verbose output', 'no'),
 			BoolOption('debug', 'build debug variant', 'no'),
-			PathOption('PREFIX', 'install prefix', '/usr/local', PathOption.PathAccept),
+			PathOption('DESTDIR', 'staged install prefix', None, PathOption.PathAccept),
+			PathOption('PREFIX', 'install prefix', '$DESTDIR/usr/local', PathOption.PathAccept),
 			PathOption('BINDIR', 'bin dir', '$PREFIX/bin', PathOption.PathAccept),
 			PathOption('DATADIR', 'data dir', '$PREFIX/share', PathOption.PathAccept),
 			PathOption('LOCALEDIR', 'locale dir', '$DATADIR/locale', PathOption.PathAccept),
