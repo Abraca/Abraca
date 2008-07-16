@@ -70,17 +70,27 @@ namespace Abraca {
 		/**
 		 * Construct the filename based on the standard XMMS2 path.
 		 */
-		private static string build_filename ()
+		private static string build_filename () throws GLib.FileError
 		{
 			char[] buf = new char[255];
 
 			Xmms.Client.userconfdir_get(buf);
 
-			string ret = GLib.Path.build_filename(
-				(string) buf, "clients", "abraca.conf", null
+			string path = GLib.Path.build_filename(
+				(string) buf, "clients", null
 			);
 
-			return ret;
+			if (GLib.FileUtils.test(path, GLib.FileTest.EXISTS)) {
+				if (!GLib.FileUtils.test(path, GLib.FileTest.IS_DIR)) {
+					throw new GLib.FileError.NOTDIR(path + " is not a directory");
+				}
+			} else {
+				if (GLib.DirUtils.create_with_parents(path, 0755) < 0) {
+					throw new GLib.FileError.FAILED("Failed to create " + path);
+				}
+			}
+
+			return GLib.Path.build_filename(path, "abraca.conf", null);
 		}
 
 		/**
@@ -93,8 +103,11 @@ namespace Abraca {
 			try {
 				string filename = build_filename();
 				file.load_from_file(filename, GLib.KeyFileFlags.NONE);
-			} catch (GLib.Error ex) {
-				/* First time abraca is launched, no config exists. */
+			} catch (GLib.FileError e) {
+				/* GLib.FileError.NOENT == 4, which is true the first time */
+				if (e.code != 4) {
+					GLib.stderr.printf("ERROR: %s\n", e.message);
+				}
 			}
 
 			return file;
@@ -108,8 +121,13 @@ namespace Abraca {
 			GLib.FileStream stream;
 			size_t length;
 
-			stream = GLib.FileStream.open(build_filename(), "w");
-			stream.puts(file.to_data(out length));
+			try {
+				string filename = build_filename();
+				stream = GLib.FileStream.open(filename, "w");
+				stream.puts(file.to_data(out length));
+			} catch (GLib.FileError e) {
+				GLib.stderr.printf("ERROR: %s\n", e.message);
+			}
 		}
 
 		/**
