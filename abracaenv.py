@@ -166,9 +166,14 @@ class AbracaEnvironment(SConsEnvironment):
 			raise SCons.Errors.UserError('valac min version needs to be a string')
 		ctx.Message('Checking for valac >= %s... ' % min_version)
 		cmd = ctx.env.subst('$VALAC')
-		proc = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE)
-		proc.wait()
-		res = re.findall('([0-9](\.[0-9])*)$', proc.stdout.read())
+		try:
+			proc = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE)
+			proc.wait()
+			res = re.findall('([0-9](\.[0-9])*)$', proc.stdout.read())
+		except OSError:
+			ctx.Result(0)
+			raise SCons.Errors.UserError('No vala compiler found')
+
 		if res and res[0] and res[0][0] >= min_version:
 			ctx.Result(1)
 		else:
