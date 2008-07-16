@@ -28,6 +28,11 @@ namespace Abraca {
 		private static bool config_loaded = false;
 
 
+		/**
+		 * Register a configurable object.
+		 * If the object was registered after the initial read
+		 * of the config file, then the config file will be re-read.
+		 */
 		public static void register (IConfigurable obj)
 		{
 			GLib.KeyFile file;
@@ -46,6 +51,12 @@ namespace Abraca {
 			configurables.prepend(obj);
 		}
 
+		/**
+		 * Unregister a configurable object.
+		 * As this happens before a "global shutdown" the
+		 * settings from this object needs to be merged with
+		 * the config file from disk.
+		 */
 		public static void unregister (IConfigurable obj)
 		{
 			GLib.KeyFile file = read_config();
@@ -56,6 +67,9 @@ namespace Abraca {
 			write_config(file);
 		}
 
+		/**
+		 * Construct the filename based on the standard XMMS2 path.
+		 */
 		private static string build_filename ()
 		{
 			char[] buf = new char[255];
@@ -69,6 +83,9 @@ namespace Abraca {
 			return ret;
 		}
 
+		/**
+		 * Read the config file.
+		 */
 		private static GLib.KeyFile read_config ()
 		{
 			GLib.KeyFile file = new GLib.KeyFile();
@@ -83,6 +100,9 @@ namespace Abraca {
 			return file;
 		}
 
+		/**
+		 * Write the config file.
+		 */
 		private static void write_config (GLib.KeyFile file)
 		{
 			GLib.FileStream stream;
@@ -92,6 +112,9 @@ namespace Abraca {
 			stream.puts(file.to_data(out length));
 		}
 
+		/**
+		 * Load the config file and pass it to all registered listeners.
+		 */
 		public static void load ()
 		{
 			GLib.KeyFile file = read_config();
@@ -106,6 +129,9 @@ namespace Abraca {
 			config_loaded = true;
 		}
 
+		/**
+		 * Ask all registered listeners for settings and save to file.
+		 */
 		public static void save ()
 		{
 			GLib.KeyFile file = read_config();
