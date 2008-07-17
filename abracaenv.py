@@ -63,7 +63,7 @@ class AbracaEnvironment(SConsEnvironment):
 		opts.AddOptions(
 			BoolOption('verbose', 'verbose output', 'no'),
 			BoolOption('debug', 'build debug variant', 'no'),
-			PathOption('DESTDIR', 'staged install prefix', None, PathOption.PathIsDirCreate),
+			PathOption('DESTDIR', 'staged install prefix', None, PathOption.PathAccept),
 			PathOption('PREFIX', 'install prefix', '/usr/local', PathOption.PathIsDirCreate),
 			PathOption('BINDIR', 'bin dir', '$PREFIX/bin', PathOption.PathIsDirCreate),
 			PathOption('DATADIR', 'data dir', '$PREFIX/share', PathOption.PathIsDirCreate),
@@ -91,12 +91,14 @@ class AbracaEnvironment(SConsEnvironment):
 		self.InstallAs = self._install_as
 
 	def _install(self, dst, src):
-		if self.has_key('DESTDIR'):
+		if self.has_key('DESTDIR') and self['DESTDIR']:
+			PathOption.PathIsDirCreate('DESTDIR', self['DESTDIR'], self)
 			dst = os.path.join(self['DESTDIR'], dst)
 		return self.SConsInstall(dst, src)
 
 	def _install_as(self, dst, src):
-		if self.has_key('DESTDIR'):
+		if self.has_key('DESTDIR') and self['DESTDIR']:
+			PathOption.PathIsDirCreate('DESTDIR', self['DESTDIR'], self)
 			dst = os.path.join(self['DESTDIR'], dst)
 		return self.SConsInstallAs(dst, src)
 
