@@ -31,4 +31,4 @@ if not env.DebugVariant():
 
 env.Append(CPPPATH = ['utils'])
 
-env.Alias('install', env.Install('$DESTDIR$BINDIR', prog))
+env.Alias('install', env.Install('$BINDIR', prog))

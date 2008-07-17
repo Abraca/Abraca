@@ -17,5 +17,5 @@ env.Append(VALAPKGS = ['abraca_images'])
 
 Export('images')
 
-env.Alias('install', env.Install('$DESTDIR$DATADIR/icons', 'abraca.svg'))
-env.Alias('install', env.Install('$DESTDIR$DATADIR/applications', 'abraca.desktop'))
+env.Alias('install', env.Install('$DATADIR/icons', 'abraca.svg'))
+env.Alias('install', env.Install('$DATADIR/applications', 'abraca.desktop'))

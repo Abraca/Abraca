@@ -63,11 +63,11 @@ class AbracaEnvironment(SConsEnvironment):
 		opts.AddOptions(
 			BoolOption('verbose', 'verbose output', 'no'),
 			BoolOption('debug', 'build debug variant', 'no'),
-			PathOption('DESTDIR', 'staged install prefix', None, PathOption.PathAccept),
-			PathOption('PREFIX', 'install prefix', '/usr/local', PathOption.PathAccept),
-			PathOption('BINDIR', 'bin dir', '$PREFIX/bin', PathOption.PathAccept),
-			PathOption('DATADIR', 'data dir', '$PREFIX/share', PathOption.PathAccept),
-			PathOption('LOCALEDIR', 'locale dir', '$DATADIR/locale', PathOption.PathAccept),
+			PathOption('DESTDIR', 'staged install prefix', None, PathOption.PathIsDirCreate),
+			PathOption('PREFIX', 'install prefix', '/usr/local', PathOption.PathIsDirCreate),
+			PathOption('BINDIR', 'bin dir', '$PREFIX/bin', PathOption.PathIsDirCreate),
+			PathOption('DATADIR', 'data dir', '$PREFIX/share', PathOption.PathIsDirCreate),
+			PathOption('LOCALEDIR', 'locale dir', '$DATADIR/locale', PathOption.PathIsDirCreate),
 		)
 		opts.Update(self)
 		opts.Save('.scons_options', self)
@@ -83,6 +83,22 @@ class AbracaEnvironment(SConsEnvironment):
 			self['MSGFMTCOMSTR']      = '  Localize: $TARGET'
 			self['STRIPCOMSTR']       = ' Stripping: $TARGET'
 			self['GDKPBUFCOMSTR']     = ' Embedding: $SOURCES'
+
+		self.SConsInstall = self.Install
+		self.Install = self._install
+
+		self.SConsInstallAs = self.InstallAs
+		self.InstallAs = self._install_as
+
+	def _install(self, dst, src):
+		if self.has_key('DESTDIR'):
+			dst = os.path.join(self['DESTDIR'], dst)
+		self.SConsInstall(dst, src)
+
+	def _install_as(self, dst, src):
+		if self.has_key('DESTDIR'):
+			dst = os.path.join(self['DESTDIR'], dst)
+		self.SConsInstallAs(dst, src)
 
 	def _import_variable(self, name):
 		if ARGUMENTS.has_key(name):
