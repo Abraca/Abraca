@@ -1635,7 +1635,7 @@ namespace Gtk {
 		public Gtk.SelectionData copy ();
 		public Gdk.Pixbuf? get_pixbuf ();
 		public bool get_targets (out Gdk.Atom targets, int n_atoms);
-		public weak uchar[] get_text ();
+		public string? get_text ();
 		[NoArrayLength]
 		public string[] get_uris ();
 		public void set (Gdk.Atom type, int format, uchar[] data);
@@ -2669,7 +2669,7 @@ namespace Gtk {
 		public static weak GLib.ParamSpec class_list_child_properties (GLib.ObjectClass cclass, uint n_properties);
 		public void @foreach (Gtk.Callback callback);
 		public uint get_border_width ();
-		public weak GLib.List get_children ();
+		public weak GLib.List<Gtk.Widget> get_children ();
 		public bool get_focus_chain (GLib.List focusable_widgets);
 		public weak Gtk.Adjustment get_focus_hadjustment ();
 		public weak Gtk.Adjustment get_focus_vadjustment ();
@@ -3721,7 +3721,7 @@ namespace Gtk {
 		public uint menu_flag;
 		public uint ignore_enter;
 		public void activate_item (Gtk.Widget menu_item, bool force_deactivate);
-		public void append ([CCode(ctype="GtkWidget*")] Gtk.MenuItem child);
+		public void append ([CCode (type = "GtkWidget*")] Gtk.MenuItem child);
 		public void deselect ();
 		public bool get_take_focus ();
 		public void prepend (Gtk.Widget child);
@@ -5931,7 +5931,7 @@ namespace Gtk {
 		public Gtk.ShadowType get_shadow_type ();
 		public weak Gtk.Adjustment get_vadjustment ();
 		[CCode (type = "GtkWidget*")]
-		public Viewport (Gtk.Adjustment hadjustment, Gtk.Adjustment vadjustment);
+		public Viewport (Gtk.Adjustment? hadjustment, Gtk.Adjustment? vadjustment);
 		public void set_hadjustment (Gtk.Adjustment adjustment);
 		public void set_shadow_type (Gtk.ShadowType type);
 		public void set_vadjustment (Gtk.Adjustment adjustment);
@@ -6466,7 +6466,7 @@ namespace Gtk {
 		public bool backward_search (string str, Gtk.TextSearchFlags flags, out Gtk.TextIter match_start, out Gtk.TextIter match_end, Gtk.TextIter? limit);
 		public bool backward_sentence_start ();
 		public bool backward_sentence_starts (int count);
-		public bool backward_to_tag_toggle (Gtk.TextTag tag);
+		public bool backward_to_tag_toggle (Gtk.TextTag? tag);
 		public bool backward_visible_cursor_position ();
 		public bool backward_visible_cursor_positions (int count);
 		public bool backward_visible_line ();
@@ -6497,7 +6497,7 @@ namespace Gtk {
 		public bool forward_sentence_ends (int count);
 		public void forward_to_end ();
 		public bool forward_to_line_end ();
-		public bool forward_to_tag_toggle (Gtk.TextTag tag);
+		public bool forward_to_tag_toggle (Gtk.TextTag? tag);
 		public bool forward_visible_cursor_position ();
 		public bool forward_visible_cursor_positions (int count);
 		public bool forward_visible_line ();
