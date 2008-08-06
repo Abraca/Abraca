@@ -2468,9 +2468,10 @@ namespace GLib {
 		public const string RESERVED_CHARS_SUBCOMPONENT_DELIMITERS;
 
 		public static string escape_string (string unescaped, string reserved_chars_allowed, bool allow_utf8);
+		[CCode(cname="g_uri_parse_scheme")]
 		public static string get_scheme (string uri);
-		public static string unescape_segment (string escaped_string, string escaped_string_end, string illegal_characters);
-		public static string unescape_string (string escaped_string, string illegal_characters);
+		public static string unescape_segment (string escaped_string, string escaped_string_end, string? illegal_characters);
+		public static string unescape_string (string escaped_string, string? illegal_characters);
 	}
 
 	/* Shell-related Utilities */

@@ -530,8 +530,7 @@ namespace Abraca {
 			} else if (info == (uint) DragDropTargetType.COLL) {
 				success = on_drop_collection(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.URI) {
-				GLib.stdout.printf("Drop from filesystem not implemented\n");
-				// success = on_drop_files(sel, x, y);
+				success = on_drop_files(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.INTERNET) {
 				success = on_drop_files(sel, x, y, true);
 			} else {
@@ -621,27 +620,34 @@ namespace Abraca {
 
 			Client c = Client.instance();
 
-			uri_list = ((string) sel.data).split("\n");
+			uri_list = ((string) sel.data).split("\r\n");
 
-			for (int i = 0; uri_list[i] != null; i++) {
+			for (int i = 0; uri_list != null && uri_list[i] != null; i++) {
 				if (internet && (i % 2 != 0)) {
 					continue;
 				}
 
-				if (((string)uri_list[i]).len() > 0) {
+				if (((string) uri_list[i]).len() > 0) {
 					Gtk.TreeViewDropPosition align;
 					Gtk.TreePath path;
+					bool is_dir = false;
 
-					if (get_dest_row_at_pos(x, y, out path, out align)) {
+					string uri = GLib.Uri.unescape_string(uri_list[i], null);
+					if (GLib.Uri.get_scheme(uri) == "file") {
+						string[] tmp = uri.split("file://", 2);
+						if (tmp != null && tmp[1] != null) {
+							GLib.FileTest pattern = GLib.FileTest.EXISTS | GLib.FileTest.IS_DIR;
+							is_dir = GLib.FileUtils.test(tmp[1], pattern);
+						}
+					}
+
+					if (is_dir) {
+						c.xmms.playlist_radd (Xmms.ACTIVE_PLAYLIST, uri);
+					} else if (get_dest_row_at_pos(x, y, out path, out align)) {
 						int pos = path.get_indices()[0];
-
-						c.xmms.playlist_insert_url(
-							Xmms.ACTIVE_PLAYLIST, pos, uri_list[i]
-						);
+						c.xmms.playlist_insert_url(Xmms.ACTIVE_PLAYLIST, pos, uri);
 					} else {
-						c.xmms.playlist_add_url(
-							Xmms.ACTIVE_PLAYLIST, uri_list[i]
-						);
+						c.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, uri);
 					}
 				}
 			}
