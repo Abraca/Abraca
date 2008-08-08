@@ -21,6 +21,7 @@ vala_sources = """
 	dragdroptarget.vala
 	collection_cellrenderer.vala
 	configurable.vala
+	volume_button.vala
 """.split()
 
 sources = env.Vala(vala_sources)

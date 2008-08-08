@@ -31,8 +31,9 @@ namespace Abraca {
 		public signal void playback_status(int status);
 		public signal void playback_current_id(uint mid);
 		public signal void playback_playtime(uint pos);
-		public signal void playlist_loaded(string name);
+		public signal void playback_volume(Xmms.Result res);
 
+		public signal void playlist_loaded(string name);
 		public signal void playlist_add(string playlist, uint mid);
 		public signal void playlist_move(string playlist, int pos, int npos);
 		public signal void playlist_insert(string playlist, uint mid, int pos);
@@ -49,6 +50,7 @@ namespace Abraca {
 		private Xmms.Result _result_playback_status;
 		private Xmms.Result _result_playback_current_id;
 		private Xmms.Result _result_medialib_entry_changed;
+		private Xmms.Result _result_playback_volume;
 		private Xmms.Result _result_playlist_loaded;
 		private Xmms.Result _result_playlist_changed;
 		private Xmms.Result _result_playlist_position;
@@ -159,6 +161,13 @@ namespace Abraca {
 				on_playback_playtime
 			);
 
+			_xmms.playback_volume_get().notifier_set(
+				on_playback_volume
+			);
+			_xmms.broadcast_playback_volume_changed().notifier_set(
+				on_playback_volume
+			);
+
 			_xmms.playlist_current_active().notifier_set(
 				on_playlist_loaded
 			);
@@ -228,6 +237,15 @@ namespace Abraca {
 			}
 		}
 
+		private void on_playback_volume(Xmms.Result #res) {
+
+			playback_volume(res);
+
+			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
+				_result_playback_volume = res;
+				_result_playback_volume.ref();
+			}
+		}
 
 		private void on_playlist_loaded(Xmms.Result #res) {
 			weak string name;

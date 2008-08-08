@@ -62,6 +62,9 @@ namespace Abraca {
 			create_cover_image();
 			create_track_label();
 
+			btn = new VolumeButton();
+			pack_end(btn, false, false, 0);
+
 			c.playback_status += on_playback_status_change;
 			c.playback_current_id += on_playback_current_id;
 			c.playback_playtime += on_playback_playtime;

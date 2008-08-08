@@ -104,7 +104,7 @@ namespace Gdk {
 		public Pixbuf.from_file (string filename) throws GLib.Error;
 		public Pixbuf.from_file_at_scale (string filename, int width, int height, bool preserve_aspect_ratio) throws GLib.Error;
 		public Pixbuf.from_file_at_size (string filename, int width, int height) throws GLib.Error;
-		public Pixbuf.from_inline (int data_length, uchar data, bool copy_pixels) throws GLib.Error;
+		public Pixbuf.from_inline (int data_length, uchar[] data, bool copy_pixels) throws GLib.Error;
 		public Pixbuf.from_stream (GLib.InputStream stream, GLib.Cancellable cancellable) throws GLib.Error;
 		public Pixbuf.from_stream_at_scale (GLib.InputStream stream, int width, int height, bool preserve_aspect_ratio, GLib.Cancellable cancellable) throws GLib.Error;
 		[NoArrayLength]
