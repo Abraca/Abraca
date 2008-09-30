@@ -26,11 +26,7 @@ vala_sources = """
 """.split()
 
 sources = env.Vala(vala_sources)
-prog = env.Program('abraca', sources + ['utils/playlist_map.c', images])
-
-if not env.DebugVariant():
-	env.AddPostAction(prog, env.Strip)
+prog = env.Program('abraca', sources + ['utils/playlist_map.c', images], install=True)
 
 env.Append(CPPPATH = ['utils'])
 
-env.Alias('install', env.Install('$BINDIR', prog))

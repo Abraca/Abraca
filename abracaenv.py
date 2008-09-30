@@ -95,6 +95,19 @@ class AbracaEnvironment(SConsEnvironment):
 		self.SConsInstallAs = self.InstallAs
 		self.InstallAs = self._install_as
 
+		self['BUILDERS']['SConsProgram'] = self['BUILDERS']['Program']
+		self['BUILDERS']['Program'] = self._program
+
+	def _program(self, target, source, *args, **kwargs):
+		prog = self['BUILDERS']['SConsProgram'](target, source, *args, **kwargs)
+
+		if not self.DebugVariant():
+			self.AddPostAction(prog, self.Strip)
+
+		if kwargs.get('install'):
+			destdir = kwargs['install'] if isinstance(kwargs['install'], basestring) else '$BINDIR'
+			self.Alias('install', self.Install(destdir, prog))
+
 	def _install(self, dst, src):
 		if self.has_key('DESTDIR') and self['DESTDIR']:
 			dst = os.path.join(self['DESTDIR'], dst)
@@ -104,6 +117,12 @@ class AbracaEnvironment(SConsEnvironment):
 		if self.has_key('DESTDIR') and self['DESTDIR']:
 			dst = os.path.join(self['DESTDIR'], dst)
 		return self.SConsInstallAs(dst, src)
+
+	def InstallData(self, target, source):
+		self.Alias('install', self.Install(os.path.join('$DATADIR', target), source))
+
+	def InstallLocale(self, target, source):
+		self.Alias('install', self.InstallAs(os.path.join('$LOCALEDIR', target), source))
 
 	def _import_variable(self, name):
 		if ARGUMENTS.has_key(name):
@@ -203,4 +222,5 @@ class AbracaEnvironment(SConsEnvironment):
 		proc = subprocess.Popen(['strip', target[0].path])
 		proc.wait()
 	Strip = SCons.Action.Action(Strip, '$STRIPCOMSTR')
+
 
