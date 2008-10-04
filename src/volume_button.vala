@@ -17,113 +17,79 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public class Abraca.VolumeButton : Gtk.Button {
-	public signal void volume_changed (uint volume);
+public class Abraca.VolumeButton : Gtk.ScaleButton {
 
-	private int _old_icon = -1;
-
-	private uint _volume = 0;
-
-	public uint volume {
-		get {
-			return _volume;
-		}
-		set {
-			if (value > min && value < max) {
-				_volume = value;
-				update_icon();
-				volume_changed(value);
-				tooltip_text = "%d%%".printf((int)(100.0 * value / (max - min)));
-			}
-		}
-		default = 0;
-	}
-
-	public uint step {
-		get; set; default = 3;
-	}
-
-	public uint min {
-		get; set; default = 0;
-	}
-
-	public uint max {
-		get; set; default = 100;
-	}
-
-	public Gtk.IconSize size {
-		get; set; default = Gtk.IconSize.SMALL_TOOLBAR;
-	}
+	private bool _accept_updates = true;
 
 	construct {
 		has_tooltip = true;
 		relief = Gtk.ReliefStyle.NONE;
-		volume = 50;
+
+		adjustment.lower = 0;
+		adjustment.upper = 100;
+
+		icons = new string[] {
+			"stock_volume-mute",
+			"stock_volume-max",
+			"stock_volume-0",
+			"stock_volume-min",
+			"stock_volume-med"
+		};
+
+		pressed += (w) => {
+			_accept_updates = false;
+		};
+
+		released += (w) => {
+			_accept_updates = true ;
+		};
 
 		scroll_event += on_scroll_event;
 
 		Client c = Client.instance();
 		c.playback_volume += (client, res) => {
-			uint tmp;
-			res.get_dict_entry_uint("master", out tmp);
-			volume = tmp;
+			if (_accept_updates) {
+				value = 0;
+				res.dict_foreach((key, type, val) => {
+					if (value == 0) {
+						value = (int) val;
+					} else {
+						value = (value + (int) val) / 2;
+					}
+				});
+			}
+		};
+
+		value_changed += (w, volume) => {
+			_apply_volume((uint) volume);
 		};
 	}
 
-	private void update_icon() {
-		Gdk.Pixbuf buf;
-		int icon = (int)(4.0 * volume / (max - min));
+	private void _apply_volume (uint volume) {
+		Client c = Client.instance();
+		c.xmms.playback_volume_get().notifier_set((res) => {
+			res.dict_foreach((key, type, val) => {
+				Client c = Client.instance();
+				c.xmms.playback_volume_set((string) key, (uint) value);
+			});
+		});
 
-		/* Still the same icon */
-		if (icon == _old_icon) {
-			return;
-		}
-
-		try {
-			Gdk.Pixbuf tmp;
-
-			switch (icon) {
-				case 0:
-			 		tmp = new Gdk.Pixbuf.from_inline (
-						-1, Resources.audio_volume_muted, false
-					);
-					break;
-				case 1:
-			 		tmp = new Gdk.Pixbuf.from_inline (
-						-1, Resources.audio_volume_low, false
-					);
-					break;
-				case 2:
-			 		tmp = new Gdk.Pixbuf.from_inline (
-						-1, Resources.audio_volume_medium, false
-					);
-					break;
-				case 3:
-			 		tmp = new Gdk.Pixbuf.from_inline (
-						-1, Resources.audio_volume_high, false
-					);
-					break;
-				default:
-					GLib.stdout.printf("noes %d\n", icon);
-					break;
-			}
-			buf = tmp;
-		} catch (GLib.Error e) {
-			GLib.stderr.printf("ERROR: %s\n", e.message);
-		}
-
-		image = new Gtk.Image.from_pixbuf(buf);
-
-		_old_icon = icon;
+		tooltip_text = "%d%%".printf((int) value);
 	}
 
 	public bool on_scroll_event (VolumeButton w, Gdk.EventScroll e) {
 		Client c = Client.instance();
+		uint tmp;
+
 		if (e.direction == Gdk.ScrollDirection.UP) {
-			c.xmms.playback_volume_set("master", (uint) volume + step);
+			tmp = (uint) value + 5;
 		} else if (e.direction == Gdk.ScrollDirection.DOWN) {
-			c.xmms.playback_volume_set("master", (uint) volume - step);
+			tmp = (uint) value - 5;
+		} else {
+			return true;
 		}
+
+		_apply_volume(tmp);
 
 		return true;
 	}
