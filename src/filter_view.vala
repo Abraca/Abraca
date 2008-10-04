@@ -53,12 +53,6 @@ namespace Abraca {
 			DragDropTarget.TrackId
 		};
 
-		/* metadata properties we're interested in */
-		private const string[] _properties = {
-			"artist", "album", "title"
-		};
-
-
 		construct {
 			fixed_height_mode = true;
 			enable_search = false;
