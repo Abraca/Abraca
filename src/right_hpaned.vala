@@ -43,7 +43,7 @@ namespace Abraca {
 
 		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
 			int pos = file.get_integer("panes", "pos2");
-			if (pos > 0) {
+			if (pos >= 0) {
 				position = pos;
 			}
 
