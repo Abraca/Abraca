@@ -34,23 +34,25 @@ namespace Abraca {
 			ID
 		}
 
+		public string[] dynamic_columns;
+
 		/* Map medialib id to row */
 		/* TODO: Should probably be iters instead */
 		private GLib.HashTable<int,Gtk.TreeRowReference> pos_map;
 
 		construct {
-			/* To be set dynamically
-			 * TODO: Pos 0 = status, Pos 1 = mid always
-			 */
-			set_column_types(new GLib.Type[7] {
-					typeof(int),
-					typeof(uint),
-					typeof(string),
-					typeof(string),
-					typeof(string),
-					typeof(string),
-					typeof(string)
-			});
+			dynamic_columns = new string[] {"artist", "title", "album"};
+
+			GLib.Type[] types = new GLib.Type[2 + dynamic_columns.length];
+
+			types[0] = typeof(int);
+			types[1] = typeof(uint);
+
+			int pos = 2;
+			foreach (weak string s in dynamic_columns) {
+				types[pos++] = typeof(string);
+			}
+			set_column_types(types);
 
 			// TODO: Add proper unreffing here
 			pos_map = new GLib.HashTable<int,Gtk.TreeRowReference>(GLib.direct_hash, GLib.direct_equal);
@@ -68,7 +70,7 @@ namespace Abraca {
 		 */
 		public void replace_content (Xmms.Result res) {
 			Gtk.TreeIter iter, sibling;
-			bool first = true;
+			bool is_first = true;
 
 			clear();
 
@@ -85,15 +87,14 @@ namespace Abraca {
 				if (!res.get_uint(out id))
 					continue;
 
-				if (first) {
+				if (is_first) {
 					insert_after(out iter, null);
-					first = !first;
+					is_first = !is_first;
 				} else {
 					insert_after(out iter, sibling);
 				}
 
-				set(iter, Column.STATUS, Status.UNRESOLVED);
-				set(iter, Column.ID, id);
+				set(iter, Column.ID, id, Column.STATUS, Status.UNRESOLVED);
 
 				sibling = iter;
 
@@ -128,15 +129,11 @@ namespace Abraca {
 			base.get_value(iter, column, ref val);
 		}
 
-		/**
-		 * TODO: This sucks a bit, should handle dynamic columns.
-		 */
 		private void on_medialib_info(Xmms.Result #res) {
-			weak string artist, album, title;
 			weak Gtk.TreeRowReference row;
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
-			int mid, pos, id;
+			int mid, id;
 			string info;
 
 			res.get_dict_entry_int("id", out mid);
@@ -146,21 +143,58 @@ namespace Abraca {
 				return;
 			}
 
-			if (!res.get_dict_entry_string("artist", out artist)) {
-				artist = _("Unknown");
-			}
-			if (!res.get_dict_entry_string("album", out album)) {
-				album = _("Unknown");
-			}
-			if (!res.get_dict_entry_string("title", out title)) {
-				title = _("Unknown");
-			}
-
 			path = row.get_path();
 
 			if (get_iter(out iter, path)) {
-				set(iter, Column.STATUS, Status.RESOLVED, 2, artist, 3, title, 4, album);
+				set(iter, Column.STATUS, Status.RESOLVED);
+
+				int pos = 2;
+				foreach (weak string key in dynamic_columns) {
+					GLib.Value tmp;
+					get_string_from_dict(res, key, out tmp);
+					set_value(iter, pos++, tmp);
+					tmp.unset();
+				}
+
 			}
+		}
+
+		private bool get_string_from_dict (Xmms.Result res, string key, out GLib.Value val) {
+			bool ret = true;
+			string repr;
+
+			switch (res.get_dict_entry_type(key)) {
+				case Xmms.ResultType.INT32:
+					int tmp;
+					if (!res.get_dict_entry_int(key, out tmp)) {
+						repr = "%s".printf(_("Unknown"));
+					} else {
+						repr = "%d".printf(tmp);
+					}
+					break;
+				case Xmms.ResultType.UINT32:
+					uint tmp;
+					if (!res.get_dict_entry_uint(key, out tmp)) {
+						repr = "%s".printf(_("Unknown"));
+					} else {
+						repr = "%u".printf(tmp);
+					}
+					break;
+				case Xmms.ResultType.STRING:
+					if (!res.get_dict_entry_string(key, out repr)) {
+						repr = "%s".printf(_("Unknown"));
+					} else {
+						repr = "%s".printf(repr);
+					}
+					break;
+				default:
+					break;
+			}
+
+			val = GLib.Value(typeof(string));
+			val.take_string(repr);
+
+			return ret;
 		}
 	}
 }
