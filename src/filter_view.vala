@@ -32,7 +32,7 @@ namespace Abraca {
 		Total
 	}
 
-	public class FilterView : Gtk.TreeView {
+	public class FilterView : Gtk.TreeView, IConfigurable {
 		/** context menu */
 		private Gtk.Menu filter_menu;
 
@@ -59,9 +59,6 @@ namespace Abraca {
 
 			get_selection().set_mode(Gtk.SelectionMode.MULTIPLE);
 
-			model = new FilterModel();
-
-			create_columns ();
 
 			create_context_menu();
 			get_selection().changed += on_selection_changed_update_menu;
@@ -71,8 +68,29 @@ namespace Abraca {
 
 			button_press_event += on_button_press_event;
 			row_activated += on_row_activated;
+
+			Configurable.register(this);
 		}
 
+		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+			string[] list;
+
+			if (file.has_key("filter", "columns")) {
+				list = file.get_string_list("filter", "columns");
+			} else {
+				list = new string[] {"artist", "title", "album"};
+			}
+
+			PropertyList props = new PropertyList(list);
+			model = new FilterModel(props);
+
+			create_columns ();
+		}
+
+		public void get_configuration(GLib.KeyFile file) {
+			FilterModel store = (FilterModel) model;
+			file.set_string_list("filter", "columns", store.dynamic_columns.get());
+		}
 
 		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
 			int n = s.count_selected_rows();
@@ -256,7 +274,7 @@ namespace Abraca {
 			cell.ellipsize = Pango.EllipsizeMode.END;
 
 			int pos = 2;
-			foreach (weak string key in store.dynamic_columns) {
+			foreach (weak string key in store.dynamic_columns.get()) {
 				column = new Gtk.TreeViewColumn.with_attributes(
 					key, cell, "text", pos++, null
 				);

@@ -24,7 +24,7 @@ conf.Define('DATADIR', '"' + env.subst(env['DATADIR']) + '"')
 
 conf.Finish()
 
-env.Append(VALAPKGS = ['playlist-map', 'build-config'])
+env.Append(VALAPKGS = ['playlist-map', 'property-list', 'build-config'])
 env.Append(CCFLAGS = ['-Wall', '-Wno-unused-variable'])
 env.Append(CPPPATH = Dir('build'))
 

@@ -34,23 +34,28 @@ namespace Abraca {
 			ID
 		}
 
-		public string[] dynamic_columns;
+		public PropertyList dynamic_columns {
+			get; construct;
+		}
 
 		/* Map medialib id to row */
 		/* TODO: Should probably be iters instead */
 		private GLib.HashTable<int,Gtk.TreeRowReference> pos_map;
 
-		construct {
-			dynamic_columns = new string[] {"artist", "title", "album"};
+		public FilterModel (PropertyList props) {
+			dynamic_columns = props;
+		}
 
-			GLib.Type[] types = new GLib.Type[2 + dynamic_columns.length];
+		construct {
+			int n_columns = dynamic_columns.get_length();
+
+			GLib.Type[] types = new GLib.Type[2 + n_columns];
 
 			types[0] = typeof(int);
 			types[1] = typeof(uint);
 
-			int pos = 2;
-			foreach (weak string s in dynamic_columns) {
-				types[pos++] = typeof(string);
+			for (int i = 0; i < n_columns; i++) {
+				types[2 + i] = typeof(string);
 			}
 			set_column_types(types);
 
@@ -149,7 +154,7 @@ namespace Abraca {
 				set(iter, Column.STATUS, Status.RESOLVED);
 
 				int pos = 2;
-				foreach (weak string key in dynamic_columns) {
+				foreach (weak string key in dynamic_columns.get()) {
 					GLib.Value tmp;
 					get_string_from_dict(res, key, out tmp);
 					set_value(iter, pos++, tmp);

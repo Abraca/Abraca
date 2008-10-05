@@ -26,7 +26,12 @@ vala_sources = """
 """.split()
 
 sources = env.Vala(vala_sources)
-prog = env.Program('abraca', sources + ['utils/playlist_map.c', images], install=True)
+
+extra = [
+	'utils/playlist_map.c',
+	'utils/property_list.c',
+]
+
+prog = env.Program('abraca', sources + extra + [images], install=True)
 
 env.Append(CPPPATH = ['utils'])
-
