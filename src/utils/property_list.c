@@ -30,7 +30,6 @@ property_list_new (gchar **properties) {
 	property_list_t *props;
 	guint length, i;
 
-	g_return_val_if_fail(length > 0, NULL);
 	g_return_val_if_fail(properties && properties[0], NULL);
 
 	length = g_strv_length (properties);
