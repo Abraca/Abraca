@@ -34,20 +34,33 @@ namespace Abraca {
 			ID
 		}
 
-		public PropertyList dynamic_columns {
-			get; construct;
-		}
+		/* TODO: This should be a property, not just a member variable */
+		public string[] dynamic_columns;
 
 		/* Map medialib id to row */
 		/* TODO: Should probably be iters instead */
 		private GLib.HashTable<int,Gtk.TreeRowReference> pos_map;
 
-		public FilterModel (PropertyList props) {
-			dynamic_columns = props;
+		/**
+		 * TODO: Get rid of this one...
+		 * This method exists due to a bug in Vala that prevents constructors
+		 * to accept string[] parameters for initialization. Get rid of this
+		 * hack as soon as possible!
+		 */
+		public static FilterModel create(string[] #props) {
+			FilterModel model = new FilterModel();
+
+			model._set_dynamic_columns(#props);
+
+			return model;
 		}
 
-		construct {
-			int n_columns = dynamic_columns.get_length();
+		/**
+		 * TODO: Get rid of this one too...
+		 * Helper method for the factory hack above.
+		 */
+		public void _set_dynamic_columns (string[] #props) {
+			int n_columns = props.length;
 
 			GLib.Type[] types = new GLib.Type[2 + n_columns];
 
@@ -57,8 +70,13 @@ namespace Abraca {
 			for (int i = 0; i < n_columns; i++) {
 				types[2 + i] = typeof(string);
 			}
+
 			set_column_types(types);
 
+			dynamic_columns = #props;
+		}
+
+		construct {
 			// TODO: Add proper unreffing here
 			pos_map = new GLib.HashTable<int,Gtk.TreeRowReference>(GLib.direct_hash, GLib.direct_equal);
 
@@ -154,7 +172,7 @@ namespace Abraca {
 				set(iter, Column.STATUS, Status.RESOLVED);
 
 				int pos = 2;
-				foreach (weak string key in dynamic_columns.get()) {
+				foreach (weak string key in dynamic_columns) {
 					GLib.Value tmp;
 					get_string_from_dict(res, key, out tmp);
 					set_value(iter, pos++, tmp);

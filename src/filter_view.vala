@@ -81,15 +81,14 @@ namespace Abraca {
 				list = new string[] {"artist", "title", "album"};
 			}
 
-			PropertyList props = new PropertyList(list);
-			model = new FilterModel(props);
+			model = FilterModel.create(#list);
 
 			create_columns ();
 		}
 
 		public void get_configuration(GLib.KeyFile file) {
 			FilterModel store = (FilterModel) model;
-			file.set_string_list("filter", "columns", store.dynamic_columns.get());
+			file.set_string_list("filter", "columns", store.dynamic_columns);
 		}
 
 		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
@@ -274,7 +273,7 @@ namespace Abraca {
 			cell.ellipsize = Pango.EllipsizeMode.END;
 
 			int pos = 2;
-			foreach (weak string key in store.dynamic_columns.get()) {
+			foreach (weak string key in store.dynamic_columns) {
 				column = new Gtk.TreeViewColumn.with_attributes(
 					key, cell, "text", pos++, null
 				);
