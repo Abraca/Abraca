@@ -105,7 +105,10 @@ class AbracaEnvironment(SConsEnvironment):
 			self.AddPostAction(prog, self.Strip)
 
 		if kwargs.get('install'):
-			destdir = kwargs['install'] if isinstance(kwargs['install'], basestring) else '$BINDIR'
+			if isinstance(kwargs.get('install'), basestring):
+				destdir = kwargs['install']
+			else:
+				destdir = '$BINDIR'
 			self.Alias('install', self.Install(destdir, prog))
 
 	def _install(self, dst, src):
