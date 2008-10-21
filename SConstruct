@@ -7,7 +7,7 @@ env.VariantDir('build', '.')
 env.Append(VALAPKGPATH = ['vapi'])
 
 conf = env.Configure('build/build-config.h')
-conf.CheckVala('0.3.5')
+conf.CheckVala('0.4.0')
 conf.CheckCCompiler()
 conf.CheckPkgConfig()
 conf.CheckApp('msgfmt')
@@ -32,7 +32,6 @@ if env.DebugVariant():
 	env.Append(CCFLAGS = ['-g'])
 else:
 	env.Append(CCFLAGS = ['-O2'])
-
 
 env.SConscript('build/data/SConscript', exports='env', duplicate=0)
 env.SConscript('build/src/SConscript', exports='env', duplicate=0)

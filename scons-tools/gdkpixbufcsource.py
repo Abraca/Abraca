@@ -79,7 +79,7 @@ def gdk_pixbuf_csource_action(target, source, env):
 
 	for decl in decls:
 		fd.write('\t[CCode(cname="%s")]\n' % decl)
-		fd.write('\tpublic const uchar[] ' + decl[9:] + ';\n')
+		fd.write('\tpublic const uchar ' + decl[9:] + ';\n')
 
 	fd.write('}')
 	fd.close()

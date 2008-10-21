@@ -557,6 +557,7 @@ public struct double {
 }
 
 [CCode (cheader_filename = "time.h")]
+[IntegerType (rank = 8)]
 public struct time_t {
 	[CCode (cname = "time")]
 	public time_t ();
@@ -601,7 +602,7 @@ public struct unichar {
 	public unichar clamp (unichar low, unichar high);
 }
 
-[CCode (cprefix = "G_UNICODE_")]
+[CCode (cname = "GUnicodeType", cprefix = "G_UNICODE_", has_type_id = false)]
 public enum UnicodeType {
 	CONTROL,
 	FORMAT,
@@ -635,7 +636,7 @@ public enum UnicodeType {
 	SPACE_SEPARATOR
 }
 
-[CCode (cprefix = "G_UNICODE_BREAK_")]
+[CCode (cname = "GUnicodeBreakType", cprefix = "G_UNICODE_BREAK_", has_type_id = false)]
 public enum UnicodeBreakType {
 	MANDATORY,
 	CARRIAGE_RETURN,
@@ -674,6 +675,19 @@ public enum UnicodeBreakType {
 	HANGUL_LV_SYLLABLE,
 	HANGUL_LVT_SYLLABLE
 }
+
+[CCode (cname = "GNormalizeMode", cprefix = "G_NORMALIZE_", has_type_id = false)]
+public enum NormalizeMode {
+	DEFAULT,
+	NFD,
+	DEFAULT_COMPOSE,
+	NFC,
+	ALL,
+	NFKD,
+	ALL_COMPOSE,
+	NFKC
+}
+
 
 [Compact]
 [Immutable]
@@ -732,6 +746,8 @@ public class string {
 	public string reverse (int len = -1);
 	[CCode (cname = "g_utf8_validate")]
 	public bool validate (long max_len = -1, out string end = null);
+	[CCode (cname = "g_utf8_normalize")]
+	public string normalize (long len = -1, NormalizeMode mode = NormalizeMode.DEFAULT);
 	
 	[CCode (cname = "g_utf8_strup")]
 	public string up (long len = -1);
@@ -760,17 +776,22 @@ public class string {
 	[CCode (cname = "atol")]
 	public long to_long ();
 	[CCode (cname = "strtod")]
-	public double to_double (out string endptr = null);
+	public double to_double (out weak string endptr = null);
 	[CCode (cname = "strtoul")]
-	public ulong to_ulong (out string endptr = null, int _base = 0);
+	public ulong to_ulong (out weak string endptr = null, int _base = 0);
 	[CCode (cname = "g_ascii_strtoll")]
-	public int64 to_int64 (out string endptr = null, int _base = 0);
+	public int64 to_int64 (out weak string endptr = null, int _base = 0);
 	[CCode (cname = "strlen")]
 	public long size ();
 
 	[CCode (cname = "g_utf8_skip")]
 	public static char[] skip;
 
+	/* modifies string in place */
+	[CCode (cname = "g_strcanon")]
+	public void canon (string valid_chars, char substitutor);
+
+	/* internal method */
 	public string substring (long offset, long len);
 
 	public long length {
@@ -829,11 +850,6 @@ namespace GLib {
 		public uint instance_size;
 	}
 
-	// deprecated
-	[CCode (has_type_id = true)]
-	public class TypeInstance {
-	}
-
 	[Compact]
 	[CCode (ref_function = "g_type_class_ref", unref_function = "g_type_class_unref")]
 	public class TypeClass {
@@ -841,7 +857,7 @@ namespace GLib {
 		public Type get_type ();
 	}
 
-	[CCode (cprefix = "G_TYPE_DEBUG_")]
+	[CCode (cprefix = "G_TYPE_DEBUG_", has_type_id = false)]
 	public enum TypeDebugFlags {
 		NONE,
 		OBJECTS,
@@ -869,6 +885,9 @@ namespace GLib {
 		public ParamFlags flags;
 		public Type value_type;
 		public Type owner_type;
+		public weak string get_blurb ();
+		public weak string get_name ();
+		public weak string get_nick ();
 	}
 
 	public class ParamSpecEnum : ParamSpec {
@@ -891,7 +910,12 @@ namespace GLib {
 		public ParamSpecUInt (string name, string nick, string blurb, uint minimum, uint maximum, uint default_value, ParamFlags flags);
 	}
 
-	[CCode (cprefix = "G_PARAM_")]
+	public class ParamSpecBoolean : ParamSpec {
+		[CCode (cname = "g_param_spec_boolean")]
+		public ParamSpecBoolean (string name, string nick, string blurb, bool defaultvalue, ParamFlags flags);
+	}
+
+	[CCode (cprefix = "G_PARAM_", has_type_id = false)]
 	public enum ParamFlags {
 		READABLE,
 		WRITABLE,
@@ -909,6 +933,7 @@ namespace GLib {
 	public class ObjectClass : TypeClass {
 		public weak ParamSpec find_property (string property_name);
 		public weak ParamSpec[] list_properties ();
+		public void install_property (uint property_id, ParamSpec pspec);
 	}
 	
 	public struct ObjectConstructParam {
@@ -918,8 +943,10 @@ namespace GLib {
 	public static delegate void ObjectSetPropertyFunc (Object object, uint property_id, Value value, ParamSpec pspec);
 	public static delegate void WeakNotify (void *data, Object object);
 
-	[CCode (ref_function = "g_object_ref", unref_function = "g_object_unref", marshaller_type_name = "OBJECT", get_value_function = "g_value_get_object", set_value_function = "g_value_set_object", cheader_filename = "glib-object.h")]
-	public class Object : TypeInstance {
+	[CCode (ref_function = "g_object_ref", unref_function = "g_object_unref", marshaller_type_name = "OBJECT", get_value_function = "g_value_get_object", set_value_function = "g_value_set_object", param_spec_function = "g_param_spec_object", cheader_filename = "glib-object.h")]
+	public class Object {
+		public uint ref_count;
+
 		public static Object @new (Type type, ...);
 
 		[CCode (cname = "G_TYPE_FROM_INSTANCE")]
@@ -931,9 +958,10 @@ namespace GLib {
 		public void weak_unref (WeakNotify notify, void *data);
 		public void add_weak_pointer (void **data);
 		public void remove_weak_pointer (void **data);
-		public void get (...);
-		public void set (...);
+		public void get (string first_property_name, ...);
+		public void set (string first_property_name, ...);
 		public void get_property (string property_name, Value value);
+		public void set_property (string property_name, Value value);
 		public void* get_data (string key);
 		public void set_data (string key, void* data);
 		public void set_data_full (string key, void* data, DestroyNotify? destroy);
@@ -951,7 +979,13 @@ namespace GLib {
 		public signal void notify (ParamSpec pspec);
 
 		public weak Object connect (string signal_spec, ...);
+
+		public void add_toggle_ref (ToggleNotify notify);
+		public void remove_toggle_ref (ToggleNotify notify);
 	}
+
+	[CCode (instance_pos = 0)]
+	public delegate void ToggleNotify (GLib.Object object, bool is_last_ref);
 
 	public struct Parameter {
 		public string name;
@@ -1072,7 +1106,7 @@ namespace GLib {
 
 	public delegate bool SignalEmissionHook (SignalInvocationHint ihint, [CCode (array_length_pos = 1.9)] Value[] param_values);
 
-	[CCode (cprefix = "G_SIGNAL_")]
+	[CCode (cprefix = "G_SIGNAL_", has_type_id = false)]
 	public enum SignalFlags {
 		RUN_FIRST,
 		RUN_LAST,
@@ -1082,7 +1116,7 @@ namespace GLib {
 		NO_HOOKS
 	}
 
-	[CCode (cprefix = "G_CONNECT_")]
+	[CCode (cprefix = "G_CONNECT_", has_type_id = false)]
 	public enum ConnectFlags {
 		AFTER,
 		SWAPPED
@@ -1301,12 +1335,12 @@ namespace GLib {
 		public weak MainContext get_context ();
 	}
 	
-	public enum Priority {
-		HIGH,
-		DEFAULT,
-		HIGH_IDLE,
-		DEFAULT_IDLE,
-		LOW
+	namespace Priority {
+		public const int HIGH;
+		public const int DEFAULT;
+		public const int HIGH_IDLE;
+		public const int DEFAULT_IDLE;
+		public const int LOW;
 	}
 
 	[Compact]
@@ -1325,8 +1359,8 @@ namespace GLib {
 		public bool is_owner ();
 		public bool wait (Cond cond, Mutex mutex);
 		public bool prepare (out int priority);
-		[NoArrayLength ()]
-		public int query (int max_priority, out int timeout_, PollFD[] fds, int n_fds);
+		public int query (int max_priority, out int timeout_, PollFD[] fds);
+		[NoArrayLength]
 		public int check (int max_priority, PollFD[] fds, int n_fds);
 		public void dispatch ();
 		public void set_poll_func (PollFunc func);
@@ -1448,6 +1482,7 @@ namespace GLib {
 	public delegate void* ThreadFunc ();
 	public delegate void Func (void* data);
 	
+	[CCode (has_type_id = false)]
 	public enum ThreadPriority {
 		LOW,
 		NORMAL,
@@ -1505,7 +1540,7 @@ namespace GLib {
 	[Compact]
 	[CCode (free_function = "g_thread_pool_free")]
 	public class ThreadPool {
-		public ThreadPool (Func func, void* user_data, int max_threads, bool exclusive) throws ThreadError;
+		public ThreadPool (Func func, int max_threads, bool exclusive) throws ThreadError;
 		public void push (void* data) throws ThreadError;
 		public void set_max_threads (int max_threads) throws ThreadError;
 		public int get_max_threads ();
@@ -1515,7 +1550,7 @@ namespace GLib {
 		public static int get_max_unused_threads ();
 		public static uint get_num_unused_threads ();
 		public static void stop_unused_threads ();
-		public void set_sort_function (CompareDataFunc func, void* user_data);
+		public void set_sort_function (CompareDataFunc func);
 		public static void set_max_idle_time (uint interval);
 		public static uint get_max_idle_time ();
 	}
@@ -1527,23 +1562,23 @@ namespace GLib {
 	public class AsyncQueue {
 		public AsyncQueue ();
 		public void push (void* data);
-		public void push_sorted (void* data, CompareDataFunc func, void* user_data);
+		public void push_sorted (void* data, CompareDataFunc func);
 		public void* pop ();
 		public void* try_pop ();
 		public void* timed_pop (ref TimeVal end_time);
 		public int length ();
-		public void sort (CompareDataFunc func, void* user_data);
+		public void sort (CompareDataFunc func);
 		public void @lock ();
 		public void unlock ();
 		public void ref_unlocked ();
 		public void unref_and_unlock ();
 		public void push_unlocked (void* data);
-		public void push_sorted_unlocked (void* data, CompareDataFunc func, void* user_data);
+		public void push_sorted_unlocked (void* data, CompareDataFunc func);
 		public void* pop_unlocked ();
 		public void* try_pop_unlocked ();
 		public void* timed_pop_unlocked (ref TimeVal end_time);
 		public int length_unlocked ();
-		public void sort_unlocked (CompareDataFunc func, void* user_data);
+		public void sort_unlocked (CompareDataFunc func);
 	}
 
 	/* Memory Allocation */
@@ -1573,6 +1608,8 @@ namespace GLib {
 		public static int cmp (void* s1, void* s2, size_t n);
 		[CCode (cname = "memcpy")]
 		public static void* copy (void* dest, void* src, size_t n);
+		[CCode (cname = "memset")]
+		public static void* set (void* dest, int src, size_t n);
 		[CCode (cname = "g_memmove")]
 		public static void* move (void* dest, void* src, size_t n);
 		[CCode (cname = "g_memdup")]
@@ -1620,13 +1657,14 @@ namespace GLib {
 		public void set_close_on_unref (bool do_close);
 	}
 
-	[CCode (cprefix = "G_SEEK_")]
+	[CCode (cprefix = "G_SEEK_", has_type_id = false)]
 	public enum SeekType {
 		CUR,
 		SET,
 		END
 	}
 	
+	[CCode (has_type_id = false)]
 	public enum IOStatus {
 		ERROR,
 		NORMAL,
@@ -1646,7 +1684,8 @@ namespace GLib {
 		FAILED
 	}
 
-	[CCode (cprefix = "G_IO_", type_id = "G_TYPE_IO_CONDITION")]
+	[Flags]
+	[CCode (cprefix = "G_IO_")]
 	public enum IOCondition {
 		IN,
 		OUT,
@@ -1658,7 +1697,7 @@ namespace GLib {
 
 	public delegate bool IOFunc (IOChannel source, IOCondition condition);
 
-	[CCode (cprefix = "G_IO_FLAG_")]
+	[CCode (cprefix = "G_IO_FLAG_", has_type_id = false)]
 	public enum IOFlags {
 		APPEND,
 		NONBLOCK,
@@ -1710,7 +1749,7 @@ namespace GLib {
 
 	/* Message Logging */
 	
-	[CCode (cprefix = "G_LOG_")]
+	[CCode (cprefix = "G_LOG_", has_type_id = false)]
 	public enum LogLevelFlags {
 		/* log flags */
 		FLAG_RECURSION,
@@ -1750,7 +1789,8 @@ namespace GLib {
 	public delegate void LogFunc (string? log_domain, LogLevelFlags log_levels, string message);
 
 	namespace Log {
-		public uint set_handler (string? log_domain, LogLevelFlags log_levels, LogFunc log_func);
+		public static uint set_handler (string? log_domain, LogLevelFlags log_levels, LogFunc log_func);
+		public static void set_default_handler (LogFunc log_func);
 	}
 
 	/* String Utility Functions */
@@ -1801,7 +1841,7 @@ namespace GLib {
 
 	/* Data Checksums */
 
-	[CCode (cprefix = "G_CHECKSUM_")]
+	[CCode (cprefix = "G_CHECKSUM_", has_type_id = false)]
 	public enum ChecksumType {
 		MD5,
 		SHA1,
@@ -1820,9 +1860,10 @@ namespace GLib {
 		public weak string get_string ();
 		[NoArrayLength]
 		public void get_digest (uint8[] buffer, ref size_t digest_len);
-		[NoArrayLength]
-		public static string compute_for_data (ChecksumType checksum_type, uchar[] data, size_t length);
-		public static string compute_for_string (ChecksumType checksum_type, string str, size_t length);
+		[CCode (cname = "g_compute_checksum_for_data")]
+		public static string compute_for_data (ChecksumType checksum_type, uchar[] data);
+		[CCode (cname = "g_compute_checksum_for_string")]
+		public static string compute_for_string (ChecksumType checksum_type, string str, size_t length = -1);
 	}
 
 	/* Date and Time Functions */
@@ -1848,7 +1889,7 @@ namespace GLib {
 		public bool valid ();
 	}
 
-	[CCode (cprefix = "G_DATE_")]
+	[CCode (cprefix = "G_DATE_", has_type_id = false)]
 	public enum DateMonth {
 		BAD_MONTH,
 		JANUARY,
@@ -1884,7 +1925,7 @@ namespace GLib {
 		public bool valid ();
 	}
 
-	[CCode (cprefix = "G_DATE_")]
+	[CCode (cprefix = "G_DATE_", has_type_id = false)]
 	public enum DateWeekday {
 		BAD_WEEKDAY,
 		MONDAY,
@@ -2031,6 +2072,8 @@ namespace GLib {
 		public static string[] list_variables ();
 		[CCode (cname = "g_get_user_name")]
 		public static weak string get_user_name ();
+		[CCode (cname = "g_get_real_name")]
+		public static weak string get_real_name ();
 		[CCode (cname = "g_get_user_cache_dir")]
 		public static weak string get_user_cache_dir ();
 		[CCode (cname = "g_get_user_data_dir")]
@@ -2055,8 +2098,11 @@ namespace GLib {
 		public static string find_program_in_path (string program);
 		[CCode (cname = "g_atexit")]
 		public static void atexit (VoidFunc func);
+		[CCode (cname = "g_chdir")]
+		public static int set_current_dir (string path);
 	}
 
+	[CCode (has_type_id = false)]
 	public enum UserDirectory {
 		DESKTOP,
 		DOCUMENTS,
@@ -2102,7 +2148,16 @@ namespace GLib {
 	[Compact]
 	[CCode (free_function = "g_scanner_destroy")]
 	public class Scanner {
-		public Scanner (ScannerConfig config_templ);
+		public weak string input_name;
+		public TokenType token;
+		public TokenValue value;
+		public uint line;
+		public uint position;
+		public TokenType next_token;
+		public TokenValue next_value;
+		public uint next_line;
+		public uint next_position;
+		public Scanner (ScannerConfig? config_templ);
 		public void input_file (int input_fd);
 		public void sync_file_offset ();
 		public void input_text (string text, uint text_len);
@@ -2123,7 +2178,7 @@ namespace GLib {
 		public void warn (string format, ...);
 		[PrintfFormat]
 		public void error (string format, ...);
-		public void unexp_token (TokenType expected_token, string identifier_spec, string symbol_spec, string symbol_name, string message, int is_error);
+		public void unexp_token (TokenType expected_token, string? identifier_spec, string? symbol_spec, string? symbol_name, string? message, bool is_error);
 	}
 
 	public struct ScannerConfig {
@@ -2131,44 +2186,40 @@ namespace GLib {
 		public string cset_identifier_first;
 		public string cset_identifier_nth;
 		public string cpair_comment_single;
-		public uint case_sensitive;
-		public uint skip_comment_multi;
-		public uint skip_comment_single;
-		public uint scan_comment_multi;
-		public uint scan_identifier;
-		public uint scan_identifier_1char;
-		public uint scan_identifier_NULL;
-		public uint scan_symbols;
-		public uint scan_binary;
-		public uint scan_octal;
-		public uint scan_float;
-		public uint scan_hex;
-		public uint scan_hex_dollar;
-		public uint scan_string_sq;
-		public uint scan_string_dq;
-		public uint numbers_2_int;
-		public uint int_2_float;
-		public uint identifier_2_string;
-		public uint char_2_token;
-		public uint symbol_2_token;
-		public uint scope_0_fallback;
-		public uint store_int64;
+		public bool case_sensitive;
+		public bool skip_comment_multi;
+		public bool skip_comment_single;
+		public bool scan_comment_multi;
+		public bool scan_identifier;
+		public bool scan_identifier_1char;
+		public bool scan_identifier_NULL;
+		public bool scan_symbols;
+		public bool scan_binary;
+		public bool scan_octal;
+		public bool scan_float;
+		public bool scan_hex;
+		public bool scan_hex_dollar;
+		public bool scan_string_sq;
+		public bool scan_string_dq;
+		public bool numbers_2_int;
+		public bool int_2_float;
+		public bool identifier_2_string;
+		public bool char_2_token;
+		public bool symbol_2_token;
+		public bool scope_0_fallback;
+		public bool store_int64;
 	}
 
+	[CCode (lower_case_cprefix="G_CSET_")]
 	namespace CharacterSet {
-		[CCode (cname = "G_CSET_A_2_Z")]
 		public const string A_2_Z;
-		[CCode (cname = "G_CSET_a_2_z")]
 		public const string a_2_z;
-		[CCode (cname = "G_CSET_DIGITS")]
 		public const string DIGITS;
-		[CCode (cname = "G_CSET_LATINC")]
 		public const string LATINC;
-		[CCode (cname = "G_CSET_LATINS")]
 		public const string LATINS;
 	}
 
-	[CCode (cprefix = "G_TOKEN_")]
+	[CCode (cprefix = "G_TOKEN_", has_type_id = false)]
 	public enum TokenType
 	{
 		EOF,
@@ -2213,7 +2264,7 @@ namespace GLib {
 		public uint v_error;
 	}
 
-	[CCode (cprefix = "G_ERR_")]
+	[CCode (cprefix = "G_ERR_", has_type_id = false)]
 	public enum ErrorType
 	{
 		UNKNOWN,
@@ -2225,6 +2276,27 @@ namespace GLib {
 		FLOAT_RADIX,
 		FLOAT_MALFORMED
 	}
+
+	/* Automatic String Completion */
+
+	[Compact]
+	[CCode (free_function = "g_completion_free")]
+	public class Completion {
+		public Completion (CompletionFunc? func = null);
+		public List<void*> items;
+		public CompletionFunc func;
+		public string prefix;
+		public List<void*> cache;
+		public CompletionStrncmpFunc strncmp_func;
+		public void add_items (List<void*> items);
+		public void remove_items (List<void*> items);
+		public void clear_items ();
+		public weak List<void*> complete (string prefix, out string? new_prefix = null);
+		public weak List<void*> complete_utf8 (string prefix, out string? new_prefix = null);
+	}
+
+	public static delegate string CompletionFunc (void* item);
+	public static delegate int CompletionStrncmpFunc (string s1, string s2, size_t n);
 
 	/* Timers */
 
@@ -2264,7 +2336,7 @@ namespace GLib {
 		FAILED
 	}
 
-	[CCode (cprefix = "G_SPAWN_")]
+	[CCode (cprefix = "G_SPAWN_", has_type_id = false)]
 	public enum SpawnFlags {
 		LEAVE_DESCRIPTORS_OPEN,
 		DO_NOT_REAP_CHILD,
@@ -2291,24 +2363,25 @@ namespace GLib {
 		public static void close_pid (Pid pid);
 		
 		/* these macros are required to examine the exit status of a process */
-		[CCode (cname = "WIFEXITED")]
+		[CCode (cname = "WIFEXITED", cheader_filename = "sys/wait.h")]
 		public static bool if_exited (int status);
-		[CCode (cname = "WEXITSTATUS")]
+		[CCode (cname = "WEXITSTATUS", cheader_filename = "sys/wait.h")]
 		public static int exit_status (int status);
-		[CCode (cname = "WIFSIGNALED")]
+		[CCode (cname = "WIFSIGNALED", cheader_filename = "sys/wait.h")]
 		public static bool if_signaled (int status);
-		[CCode (cname = "WTERMSIG")]
+		[CCode (cname = "WTERMSIG", cheader_filename = "sys/wait.h")]
 		public static ProcessSignal term_sig (int status);
-		[CCode (cname = "WCOREDUMP")]
+		[CCode (cname = "WCOREDUMP", cheader_filename = "sys/wait.h")]
 		public static bool core_dump (int status);
-		[CCode (cname = "WIFSTOPPED")]
+		[CCode (cname = "WIFSTOPPED", cheader_filename = "sys/wait.h")]
 		public static bool if_stopped (int status);
-		[CCode (cname = "WSTOPSIG")]
+		[CCode (cname = "WSTOPSIG", cheader_filename = "sys/wait.h")]
 		public static ProcessSignal stop_sig (int status);
-		[CCode (cname = "WIFCONTINUED")]
+		[CCode (cname = "WIFCONTINUED", cheader_filename = "sys/wait.h")]
 		public static bool if_continued (int status);
 	}
 	
+	[CCode (cname = "int", has_type_id = false)]
 	public enum ProcessSignal {
 		HUP,
 		INT,
@@ -2364,6 +2437,7 @@ namespace GLib {
 		FAILED
 	}
 
+	[CCode (has_type_id = false)]
 	public enum FileTest {
 		IS_REGULAR,
 		IS_SYMLINK,
@@ -2372,13 +2446,20 @@ namespace GLib {
 		EXISTS
 	}
 
+	[CCode (cprefix = "SEEK_", has_type_id = false)]
+	public enum FileSeek {
+		SET,
+		CUR,
+		END
+	}
+
 	[Compact]
 	[CCode (cname = "FILE", free_function = "fclose", cheader_filename = "stdio.h")]
 	public class FileStream {
 		[CCode (cname = "fopen")]
-		public static FileStream open (string path, string mode);
+		public static FileStream? open (string path, string mode);
 		[CCode (cname = "fdopen")]
-		public static FileStream fdopen (int fildes, string mode);
+		public static FileStream? fdopen (int fildes, string mode);
 		[CCode (cname = "fprintf")]
 		[PrintfFormat ()]
 		public void printf (string format, ...);
@@ -2396,6 +2477,12 @@ namespace GLib {
 		public int scanf (string format, ...);
 		[CCode (cname = "fflush")]
 		public int flush ();
+		[CCode (cname = "fseek")]
+		public int seek (long offset, FileSeek whence);
+		[CCode (cname = "ftell")]
+		public long tell ();
+		[CCode (cname = "rewind")]
+		public void rewind ();
 	}
 
 	[CCode (lower_case_cprefix = "g_file_", cheader_filename = "glib/gstdio.h")]
@@ -2468,10 +2555,10 @@ namespace GLib {
 		public const string RESERVED_CHARS_SUBCOMPONENT_DELIMITERS;
 
 		public static string escape_string (string unescaped, string reserved_chars_allowed, bool allow_utf8);
-		[CCode(cname="g_uri_parse_scheme")]
+		public static string parse_scheme (string uri);
 		public static string get_scheme (string uri);
-		public static string unescape_segment (string escaped_string, string escaped_string_end, string? illegal_characters);
-		public static string unescape_string (string escaped_string, string? illegal_characters);
+		public static string unescape_segment (string escaped_string, string escaped_string_end, string illegal_characters);
+		public static string unescape_string (string escaped_string, string illegal_characters);
 	}
 
 	/* Shell-related Utilities */
@@ -2521,6 +2608,7 @@ namespace GLib {
 
 	public delegate weak string TranslateFunc (string str);
 
+	[CCode (has_type_id = false)]
 	public enum OptionArg {
 		NONE,
 		STRING,
@@ -2534,7 +2622,7 @@ namespace GLib {
 	}
 	
 	[Flags]
-	[CCode (cprefix = "G_OPTION_FLAG_")]
+	[CCode (cprefix = "G_OPTION_FLAG_", has_type_id = false)]
 	public enum OptionFlags {
 		HIDDEN,
 		IN_MAIN,
@@ -2581,7 +2669,7 @@ namespace GLib {
 		MATCH
 	}
 
-	[CCode (cprefix = "G_REGEX_")]
+	[CCode (cprefix = "G_REGEX_", has_type_id = false)]
 	public enum RegexCompileFlags {
 		CASELESS,
 		MULTILINE,
@@ -2599,7 +2687,7 @@ namespace GLib {
 		NEWLINE_CRLF
 	}
 
-	[CCode (cprefix = "G_REGEX_MATCH_")]
+	[CCode (cprefix = "G_REGEX_MATCH_", has_type_id = false)]
 	public enum RegexMatchFlags {
 		ANCHORED,
 		NOTBOL,
@@ -2669,7 +2757,7 @@ namespace GLib {
 		INVALID_CONTENT
 	}
 
-	[CCode (cprefix = "G_MARKUP_")]
+	[CCode (cprefix = "G_MARKUP_", has_type_id = false)]
 	public enum MarkupParseFlags {
 		TREAT_CDATA_AS_TEXT
 	}
@@ -2679,20 +2767,22 @@ namespace GLib {
 	public class MarkupParseContext {
 		public MarkupParseContext (MarkupParser parser, MarkupParseFlags _flags, void* user_data, DestroyNotify? user_data_dnotify);
 		public bool parse (string text, long text_len) throws MarkupError;
+		public bool end_parse () throws MarkupError;
 		public weak string get_element ();
 		public weak SList<string> get_element_stack ();
+		public void get_position (out int line_number, out int char_number);
 	}
 	
 	[NoArrayLength]
-	public static delegate void MarkupParserStartElementFunc (MarkupParseContext context, string element_name, string[] attribute_names, string[] attribute_values, void* user_data) throws MarkupError;
+	public delegate void MarkupParserStartElementFunc (MarkupParseContext context, string element_name, string[] attribute_names, string[] attribute_values) throws MarkupError;
 	
-	public static delegate void MarkupParserEndElementFunc (MarkupParseContext context, string element_name, void* user_data) throws MarkupError;
+	public delegate void MarkupParserEndElementFunc (MarkupParseContext context, string element_name) throws MarkupError;
 	
-	public static delegate void MarkupParserTextFunc (MarkupParseContext context, string text, ulong text_len, void* user_data) throws MarkupError;
+	public delegate void MarkupParserTextFunc (MarkupParseContext context, string text, ulong text_len) throws MarkupError;
 	
-	public static delegate void MarkupParserPassthroughFunc (MarkupParseContext context, string passthrough_text, ulong text_len, void* user_data) throws MarkupError;
+	public delegate void MarkupParserPassthroughFunc (MarkupParseContext context, string passthrough_text, ulong text_len) throws MarkupError;
 	
-	public static delegate void MarkupParserErrorFunc (MarkupParseContext context, Error error, void* user_data);
+	public delegate void MarkupParserErrorFunc (MarkupParseContext context, Error error);
 	
 	public struct MarkupParser {
 		public MarkupParserStartElementFunc start_element;
@@ -2725,6 +2815,8 @@ namespace GLib {
 		public KeyFile ();
 		public void set_list_separator (char separator);
 		public bool load_from_file (string file, KeyFileFlags @flags) throws KeyFileError;
+		[NoArrayLength]
+		public bool load_from_dirs (string file, string[] search_dirs, out string full_path, KeyFileFlags @flags) throws KeyFileError;
 		public bool load_from_data (string data, ulong length, KeyFileFlags @flags) throws KeyFileError;
 		public bool load_from_data_dirs (string file, out string full_path, KeyFileFlags @flags) throws KeyFileError;
 		public string to_data (out size_t length) throws KeyFileError;
@@ -2769,7 +2861,7 @@ namespace GLib {
 		public void remove_comment (string group_name, string key) throws KeyFileError;
 	}
 	
-	[CCode (cprefix = "G_KEY_FILE_")]
+	[CCode (cprefix = "G_KEY_FILE_", has_type_id = false)]
 	public enum KeyFileFlags {
 		NONE,
 		KEEP_COMMENTS,
@@ -2848,6 +2940,7 @@ namespace GLib {
 		public static bool quiet ();
 		public static int run ();
 		public static void add_func (string testpath, Callback test_funcvoid);
+		public static void add_data_func (string testpath, [CCode (delegate_target_pos = 1.9)] DataTestFunc test_funcvoid);
 		[PrintfFormat]
 		public static void message (string format, ...);
 		public static void bug_base (string uri_pattern);
@@ -2871,8 +2964,10 @@ namespace GLib {
 		public static double rand_double_range ();
 	}
 
+	public delegate void DataTestFunc ();
+
 	[Flags]
-	[CCode (cprefix = "G_TEST_TRAP_")]
+	[CCode (cprefix = "G_TEST_TRAP_", has_type_id = false)]
 	public enum TestTrapFlags {
 		SILENCE_STDOUT,
 		SILENCE_STDERR,
@@ -3038,38 +3133,38 @@ namespace GLib {
 		public static void foreach_range (SequenceIter<G> begin, SequenceIter<G> end, Func func);
 		public void sort (CompareDataFunc cmp_func);
 		public void sort_iter (SequenceIterCompareFunc<G> func);
-		public weak SequenceIter<G> get_begin_iter ();
-		public weak SequenceIter<G> get_end_iter ();
-		public weak SequenceIter<G> get_iter_at_pos (int pos);
-		public weak SequenceIter<G> append (G# data);
-		public weak SequenceIter<G> prepend (G# data);
-		public static weak SequenceIter<G> insert_before (SequenceIter<G> iter, G# data);
+		public SequenceIter<G> get_begin_iter ();
+		public SequenceIter<G> get_end_iter ();
+		public SequenceIter<G> get_iter_at_pos (int pos);
+		public SequenceIter<G> append (G# data);
+		public SequenceIter<G> prepend (G# data);
+		public static SequenceIter<G> insert_before (SequenceIter<G> iter, G# data);
 		public static void move (SequenceIter<G> src, SequenceIter<G> dest);
 		public static void swap (SequenceIter<G> src, SequenceIter<G> dest);
-		public weak SequenceIter<G> insert_sorted (G# data, CompareDataFunc cmp_func);
-		public weak SequenceIter<G> insert_sorted_iter (G# data, SequenceIterCompareFunc<G> iter_cmp);
+		public SequenceIter<G> insert_sorted (G# data, CompareDataFunc cmp_func);
+		public SequenceIter<G> insert_sorted_iter (G# data, SequenceIterCompareFunc<G> iter_cmp);
 		public static void sort_changed (SequenceIter<G> iter, CompareDataFunc cmp_func);
 		public static void sort_changed_iter (SequenceIter<G> iter, SequenceIterCompareFunc<G> iter_cmp);
 		public static void remove (SequenceIter<G> iter);
 		public static void remove_range (SequenceIter<G> begin, SequenceIter<G> end);
 		public static void move_range (SequenceIter<G> dest, SequenceIter<G> begin, SequenceIter<G> end);
-		public weak SequenceIter<G> search (G data, CompareDataFunc cmp_func);
-		public weak SequenceIter<G> search_iter (G data, SequenceIterCompareFunc<G> iter_cmp);
+		public SequenceIter<G> search (G data, CompareDataFunc cmp_func);
+		public SequenceIter<G> search_iter (G data, SequenceIterCompareFunc<G> iter_cmp);
 		public static weak G get (SequenceIter<G> iter);
 		public static void set (SequenceIter<G> iter, G# data);
-		public static weak SequenceIter<G> range_get_midpoint (SequenceIter<G> begin, SequenceIter<G> end);
+		public static SequenceIter<G> range_get_midpoint (SequenceIter<G> begin, SequenceIter<G> end);
 	}
 
-	[Compact]
-	[CCode (ref_function = "", unref_function = "")]
-	public class SequenceIter<G> {
+	[SimpleType]
+	[CCode (cname = "GSequenceIter*", type_id = "G_TYPE_POINTER")]
+	public struct SequenceIter<G> {
 		public bool is_begin ();
 		public bool is_end ();
-		public weak SequenceIter<G> next ();
-		public weak SequenceIter<G> prev ();
+		public SequenceIter<G> next ();
+		public SequenceIter<G> prev ();
 		public int get_position ();
-		public weak SequenceIter<G> move (int delta);
-		public weak Sequence<G> get_sequence ();
+		public SequenceIter<G> move (int delta);
+		public Sequence<G> get_sequence ();
 		public int compare (SequenceIter<G> other);
 	}
 
@@ -3092,6 +3187,8 @@ namespace GLib {
 		[CCode (cname = "g_hash_table_foreach")]
 		public void for_each (HFunc func);
 		public uint size ();
+		public bool steal (K key);
+		public void steal_all ();
 	}
 	
 	public static delegate uint HashFunc (void* key);
@@ -3147,6 +3244,18 @@ namespace GLib {
 		public string str;
 		public long len;
 		public long allocated_len;
+	}
+
+	/* String Chunks */
+
+	[Compact]
+	[CCode (free_function = "g_string_chunk_free")]
+	public class StringChunk {
+		public StringChunk (size_t size);
+		public weak string insert (string str);
+		public weak string insert_const (string str);
+		public weak string insert_len (string str, ssize_t len);
+		public void clear ();
 	}
 
 	/* Pointer Arrays */
@@ -3239,7 +3348,7 @@ namespace GLib {
 	
 	public static delegate int TraverseFunc (void* key, void* value, void* data);
 	
-	[CCode (c_prefix="C_")]
+	[CCode (c_prefix="C_", has_type_id = false)]
 	public enum TraverseType {
 		IN_ORDER,
 		PRE_ORDER,
@@ -3274,7 +3383,7 @@ namespace GLib {
 	[CCode (cname = "N_", cheader_filename = "glib.h,glib/gi18n-lib.h")]
 	public static weak string N_ (string str);
 	
-	[CCode (cprefix = "LC_", cheader_filename = "locale.h")]
+	[CCode (cname = "int", cprefix = "LC_", cheader_filename = "locale.h", has_type_id = false)]
 	public enum LocaleCategory {
 		ALL,
 		COLLATE,
@@ -3353,7 +3462,7 @@ namespace GLib {
 		public weak Type[] param_types;
 	}
 
-	[CCode (cprefix = "G_SIGNAL_MATCH_")]
+	[CCode (cprefix = "G_SIGNAL_MATCH_", has_type_id = false)]
 	public enum SignalMatchType {
 		ID,
 		DETAIL,

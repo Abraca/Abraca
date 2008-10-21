@@ -18,9 +18,15 @@
  */
 
 public class Abraca.VolumeButton : Gtk.ScaleButton {
+	private const string[] _icons = {
+		"stock_volume-mute",
+		"stock_volume-max",
+		"stock_volume-0",
+		"stock_volume-min",
+		"stock_volume-med"
+	};
 
 	private bool _accept_updates = true;
-
 	construct {
 		has_tooltip = true;
 		relief = Gtk.ReliefStyle.NONE;
@@ -28,13 +34,7 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 		adjustment.lower = 0;
 		adjustment.upper = 100;
 
-		icons = new string[] {
-			"stock_volume-mute",
-			"stock_volume-max",
-			"stock_volume-0",
-			"stock_volume-min",
-			"stock_volume-med"
-		};
+		set_icons(_icons);
 
 		pressed += (w) => {
 			_accept_updates = false;

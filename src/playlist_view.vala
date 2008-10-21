@@ -633,7 +633,7 @@ namespace Abraca {
 					bool is_dir = false;
 
 					string uri = GLib.Uri.unescape_string(uri_list[i], null);
-					if (GLib.Uri.get_scheme(uri) == "file") {
+					if (GLib.Uri.parse_scheme(uri) == "file") {
 						string[] tmp = uri.split("file://", 2);
 						if (tmp != null && tmp[1] != null) {
 							GLib.FileTest pattern = GLib.FileTest.EXISTS | GLib.FileTest.IS_DIR;
