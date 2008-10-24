@@ -318,7 +318,7 @@ namespace Abraca {
 		private void on_medialib_info(Xmms.Result #res) {
 			weak GLib.SList<Gtk.TreeRowReference> lst;
 			weak string artist, album, title, genre;
-			int duration, dur_min, dur_sec, pos, id, status;
+			int pos, id, status;
 			string info;
 			int mid;
 
@@ -332,13 +332,6 @@ namespace Abraca {
 
 			res.get_dict_entry_int("status", out status);
 
-			if (!res.get_dict_entry_int("duration", out duration)) {
-				duration = 0;
-			}
-
-			dur_min = duration / 60000;
-			dur_sec = (duration % 60000) / 1000;
-
 			if (!res.get_dict_entry_string("album", out album)) {
 				album = _("Unknown");
 			}
@@ -347,15 +340,17 @@ namespace Abraca {
 			}
 
 			if (res.get_dict_entry_string("title", out title)) {
+				string duration;
+
 				if (!res.get_dict_entry_string("artist", out artist)) {
 					artist = _("Unknown");
 				}
 
-				if (dur_min > 0 || dur_sec > 0) {
+				if (Client.transform_duration(res, out duration)) {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b> - <small>%d:%02d</small>\n" +
+						_("<b>%s</b> - <small>%s</small>\n" +
 						"<small>by</small> %s <small>from</small> %s"),
-						title, dur_min, dur_sec, artist, album
+						title, duration, artist, album
 					);
 				} else {
 					info = GLib.Markup.printf_escaped(
@@ -366,13 +361,14 @@ namespace Abraca {
 				}
 			} else {
 				weak string url;
+				string duration;
 
 				res.get_dict_entry_string("url", out url);
 
-				if (dur_min > 0 || dur_sec > 0) {
+				if (Client.transform_duration(res, out duration)) {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b> - <small>%d:%02d</small>"),
-						url, dur_min, dur_sec
+						_("<b>%s</b> - <small>%s</small>"),
+						url, duration
 					);
 				} else {
 					info = GLib.Markup.printf_escaped(
