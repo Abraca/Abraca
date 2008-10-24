@@ -278,6 +278,7 @@ namespace Abraca {
 					key, cell, "text", pos++, null
 				);
 				column.resizable = true;
+				column.reorderable = true;
 				column.fixed_width = 120;
 				column.sizing = Gtk.TreeViewColumnSizing.FIXED;
 				insert_column(column, -1);
