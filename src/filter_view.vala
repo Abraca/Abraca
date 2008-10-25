@@ -288,16 +288,11 @@ namespace Abraca {
 
 				insert_column(column, -1);
 
-				/* Travel up until we find a button.. */
-				Gtk.Widget w = column.widget.parent;
-				while (!(w == null || w is Gtk.Button)) {
-					w = w.parent;
-				}
+				Gtk.Widget ancestor = column.widget.get_ancestor(typeof(Gtk.Button));
 
-				/* To be on the safe side... but should be the button. */
-				if (w != null) {
-					w.button_press_event += on_header_clicked;
-				}
+				GLib.assert(ancestor != null);
+
+				ancestor.button_press_event += on_header_clicked;
 			}
 		}
 
@@ -312,6 +307,19 @@ namespace Abraca {
 			}
 
 			menu = new Gtk.Menu();
+
+			/* Ok.. this is retarded, but there's no other way of
+			 * propagating the title of the column to the menuitem
+			 * handlers from what I can tell...
+			 */
+			Gtk.Container container = (Gtk.Container) ((Gtk.Button) w).child;
+			foreach (weak Gtk.Widget widget in container.get_children()) {
+				if (widget is Gtk.Alignment) {
+					Gtk.Label lbl = (Gtk.Label) ((Gtk.Alignment) widget).child;
+					menu.set_title(lbl.get_label());
+					break;
+				}
+			}
 
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
 			item.activate += on_header_add;
@@ -328,12 +336,13 @@ namespace Abraca {
 			return true;
 		}
 
-		private void on_header_add (Gtk.Widget w) {
+		private void on_header_add (Gtk.Widget widget) {
 			GLib.stdout.printf("on_header_add\n");
 		}
 
-		private void on_header_remove (Gtk.Widget w) {
-			GLib.stdout.printf("on_header_remove\n");
+		private void on_header_remove (Gtk.Widget widget) {
+			Gtk.Menu menu = (Gtk.Menu) widget.parent;
+			GLib.stdout.printf("you want to delete %s?\n", menu.get_title());
 		}
 
 		private void create_context_menu() {
