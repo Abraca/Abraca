@@ -56,6 +56,7 @@ namespace Abraca {
 		construct {
 			fixed_height_mode = true;
 			enable_search = false;
+			headers_clickable = true;
 
 			get_selection().set_mode(Gtk.SelectionMode.MULTIPLE);
 
@@ -281,10 +282,59 @@ namespace Abraca {
 				column.reorderable = true;
 				column.fixed_width = 120;
 				column.sizing = Gtk.TreeViewColumnSizing.FIXED;
+				column.clickable = true;
+				column.widget = new Gtk.Label(key);
+				column.widget.show();
+
 				insert_column(column, -1);
+
+				/* Travel up until we find a button.. */
+				Gtk.Widget w = column.widget.parent;
+				while (!(w == null || w is Gtk.Button)) {
+					w = w.parent;
+				}
+
+				/* To be on the safe side... but should be the button. */
+				if (w != null) {
+					w.button_press_event += on_header_clicked;
+				}
 			}
 		}
 
+
+		private bool on_header_clicked (Gtk.Widget w, Gdk.EventButton e)
+		{
+			Gtk.MenuItem item;
+			Gtk.Menu menu;
+
+			if (e.button != 3) {
+				return false;
+			}
+
+			menu = new Gtk.Menu();
+
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
+			item.activate += on_header_add;
+			menu.append(item);
+
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_REMOVE, null);
+			item.activate += on_header_remove;
+			menu.append(item);
+
+			menu.popup(null, null, null, e.button, Gtk.get_current_event_time());
+
+			menu.show_all();
+
+			return true;
+		}
+
+		private void on_header_add (Gtk.Widget w) {
+			GLib.stdout.printf("on_header_add\n");
+		}
+
+		private void on_header_remove (Gtk.Widget w) {
+			GLib.stdout.printf("on_header_remove\n");
+		}
 
 		private void create_context_menu() {
 			Gtk.MenuItem item;
