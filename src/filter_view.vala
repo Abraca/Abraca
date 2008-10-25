@@ -340,9 +340,22 @@ namespace Abraca {
 			GLib.stdout.printf("on_header_add\n");
 		}
 
+		/**
+		 * Here we actually keep the data, and simply delete the
+		 * TreeViewColumn.. keep it simple..
+		 */
 		private void on_header_remove (Gtk.Widget widget) {
+			FilterModel store = (FilterModel) model;
+
 			Gtk.Menu menu = (Gtk.Menu) widget.parent;
-			GLib.stdout.printf("you want to delete %s?\n", menu.get_title());
+			weak string title = menu.get_title();
+			foreach (weak Gtk.TreeViewColumn column in get_columns()) {
+				Gtk.Label lbl = (Gtk.Label) column.widget;
+				if (lbl.get_label() == title) {
+					remove_column(column);
+					break;
+				}
+			}
 		}
 
 		private void create_context_menu() {
