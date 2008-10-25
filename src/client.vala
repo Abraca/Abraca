@@ -439,5 +439,81 @@ namespace Abraca {
 			_result_configval_changed = res;
 			_result_configval_changed.ref();
 		}
+
+
+		/** Here comes default Xmms.Result filters, need a good place to live... */
+		public static bool transform_duration (Xmms.Result res, out string result)
+		{
+			int dur_sec, dur_min, duration;
+
+			if (!res.get_dict_entry_int("duration", out duration)) {
+				return false;
+			}
+
+			dur_min = duration / 60000;
+			dur_sec = (duration % 60000) / 1000;
+
+			result = "%d:%02d".printf(dur_min, dur_sec);
+
+			return true;
+		}
+
+		public static bool transform_bitrate (Xmms.Result res, out string result)
+		{
+			int bitrate;
+
+			if (!res.get_dict_entry_int("bitrate", out bitrate)) {
+				return false;
+			}
+
+			result = "%.1f kbps".printf(bitrate / 1000.0 );
+
+			return true;
+		}
+
+		public static bool transform_date (Xmms.Result res, string key, out string result)
+		{
+			GLib.TimeVal time;
+			int unxtime;
+
+			if (!res.get_dict_entry_int(key, out unxtime)) {
+				return false;
+			}
+
+			time.tv_sec = unxtime;
+			result = time.to_iso8601();
+
+			return true;
+		}
+
+		public static bool transform_generic (Xmms.Result res, string key, out string repr)
+		{
+			switch (res.get_dict_entry_type(key)) {
+				case Xmms.ResultType.INT32:
+					int tmp;
+					if (!res.get_dict_entry_int(key, out tmp)) {
+						return false;
+					}
+					repr = "%d".printf(tmp);
+					break;
+				case Xmms.ResultType.UINT32:
+					uint tmp;
+					if (!res.get_dict_entry_uint(key, out tmp)) {
+						return false;
+					}
+					repr = "%u".printf(tmp);
+					break;
+				case Xmms.ResultType.STRING:
+					if (!res.get_dict_entry_string(key, out repr)) {
+						return false;
+					}
+					repr = "%s".printf(repr);
+					break;
+				default:
+					return false;
+			}
+
+			return true;
+		}
 	}
 }

@@ -186,32 +186,22 @@ namespace Abraca {
 			bool ret = true;
 			string repr;
 
-			switch (res.get_dict_entry_type(key)) {
-				case Xmms.ResultType.INT32:
-					int tmp;
-					if (!res.get_dict_entry_int(key, out tmp)) {
-						repr = "%s".printf(_("Unknown"));
-					} else {
-						repr = "%d".printf(tmp);
-					}
-					break;
-				case Xmms.ResultType.UINT32:
-					uint tmp;
-					if (!res.get_dict_entry_uint(key, out tmp)) {
-						repr = "%s".printf(_("Unknown"));
-					} else {
-						repr = "%u".printf(tmp);
-					}
-					break;
-				case Xmms.ResultType.STRING:
-					if (!res.get_dict_entry_string(key, out repr)) {
-						repr = "%s".printf(_("Unknown"));
-					} else {
-						repr = "%s".printf(repr);
-					}
-					break;
-				default:
-					break;
+			if (key == "duration") {
+				if (!Client.transform_duration(res, out repr)) {
+					repr = "%s".printf(_("Unknown"));
+				}
+			} else if (key == "bitrate") {
+				if (!Client.transform_bitrate(res, out repr)) {
+					repr = "%s".printf(_("Unknown"));
+				}
+			} else if (key == "laststarted") {
+				if (!Client.transform_date(res, "laststarted", out repr)) {
+					repr = "%s".printf(_("Unknown"));
+				}
+			} else {
+				if (!Client.transform_generic(res, key, out repr)) {
+					repr = "%s".printf(_("Unknown"));
+				}
 			}
 
 			val = GLib.Value(typeof(string));
