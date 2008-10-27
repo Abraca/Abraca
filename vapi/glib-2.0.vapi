@@ -2015,6 +2015,7 @@ namespace GLib {
 		public time_t mktime ();
 
 		[CCode (instance_pos = -1)]
+		[CCode (cname = "strftime")]
 		public size_t strftime (char[] s, string format);
 		[CCode (instance_pos = -1)]
 		public weak string? strptime (string buf, string format);

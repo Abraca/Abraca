@@ -473,15 +473,17 @@ namespace Abraca {
 
 		public static bool transform_date (Xmms.Result res, string key, out string result)
 		{
-			GLib.TimeVal time;
+			GLib.Time time;
 			int unxtime;
 
 			if (!res.get_dict_entry_int(key, out unxtime)) {
 				return false;
 			}
 
-			time.tv_sec = unxtime;
-			result = time.to_iso8601();
+			time = Time.gm(unxtime);
+			result = (string) new char[4+1+2+1+2+1]; // yyyy-mm-dd
+
+			time.strftime((char[]) result, "%Y-%0m-%0d");
 
 			return true;
 		}
