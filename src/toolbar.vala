@@ -159,8 +159,9 @@ namespace Abraca {
 			_track_label = new Gtk.Label(
 				_("No Track")
 			);
+			_track_label.ellipsize = Pango.EllipsizeMode.END;
 
-			pack_start(_track_label, false, true, 4);
+			pack_start(_track_label, true, true, 4);
 		}
 
 
