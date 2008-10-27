@@ -255,7 +255,7 @@ namespace Abraca {
 
 				info = GLib.Markup.printf_escaped(
 					_("<b>%s</b>\n" +
-					"<small>by</small> %s <small>from</small> %s"),
+					"<span size=\"small\" foreground=\"#666666\">by</span> %s <span size=\"small\" foreground=\"#666666\">from</span> %s"),
 					title, artist, album
 				);
 			} else {
