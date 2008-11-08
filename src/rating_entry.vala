@@ -159,7 +159,7 @@ namespace Abraca {
 		/**
 		 * Update the size of the rating widget.
 		 */
-		public void on_size_request (RatingEntry w, Gtk.Requisition req) {
+		public void on_size_request (RatingEntry w, Gtk.Requisition #req) {
 			req.width = _canvas.width;
 			req.height = _canvas.height;
 		}

@@ -7,7 +7,7 @@ env.VariantDir('build', '.')
 env.Append(VALAPKGPATH = ['vapi'])
 
 conf = env.Configure('build/build-config.h')
-conf.CheckVala('0.4.0')
+conf.CheckVala('0.5.1')
 conf.CheckCCompiler()
 conf.CheckPkgConfig()
 conf.CheckApp('msgfmt')
@@ -24,7 +24,7 @@ conf.Define('DATADIR', '"' + env.subst(env['DATADIR']) + '"')
 
 conf.Finish()
 
-env.Append(VALAPKGS = ['playlist-map', 'build-config'])
+env.Append(VALAPKGS = ['playlist-map', 'build-config', 'gdk-keysyms'])
 env.Append(CCFLAGS = ['-Wall', '-Wno-unused-variable'])
 env.Append(CPPPATH = Dir('build'))
 

@@ -181,10 +181,10 @@ namespace Abraca {
 			int KEY_DELETE = 65535;
 
 			switch (e.keyval) {
-				case KEY_F2:
+				case Gdk.Keysym.F2:
 					selected_collection_rename();
 					return true;
-				case KEY_DELETE:
+				case Gdk.Keysym.Delete:
 					selected_collection_delete();
 					return true;
 			}
