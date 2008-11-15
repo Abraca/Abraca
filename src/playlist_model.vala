@@ -1,3 +1,4 @@
+
 /**
  * Abraca, an XMMS2 client.
  * Copyright (C) 2008  Abraca Team
@@ -87,11 +88,12 @@ namespace Abraca {
 		 * has been resolved or not, otherwise resolve it.
 		 */
 		public void get_value(Gtk.TreeIter iter, int column, ref GLib.Value val) {
-			GLib.Value tmp1, tmp2;
+			GLib.Value tmp1;
 
 			base.get_value(iter, Column.STATUS, ref tmp1);
 			if (((Status)tmp1.get_int()) == Status.UNRESOLVED) {
 				Client c = Client.instance();
+				GLib.Value tmp2;
 
 				base.get_value(iter, Column.ID, ref tmp2);
 
