@@ -228,6 +228,7 @@ namespace Abraca {
 			);
 
 			scrolled.add_with_viewport(view);
+			scrolled.border_width = 10;
 
 			return scrolled;
 		}
