@@ -12,7 +12,7 @@ copyright and GPL license.
 README, INSTALL:
         Licensed under GFDL without unmodifiable sections.
 
-abracaenv.py, scons-tools/vala.py, scons-tools/msgfmt.py:
+abracaenv.py, site_scons/site_tools/*:
         Licensed under ISC license.
 
 data/abraca-playlist-22.png, data/abraca-collection-22.png:

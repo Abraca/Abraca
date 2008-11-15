@@ -51,9 +51,9 @@ class AbracaEnvironment(SConsEnvironment):
 		self.EnsureSConsVersion(0, 97)
 
 		# Load the custom vala builder
-		self.Tool('vala', toolpath=['scons-tools'])
-		self.Tool('msgfmt', toolpath=['scons-tools'])
-		self.Tool('gdkpixbufcsource', toolpath=['scons-tools'])
+		self.Tool('vala')
+		self.Tool('msgfmt')
+		self.Tool('gdkpixbufcsource')
 
 		# Beef up performance a bit by caching implicit deps
 		self.SetOption('implicit_cache', True)
