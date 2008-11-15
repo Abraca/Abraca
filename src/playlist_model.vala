@@ -49,21 +49,22 @@ namespace Abraca {
 		/** keep track of playlist position <-> medialib id */
 		private PlaylistMap playlist_map;
 
+		private const GLib.Type[] _types = {
+			typeof(int),
+			typeof(uint),
+			typeof(string),
+			typeof(bool),
+			typeof(string),
+			typeof(string),
+			typeof(string),
+			typeof(string),
+			typeof(string)
+		};
 
 		construct {
 			Client c = Client.instance();
 
-			set_column_types(new GLib.Type[8] {
-					typeof(int),
-					typeof(uint),
-					typeof(string),
-					typeof(bool),
-					typeof(string),
-					typeof(string),
-					typeof(string),
-					typeof(string),
-					typeof(string)
-			});
+			set_column_types(_types);
 
 			playlist_map = new PlaylistMap();
 
