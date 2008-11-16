@@ -71,7 +71,7 @@ namespace Abraca {
 			ids = new GLib.List<uint>();
 			delete_event += on_delete_event;
 
-			set_default_size(200, 330);
+			set_default_size(310, 310);
 
 			border_width = 5;
 			transient_for = Abraca.instance().main_window;
