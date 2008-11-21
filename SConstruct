@@ -1,5 +1,3 @@
-from abracaenv import AbracaEnvironment
-
 env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.4-WiP')
 
 env.VariantDir('build', '.')
