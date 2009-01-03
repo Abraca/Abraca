@@ -91,24 +91,28 @@ namespace Abraca {
 		 * Replaces the content of the filter list model with the
 		 * result of a medialib query
 		 */
-		public void replace_content (Xmms.Result res) {
-			Gtk.TreeIter iter, sibling;
-			bool is_first = true;
+		public bool replace_content (Xmms.Value val) {
+			Gtk.TreeIter? iter, sibling = null;
+			bool is_first = !get_iter_first(out iter);
 
 			clear();
 
 			pos_map.remove_all();
 
-			get_iter_first(out iter);
+			
+			weak Xmms.ListIter list_iter;
+			val.get_list_iter(out list_iter);
 
-			for (res.list_first(); res.list_valid(); res.list_next()) {
+			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
 				Gtk.TreeRowReference row;
 				Gtk.TreePath path;
-				uint id;
-				int pos;
+				Xmms.Value entry;
+				uint id = 0;
 
-				if (!res.get_uint(out id))
+				if (!(list_iter.entry(out entry) && entry.get_uint(out id))) {
+					GLib.stdout.printf("crapping out\n");
 					continue;
+				}
 
 				if (is_first) {
 					insert_after(out iter, null);
@@ -126,6 +130,8 @@ namespace Abraca {
 
 				pos_map.insert((int) id, #row);
 			}
+
+			return true;
 		}
 
 
@@ -134,13 +140,14 @@ namespace Abraca {
 		 * has been resolved or not, otherwise resolve it.
 		 */
 		public void get_value(Gtk.TreeIter iter, int column, ref GLib.Value val) {
-			GLib.Value tmp1, tmp2;
+			GLib.Value tmp1;
 
-			base.get_value(iter, Column.STATUS, ref tmp1);
+			base.get_value(iter, Column.STATUS, out tmp1);
 			if (((Status)tmp1.get_int()) == Status.UNRESOLVED) {
+				GLib.Value tmp2;
 				Client c = Client.instance();
 
-				base.get_value(iter, Column.ID, ref tmp2);
+				base.get_value(iter, Column.ID, out tmp2);
 
 				set(iter, Column.STATUS, Status.RESOLVING);
 
@@ -149,21 +156,22 @@ namespace Abraca {
 				);
 			}
 
-			base.get_value(iter, column, ref val);
+			base.get_value(iter, column, out val);
 		}
 
-		private void on_medialib_info(Xmms.Result #res) {
+		private bool on_medialib_info(Xmms.Value propdict) {
 			weak Gtk.TreeRowReference row;
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
-			int mid, id;
-			string info;
+			int mid;
 
-			res.get_dict_entry_int("id", out mid);
+			Xmms.Value val = propdict.propdict_to_dict();
+
+			val.get_dict_entry_int("id", out mid);
 
 			row = (Gtk.TreeRowReference) pos_map.lookup(mid);
 			if (row == null || !row.valid()) {
-				return;
+				return false;
 			}
 
 			path = row.get_path();
@@ -173,39 +181,48 @@ namespace Abraca {
 
 				int pos = 2;
 				foreach (weak string key in dynamic_columns) {
-					GLib.Value tmp;
-					get_string_from_dict(res, key, out tmp);
-					set_value(iter, pos++, tmp);
-					tmp.unset();
+					string tmp;
+					if (get_string_from_dict(val, key, out tmp)) {
+						set(iter, pos++, tmp);
+					}
 				}
-
 			}
+
+			return true;
 		}
 
-		private bool get_string_from_dict (Xmms.Result res, string key, out GLib.Value val) {
+		private bool get_string_from_dict (Xmms.Value val, string key, out string repr) {
 			bool ret = true;
-			string repr;
+			//string repr;
 
 			if (key == "duration") {
-				if (!Client.transform_duration(res, out repr)) {
+				if (!Client.transform_duration(val, out repr)) {
 					repr = "%s".printf(_("Unknown"));
 				}
 			} else if (key == "bitrate") {
-				if (!Client.transform_bitrate(res, out repr)) {
+				if (!Client.transform_bitrate(val, out repr)) {
 					repr = "%s".printf(_("Unknown"));
 				}
 			} else if (key == "laststarted") {
-				if (!Client.transform_date(res, "laststarted", out repr)) {
+				if (!Client.transform_date(val, "laststarted", out repr)) {
+					repr = "%s".printf(_("Unknown"));
+				}
+			} else if (key == "added") {
+				if (!Client.transform_date(val, "added", out repr)) {
+					repr = "%s".printf(_("Unknown"));
+				}
+			} else if (key == "lmod") {
+				if (!Client.transform_date(val, "lmod", out repr)) {
 					repr = "%s".printf(_("Unknown"));
 				}
 			} else {
-				if (!Client.transform_generic(res, key, out repr)) {
+				if (!Client.transform_generic(val, key, out repr)) {
 					repr = "%s".printf(_("Unknown"));
 				}
 			}
 
-			val = GLib.Value(typeof(string));
-			val.take_string(repr);
+			//val = GLib.Value(typeof(string));
+			//val.take_string(repr);
 
 			return ret;
 		}

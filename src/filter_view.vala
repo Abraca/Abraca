@@ -44,13 +44,12 @@ namespace Abraca {
 		private GLib.List<Gtk.MenuItem>
 			filter_menu_item_when_none_selected = null;
 
-		private const string[]? _sort_order = {
-			"artist", "album", "tracknr"
-		};
+		private Xmms.Value _sort_order;
 
 		/** allowed drag-n-drop variants */
 		private const Gtk.TargetEntry[] _target_entries = {
-			DragDropTarget.TrackId
+			//DragDropTarget.TrackId
+			{"application/x-xmmsclient-track-id", 0, DragDropTargetType.MID}
 		};
 
 		construct {
@@ -70,7 +69,17 @@ namespace Abraca {
 			button_press_event += on_button_press_event;
 			row_activated += on_row_activated;
 
+			_sort_order = new Xmms.Value.from_list();
+			_sort_order.list_append(new Xmms.Value.from_string("artist"));
+			_sort_order.list_append(new Xmms.Value.from_string("album"));
+			_sort_order.list_append(new Xmms.Value.from_string("tracknr"));
+
 			Configurable.register(this);
+		}
+
+		public void get_configuration(GLib.KeyFile file) {
+			FilterModel store = (FilterModel) model;
+			file.set_string_list("filter", "columns", store.dynamic_columns);
 		}
 
 		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
@@ -83,13 +92,7 @@ namespace Abraca {
 			}
 
 			model = FilterModel.create(#list);
-
 			create_columns ();
-		}
-
-		public void get_configuration(GLib.KeyFile file) {
-			FilterModel store = (FilterModel) model;
-			file.set_string_list("filter", "columns", store.dynamic_columns);
 		}
 
 		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
@@ -115,7 +118,7 @@ namespace Abraca {
 		public void query_collection(Xmms.Collection coll) {
 			Client c = Client.instance();
 
-			c.xmms.coll_query_ids(coll, _sort_order, 0, 0).notifier_set(
+			c.xmms.coll_query_ids(coll, _sort_order).notifier_set(
 				on_coll_query_ids
 			);
 		}
@@ -155,16 +158,18 @@ namespace Abraca {
 		}
 
 
-		private void on_coll_query_ids(Xmms.Result #res) {
+		private bool on_coll_query_ids(Xmms.Value val) {
 			FilterModel store = (FilterModel) model;
 
 			/* disconnect our model while the shit hits the fan */
 			set_model(null);
 
-			store.replace_content (res);
+			store.replace_content (val);
 
 			/* reconnect the model again */
 			set_model(store);
+
+			return true;
 		}
 
 
@@ -212,7 +217,6 @@ namespace Abraca {
 		}
 
 		private void on_menu_info(Gtk.MenuItem item) {
-			Client c = Client.instance();
 			GLib.List<Gtk.TreePath> list;
 			weak Gtk.TreeModel mod;
 			Gtk.TreeIter iter;
@@ -321,8 +325,8 @@ namespace Abraca {
 				}
 			}
 
-			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
-			item.activate += on_header_add;
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_EDIT, null);
+			item.activate += on_header_edit;
 			menu.append(item);
 
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_REMOVE, null);
@@ -336,22 +340,60 @@ namespace Abraca {
 			return true;
 		}
 
-		private void on_header_add (Gtk.Widget widget) {
-			GLib.stdout.printf("on_header_add\n");
+		private void on_header_edit (Gtk.MenuItem item) {
+			FilterModel store = (FilterModel) model;
+			FilterEditor edit = new FilterEditor();
+
+			edit.column_changed += (editor, prop, enabled) => {
+				FilterModel store = (FilterModel) model;
+
+				string[] modified;
+				int i = 0;
+
+				if (enabled) {
+					modified = new string[store.dynamic_columns.length + 1];
+				} else {
+					modified = new string[store.dynamic_columns.length - 1];
+				}
+
+				foreach (weak string s in store.dynamic_columns) {
+					if (!enabled && s == prop) {
+						continue;
+					}
+					modified[i++] = s;
+				}
+
+				if (enabled) {
+					modified[i] = prop;
+				}
+
+				model = FilterModel.create(#modified);
+
+				foreach (Gtk.TreeViewColumn column in get_columns()) {
+					remove_column(column);
+				}
+				create_columns ();
+			};
+
+			edit.set_active(store.dynamic_columns);
+			edit.run();
 		}
 
 		/**
 		 * Here we actually keep the data, and simply delete the
 		 * TreeViewColumn.. keep it simple..
 		 */
-		private void on_header_remove (Gtk.Widget widget) {
-			FilterModel store = (FilterModel) model;
-
-			Gtk.Menu menu = (Gtk.Menu) widget.parent;
+		private void on_header_remove (Gtk.MenuItem item) {
+			Gtk.Menu menu = (Gtk.Menu) item.parent;
 			weak string title = menu.get_title();
+
+			remove_column_by_name(title);
+		}
+
+		private void remove_column_by_name(string name) {
 			foreach (weak Gtk.TreeViewColumn column in get_columns()) {
 				Gtk.Label lbl = (Gtk.Label) column.widget;
-				if (lbl.get_label() == title) {
+				if (lbl.get_label() == name) {
 					remove_column(column);
 					break;
 				}
@@ -360,7 +402,6 @@ namespace Abraca {
 
 		private void create_context_menu() {
 			Gtk.MenuItem item;
-			Gtk.ImageMenuItem img_item;
 
 			filter_menu = new Gtk.Menu();
 
@@ -411,8 +452,6 @@ namespace Abraca {
 			weak Gtk.TreeSelection sel = get_selection();
 			GLib.List<Gtk.TreePath> lst = sel.get_selected_rows(null);
 			GLib.List<uint> mid_list = new GLib.List<uint>();
-
-			string buf = null;
 
 			foreach (weak Gtk.TreePath p in lst) {
 				Gtk.TreeIter iter;

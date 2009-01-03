@@ -25,13 +25,16 @@ namespace Abraca {
 
 		/** drag-n-drop targets */
 		private const Gtk.TargetEntry[] _target_entries = {
-			DragDropTarget.TrackId,
-			DragDropTarget.Collection
+			//DragDropTarget.TrackId,
+			{"application/x-xmmsclient-track-id", 0, DragDropTargetType.MID},
+			//DragDropTarget.Collection
+			{"application/x-xmmsclient-collection", 0, DragDropTargetType.COLL}
 		};
 
 		/** drag-n-drop sources */
 		private const Gtk.TargetEntry[] _source_entries = {
-			DragDropTarget.Collection
+			//DragDropTarget.Collection
+			{"application/x-xmmsclient-collection", 0, DragDropTargetType.COLL}
 		};
 
 		/** context menu */
@@ -177,9 +180,6 @@ namespace Abraca {
 
 		private bool on_key_press_event (CollectionsView w, Gdk.EventKey e)
 		{
-			int KEY_F2 = 65471;
-			int KEY_DELETE = 65535;
-
 			switch (e.keyval) {
 				case Gdk.Keysym.F2:
 					selected_collection_rename();
@@ -276,7 +276,6 @@ namespace Abraca {
 		{
 			CollectionsModel store = (CollectionsModel) model;
 			Gtk.TreeViewDropPosition pos;
-			Gtk.TreePath tmp;
 
 			/* save to handle */
 			get_drag_dest_row(out _drop_path, out pos);
@@ -300,8 +299,8 @@ namespace Abraca {
 
 			if (_drop_path != null) {
 				CollectionsModel.CollectionType type;
+				string name = "Unknown";
 				Gtk.TreeIter iter;
-				string name;
 
 				store.get_iter(out iter, _drop_path);
 
@@ -310,9 +309,7 @@ namespace Abraca {
 				} else {
 					type = CollectionsModel.CollectionType.Playlist;
 					if (store.path_is_child_of_type(_drop_path, type)) {
-						store.get(
-							iter, CollectionsModel.Column.Name, out name
-						);
+						store.get(iter, CollectionsModel.Column.Name, out name);
 					}
 				}
 
@@ -373,7 +370,7 @@ namespace Abraca {
 			Client c = Client.instance();
 
 			store.get_iter(out iter, path);
-			store.get(iter, CollectionsModel.Column.Name, ref name);
+			store.get(iter, CollectionsModel.Column.Name, out name);
 
 			type = CollectionsModel.CollectionType.Collection;
 			if (store.path_is_child_of_type(path, type)) {
@@ -407,26 +404,21 @@ namespace Abraca {
 				if (path.get_depth() == 2) {
 					CollectionsModel.CollectionType type;
 					Client c = Client.instance();
-					Gtk.TreePath tmp;
 					weak string ns;
 					string name;
 
-					store.get(iter, CollectionsModel.Column.Name, ref name);
-
-					type = CollectionsModel.CollectionType.Playlist;
-					if (store.path_is_child_of_type(path, type)) {
-						ns = Xmms.COLLECTION_NS_PLAYLISTS;
-					}
+					store.get(iter, CollectionsModel.Column.Name, out name);
 
 					type = CollectionsModel.CollectionType.Collection;
 					if (store.path_is_child_of_type(path, type)) {
 						ns = Xmms.COLLECTION_NS_COLLECTIONS;
+					} else {
+						ns = Xmms.COLLECTION_NS_PLAYLISTS;
 					}
 
 					/* TODO: Pass to the top class of filtertree */
-					c.xmms.coll_get(name, ns).notifier_set(
-						on_coll_get
-					);
+					c.xmms.coll_get(name, ns).notifier_set(on_coll_get);
+
 					if (Client.collection_needs_quoting(name)) {
 						Abraca.instance().main_window.main_hpaned.
 							right_hpaned.filter_entry_set_text(
@@ -487,16 +479,10 @@ namespace Abraca {
 				if (path.get_depth() == 2) {
 					CollectionsModel.CollectionType type;
 					Client c = Client.instance();
-					Gtk.TreePath tmp;
-					weak string ns;
+					weak string ns = Xmms.COLLECTION_NS_PLAYLISTS;
 					string name;
 
-					store.get(iter, CollectionsModel.Column.Name, ref name);
-
-					type = CollectionsModel.CollectionType.Playlist;
-					if (store.path_is_child_of_type(path, type)) {
-						ns = Xmms.COLLECTION_NS_PLAYLISTS;
-					}
+					store.get(iter, CollectionsModel.Column.Name, out name);
 
 					type = CollectionsModel.CollectionType.Collection;
 					if (store.path_is_child_of_type(path, type)) {
@@ -509,14 +495,16 @@ namespace Abraca {
 		}
 
 
-		private void on_coll_get (Xmms.Result #res)
+		private bool on_coll_get (Xmms.Value val)
 		{
 			Xmms.Collection coll;
 
-			if (res.get_collection(out coll)) {
+			if (val.get_collection(out coll)) {
 				Abraca.instance().main_window.main_hpaned.
 					right_hpaned.filter_tree.query_collection(coll);
 			}
+
+			return true;
 		}
 
 
@@ -528,7 +516,6 @@ namespace Abraca {
 		{
 			Gtk.TreeViewColumn column;
 			CollCellRenderer renderer;
-			weak Gdk.Pixbuf pixbuf;
 
 			/* Load the playlist icon */
 			try {

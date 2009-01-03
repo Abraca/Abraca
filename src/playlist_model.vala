@@ -49,7 +49,7 @@ namespace Abraca {
 		/** keep track of playlist position <-> medialib id */
 		private PlaylistMap playlist_map;
 
-		private const GLib.Type[] _types = {
+		private GLib.Type[] _types = new GLib.Type[] {
 			typeof(int),
 			typeof(uint),
 			typeof(string),
@@ -91,12 +91,12 @@ namespace Abraca {
 		public void get_value(Gtk.TreeIter iter, int column, ref GLib.Value val) {
 			GLib.Value tmp1;
 
-			base.get_value(iter, Column.STATUS, ref tmp1);
+			base.get_value(iter, Column.STATUS, out tmp1);
 			if (((Status)tmp1.get_int()) == Status.UNRESOLVED) {
 				Client c = Client.instance();
 				GLib.Value tmp2;
 
-				base.get_value(iter, Column.ID, ref tmp2);
+				base.get_value(iter, Column.ID, out tmp2);
 
 				set(iter, Column.STATUS, Status.RESOLVING);
 
@@ -105,7 +105,7 @@ namespace Abraca {
 				);
 			}
 
-			base.get_value(iter, column, ref val);
+			base.get_value(iter, column, out val);
 		}
 
 
@@ -136,7 +136,7 @@ namespace Abraca {
 		 * TODO: Move row x to pos y.
 		 */
 		private void on_playlist_move(Client c, string playlist, int pos, int npos) {
-			Gtk.TreeIter iter, niter;
+			Gtk.TreeIter? iter, niter = null;
 			if (iter_nth_child (out iter, null, pos) &&
 			    iter_nth_child(out niter, null, npos)) {
 				if (pos < npos) {
@@ -213,7 +213,7 @@ namespace Abraca {
 
 				set(added, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
 
-				Gtk.TreePath path = get_path(added);
+				path = get_path(added);
 				Gtk.TreeRowReference row = new Gtk.TreeRowReference(this, path);
 				playlist_map.insert(mid, row);
 			}
@@ -272,9 +272,8 @@ namespace Abraca {
 		/**
 		 * Refresh the whole playlist.
 		 */
-		private void on_playlist_list_entries(Xmms.Result #res) {
-			Client c = Client.instance();
-			Gtk.TreeIter iter, sibling;
+		private bool on_playlist_list_entries(Xmms.Value val) {
+			Gtk.TreeIter? iter, sibling = null;
 			bool first = true;
 
 			playlist_map.clear();
@@ -285,13 +284,16 @@ namespace Abraca {
 			set_model(null);
 			*/
 
-			for (res.list_first(); res.list_valid(); res.list_next()) {
+			weak Xmms.ListIter list_iter;
+			val.get_list_iter(out list_iter);
+
+			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
 				Gtk.TreeRowReference row;
 				Gtk.TreePath path;
-				uint mid;
-				int pos;
+				Xmms.Value entry;
+				uint mid = 0;
 
-				if (!res.get_uint(out mid))
+				if (!(list_iter.entry(out entry) && entry.get_uint(out mid)))
 					continue;
 
 				if (first) {
@@ -315,41 +317,45 @@ namespace Abraca {
 			/*
 			set_model(ore);
 			*/
+
+			return true;
 		}
 
 
-		private void on_medialib_info(Xmms.Result #res) {
+		private bool on_medialib_info(Xmms.Value propdict) {
 			weak GLib.SList<Gtk.TreeRowReference> lst;
-			weak string artist, album, title, genre;
-			int pos, id, status;
+			string album, title, genre, artist = null;
 			string info;
-			int mid;
+			int status, mid;
 
-			res.get_dict_entry_int("id", out mid);
+			Xmms.Value val = propdict.propdict_to_dict();
+
+			val.get_dict_entry_int("id", out mid);
 
 			lst = playlist_map.lookup(mid);
 			if (lst == null) {
 				// the given mid doesn't match any of our rows 
-				return;
+				GLib.stdout.printf("omg %d\n", mid);
+				return false;
 			}
 
-			res.get_dict_entry_int("status", out status);
+			val.get_dict_entry_int("status", out status);
 
-			if (!res.get_dict_entry_string("album", out album)) {
+			if (!val.get_dict_entry_string("album", out album)) {
 				album = _("Unknown");
 			}
-			if (!res.get_dict_entry_string("genre", out genre)) {
+			if (!val.get_dict_entry_string("genre", out genre)) {
 				genre = _("Unknown");
 			}
 
-			if (res.get_dict_entry_string("title", out title)) {
+			if (val.get_dict_entry_string("title", out title)) {
 				string duration;
 
-				if (!res.get_dict_entry_string("artist", out artist)) {
+				if (!val.get_dict_entry_string("artist", out artist)) {
 					artist = _("Unknown");
 				}
 
-				if (Client.transform_duration(res, out duration)) {
+				if (Client.transform_duration(val, out duration)) {
 					info = GLib.Markup.printf_escaped(
 						_("<b>%s</b> - <small>%s</small>\n" +
 						"<small>by</small> %s <small>from</small> %s"),
@@ -363,20 +369,19 @@ namespace Abraca {
 					);
 				}
 			} else {
-				weak string url;
-				string duration;
+				string duration, url;
 
-				res.get_dict_entry_string("url", out url);
+				if (!val.get_dict_entry_string("url", out url)) {
+					url = _("Unknown");
+				}
 
-				if (Client.transform_duration(res, out duration)) {
+				if (Client.transform_duration(val, out duration)) {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b> - <small>%s</small>"),
-						url, duration
+						_("<b>%s</b> - <small>%s</small>"), url, duration
 					);
 				} else {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b>"),
-						url
+						_("<b>%s</b>"), url
 					);
 				}
 			}
@@ -384,7 +389,7 @@ namespace Abraca {
 
 			foreach (weak Gtk.TreeRowReference row in lst) {
 				Gtk.TreePath path;
-				Gtk.TreeIter iter;
+				Gtk.TreeIter? iter = null;
 
 				path = row.get_path();
 
@@ -401,6 +406,8 @@ namespace Abraca {
 					Column.GENRE, genre
 				);
 			}
+
+			return true;
 		}
 	}
 }

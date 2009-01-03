@@ -31,7 +31,7 @@ namespace Abraca {
 		public signal void playback_status(int status);
 		public signal void playback_current_id(uint mid);
 		public signal void playback_playtime(uint pos);
-		public signal void playback_volume(Xmms.Result res);
+		public signal void playback_volume(Xmms.Value res);
 
 		public signal void playlist_loaded(string name);
 		public signal void playlist_add(string playlist, uint mid);
@@ -45,21 +45,9 @@ namespace Abraca {
 		public signal void collection_rename(string name, string newname, string ns);
 		public signal void collection_remove(string name, string ns);
 
-		public signal void medialib_entry_changed(Xmms.Result res);
+		public signal void medialib_entry_changed(Xmms.Value res);
 
 		public signal void configval_changed(string key, string val);
-
-		private Xmms.Result _result_playback_status;
-		private Xmms.Result _result_playback_current_id;
-		private Xmms.Result _result_medialib_entry_changed;
-		private Xmms.Result _result_playback_volume;
-		private Xmms.Result _result_playlist_loaded;
-		private Xmms.Result _result_playlist_changed;
-		private Xmms.Result _result_playlist_position;
-
-		private Xmms.Result _result_collection_changed;
-
-		private Xmms.Result _result_configval_changed;
 
 		/** current playback status */
 		public int current_playback_status {
@@ -71,23 +59,21 @@ namespace Abraca {
 			get; set; default = "";
 		}
 
+		public const string[] source_preferences = {
+			"server",
+			"client/*",
+			"plugin/id3v2",
+			"plugin/segment",
+			"plugin/*",
+			"*"
+		};
 
 		construct {
 			_xmms = new Xmms.Client("Abraca");
 		}
 
-
 		private void on_disconnect() {
 			disconnected();
-
-			_result_playback_status = null;
-			_result_playback_current_id = null;
-			_result_medialib_entry_changed = null;
-			_result_playlist_loaded = null;
-			_result_playlist_changed = null;
-			_result_playlist_position = null;
-			_result_collection_changed = null;
-			_result_configval_changed = null;
 
 			GLib.Timeout.add(500, reconnect);
 
@@ -203,63 +189,51 @@ namespace Abraca {
 		}
 
 
-		private void on_playback_status(Xmms.Result #res) {
+		private bool on_playback_status(Xmms.Value val) {
 			uint status;
-			if (res.get_uint(out status)) {
+			if (val.get_uint(out status)) {
 				playback_status((int) status);
-				current_playback_status = status;
+				current_playback_status = (int) status;
 			}
 
-			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
-				_result_playback_status = res;
-				_result_playback_status.ref();
-			}
+			return true;
 		}
 
 
-		private void on_playback_current_id(Xmms.Result #res) {
+		private bool on_playback_current_id(Xmms.Value val) {
 			uint mid;
 
-			if (res.get_uint(out mid)) {
+			if (val.get_uint(out mid)) {
 				playback_current_id(mid);
 			}
 
-			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
-				_result_playback_current_id = res;
-				_result_playback_current_id.ref();
-			}
+			return true;
 		}
 
 
 		/**
 		 * Emit the current playback position in ms.
 		 */
-		private void on_playback_playtime(Xmms.Result #res) {
+		private bool on_playback_playtime(Xmms.Value val) {
 			uint pos;
 
-			if (res.get_uint(out pos)) {
+			if (val.get_uint(out pos)) {
 				playback_playtime(pos);
 			}
 
-			if (res.get_class() == Xmms.ResultClass.SIGNAL) {
-				res.restart();
-			}
+			return true;
 		}
 
-		private void on_playback_volume(Xmms.Result #res) {
+		private bool on_playback_volume(Xmms.Value val) {
+			playback_volume(val);
 
-			playback_volume(res);
-
-			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
-				_result_playback_volume = res;
-				_result_playback_volume.ref();
-			}
+			return true;
 		}
 
-		private void on_playlist_loaded(Xmms.Result #res) {
+		private bool on_playlist_loaded(Xmms.Value val) {
 			weak string name;
 
-			if (res.get_string(out name)) {
+			if (val.get_string(out name)) {
 				current_playlist = name;
 
 				playlist_loaded(name);
@@ -268,47 +242,41 @@ namespace Abraca {
 					on_playlist_position
 				);
 			}
-
-			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
-				_result_playlist_loaded = res;
-				_result_playlist_loaded.ref();
-			}
+			return true;
 		}
 
 
-		private void on_playlist_position(Xmms.Result #res) {
+		private bool on_playlist_position(Xmms.Value val) {
 			uint pos;
 
-			if (res.get_type() == Xmms.ResultType.DICT) {
-				weak string name;
-
-				res.get_dict_entry_uint("position", out pos);
-				res.get_dict_entry_string("name", out name);
-
+			if (val.is_dict()) {
+				string name;
+				if (!val.get_dict_entry_uint("position", out pos))
+					return true;
+				if (!val.get_dict_entry_string("name", out name))
+					return true;
 				playlist_position(name, pos);
 			} else {
-				res.get_uint(out pos);
-
+				if (!val.get_uint(out pos))
+					return true;
 				playlist_position(current_playlist, pos);
 			}
 
-			if (res.get_class() != Xmms.ResultClass.DEFAULT) {
-				_result_playlist_loaded = res;
-				_result_playlist_loaded.ref();
-			}
+			return true;
 		}
 
 
-		private void on_playlist_changed(Xmms.Result #res) {
-			weak string playlist;
+		private bool on_playlist_changed(Xmms.Value val) {
+			string playlist;
 			int change, pos, npos;
 			uint mid;
+			bool tmp;
 
-			res.get_dict_entry_int("type", out change);
-			res.get_dict_entry_int("position", out pos);
-			res.get_dict_entry_int("newposition", out npos);
-			res.get_dict_entry_uint("id", out mid);
-			res.get_dict_entry_string("name", out playlist);
+			tmp = val.get_dict_entry_int("type", out change);
+			tmp = val.get_dict_entry_int("position", out pos);
+			tmp = val.get_dict_entry_int("newposition", out npos);
+			tmp = val.get_dict_entry_uint("id", out mid);
+			tmp = val.get_dict_entry_string("name", out playlist);
 
 			switch (change) {
 				case Xmms.PlaylistChange.ADD:
@@ -335,18 +303,18 @@ namespace Abraca {
 					break;
 			}
 
-			_result_playlist_changed = res;
-			_result_playlist_changed.ref();
+			return true;
 		}
 
 
-		private void on_collection_changed(Xmms.Result #res) {
-			weak string name, newname, ns;
+		private bool on_collection_changed(Xmms.Value val) {
+			string name, newname, ns;
 			int change;
+			bool tmp;
 
-			res.get_dict_entry_string("name", out name);
-			res.get_dict_entry_string("namespace", out ns);
-			res.get_dict_entry_int("type", out change);
+			tmp = val.get_dict_entry_string("name", out name);
+			tmp = val.get_dict_entry_string("namespace", out ns);
+			tmp = val.get_dict_entry_int("type", out change);
 
 			switch (change) {
 				case Xmms.CollectionChanged.ADD:
@@ -356,11 +324,12 @@ namespace Abraca {
 					collection_update(name, ns);
 					break;
 				case Xmms.CollectionChanged.RENAME:
-					res.get_dict_entry_string("newname", out newname);
-					if (name == current_playlist) {
-						current_playlist = newname;
+					if (val.get_dict_entry_string("newname", out newname)) {
+						if (name == current_playlist) {
+							current_playlist = newname;
+						}
+						collection_rename(name, newname, ns);
 					}
-					collection_rename(name, newname, ns);
 					break;
 				case Xmms.CollectionChanged.REMOVE:
 					collection_remove(name, ns);
@@ -369,29 +338,27 @@ namespace Abraca {
 					break;
 			}
 
-			_result_collection_changed = res;
-			_result_collection_changed.ref();
+			return true;
 		}
 
 
-		public void on_medialib_entry_changed(Xmms.Result #res) {
+		public bool on_medialib_entry_changed(Xmms.Value val) {
 			uint mid;
 
-			if (res.get_uint(out mid)) {
+			if (val.get_uint(out mid)) {
 				_xmms.medialib_get_info(mid).notifier_set(
 					on_medialib_get_info
 				);
 			}
-
-			_result_medialib_entry_changed = res;
-			_result_medialib_entry_changed.ref();
+			return true;
 		}
 
 
-		private void on_medialib_get_info(Xmms.Result #res) {
-			if (!res.iserror()) {
-				medialib_entry_changed(res);
+		private bool on_medialib_get_info(Xmms.Value val) {
+			if (!val.is_error()) {
+				medialib_entry_changed(val);
 			}
+			return true;
 		}
 
 		public static bool collection_needs_quoting (string str) {
@@ -428,25 +395,25 @@ namespace Abraca {
 			return ret || numeric;
 		}
 
-		private void on_configval_changed_dict_each(void *key, Xmms.ResultType type,
-		                                            void *val) {
-			configval_changed((string) key, (string) val);
+		private void on_configval_changed_foreach(string key, Xmms.Value val) {
+			string cfg_value;
+			if (val.get_string(out cfg_value)) {
+				configval_changed(key, cfg_value);
+			}
 		}
 
-		private void on_configval_changed(Xmms.Result #res) {
-			res.dict_foreach(on_configval_changed_dict_each);
-
-			_result_configval_changed = res;
-			_result_configval_changed.ref();
+		private bool on_configval_changed(Xmms.Value val) {
+			val.dict_foreach(on_configval_changed_foreach);
+			return true;
 		}
 
 
 		/** Here comes default Xmms.Result filters, need a good place to live... */
-		public static bool transform_duration (Xmms.Result res, out string result)
+		public static bool transform_duration (Xmms.Value val, out string result)
 		{
 			int dur_sec, dur_min, duration;
 
-			if (!res.get_dict_entry_int("duration", out duration)) {
+			if (!val.get_dict_entry_int("duration", out duration)) {
 				return false;
 			}
 
@@ -458,11 +425,11 @@ namespace Abraca {
 			return true;
 		}
 
-		public static bool transform_bitrate (Xmms.Result res, out string result)
+		public static bool transform_bitrate (Xmms.Value val, out string result)
 		{
 			int bitrate;
 
-			if (!res.get_dict_entry_int("bitrate", out bitrate)) {
+			if (!val.get_dict_entry_int("bitrate", out bitrate)) {
 				return false;
 			}
 
@@ -471,18 +438,18 @@ namespace Abraca {
 			return true;
 		}
 
-		public static bool transform_date (Xmms.Result res, string key, out string result)
+		public static bool transform_date (Xmms.Value val, string key, out string result)
 		{
 			int unxtime;
 
-			if (!res.get_dict_entry_int(key, out unxtime)) {
+			if (!val.get_dict_entry_int(key, out unxtime)) {
 				return false;
 			}
 
 			if (unxtime > 0) {
 				GLib.Time time;
 
-				time = Time.gm(unxtime);
+				time = Time.gm((time_t) unxtime);
 				result = (string) new char[4+1+2+1+2+1]; // yyyy-mm-dd\0
 
 				time.strftime((char[]) result, "%Y-%0m-%0d");
@@ -493,25 +460,25 @@ namespace Abraca {
 			return true;
 		}
 
-		public static bool transform_generic (Xmms.Result res, string key, out string repr)
+		public static bool transform_generic (Xmms.Value val, string key, out string repr)
 		{
-			switch (res.get_dict_entry_type(key)) {
-				case Xmms.ResultType.INT32:
+			switch (val.get_dict_entry_type(key)) {
+				case Xmms.ValueType.INT32:
 					int tmp;
-					if (!res.get_dict_entry_int(key, out tmp)) {
+					if (!val.get_dict_entry_int(key, out tmp)) {
 						return false;
 					}
 					repr = "%d".printf(tmp);
 					break;
-				case Xmms.ResultType.UINT32:
+			    case Xmms.ValueType.UINT32:
 					uint tmp;
-					if (!res.get_dict_entry_uint(key, out tmp)) {
+					if (!val.get_dict_entry_uint(key, out tmp)) {
 						return false;
 					}
 					repr = "%u".printf(tmp);
 					break;
-				case Xmms.ResultType.STRING:
-					if (!res.get_dict_entry_string(key, out repr)) {
+				case Xmms.ValueType.STRING:
+					if (!val.get_dict_entry_string(key, out repr)) {
 						return false;
 					}
 					repr = "%s".printf(repr);

@@ -74,9 +74,8 @@ namespace Abraca {
 
 		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
 			int xpos, ypos, width, height;
-			bool is_maximized;
 
-			gravity = file.get_integer("main_win", "gravity");
+			gravity = (Gdk.Gravity) file.get_integer("main_win", "gravity");
 			xpos = file.get_integer("main_win", "x");
 			ypos = file.get_integer("main_win", "y");
 

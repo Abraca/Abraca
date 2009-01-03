@@ -107,9 +107,7 @@ namespace Abraca {
 				_("_Playlist")
 			);
 			Gtk.MenuItem item;
-			Gtk.ImageMenuItem img_item;
 			Gtk.CheckMenuItem check_item;
-			Gtk.Image img;
 			Gtk.Menu sub = new Gtk.Menu();
 
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_NEW, null);
@@ -192,40 +190,34 @@ namespace Abraca {
 		private void on_music_quit(Gtk.MenuItem item) {
 			Abraca.instance().quit();
 		}
-		private void on_playlist_replace_with_filter_results(Gtk.MenuItem item) {
-			Abraca.instance().main_window.main_hpaned.
-				right_hpaned.filter_tree.playlist_replace_with_filter_results();
-		}
-		private void on_playlist_add_filter_results(Gtk.ImageMenuItem item) {
-			Abraca.instance().main_window.main_hpaned.
-				right_hpaned.filter_tree.playlist_add_filter_results();
-		}
+
 		private void on_configure_sorting(Gtk.MenuItem item) {
 			Config.instance().show_sorting_dialog();
 		}
+
 		private void on_playlist_clear(Gtk.MenuItem item) {
 			Client.instance().xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
 		}
+
 		private void on_playlist_shuffle(Gtk.MenuItem item) {
 			Client.instance().xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
 		}
 
 		private void on_help_about(Gtk.MenuItem item) {
-			string filename;
 			Gtk.AboutDialog d;
 			Gdk.Pixbuf buf;
+
+			d = new Gtk.AboutDialog();
 
 			try {
 				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
 					-1, Resources.abraca_192, false
 				);
 				buf = tmp;
+				d.set_logo(buf);
 			} catch (GLib.Error e) {
 				GLib.stderr.printf("ERROR: %s\n", e.message);
 			}
-
-			d = new Gtk.AboutDialog();
-			d.set_logo(buf);
 
 			d.name = GLib.Environment.get_application_name();
 			d.comments = _("A client for the XMMS2 music player");

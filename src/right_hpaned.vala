@@ -63,7 +63,7 @@ namespace Abraca {
 			Gtk.TreeIter iter;
 			string[] list = new string[25];
 			string current;
-			int i;
+			int i = 0;
 
 			file.set_integer("panes", "pos2", position);
 
@@ -78,29 +78,18 @@ namespace Abraca {
 		}
 
 		private void on_filter_entry_changed(Gtk.Entry entry) {
+			Gdk.Color? color = null;
 			Xmms.Collection coll;
-			Gdk.Color color;
-			weak string text;
-			bool is_error = false;
 
-			text = entry.get_text();
+			weak string text = entry.get_text();
 
-			if (text.size() > 0) {
-				if (!Xmms.Collection.parse(text, out coll)) {
-					is_error = true;
-
-					/* set color to a bright red */
-					color.red = (ushort) 0xffff;
-					color.green = (ushort) 0x6666;
-					color.blue = (ushort) 0x6666;
+			if (text.size() > 0 && !Xmms.Collection.parse(text, out coll)) {
+				if (!Gdk.Color.parse("#ff6666", out color)) {
+					color = null;
 				}
 			}
 
-			if (is_error) {
-				entry.modify_base(Gtk.StateType.NORMAL, color);
-			} else {
-				entry.modify_base(Gtk.StateType.NORMAL, null);
-			}
+			entry.modify_base(Gtk.StateType.NORMAL, color);
 		}
 
 		private void _filter_save (string pattern) {
@@ -169,7 +158,7 @@ namespace Abraca {
 				null, null
 			);
 
-			scrolled.set_policy(Gtk.PolicyType.NEVER,
+			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
 			                    Gtk.PolicyType.AUTOMATIC);
 			scrolled.set_shadow_type(Gtk.ShadowType.IN);
 

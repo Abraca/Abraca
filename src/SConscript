@@ -6,6 +6,7 @@ vala_sources = """
 	collections_view.vala
 	collections_model.vala
 	config.vala
+        filter_editor.vala
 	filter_view.vala
 	filter_model.vala
 	medialib.vala

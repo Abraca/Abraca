@@ -47,14 +47,17 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 		scroll_event += on_scroll_event;
 
 		Client c = Client.instance();
-		c.playback_volume += (client, res) => {
+		c.playback_volume += (client, val) => {
 			if (_accept_updates) {
 				value = 0;
-				res.dict_foreach((key, type, val) => {
+				val.dict_foreach((key, val) => {
+					int tmp;
+					val.get_int(out tmp);
+
 					if (value == 0) {
-						value = (int) val;
+						value = (int) tmp;
 					} else {
-						value = (value + (int) val) / 2;
+						value = (value + (int) tmp) / 2;
 					}
 				});
 			}
@@ -67,18 +70,21 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 
 	private void _apply_volume (uint volume) {
 		Client c = Client.instance();
-		c.xmms.playback_volume_get().notifier_set((res) => {
-			res.dict_foreach((key, type, val) => {
+		c.xmms.playback_volume_get().notifier_set((val) => {
+			val.dict_foreach((key, val) => {
 				Client c = Client.instance();
-				c.xmms.playback_volume_set((string) key, (uint) value);
+				uint tmp;
+				if (val.get_uint(out tmp)) {
+					c.xmms.playback_volume_set(key, tmp);
+				}
 			});
+			return true;
 		});
 
 		tooltip_text = "%d%%".printf((int) value);
 	}
 
 	public bool on_scroll_event (VolumeButton w, Gdk.EventScroll e) {
-		Client c = Client.instance();
 		uint tmp;
 
 		if (e.direction == Gdk.ScrollDirection.UP) {

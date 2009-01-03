@@ -66,11 +66,14 @@ namespace Abraca {
 				c.xmms.configval_get(config_key).notifier_set(on_value_get);
 			}
 
-			private void on_value_get(Xmms.Result #res) {
-				weak string val;
+			private bool on_value_get(Xmms.Value val) {
+				string tmp;
 
-				res.get_string(out val);
-				set_active((bool) val.to_int());
+				if (val.get_string(out tmp)) {
+					set_active((bool) tmp.to_int());
+				}
+
+				return true;
 			}
 
 			private void on_value_changed(Client c, string key, string val) {

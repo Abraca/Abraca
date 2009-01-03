@@ -216,22 +216,22 @@ namespace Abraca {
 		}
 
 
-		private void on_media_info(Xmms.Result #res) {
-			weak string title, cover;
-			string info;
-			int id;
-			int duration, dur_min, dur_sec, pos;
+		private bool on_media_info(Xmms.Value propdict) {
+			string title, cover, info, url;
+			int duration, id;
 
-			res.get_dict_entry_int("id", out id);
+			Xmms.Value val = propdict.propdict_to_dict();
+
+			val.get_dict_entry_int("id", out id);
 			if (_current_id != id) {
-				return;
+				return true;
 			}
 
-			if (!res.get_dict_entry_int("duration", out duration)) {
+			if (!val.get_dict_entry_int("duration", out duration)) {
 				duration = 0;
 			}
 
-			if (!res.get_dict_entry_string("picture_front", out cover)) {
+			if (!val.get_dict_entry_string("picture_front", out cover)) {
 				_coverart.set_from_stock(
 					Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR
 				);
@@ -243,13 +243,13 @@ namespace Abraca {
 				);
 			}
 
-			if (res.get_dict_entry_string("title", out title)) {
-				weak string artist, album, cover;
-				if (!res.get_dict_entry_string("artist", out artist)) {
+			if (val.get_dict_entry_string("title", out title)) {
+				string artist, album;
+				if (!val.get_dict_entry_string("artist", out artist)) {
 					artist = _("Unknown");
 				}
 
-				if (!res.get_dict_entry_string("album", out album)) {
+				if (!val.get_dict_entry_string("album", out album)) {
 					album = _("Unknown");
 				}
 
@@ -258,11 +258,10 @@ namespace Abraca {
 					"<span size=\"small\" foreground=\"#666666\">by</span> %s <span size=\"small\" foreground=\"#666666\">from</span> %s"),
 					title, artist, album
 				);
-			} else {
-				weak string url;
-
-				res.get_dict_entry_string("url", out url);
+			} else if (val.get_dict_entry_string("url", out url)) {
 				info = GLib.Markup.printf_escaped(_("<b>%s</b>"), url);
+			} else {
+				info = "%s".printf("Unknown");
 			}
 
 
@@ -271,13 +270,15 @@ namespace Abraca {
 			_duration = duration;
 
 			update_time_label();
+
+			return true;
 		}
 
 
-		private void on_bindata_retrieve(Xmms.Result #res) {
+		private bool on_bindata_retrieve(Xmms.Value val) {
 			weak uchar[] data;
 
-			if (res.get_bin(out data)) {
+			if (val.get_bin(out data)) {
 				Gdk.PixbufLoader loader;
 				weak Gdk.Pixbuf pixbuf;
 
@@ -293,6 +294,8 @@ namespace Abraca {
 				pixbuf = pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR);
 				_coverart.set_from_pixbuf(pixbuf);
 			}
+
+			return true;
 		}
 
 

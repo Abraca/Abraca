@@ -7,16 +7,20 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  *
+ * As a special exception, if you use inline functions from this file, this
+ * file does not by itself cause the resulting executable to be covered by
+ * the GNU Lesser General Public License.
+ * 
  * Author:
  * 	Jürg Billeter <j@bitron.ch>
  *	Raffaele Sandrini <rasa@gmx.ch>
@@ -106,6 +110,9 @@ public struct int {
 
 	[CCode (cname = "GINT_TO_POINTER")]
 	public void* to_pointer ();
+
+	[CCode (cname = "abs")]
+	public int abs ();
 }
 
 [SimpleType]
@@ -189,6 +196,8 @@ public struct long {
 	public static long max (long a, long b);
 	[CCode (cname = "CLAMP")]
 	public long clamp (long low, long high);
+	[CCode (cname = "labs")]
+	public long abs ();
 }
 
 [SimpleType]
@@ -427,6 +436,8 @@ public struct int64 {
 	public static int64 max (int64 a, int64 b);
 	[CCode (cname = "CLAMP")]
 	public int64 clamp (int64 low, int64 high);
+	[CCode (cname = "llabs")]
+	public int64 abs ();
 }
 
 [SimpleType]
@@ -705,8 +716,6 @@ public class string {
 	public int scanf (...);
 	[CCode (cname = "g_strconcat")]
 	public string concat (string string2, ...);
-	[CCode (cname = "g_strndup")]
-	public string ndup (ulong n); /* FIXME: only UTF-8 */
 	[CCode (cname = "g_strescape")]
 	public string escape (string exceptions);
 	[CCode (cname = "g_strcompress")]
@@ -720,6 +729,8 @@ public class string {
 	[CCode (cname = "g_strjoinv")]
 	[NoArrayLength]
 	public static string joinv (string separator, string[] str_array);
+	[CCode (cname = "g_strjoin")]
+	public static string join (string separator, ...);
 	[CCode (cname = "g_strnfill")]
 	public static string nfill (ulong length, char fill_char);
 
@@ -791,8 +802,39 @@ public class string {
 	[CCode (cname = "g_strcanon")]
 	public void canon (string valid_chars, char substitutor);
 
-	/* internal method */
-	public string substring (long offset, long len);
+	// n is size in bytes, not length in characters
+	[CCode (cname = "g_strndup")]
+	public string ndup (size_t n);
+
+	public string substring (long offset, long len = -1) {
+		long string_length = this.len ();
+		if (offset < 0) {
+			offset = string_length + offset;
+			GLib.warn_if_fail (offset >= 0);
+		} else {
+			GLib.warn_if_fail (offset <= string_length);
+		}
+		if (len < 0) {
+			len = string_length - offset;
+		}
+		GLib.warn_if_fail (offset + len <= string_length);
+		weak string start = this.offset (offset);
+		return start.ndup (((char*) start.offset (len)) - ((char*) start));
+	}
+
+	public bool contains (string needle) {
+		return this.str (needle) != null;
+	}
+
+
+	public string replace (string old, string replacement) {
+		try {
+			var regex = new GLib.Regex (GLib.Regex.escape_string (old));
+			return regex.replace_literal (this, -1, 0, replacement);
+		} catch (GLib.RegexError e) {
+			GLib.assert_not_reached ();
+		}
+	}
 
 	public long length {
 		get { return this.len (); }
@@ -1036,7 +1078,8 @@ namespace GLib {
 		public void add_poll (ref PollFD fd, int priority);
 		public void remove_poll (ref PollFD fd);
 		public int depth ();
-		public weak Source current_source ();
+		[CCode (cname = "g_main_current_source")]
+		public static weak Source current_source ();
 	}
 	
 	public static delegate int PollFunc (PollFD[] ufds, uint nfsd, int timeout_);
@@ -1143,10 +1186,7 @@ namespace GLib {
 	}
 
 	/* Thread support */
-	[Compact]
-	public class ThreadFunctions {
-	}
-	
+
 	public delegate void* ThreadFunc ();
 	public delegate void Func (void* data);
 	
@@ -1160,7 +1200,6 @@ namespace GLib {
 	
 	[Compact]
 	public class Thread {
-		public static void init (ThreadFunctions? vtable = null);
 		public static bool supported ();
 		public static weak Thread create (ThreadFunc func, bool joinable) throws ThreadError;
 		public static weak Thread create_full (ThreadFunc func, ulong stack_size, bool joinable, bool bound, ThreadPriority priority) throws ThreadError;
@@ -1227,24 +1266,24 @@ namespace GLib {
 
 	[Compact]
 	[CCode (ref_function = "g_async_queue_ref", unref_function = "g_async_queue_unref")]
-	public class AsyncQueue {
+	public class AsyncQueue<G> {
 		public AsyncQueue ();
-		public void push (void* data);
-		public void push_sorted (void* data, CompareDataFunc func);
-		public void* pop ();
-		public void* try_pop ();
-		public void* timed_pop (ref TimeVal end_time);
+		public void push (G# data);
+		public void push_sorted (G# data, CompareDataFunc func);
+		public G pop ();
+		public G try_pop ();
+		public G timed_pop (ref TimeVal end_time);
 		public int length ();
 		public void sort (CompareDataFunc func);
 		public void @lock ();
 		public void unlock ();
 		public void ref_unlocked ();
 		public void unref_and_unlock ();
-		public void push_unlocked (void* data);
-		public void push_sorted_unlocked (void* data, CompareDataFunc func);
-		public void* pop_unlocked ();
-		public void* try_pop_unlocked ();
-		public void* timed_pop_unlocked (ref TimeVal end_time);
+		public void push_unlocked (G# data);
+		public void push_sorted_unlocked (G# data, CompareDataFunc func);
+		public G pop_unlocked ();
+		public G try_pop_unlocked ();
+		public G timed_pop_unlocked (ref TimeVal end_time);
 		public int length_unlocked ();
 		public void sort_unlocked (CompareDataFunc func);
 	}
@@ -1545,6 +1584,8 @@ namespace GLib {
 		public long tv_usec;
 
 		[CCode (cname = "g_get_current_time")]
+		public TimeVal ();
+		[CCode (cname = "g_get_current_time")]
 		public void get_current_time ();
 		public void add (long microseconds);
 		[CCode (instance_pos = -1)]
@@ -1642,7 +1683,7 @@ namespace GLib {
 		public uint get_monday_week_of_year ();
 		public uint get_sunday_week_of_year ();
 		public uint get_iso8601_week_of_year ();
-		[CCode (instance_pos = -1, cname="strftime")]
+		[CCode (instance_pos = -1)]
 		public size_t strftime (char[] s, string format);
 		[CCode (cname = "g_date_to_struct_tm")]
 		public void to_time (out Time tm);
@@ -1680,15 +1721,22 @@ namespace GLib {
 		[CCode (cname = "localtime_r", instance_pos = -1)]
 		public Time.local (time_t time);
 
-		[CCode (cname = "asctime_r")]
-		public string to_string (char* buffer = new char[26]);
+		public string to_string () {
+			return "%04d-%02d-%02d %02d:%02d:%02d".printf (year + 1900, month + 1, day, hour, minute, second);
+		}
+
+		public string format (string format) {
+			var buffer = new char[64];
+			this.strftime (buffer, format);
+			return (string) buffer;
+		}
 
 		[CCode (cname = "mktime")]
 		public time_t mktime ();
 
-		[CCode (instance_pos = -1, cname="strftime")]
+		[CCode (cname = "strftime", instance_pos = -1)]
 		public size_t strftime (char[] s, string format);
-		[CCode (instance_pos = -1)]
+		[CCode (cname = "strptime", instance_pos = -1)]
 		public weak string? strptime (string buf, string format);
 	}
 
@@ -1739,6 +1787,8 @@ namespace GLib {
 		public static weak string? get_variable (string variable);
 		[CCode (cname = "g_setenv")]
 		public static bool set_variable (string variable, string value, bool overwrite);
+		[CCode (cname = "g_unsetenv")]
+		public static void unset_variable (string variable);
 		[CCode (cname = "g_listenv")]
 		[NoArrayLength]
 		public static string[] list_variables ();
@@ -1800,6 +1850,10 @@ namespace GLib {
 		public const string DIR_SEPARATOR_S;
 		[CCode (cname = "G_IS_DIR_SEPARATOR")]
 		public static bool is_dir_separator (unichar c);
+		[CCode (cname = "G_SEARCHPATH_SEPARATOR")]
+		public const char SEARCHPATH_SEPARATOR;
+		[CCode (cname = "G_SEARCHPATH_SEPARATOR_S")]
+		public const string SEARCHPATH_SEPARATOR_S;
 	}
 
 	namespace Bit {
@@ -2163,6 +2217,12 @@ namespace GLib {
 		public long tell ();
 		[CCode (cname = "rewind")]
 		public void rewind ();
+		[CCode (cname = "fileno")]
+		public int fileno ();
+		[CCode (cname = "ferror")]
+		public int error ();
+		[CCode (cname = "clearerr")]
+		public void clearerr ();
 	}
 
 	[CCode (lower_case_cprefix = "g_file_", cheader_filename = "glib/gstdio.h")]
@@ -2205,6 +2265,8 @@ namespace GLib {
 		public static int create_with_parents (string pathname, int mode);
 		[CCode (cname = "mkdtemp")]
 		public static weak string mkdtemp (string template);
+		[CCode (cname = "g_rmdir")]
+		public static int remove (string filename);
 	}
 
 	[Compact]
@@ -2234,11 +2296,10 @@ namespace GLib {
 		public const string RESERVED_CHARS_GENERIC_DELIMITERS;
 		public const string RESERVED_CHARS_SUBCOMPONENT_DELIMITERS;
 
-		public static string escape_string (string unescaped, string reserved_chars_allowed, bool allow_utf8);
 		public static string parse_scheme (string uri);
-		public static string get_scheme (string uri);
+		public static string escape_string (string unescaped, string reserved_chars_allowed, bool allow_utf8);
+		public static string unescape_string (string escaped_string, string? illegal_characters=null);
 		public static string unescape_segment (string escaped_string, string escaped_string_end, string illegal_characters);
-		public static string unescape_string (string escaped_string, string illegal_characters);
 	}
 
 	/* Shell-related Utilities */
@@ -2787,13 +2848,13 @@ namespace GLib {
 		public void sort (CompareDataFunc compare_func, void* user_data);
 		public void push_head (G# data);
 		public void push_tail (G# data);
-		public void push_nth (G# data);
+		public void push_nth (G# data, int n);
 		public G pop_head ();
 		public G pop_tail ();
-		public G pop_nth ();
+		public G pop_nth (uint n);
 		public weak G peek_head ();
 		public weak G peek_tail ();
-		public weak G peek_nth ();
+		public weak G peek_nth (uint n);
 		public int index (G data);
 		public void remove (G data);
 		public void remove_all (G data);
@@ -2835,9 +2896,9 @@ namespace GLib {
 		public static SequenceIter<G> range_get_midpoint (SequenceIter<G> begin, SequenceIter<G> end);
 	}
 
-	[SimpleType]
-	[CCode (cname = "GSequenceIter*", type_id = "G_TYPE_POINTER")]
-	public struct SequenceIter<G> {
+	[Compact]
+	[CCode (ref_function = "", unref_function = "")]
+	public class SequenceIter<G> {
 		public bool is_begin ();
 		public bool is_end ();
 		public SequenceIter<G> next ();
@@ -2856,7 +2917,7 @@ namespace GLib {
 	/* Hash Tables */
 
 	[Compact]
-	[CCode (ref_function = "g_hash_table_ref", unref_function = "g_hash_table_unref", type_signature = "a{%s}")]
+	[CCode (ref_function = "g_hash_table_ref", unref_function = "g_hash_table_unref", type_id = "G_TYPE_HASH_TABLE", type_signature = "a{%s}")]
 	public class HashTable<K,V> : Boxed {
 		public HashTable (HashFunc hash_func, EqualFunc key_equal_func);
 		public HashTable.full (HashFunc hash_func, EqualFunc key_equal_func, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
@@ -2918,6 +2979,7 @@ namespace GLib {
 		public weak StringBuilder prepend_len (string val, long len);
 		public weak StringBuilder insert (long pos, string val);
 		public weak StringBuilder erase (long pos, long len);
+		public weak StringBuilder truncate (size_t len);
 
 		[PrintfFormat]
 		public void printf (string format, ...);
@@ -2951,8 +3013,19 @@ namespace GLib {
 	/* Byte Arrays */
 
 	[Compact]
-	[CCode (free_function = "g_byte_array_free")]
+	[CCode (cprefix = "g_byte_array_", free_function = "g_byte_array_free")]
 	public class ByteArray {
+		public ByteArray ();
+		[CCode (cname = "g_byte_array_sized_new")]
+		public ByteArray.sized (uint reserved_size);
+		public void append (uint8[] data);
+		public void prepend (uint8[] data);
+		public void remove_index (uint index);
+		public void remove_index_fast (uint index);
+		public void remove_range (uint index, uint length);
+		public void sort (CompareFunc compare_func);
+		public void sort_with_data (CompareDataFunc compare_func);
+		public void set_size (uint length);
 	}
 
 	/* N-ary Trees */
@@ -2971,6 +3044,7 @@ namespace GLib {
 	
 	public struct Quark : uint32 {
 		public static Quark from_string (string str);
+		public static Quark try_string (string str);
 		public weak string to_string ();
 	}
 
@@ -2999,32 +3073,25 @@ namespace GLib {
 
 	[Compact]
 	public class Array<G> {
+		[CCode (cname = "len")]
+		public uint length;
+
 		public Array (bool zero_terminated, bool clear, uint element_size);
 		[CCode (cname = "g_array_sized_new")]
 		public Array.sized (bool zero_terminated, bool clear, uint element_size, uint reserved_size);
-		[ReturnsModifiedPointer ()]
 		public void append_val (G value);
-		[ReturnsModifiedPointer ()]
 		public void append_vals (constpointer data, uint len);
-		[ReturnsModifiedPointer ()]
 		public void prepend_val (G value);
-		[ReturnsModifiedPointer ()]
 		public void prepend_vals (constpointer data, uint len);
-		[ReturnsModifiedPointer ()]
 		public void insert_val (uint index, G value);
-		[ReturnsModifiedPointer ()]
 		public void insert_vals (uint index, constpointer data, uint len);
-		[ReturnsModifiedPointer ()]
 		public void remove_index (uint index);
-		[ReturnsModifiedPointer ()]
 		public void remove_index_fast (uint index);
-		[ReturnsModifiedPointer ()]
 		public void remove_range (uint index, uint length);
 		public void sort (CompareFunc compare_func);
 		public void sort_with_data (CompareDataFunc compare_func, void* user_data);
-		[ReturnsModifiedPointer ()]
+		public G index (uint index);
 		public void set_size (uint length);
-		public string free (bool free_segment);
 	}
 	
 	/* GTree */

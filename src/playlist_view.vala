@@ -34,22 +34,28 @@ namespace Abraca {
 
 		/** drag-n-drop targets */
 		private const Gtk.TargetEntry[] _target_entries = {
-			DragDropTarget.PlaylistRow,
-			DragDropTarget.Collection,
-			DragDropTarget.TrackId,
-			DragDropTarget.UriList,
-			DragDropTarget.Internet
+			//DragDropTarget.PlaylistRow,
+			{"application/x-xmmsclient-playlist-row", 0, DragDropTargetType.ROW},
+			//DragDropTarget.Collection,
+			{"application/x-xmmsclient-collection", 0, DragDropTargetType.COLL},
+			//DragDropTarget.TrackId,
+ 			{"application/x-xmmsclient-track-id", 0, DragDropTargetType.MID},
+			//DragDropTarget.UriList,
+			{"text/uri-list", 0, DragDropTargetType.URI},
+			//DragDropTarget.Internet
+			{"_NETSCAPE_URL", 0, DragDropTargetType.INTERNET}
 		};
 
 		/** drag-n-drop sources */
 		private const Gtk.TargetEntry[] _source_entries = {
-			DragDropTarget.PlaylistRow,
-			DragDropTarget.TrackId
+			//DragDropTarget.PlaylistRow,
+			{"application/x-xmmsclient-playlist-row", 0, DragDropTargetType.ROW},
+			//DragDropTarget.TrackId
+ 			{"application/x-xmmsclient-track-id", 0, DragDropTargetType.MID}
 		};
 
-		/** current sorting order */
-		private string[] _sort;
-
+		/** current playlist sort order */
+		private Xmms.Value _sort;
 
 		construct {
 			Client c = Client.instance();
@@ -371,14 +377,18 @@ namespace Abraca {
 
 		private void on_menu_playlist_sort(string type) {
 			Client c = Client.instance();
-			_sort = type.split(",");
 
-			c.xmms.playlist_sort(Xmms.ACTIVE_PLAYLIST, (string[]) _sort);
+			_sort = new Xmms.Value.from_list();
+
+			foreach (string s in type.split(",")) {
+				_sort.list_append(new Xmms.Value.from_string(s));
+			}
+
+			c.xmms.playlist_sort(Xmms.ACTIVE_PLAYLIST, _sort);
 		}
 
 
 		private void on_menu_playlist_filter(string key) {
-			Client c = Client.instance();
 			GLib.List<Gtk.TreePath> list;
 			Gtk.TreeSelection sel;
 			Gtk.TreeIter iter;
@@ -440,7 +450,6 @@ namespace Abraca {
 
 
 		private void on_menu_playlist_info(Gtk.MenuItem item) {
-			Client c = Client.instance();
 			GLib.List<Gtk.TreePath> list;
 			weak Gtk.TreeModel mod;
 			Gtk.TreeIter iter;
@@ -479,8 +488,6 @@ namespace Abraca {
 			GLib.List<uint> pos_list = new GLib.List<uint>();
 			Gdk.Atom dnd_atom;
 
-			string buf = null;
-
 			if (info == (uint) DragDropTargetType.ROW) {
 				foreach (weak Gtk.TreePath p in lst) {
 					pos_list.prepend(p.get_indices()[0]);
@@ -517,10 +524,7 @@ namespace Abraca {
 		 * Take care of the various types of drops.
 		 */
 		private void on_drag_data_receive(PlaylistView w, Gdk.DragContext ctx, int x, int y,
-		                              Gtk.SelectionData sel, uint info,
-		                              uint time) {
-
-			Gtk.TargetList target_list;
+										  Gtk.SelectionData sel, uint info, uint time) {
 			bool success = false;
 
 			if (info == (uint) DragDropTargetType.ROW) {
@@ -632,7 +636,7 @@ namespace Abraca {
 					Gtk.TreePath path;
 					bool is_dir = false;
 
-					string uri = GLib.Uri.unescape_string(uri_list[i], null);
+					string uri = GLib.Uri.unescape_string(uri_list[i]);
 					if (GLib.Uri.parse_scheme(uri) == "file") {
 						string[] tmp = uri.split("file://", 2);
 						if (tmp != null && tmp[1] != null) {
@@ -705,8 +709,11 @@ namespace Abraca {
 						if (status != Xmms.PlaybackStatus.PLAY) {
 							c.xmms.playback_start();
 						}
+						return true;
 					});
+					return true;
 				});
+				return true;
 			});
 		}
 

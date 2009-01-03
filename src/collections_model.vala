@@ -237,10 +237,12 @@ namespace Abraca {
 		{
 			c.xmms.coll_list(Xmms.COLLECTION_NS_COLLECTIONS).notifier_set(r => {
 				on_list_collections(r, CollectionType.Collection);
+				return true;
 			});
 
 			c.xmms.coll_list(Xmms.COLLECTION_NS_PLAYLISTS).notifier_set(r => {
 				on_list_collections(r, CollectionType.Playlist);
+				return true;
 			});
 		}
 
@@ -248,8 +250,7 @@ namespace Abraca {
 		/**
 		 * Perform a full list of Collections starting from a clean tree.
 		 */
-		private void on_list_collections (Xmms.Result #res,
-		                                  CollectionType type)
+		private bool on_list_collections (Xmms.Value val, CollectionType type)
 		{
 			Gtk.TreeIter child, parent;
 			weak Gdk.Pixbuf pixbuf;
@@ -268,13 +269,17 @@ namespace Abraca {
 
 			int pos = iter_n_children(parent);
 
-			for (res.list_first(); res.list_valid(); res.list_next()) {
-				Gtk.TreeIter iter;
-				weak string name;
-				Pango.Style style;
-				Pango.Weight weight;
+			weak Xmms.ListIter list_iter;
+			val.get_list_iter(out list_iter);
 
-				if (!res.get_string (out name))
+			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
+				Pango.Weight weight = Pango.Weight.NORMAL;
+				Pango.Style style = Pango.Style.NORMAL;
+				Xmms.Value entry;
+				Gtk.TreeIter iter;
+				string? name = null;
+
+				if (!(list_iter.entry(out entry) && entry.get_string (out name)))
 					continue;
 
 				// Ignore hidden collections
@@ -287,9 +292,6 @@ namespace Abraca {
 						style = Pango.Style.ITALIC;
 						weight = Pango.Weight.BOLD;
 					}
-				} else {
-					style = Pango.Style.NORMAL;
-					weight = Pango.Weight.NORMAL;
 				}
 
 				insert_with_values(
@@ -303,6 +305,8 @@ namespace Abraca {
 			}
 
 			collection_loaded(type);
+
+			return true;
 		}
 
 

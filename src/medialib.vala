@@ -242,16 +242,15 @@ namespace Abraca {
 		}
 
 		void change_color(Gtk.Entry editable, string origin) {
-			if (origin == editable.get_text()) {
-				editable.modify_base(Gtk.StateType.NORMAL, null);
-			} else {
-				Gdk.Color color;
-				color.red = (ushort) 0xffff;
-				color.green = (ushort) 0xffff;
-				color.blue = (ushort) 0x6666;
-				editable.modify_base(Gtk.StateType.NORMAL, color);
+			Gdk.Color? color = null;
+
+			if (origin != editable.get_text()) {
+				if (!Gdk.Color.parse("#ffff66", out color)) {
+					color = null;
+				}
 			}
 
+			editable.modify_base(Gtk.StateType.NORMAL, color);
 			editable.set_tooltip_text(editable.get_text());
 		}
 
@@ -286,7 +285,7 @@ namespace Abraca {
 
 			c.xmms.medialib_entry_property_set_str(
 				current.data, key, val
-			).notifier_set( on_value_wrote);
+			).notifier_set(on_value_wrote);
 		}
 
 		private void set_int(Gtk.SpinButton editable, string key) {
@@ -335,8 +334,9 @@ namespace Abraca {
 			}
 		}
 
-		private void on_value_wrote(Xmms.Result #res) {
+		private bool on_value_wrote(Xmms.Value val) {
 			refresh_content();
+			return true;
 		}
 
 		private void on_prev_button_clicked(Gtk.Button btn) {
@@ -357,10 +357,11 @@ namespace Abraca {
 			close();
 		}
 
-		private void on_medialib_get_info(Xmms.Result #res) {
-			show_overview(res);
+		private bool on_medialib_get_info(Xmms.Value val) {
+			show_overview(val);
 			store.clear();
-			res.propdict_foreach(dict_foreach);
+			val.dict_foreach(dict_foreach);
+			return true;
 		}
 
 		private void refresh_border() {
@@ -396,38 +397,39 @@ namespace Abraca {
 			refresh_border();
 		}
 
-		private void show_overview(Xmms.Result res) {
-			weak string tmp;
+		private void show_overview(Xmms.Value propdict) {
+			Xmms.Value val = propdict.propdict_to_dict();
+			string tmp;
 			int itmp;
-			if (!res.get_dict_entry_string("artist", out tmp)) {
+			if (!val.get_dict_entry_string("artist", out tmp)) {
 				tmp = "";
 			}
 			artist = tmp;
 			artist_entry.text = tmp;
 			artist_entry.modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!res.get_dict_entry_string("album", out tmp)) {
+			if (!val.get_dict_entry_string("album", out tmp)) {
 				tmp = "";
 			}
 			album = tmp;
 			album_entry.text = tmp;
 			album_entry.modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!res.get_dict_entry_string("title", out tmp)) {
+			if (!val.get_dict_entry_string("title", out tmp)) {
 				tmp = "";
 			}
 			title = tmp;
 			title_entry.text = tmp;
 			title_entry.modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!res.get_dict_entry_int("tracknr", out itmp)) {
+			if (!val.get_dict_entry_int("tracknr", out itmp)) {
 				itmp = 0;
 			}
 			tracknr = itmp.to_string("%i");
 			tracknr_button.set_value(itmp);
 			tracknr_button.modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!res.get_dict_entry_string("date", out tmp)) {
+			if (!val.get_dict_entry_string("date", out tmp)) {
 				itmp = 0;
 			} else {
 				itmp = tmp.to_int();
@@ -436,55 +438,82 @@ namespace Abraca {
 			date_button.set_value(itmp);
 			date_button.modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!res.get_dict_entry_string("genre", out tmp)) {
+			if (!val.get_dict_entry_string("genre", out tmp)) {
 				tmp = "";
 			}
 			genre = tmp;
 			((Gtk.Entry) (genre_combo_box_entry.get_child())).text = tmp;
 			((Gtk.Entry) (genre_combo_box_entry.get_child())).modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!res.get_dict_entry_int("rating", out itmp)) {
+			if (!val.get_dict_entry_int("rating", out itmp)) {
 				itmp = 0;
 			}
 			rating = itmp.to_string("%i");
 			rating_entry.rating = itmp;
 		}
 
-		private void dict_foreach(void *key, Xmms.ResultType type,
-		                          void *val, string source) {
-			string parent_source, val_str;
+		/* TODO: refactor me */
+		private void dict_foreach(string key, Xmms.Value val) {
+			string? val_str, parent_source = null;
 			Gtk.TreeIter parent, iter;
 
-			switch (type) {
-				case Xmms.ResultType.UINT32:
-					val_str = ((uint) val).to_string("%u");;
-					break;
-				case Xmms.ResultType.INT32:
-					val_str = ((int) val).to_string("%i");;
-					break;
-				case Xmms.ResultType.STRING:
-					val_str  = (string) val;
-					break;
-				default:
-					return;
-			}
+			weak Xmms.DictIter dict_iter;
+			val.get_dict_iter(out dict_iter);
 
-			/* looking for parent iter */
-			if (store.iter_children(out parent, null)) {
-				do {
-					store.get(parent, 0, out parent_source);
-					if (source == parent_source)
+			for (dict_iter.first(); dict_iter.valid(); dict_iter.next()) {
+				Xmms.Value entry;
+				weak string source;
+
+				if (!dict_iter.pair(out source, out entry)) {
+					continue;
+				}
+
+				/* looking for parent iter */
+				if (store.iter_children(out parent, null)) {
+					do {
+						store.get(parent, 0, out parent_source);
+						if (source == parent_source)
+							break;
+					} while (store.iter_next(ref parent)) ;
+				}
+
+				if (source != parent_source) {
+					store.append(out parent, null);
+					store.set(parent, 0, source);
+				}
+
+				val_str = "%s".printf("Unknown");
+
+				switch (entry.get_type()) {
+				    case Xmms.ValueType.UINT32: {
+						uint tmp;
+						if (entry.get_uint(out tmp)) {
+							val_str = "%u".printf(tmp);
+						}
 						break;
-				} while (store.iter_next(ref parent)) ;
-			}
+					}
+				    case Xmms.ValueType.INT32: {
+						int tmp;
+						if (entry.get_int(out tmp)) {
+							val_str= "%d".printf(tmp);
+						}
+						break;
+					}
+				    case Xmms.ValueType.STRING: {
+						string tmp;
+						if (entry.get_string(out tmp)) {
+							val_str  = "%s".printf(tmp);
+						}
+						break;
+					}
+				    default: {
+						return;
+					}
+				}
 
-			if(source != parent_source) {
-				store.append(out parent, null);
-				store.set(parent, 0, source);
+				store.append(out iter, parent);
+				store.set(iter, 0, (string) key, 1, val_str);
 			}
-
-			store.append(out iter, parent);
-			store.set(iter, 0, (string) key, 1, val_str);
 		}
 	}
 
@@ -567,7 +596,7 @@ namespace Abraca {
 			Gtk.TreeIter iter;
 			string current;
 			string[] list = new string[25];
-			int i;
+			int i = 0;
 
 			if (urls.iter_children(out iter, null)) {
 				do {
