@@ -72,10 +72,11 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 		Client c = Client.instance();
 		c.xmms.playback_volume_get().notifier_set((val) => {
 			val.dict_foreach((key, val) => {
-				Client c = Client.instance();
+				// TODO: Use outer variable when supported by Vala
+				Client c2 = Client.instance();
 				uint tmp;
 				if (val.get_uint(out tmp)) {
-					c.xmms.playback_volume_set(key, tmp);
+					c2.xmms.playback_volume_set(key, tmp);
 				}
 			});
 			return true;

@@ -1,6 +1,7 @@
 /* glib-2.0.vala
  *
- * Copyright (C) 2006-2008  Jürg Billeter, Raffaele Sandrini
+ * Copyright (C) 2006-2009  Jürg Billeter
+ * Copyright (C) 2006-2008  Raffaele Sandrini
  * Copyright (C) 2007  Mathias Hasselmann
  *
  * This library is free software; you can redistribute it and/or
@@ -29,6 +30,7 @@
 
 [SimpleType]
 [CCode (cname = "gboolean", cheader_filename = "glib.h", type_id = "G_TYPE_BOOLEAN", marshaller_type_name = "BOOLEAN", get_value_function = "g_value_get_boolean", set_value_function = "g_value_set_boolean", default_value = "FALSE", type_signature = "b")]
+[BooleanType]
 public struct bool {
 	public string to_string () {
 		if (this) {
@@ -37,11 +39,6 @@ public struct bool {
 			return "false";
 		}
 	}
-}
-
-[SimpleType]
-[CCode (cname = "gconstpointer", cheader_filename = "glib.h", type_id = "G_TYPE_POINTER", marshaller_type_name = "POINTER", get_value_function = "g_value_get_pointer", set_value_function = "g_value_set_pointer", default_value = "NULL")]
-public struct constpointer {
 }
 
 [SimpleType]
@@ -720,15 +717,14 @@ public class string {
 	public string escape (string exceptions);
 	[CCode (cname = "g_strcompress")]
 	public string compress ();
-	[CCode (cname = "g_strsplit")]
+	[CCode (cname = "g_strsplit", array_length = false, array_null_terminated = true)]
 	[NoArrayLength]
 	public string[] split (string delimiter, int max_tokens = 0);
-	[CCode (cname = "g_strsplit_set")]
-	[NoArrayLength]
+	[CCode (cname = "g_strsplit_set", array_length = false)]
 	public string[] split_set (string delimiters, int max_tokens = 0);
 	[CCode (cname = "g_strjoinv")]
 	[NoArrayLength]
-	public static string joinv (string separator, string[] str_array);
+	public static string joinv (string separator, [CCode (array_length = false)] string[] str_array);
 	[CCode (cname = "g_strjoin")]
 	public static string join (string separator, ...);
 	[CCode (cname = "g_strnfill")]
@@ -810,14 +806,14 @@ public class string {
 		long string_length = this.len ();
 		if (offset < 0) {
 			offset = string_length + offset;
-			GLib.warn_if_fail (offset >= 0);
+			GLib.return_val_if_fail (offset >= 0, null);
 		} else {
-			GLib.warn_if_fail (offset <= string_length);
+			GLib.return_val_if_fail (offset <= string_length, null);
 		}
 		if (len < 0) {
 			len = string_length - offset;
 		}
-		GLib.warn_if_fail (offset + len <= string_length);
+		GLib.return_val_if_fail (offset + len <= string_length, null);
 		weak string start = this.offset (offset);
 		return start.ndup (((char*) start.offset (len)) - ((char*) start));
 	}
@@ -825,7 +821,6 @@ public class string {
 	public bool contains (string needle) {
 		return this.str (needle) != null;
 	}
-
 
 	public string replace (string old, string replacement) {
 		try {
@@ -841,7 +836,6 @@ public class string {
 	}
 }
 
-[Import ()]
 [CCode (cprefix = "G", lower_case_cprefix = "g_", cheader_filename = "glib.h")]
 namespace GLib {
 	[CCode (lower_case_cprefix = "", cheader_filename = "math.h")]
@@ -873,7 +867,7 @@ namespace GLib {
 		public static float sinhf (float x);
 		public static double tanh (double x);
 		public static float tanhf (float x);
-		public static void sincos (double x, out double sinx, ref double cosx);
+		public static void sincos (double x, out double sinx, out double cosx);
 		public static void sincosf (float x, out float sinx, out float cosx);
 		public static double acosh (double x);
 		public static float acoshf (float x);
@@ -1070,7 +1064,7 @@ namespace GLib {
 		public bool wait (Cond cond, Mutex mutex);
 		public bool prepare (out int priority);
 		public int query (int max_priority, out int timeout_, PollFD[] fds);
-		[NoArrayLength]
+		[CCode (array_length = false)]
 		public int check (int max_priority, PollFD[] fds, int n_fds);
 		public void dispatch ();
 		public void set_poll_func (PollFunc func);
@@ -1437,11 +1431,18 @@ namespace GLib {
 	public static void print (string format, ...);
 	public static void set_print_handler (PrintFunc func);
 	public static delegate void PrintFunc (string text);
+	[PrintfFormat]
 	public static void printerr (string format, ...);
 	public static void set_printerr_handler (PrintFunc func);
 
 	public static void return_if_fail (bool expr);
+	[CCode (sentinel = "")]
+	public static void return_val_if_fail (bool expr, ...);
+	[NoReturn]
 	public static void return_if_reached ();
+	[NoReturn]
+	[CCode (sentinel = "")]
+	public static void return_val_if_reached (...);
 	public static void warn_if_fail (bool expr);
 	public static void warn_if_reached ();
 
@@ -1498,12 +1499,15 @@ namespace GLib {
 	namespace Log {
 		public static uint set_handler (string? log_domain, LogLevelFlags log_levels, LogFunc log_func);
 		public static void set_default_handler (LogFunc log_func);
+
+		public const string FILE;
+		public const int LINE;
+		public const string METHOD;
 	}
 
 	/* String Utility Functions */
 
-	[NoArrayLength]
-	public uint strv_length (string[] str_array);
+	public uint strv_length ([CCode (array_length = false)] string[] str_array);
 
 	[CCode (cname = "errno", cheader_filename = "errno.h")]
 	public int errno;
@@ -1546,7 +1550,7 @@ namespace GLib {
 		public static size_t encode_close (bool break_lines, char* _out, ref int state, ref int save);
 		public static string encode (uchar[] data);
 		public static size_t decode_step (char[] _in, uchar* _out, ref int state, ref uint save);
-		[NoArrayLength]
+		[CCode (array_length = false)]
 		public static uchar[] decode (string text, out size_t out_len);
 	}
 
@@ -1566,11 +1570,9 @@ namespace GLib {
 	public class Checksum {
 		public Checksum (ChecksumType checksum_type);
 		public Checksum copy ();
-		[NoArrayLength]
-		public void update (uchar[] data, size_t length);
+		public void update ([CCode (array_length = false)] uchar[] data, size_t length);
 		public weak string get_string ();
-		[NoArrayLength]
-		public void get_digest (uint8[] buffer, ref size_t digest_len);
+		public void get_digest ([CCode (array_length = false)] uint8[] buffer, ref size_t digest_len);
 		[CCode (cname = "g_compute_checksum_for_data")]
 		public static string compute_for_data (ChecksumType checksum_type, uchar[] data);
 		[CCode (cname = "g_compute_checksum_for_string")]
@@ -1578,7 +1580,8 @@ namespace GLib {
 	}
 
 	/* Date and Time Functions */
-	
+
+	[CCode (has_type_id = false)]
 	public struct TimeVal {
 		public long tv_sec;
 		public long tv_usec;
@@ -1695,7 +1698,7 @@ namespace GLib {
 		public static bool valid_weekday (DateWeekday weekday);
 	}
 
-	[CCode (cname = "struct tm", cheader_filename="time.h")]
+	[CCode (cname = "struct tm", cheader_filename = "time.h", has_type_id = false)]
 	public struct Time {
 		[CCode (cname = "tm_sec")]
 		public int second;
@@ -1746,12 +1749,10 @@ namespace GLib {
 	[CCode (copy_function = "g_rand_copy", free_function = "g_rand_free")]
 	public class Rand {
 		public Rand.with_seed (uint32 seed);
-		[NoArrayLength ()]
-		public Rand.with_seed_array (uint32[] seed, uint seed_length);
+		public Rand.with_seed_array ([CCode (array_length = false)] uint32[] seed, uint seed_length);
 		public Rand ();
 		public void set_seed (uint32 seed);
-		[NoArrayLength ()]
-		public void set_seed_array (uint32[] seed, uint seed_length);
+		public void set_seed_array ([CCode (array_length = false)] uint32[] seed, uint seed_length);
 		public bool boolean ();
 		[CCode (cname = "g_rand_int")]
 		public uint32 next_int ();
@@ -1789,8 +1790,7 @@ namespace GLib {
 		public static bool set_variable (string variable, string value, bool overwrite);
 		[CCode (cname = "g_unsetenv")]
 		public static void unset_variable (string variable);
-		[CCode (cname = "g_listenv")]
-		[NoArrayLength]
+		[CCode (cname = "g_listenv", array_length = false, array_null_terminated = true)]
 		public static string[] list_variables ();
 		[CCode (cname = "g_get_user_name")]
 		public static weak string get_user_name ();
@@ -1804,9 +1804,10 @@ namespace GLib {
 		public static weak string get_user_config_dir ();
 		[CCode (cname = "g_get_user_special_dir")]
 		public static weak string get_user_special_dir (UserDirectory directory);
-		[CCode (cname = "g_get_system_data_dirs"), NoArrayLength]
+		[CCode (cname = "g_get_system_data_dirs", array_length = false, array_null_terminated = true)]
+		[NoArrayLength]
 		public static weak string[] get_system_data_dirs ();
-		[CCode (cname = "g_get_system_config_dirs"), NoArrayLength]
+		[CCode (cname = "g_get_system_config_dirs")]
 		public static weak string[] get_system_config_dirs ();
 		[CCode (cname = "g_get_host_name")]
 		public static weak string get_host_name ();
@@ -2085,12 +2086,9 @@ namespace GLib {
 
 	[CCode (lower_case_cprefix = "g_")]
 	namespace Process {
-		[NoArrayLength ()]
-		public static bool spawn_async_with_pipes (string? working_directory, string[] argv, string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out Pid child_pid, out int standard_input = null, out int standard_output = null, out int standard_error = null) throws SpawnError;
-		[NoArrayLength ()]
-		public static bool spawn_async (string? working_directory, string[] argv, string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out Pid child_pid) throws SpawnError;
-		[NoArrayLength ()]
-		public static bool spawn_sync (string? working_directory, string[] argv, string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out string standard_output = null, out string standard_error = null, out int exit_status = null) throws SpawnError;
+		public static bool spawn_async_with_pipes (string? working_directory, [CCode (array_length = false)] string[] argv, [CCode (array_length = false)] string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out Pid child_pid, out int standard_input = null, out int standard_output = null, out int standard_error = null) throws SpawnError;
+		public static bool spawn_async (string? working_directory, [CCode (array_length = false)] string[] argv, [CCode (array_length = false)] string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out Pid child_pid) throws SpawnError;
+		public static bool spawn_sync (string? working_directory, [CCode (array_length = false)] string[] argv, [CCode (array_length = false)] string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out string standard_output = null, out string standard_error = null, out int exit_status = null) throws SpawnError;
 		public static bool spawn_command_line_async (string command_line) throws SpawnError;
 		public static bool spawn_command_line_sync (string command_line, out string standard_output = null, out string standard_error = null, out int exit_status = null) throws SpawnError;
 		[CCode (cname = "g_spawn_close_pid")]
@@ -2237,6 +2235,8 @@ namespace GLib {
 		public static int mkstemp (string tmpl);
 		[CCode (cname = "g_rename")]
 		public static int rename (string oldfilename, string newfilename);
+		[CCode (cname = "g_remove")]
+		public static int remove (string filename);
 		[CCode (cname = "g_unlink")]
 		public static int unlink (string filename);
 		[CCode (cname = "g_chmod")]
@@ -2341,7 +2341,7 @@ namespace GLib {
 		public bool get_ignore_unknown_options ();
 		public string get_help (bool main_help, OptionGroup? group);
 		[NoArrayLength]
-		public void add_main_entries (OptionEntry[] entries, string? translation_domain);
+		public void add_main_entries ([CCode (array_length = false)] OptionEntry[] entries, string? translation_domain);
 		public void add_group (OptionGroup# group);
 		public void set_main_group (OptionGroup# group);
 		public weak OptionGroup get_main_group ();
@@ -2390,8 +2390,7 @@ namespace GLib {
 	[CCode (free_function = "g_option_group_free")]
 	public class OptionGroup {
 		public OptionGroup (string name, string description, string help_description, void* user_data, DestroyNotify? destroy);
-		[NoArrayLength]
-		public void add_entries (OptionEntry[] entries);
+		public void add_entries ([CCode (array_length = false)] OptionEntry[] entries);
 		public void set_parse_hooks (OptionParseFunc pre_parse_func, OptionParseFunc post_parse_hook);
 		public void set_error_hook (OptionErrorFunc error_func);
 		public void set_translate_func (TranslateFunc func, DestroyNotify? destroy_notify);
@@ -2455,12 +2454,12 @@ namespace GLib {
 		public bool match_full (string str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, out MatchInfo match_info = null) throws RegexError;
 		public bool match_all (string str, RegexMatchFlags match_options = 0, out MatchInfo match_info = null);
 		public bool match_all_full (string str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, out MatchInfo match_info = null) throws RegexError;
-		[NoArrayLength]
+		[CCode (array_length = false)]
 		public static string[] split_simple (string pattern, string str, RegexCompileFlags compile_options = 0, RegexMatchFlags match_options = 0);
-		[NoArrayLength]
+		[CCode (array_length = false)]
 		public string[] split (string str, RegexMatchFlags match_options = 0);
-		[NoArrayLength]
-		public bool split_full (string str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, int max_tokens = 0) throws RegexError;
+		[CCode (array_length = false)]
+		public string[] split_full (string str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, int max_tokens = 0) throws RegexError;
 		public string replace (string str, long string_len, int start_position, string replacement, RegexMatchFlags match_options = 0) throws RegexError;
 		public string replace_literal (string str, long string_len, int start_position, string replacement, RegexMatchFlags match_options = 0) throws RegexError;
 		public string replace_eval (string str, long string_len, int start_position, RegexMatchFlags match_options = 0, RegexEvalCallback eval, void* user_data) throws RegexError;
@@ -2483,7 +2482,7 @@ namespace GLib {
 		public bool fetch_pos (int match_num, out int start_pos, out int end_pos);
 		public string fetch_named (string name);
 		public bool fetch_named_pos (string name, out int start_pos, out int end_pos);
-		[NoArrayLength]
+		[CCode (array_length = false)]
 		public string[] fetch_all ();
 	}
 
@@ -2514,8 +2513,7 @@ namespace GLib {
 		public void get_position (out int line_number, out int char_number);
 	}
 	
-	[NoArrayLength]
-	public delegate void MarkupParserStartElementFunc (MarkupParseContext context, string element_name, string[] attribute_names, string[] attribute_values) throws MarkupError;
+	public delegate void MarkupParserStartElementFunc (MarkupParseContext context, string element_name, [CCode (array_length = false, array_null_terminated = true)] string[] attribute_names, [CCode (array_length = false, array_null_terminated = true)] string[] attribute_values) throws MarkupError;
 	
 	public delegate void MarkupParserEndElementFunc (MarkupParseContext context, string element_name) throws MarkupError;
 	
@@ -2556,8 +2554,7 @@ namespace GLib {
 		public KeyFile ();
 		public void set_list_separator (char separator);
 		public bool load_from_file (string file, KeyFileFlags @flags) throws KeyFileError;
-		[NoArrayLength]
-		public bool load_from_dirs (string file, string[] search_dirs, out string full_path, KeyFileFlags @flags) throws KeyFileError;
+		public bool load_from_dirs (string file, [CCode (array_length = false)] string[] search_dirs, out string full_path, KeyFileFlags @flags) throws KeyFileError;
 		public bool load_from_data (string data, ulong length, KeyFileFlags @flags) throws KeyFileError;
 		public bool load_from_data_dirs (string file, out string full_path, KeyFileFlags @flags) throws KeyFileError;
 		public string to_data (out size_t length) throws KeyFileError;
@@ -3054,13 +3051,13 @@ namespace GLib {
 	public struct Datalist<G> {
 		public Datalist ();
 		public void clear ();
-		public G id_get_data (Quark key_id);
+		public weak G id_get_data (Quark key_id);
 		public void id_set_data (Quark key_id, G# data);
 		public void id_set_data_full (Quark key_id, G# data, DestroyNotify? destroy_func);
 		public void id_remove_data (Quark key_id);
 		public G id_remove_no_notify (Quark key_id);
 		public void @foreach (DataForeachFunc func);
-		public G get_data (string key);
+		public weak G get_data (string key);
 		public void set_data_full (string key, G# data, DestroyNotify? destry_func);
 		public G remove_no_notify (string key);
 		public void set_data (string key, G# data);
@@ -3080,11 +3077,11 @@ namespace GLib {
 		[CCode (cname = "g_array_sized_new")]
 		public Array.sized (bool zero_terminated, bool clear, uint element_size, uint reserved_size);
 		public void append_val (G value);
-		public void append_vals (constpointer data, uint len);
+		public void append_vals (void* data, uint len);
 		public void prepend_val (G value);
-		public void prepend_vals (constpointer data, uint len);
+		public void prepend_vals (void* data, uint len);
 		public void insert_val (uint index, G value);
-		public void insert_vals (uint index, constpointer data, uint len);
+		public void insert_vals (uint index, void* data, uint len);
 		public void remove_index (uint index);
 		public void remove_index_fast (uint index);
 		public void remove_range (uint index, uint length);
@@ -3096,7 +3093,7 @@ namespace GLib {
 	
 	/* GTree */
 	
-	public static delegate int TraverseFunc (void* key, void* value, void* data);
+	public delegate int TraverseFunc (void* key, void* value);
 	
 	[CCode (c_prefix="C_", has_type_id = false)]
 	public enum TraverseType {
@@ -3110,16 +3107,16 @@ namespace GLib {
 	[CCode (free_function = "g_tree_destroy")]
 	public class Tree<K,V> {
 		public Tree (CompareFunc key_compare_func);
-		public Tree.with_data (CompareFunc key_compare_func, void* key_compare_data);
-		public Tree.full (CompareFunc key_compare_func, void* key_compare_data, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
-		public void insert (K key, V value);
-		public void replace (K key, V value);
+		public Tree.with_data (CompareDataFunc key_compare_func);
+		public Tree.full (CompareDataFunc key_compare_func, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
+		public void insert (K# key, V# value);
+		public void replace (K# key, V# value);
 		public int nnodes ();
 		public int height ();
 		public weak V lookup (K key);
 		public bool lookup_extended (K lookup_key, K orig_key, V value);
-		public void tree_foreach (TraverseFunc traverse_func, TraverseType traverse_type, void* user_data);
-		public weak V tree_search (CompareFunc search_func, void* user_data);
+		public void foreach (TraverseFunc traverse_func);
+		public weak V search (CompareFunc search_func, void* user_data);
 		public bool remove (K key);
 		public bool steal (K key);
 	}

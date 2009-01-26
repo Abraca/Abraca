@@ -699,15 +699,18 @@ namespace Abraca {
 			Client c = Client.instance();
 
 			c.xmms.playlist_set_next(pos).notifier_set((res) => {
-				Client c = Client.instance();
-				c.xmms.playback_tickle().notifier_set((res) => {
-					Client c = Client.instance();
-					c.xmms.playback_status().notifier_set((res) => {
-						Client c = Client.instance();
+				// TODO: Should use outer client when vala supports this.
+				Client c2 = Client.instance();
+				c2.xmms.playback_tickle().notifier_set((res) => {
+					// TODO: Should use outer client when vala supports this.
+					Client c3 = Client.instance();
+					c3.xmms.playback_status().notifier_set((res) => {
+						// TODO: Should use outer client when vala supports this.
+						Client c4 = Client.instance();
 						uint status;
 						res.get_uint(out status);
 						if (status != Xmms.PlaybackStatus.PLAY) {
-							c.xmms.playback_start();
+							c4.xmms.playback_start();
 						}
 						return true;
 					});

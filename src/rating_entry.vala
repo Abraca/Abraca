@@ -20,8 +20,6 @@
 namespace Abraca {
 	public class RatingEntry : Gtk.EventBox {
 		private Gdk.Pixbuf _canvas;
-		private int _width;
-		private int _height;
 
 		public int min_rating {
 			get; set; default = 0;
@@ -79,13 +77,12 @@ namespace Abraca {
 				GLib.stderr.printf("ERROR: %s\n", e.message);
 			}
 
-			_width =  rated_icon.width * (max_rating - min_rating + 1);
-			_height = rated_icon.height;
+			width_request =  rated_icon.width * (max_rating - min_rating + 1);
+			height_request = rated_icon.height;
 
-			_canvas = new Gdk.Pixbuf(Gdk.Colorspace.RGB, true, 8, _width, _height);
+			_canvas = new Gdk.Pixbuf(Gdk.Colorspace.RGB, true, 8, width_request, height_request);
 
 			expose_event += on_expose_event;
-			size_request += on_size_request;
 
 			motion_notify_event += (w, motion) => {
 				rating_from_position(motion.x);
@@ -148,20 +145,11 @@ namespace Abraca {
 		public bool on_expose_event(RatingEntry w, Gdk.EventExpose expose) {
 			expose.window.draw_pixbuf(
 				style.bg_gc[0], _canvas,
-				0, 0, 0, 0, _width, _height,
+				0, 0, 0, 0, width_request, height_request,
 				Gdk.RgbDither.NONE, 0, 0
 			);
 
 			return true;
-		}
-
-
-		/**
-		 * Update the size of the rating widget.
-		 */
-		public void on_size_request (RatingEntry w, Gtk.Requisition #req) {
-			req.width = _canvas.width;
-			req.height = _canvas.height;
 		}
 	}
 }

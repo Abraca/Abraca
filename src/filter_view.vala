@@ -345,18 +345,19 @@ namespace Abraca {
 			FilterEditor edit = new FilterEditor();
 
 			edit.column_changed += (editor, prop, enabled) => {
-				FilterModel store = (FilterModel) model;
+				// TODO: Should use outer store when vala supports this.
+				FilterModel tmp_store = (FilterModel) model;
 
 				string[] modified;
 				int i = 0;
 
 				if (enabled) {
-					modified = new string[store.dynamic_columns.length + 1];
+					modified = new string[tmp_store.dynamic_columns.length + 1];
 				} else {
-					modified = new string[store.dynamic_columns.length - 1];
+					modified = new string[tmp_store.dynamic_columns.length - 1];
 				}
 
-				foreach (weak string s in store.dynamic_columns) {
+				foreach (weak string s in tmp_store.dynamic_columns) {
 					if (!enabled && s == prop) {
 						continue;
 					}
