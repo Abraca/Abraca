@@ -330,7 +330,7 @@ namespace Abraca {
 
 			Xmms.Value val = propdict.propdict_to_dict();
 
-			val.get_dict_entry_int("id", out mid);
+			val.dict_entry_get_int("id", out mid);
 
 			lst = playlist_map.lookup(mid);
 			if (lst == null) {
@@ -339,19 +339,19 @@ namespace Abraca {
 				return false;
 			}
 
-			val.get_dict_entry_int("status", out status);
+			val.dict_entry_get_int("status", out status);
 
-			if (!val.get_dict_entry_string("album", out album)) {
+			if (!val.dict_entry_get_string("album", out album)) {
 				album = _("Unknown");
 			}
-			if (!val.get_dict_entry_string("genre", out genre)) {
+			if (!val.dict_entry_get_string("genre", out genre)) {
 				genre = _("Unknown");
 			}
 
-			if (val.get_dict_entry_string("title", out title)) {
+			if (val.dict_entry_get_string("title", out title)) {
 				string duration;
 
-				if (!val.get_dict_entry_string("artist", out artist)) {
+				if (!val.dict_entry_get_string("artist", out artist)) {
 					artist = _("Unknown");
 				}
 
@@ -371,7 +371,7 @@ namespace Abraca {
 			} else {
 				string duration, url;
 
-				if (!val.get_dict_entry_string("url", out url)) {
+				if (!val.dict_entry_get_string("url", out url)) {
 					url = _("Unknown");
 				}
 

@@ -401,35 +401,35 @@ namespace Abraca {
 			Xmms.Value val = propdict.propdict_to_dict();
 			string tmp;
 			int itmp;
-			if (!val.get_dict_entry_string("artist", out tmp)) {
+			if (!val.dict_entry_get_string("artist", out tmp)) {
 				tmp = "";
 			}
 			artist = tmp;
 			artist_entry.text = tmp;
 			artist_entry.modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!val.get_dict_entry_string("album", out tmp)) {
+			if (!val.dict_entry_get_string("album", out tmp)) {
 				tmp = "";
 			}
 			album = tmp;
 			album_entry.text = tmp;
 			album_entry.modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!val.get_dict_entry_string("title", out tmp)) {
+			if (!val.dict_entry_get_string("title", out tmp)) {
 				tmp = "";
 			}
 			title = tmp;
 			title_entry.text = tmp;
 			title_entry.modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!val.get_dict_entry_int("tracknr", out itmp)) {
+			if (!val.dict_entry_get_int("tracknr", out itmp)) {
 				itmp = 0;
 			}
 			tracknr = itmp.to_string("%i");
 			tracknr_button.set_value(itmp);
 			tracknr_button.modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!val.get_dict_entry_string("date", out tmp)) {
+			if (!val.dict_entry_get_string("date", out tmp)) {
 				itmp = 0;
 			} else {
 				itmp = tmp.to_int();
@@ -438,14 +438,14 @@ namespace Abraca {
 			date_button.set_value(itmp);
 			date_button.modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!val.get_dict_entry_string("genre", out tmp)) {
+			if (!val.dict_entry_get_string("genre", out tmp)) {
 				tmp = "";
 			}
 			genre = tmp;
 			((Gtk.Entry) (genre_combo_box_entry.get_child())).text = tmp;
 			((Gtk.Entry) (genre_combo_box_entry.get_child())).modify_base(Gtk.StateType.NORMAL, null);
 
-			if (!val.get_dict_entry_int("rating", out itmp)) {
+			if (!val.dict_entry_get_int("rating", out itmp)) {
 				itmp = 0;
 			}
 			rating = itmp.to_string("%i");

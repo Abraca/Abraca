@@ -249,11 +249,11 @@ namespace Abraca {
 		private bool on_playlist_position(Xmms.Value val) {
 			uint pos;
 
-			if (val.is_dict()) {
+			if (val.is_type(Xmms.ValueType.DICT)) {
 				string name;
-				if (!val.get_dict_entry_uint("position", out pos))
+				if (!val.dict_entry_get_uint("position", out pos))
 					return true;
-				if (!val.get_dict_entry_string("name", out name))
+				if (!val.dict_entry_get_string("name", out name))
 					return true;
 				playlist_position(name, pos);
 			} else {
@@ -272,11 +272,11 @@ namespace Abraca {
 			uint mid;
 			bool tmp;
 
-			tmp = val.get_dict_entry_int("type", out change);
-			tmp = val.get_dict_entry_int("position", out pos);
-			tmp = val.get_dict_entry_int("newposition", out npos);
-			tmp = val.get_dict_entry_uint("id", out mid);
-			tmp = val.get_dict_entry_string("name", out playlist);
+			tmp = val.dict_entry_get_int("type", out change);
+			tmp = val.dict_entry_get_int("position", out pos);
+			tmp = val.dict_entry_get_int("newposition", out npos);
+			tmp = val.dict_entry_get_uint("id", out mid);
+			tmp = val.dict_entry_get_string("name", out playlist);
 
 			switch (change) {
 				case Xmms.PlaylistChange.ADD:
@@ -312,9 +312,9 @@ namespace Abraca {
 			int change;
 			bool tmp;
 
-			tmp = val.get_dict_entry_string("name", out name);
-			tmp = val.get_dict_entry_string("namespace", out ns);
-			tmp = val.get_dict_entry_int("type", out change);
+			tmp = val.dict_entry_get_string("name", out name);
+			tmp = val.dict_entry_get_string("namespace", out ns);
+			tmp = val.dict_entry_get_int("type", out change);
 
 			switch (change) {
 				case Xmms.CollectionChanged.ADD:
@@ -324,7 +324,7 @@ namespace Abraca {
 					collection_update(name, ns);
 					break;
 				case Xmms.CollectionChanged.RENAME:
-					if (val.get_dict_entry_string("newname", out newname)) {
+					if (val.dict_entry_get_string("newname", out newname)) {
 						if (name == current_playlist) {
 							current_playlist = newname;
 						}
@@ -413,7 +413,7 @@ namespace Abraca {
 		{
 			int dur_sec, dur_min, duration;
 
-			if (!val.get_dict_entry_int("duration", out duration)) {
+			if (!val.dict_entry_get_int("duration", out duration)) {
 				return false;
 			}
 
@@ -429,7 +429,7 @@ namespace Abraca {
 		{
 			int bitrate;
 
-			if (!val.get_dict_entry_int("bitrate", out bitrate)) {
+			if (!val.dict_entry_get_int("bitrate", out bitrate)) {
 				return false;
 			}
 
@@ -442,7 +442,7 @@ namespace Abraca {
 		{
 			int unxtime;
 
-			if (!val.get_dict_entry_int(key, out unxtime)) {
+			if (!val.dict_entry_get_int(key, out unxtime)) {
 				return false;
 			}
 
@@ -462,23 +462,23 @@ namespace Abraca {
 
 		public static bool transform_generic (Xmms.Value val, string key, out string repr)
 		{
-			switch (val.get_dict_entry_type(key)) {
+			switch (val.dict_entry_get_type(key)) {
 				case Xmms.ValueType.INT32:
 					int tmp;
-					if (!val.get_dict_entry_int(key, out tmp)) {
+					if (!val.dict_entry_get_int(key, out tmp)) {
 						return false;
 					}
 					repr = "%d".printf(tmp);
 					break;
 			    case Xmms.ValueType.UINT32:
 					uint tmp;
-					if (!val.get_dict_entry_uint(key, out tmp)) {
+					if (!val.dict_entry_get_uint(key, out tmp)) {
 						return false;
 					}
 					repr = "%u".printf(tmp);
 					break;
 				case Xmms.ValueType.STRING:
-					if (!val.get_dict_entry_string(key, out repr)) {
+					if (!val.dict_entry_get_string(key, out repr)) {
 						return false;
 					}
 					repr = "%s".printf(repr);

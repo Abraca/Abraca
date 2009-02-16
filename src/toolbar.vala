@@ -222,16 +222,16 @@ namespace Abraca {
 
 			Xmms.Value val = propdict.propdict_to_dict();
 
-			val.get_dict_entry_int("id", out id);
+			val.dict_entry_get_int("id", out id);
 			if (_current_id != id) {
 				return true;
 			}
 
-			if (!val.get_dict_entry_int("duration", out duration)) {
+			if (!val.dict_entry_get_int("duration", out duration)) {
 				duration = 0;
 			}
 
-			if (!val.get_dict_entry_string("picture_front", out cover)) {
+			if (!val.dict_entry_get_string("picture_front", out cover)) {
 				_coverart.set_from_stock(
 					Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR
 				);
@@ -243,13 +243,13 @@ namespace Abraca {
 				);
 			}
 
-			if (val.get_dict_entry_string("title", out title)) {
+			if (val.dict_entry_get_string("title", out title)) {
 				string artist, album;
-				if (!val.get_dict_entry_string("artist", out artist)) {
+				if (!val.dict_entry_get_string("artist", out artist)) {
 					artist = _("Unknown");
 				}
 
-				if (!val.get_dict_entry_string("album", out album)) {
+				if (!val.dict_entry_get_string("album", out album)) {
 					album = _("Unknown");
 				}
 
@@ -258,7 +258,7 @@ namespace Abraca {
 					"<span size=\"small\" foreground=\"#666666\">by</span> %s <span size=\"small\" foreground=\"#666666\">from</span> %s"),
 					title, artist, album
 				);
-			} else if (val.get_dict_entry_string("url", out url)) {
+			} else if (val.dict_entry_get_string("url", out url)) {
 				info = GLib.Markup.printf_escaped(_("<b>%s</b>"), url);
 			} else {
 				info = "%s".printf("Unknown");

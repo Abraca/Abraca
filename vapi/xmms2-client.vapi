@@ -373,8 +373,7 @@ namespace Xmms {
 		public Value.from_dict();
 
 		public bool is_error();
-		public bool is_list();
-		public bool is_dict();
+		public bool is_type(Xmms.ValueType typ);
 
 		public Xmms.ValueType get_type();
 
@@ -382,7 +381,7 @@ namespace Xmms {
 		public bool get_int (out int val);
 		public bool get_uint (out uint val);
 		public bool get_string (out weak string val);
-		public bool get_collection (out Xmms.Collection coll);
+		public bool get_coll (out Xmms.Collection coll);
 		public bool get_bin ([CCode(array_length_type="uint")] out weak uchar[] val);
 
 		public bool get_list_iter (out weak Xmms.ListIter iter);
@@ -398,17 +397,17 @@ namespace Xmms {
 		public int  list_get_size();
 
 		public bool dict_get(string key, out Xmms.Value val);
-		public bool dict_insert(string key, Xmms.Value val);
+		public bool dict_set(string key, Xmms.Value val);
 		public bool dict_remove(string key);
 		public bool dict_clear();
 		public bool dict_foreach(Xmms.DictForeachFunc func);
 		public int dict_get_size();
 
-		public Xmms.ValueType get_dict_entry_type(string key);
-		public bool get_dict_entry_string(string key, out weak string val);
-		public bool get_dict_entry_int(string key, out int val);
-		public bool get_dict_entry_uint(string key, out uint val);
-		public bool get_dict_entry_collection(string key, out Xmms.Collection coll);
+		public Xmms.ValueType dict_entry_get_type(string key);
+		public bool dict_entry_get_string(string key, out weak string val);
+		public bool dict_entry_get_int(string key, out int val);
+		public bool dict_entry_get_uint(string key, out uint val);
+		public bool dict_entry_get_collection(string key, out Xmms.Collection coll);
 
 		public Xmms.Value propdict_to_dict([CCode (array_length = false)] string[]? prefs=null);
 	}
@@ -420,7 +419,7 @@ namespace Xmms {
 		public bool valid();
 		public void first();
 		public bool next();
-		public bool goto(int pos);
+		public bool seek(int pos);
 		public bool insert(Xmms.Value val);
 		public bool remove();
 	}

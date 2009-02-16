@@ -499,7 +499,7 @@ namespace Abraca {
 		{
 			Xmms.Collection coll;
 
-			if (val.get_collection(out coll)) {
+			if (val.get_coll(out coll)) {
 				Abraca.instance().main_window.main_hpaned.
 					right_hpaned.filter_tree.query_collection(coll);
 			}

@@ -167,7 +167,7 @@ namespace Abraca {
 
 			Xmms.Value val = propdict.propdict_to_dict();
 
-			val.get_dict_entry_int("id", out mid);
+			val.dict_entry_get_int("id", out mid);
 
 			row = (Gtk.TreeRowReference) pos_map.lookup(mid);
 			if (row == null || !row.valid()) {
