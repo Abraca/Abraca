@@ -707,8 +707,8 @@ namespace Abraca {
 					c3.xmms.playback_status().notifier_set((res) => {
 						// TODO: Should use outer client when vala supports this.
 						Client c4 = Client.instance();
-						uint status;
-						res.get_uint(out status);
+						int status;
+						res.get_int(out status);
 						if (status != Xmms.PlaybackStatus.PLAY) {
 							c4.xmms.playback_start();
 						}

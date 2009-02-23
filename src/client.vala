@@ -29,8 +29,8 @@ namespace Abraca {
 		public signal void disconnected();
 
 		public signal void playback_status(int status);
-		public signal void playback_current_id(uint mid);
-		public signal void playback_playtime(uint pos);
+		public signal void playback_current_id(int mid);
+		public signal void playback_playtime(int pos);
 		public signal void playback_volume(Xmms.Value res);
 
 		public signal void playlist_loaded(string name);
@@ -96,7 +96,7 @@ namespace Abraca {
 		}
 
 
-		public void set_playlist_id (uint mid) {
+		public void set_playlist_id (int mid) {
 			if (current_playback_status == Xmms.PlaybackStatus.STOP) {
 				playback_current_id(mid);
 			}
@@ -190,10 +190,10 @@ namespace Abraca {
 
 
 		private bool on_playback_status(Xmms.Value val) {
-			uint status;
-			if (val.get_uint(out status)) {
-				playback_status((int) status);
-				current_playback_status = (int) status;
+			int status;
+			if (val.get_int(out status)) {
+				playback_status(status);
+				current_playback_status = status;
 			}
 
 			return true;
@@ -201,9 +201,9 @@ namespace Abraca {
 
 
 		private bool on_playback_current_id(Xmms.Value val) {
-			uint mid;
+			int mid;
 
-			if (val.get_uint(out mid)) {
+			if (val.get_int(out mid)) {
 				playback_current_id(mid);
 			}
 
@@ -215,9 +215,9 @@ namespace Abraca {
 		 * Emit the current playback position in ms.
 		 */
 		private bool on_playback_playtime(Xmms.Value val) {
-			uint pos;
+			int pos;
 
-			if (val.get_uint(out pos)) {
+			if (val.get_int(out pos)) {
 				playback_playtime(pos);
 			}
 
@@ -247,17 +247,17 @@ namespace Abraca {
 
 
 		private bool on_playlist_position(Xmms.Value val) {
-			uint pos;
+			int pos;
 
 			if (val.is_type(Xmms.ValueType.DICT)) {
 				string name;
-				if (!val.dict_entry_get_uint("position", out pos))
+				if (!val.dict_entry_get_int("position", out pos))
 					return true;
 				if (!val.dict_entry_get_string("name", out name))
 					return true;
 				playlist_position(name, pos);
 			} else {
-				if (!val.get_uint(out pos))
+				if (!val.get_int(out pos))
 					return true;
 				playlist_position(current_playlist, pos);
 			}
@@ -268,14 +268,13 @@ namespace Abraca {
 
 		private bool on_playlist_changed(Xmms.Value val) {
 			string playlist;
-			int change, pos, npos;
-			uint mid;
+			int mid, change, pos, npos;
 			bool tmp;
 
 			tmp = val.dict_entry_get_int("type", out change);
 			tmp = val.dict_entry_get_int("position", out pos);
 			tmp = val.dict_entry_get_int("newposition", out npos);
-			tmp = val.dict_entry_get_uint("id", out mid);
+			tmp = val.dict_entry_get_int("id", out mid);
 			tmp = val.dict_entry_get_string("name", out playlist);
 
 			switch (change) {
@@ -343,9 +342,9 @@ namespace Abraca {
 
 
 		public bool on_medialib_entry_changed(Xmms.Value val) {
-			uint mid;
+			int mid;
 
-			if (val.get_uint(out mid)) {
+			if (val.get_int(out mid)) {
 				_xmms.medialib_get_info(mid).notifier_set(
 					on_medialib_get_info
 				);
@@ -469,13 +468,6 @@ namespace Abraca {
 						return false;
 					}
 					repr = "%d".printf(tmp);
-					break;
-			    case Xmms.ValueType.UINT32:
-					uint tmp;
-					if (!val.dict_entry_get_uint(key, out tmp)) {
-						return false;
-					}
-					repr = "%u".printf(tmp);
 					break;
 				case Xmms.ValueType.STRING:
 					if (!val.dict_entry_get_string(key, out repr)) {

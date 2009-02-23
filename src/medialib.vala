@@ -485,13 +485,6 @@ namespace Abraca {
 				val_str = "%s".printf("Unknown");
 
 				switch (entry.get_type()) {
-				    case Xmms.ValueType.UINT32: {
-						uint tmp;
-						if (entry.get_uint(out tmp)) {
-							val_str = "%u".printf(tmp);
-						}
-						break;
-					}
 				    case Xmms.ValueType.INT32: {
 						int tmp;
 						if (entry.get_int(out tmp)) {

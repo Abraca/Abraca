@@ -74,8 +74,8 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 			val.dict_foreach((key, val) => {
 				// TODO: Use outer variable when supported by Vala
 				Client c2 = Client.instance();
-				uint tmp;
-				if (val.get_uint(out tmp)) {
+				int tmp;
+				if (val.get_int(out tmp)) {
 					c2.xmms.playback_volume_set(key, tmp);
 				}
 			});

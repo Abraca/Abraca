@@ -165,7 +165,7 @@ namespace Abraca {
 		}
 
 
-		private void on_playback_current_id(Client c, uint mid) {
+		private void on_playback_current_id(Client c, int mid) {
 			_current_id = mid;
 			_pos = 0;
 
@@ -208,7 +208,7 @@ namespace Abraca {
 		}
 
 
-		private void on_playback_playtime(Client c, uint pos) {
+		private void on_playback_playtime(Client c, int pos) {
 			if (_seek == false) {
 				_pos = pos;
 				update_time_label();

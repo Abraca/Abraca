@@ -107,9 +107,9 @@ namespace Abraca {
 				Gtk.TreeRowReference row;
 				Gtk.TreePath path;
 				Xmms.Value entry;
-				uint id = 0;
+				int id = 0;
 
-				if (!(list_iter.entry(out entry) && entry.get_uint(out id))) {
+				if (!(list_iter.entry(out entry) && entry.get_int(out id))) {
 					GLib.stdout.printf("crapping out\n");
 					continue;
 				}

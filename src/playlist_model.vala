@@ -168,7 +168,7 @@ namespace Abraca {
 			/* Add the new position indicator */
 			if (iter_nth_child (out iter, null, (int) pos)) {
 				Gtk.TreePath path;
-				uint mid;
+				int mid;
 
 				/* Notify the Client of the current medialib id */
 				get(iter, Column.ID, out mid);
@@ -227,7 +227,7 @@ namespace Abraca {
 			/* Notify the Client of the current medialib id */
 			if (_position.valid()) {
 				Gtk.TreeIter iter;
-				uint mid;
+				int mid;
 
 				get_iter(out iter, _position.get_path());
 				get(iter, Column.ID, out mid);
@@ -291,9 +291,9 @@ namespace Abraca {
 				Gtk.TreeRowReference row;
 				Gtk.TreePath path;
 				Xmms.Value entry;
-				uint mid = 0;
+				int mid = 0;
 
-				if (!(list_iter.entry(out entry) && entry.get_uint(out mid)))
+				if (!(list_iter.entry(out entry) && entry.get_int(out mid)))
 					continue;
 
 				if (first) {

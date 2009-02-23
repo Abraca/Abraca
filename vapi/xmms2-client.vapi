@@ -102,7 +102,6 @@ namespace Xmms {
 	public enum ValueType {
 		NONE = 0,
 		ERROR,
-		UINT32,
 		INT32,
 		STRING,
 		COLL,
@@ -379,7 +378,6 @@ namespace Xmms {
 
 		public bool get_error (out weak string error);
 		public bool get_int (out int val);
-		public bool get_uint (out uint val);
 		public bool get_string (out weak string val);
 		public bool get_coll (out Xmms.Collection coll);
 		public bool get_bin ([CCode(array_length_type="uint")] out weak uchar[] val);
