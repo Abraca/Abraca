@@ -122,7 +122,7 @@ namespace Abraca {
 
 			add(vbox6);
 		}
-		private bool on_quit(MainWindow w) {
+		private bool on_quit(Gdk.Event e) {
 			Abraca.instance().quit();
 
 			return false;

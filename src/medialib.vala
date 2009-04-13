@@ -26,7 +26,7 @@ namespace Abraca {
 
 		private string artist;
 		private string album;
-		private string title;
+		private string song;
 		private string genre;
 		private string tracknr;
 		private string date;
@@ -40,7 +40,7 @@ namespace Abraca {
 
 		private Gtk.Entry artist_entry;
 		private Gtk.Entry album_entry;
-		private Gtk.Entry title_entry;
+		private Gtk.Entry song_entry;
 
 		private Gtk.SpinButton date_button;
 		private Gtk.SpinButton tracknr_button;
@@ -130,10 +130,10 @@ namespace Abraca {
 			label = new Gtk.Label("Title:");
 			label.xalign = 0;
 			table.attach_defaults(label, 0, 1, row, row + 1);
-			title_entry = new Gtk.Entry();
-			title_entry.changed += on_title_entry_changed;
-			title_entry.activate += on_title_entry_activated;
-			table.attach_defaults(title_entry, 1, 2, row, row + 1);
+			song_entry = new Gtk.Entry();
+			song_entry.changed += on_song_entry_changed;
+			song_entry.activate += on_song_entry_activated;
+			table.attach_defaults(song_entry, 1, 2, row, row + 1);
 			row++;
 
 			label = new Gtk.Label("Artist:");
@@ -234,7 +234,7 @@ namespace Abraca {
 		}
 
 
-		bool on_delete_event(MedialibInfoDialog dialog) {
+		bool on_delete_event(Gdk.Event e) {
 			Abraca abraca = Abraca.instance();
 			abraca.medialib.info_dialog = null;
 
@@ -254,7 +254,7 @@ namespace Abraca {
 			editable.set_tooltip_text(editable.get_text());
 		}
 
-		void on_title_entry_changed(Gtk.Entry entry) {
+		void on_song_entry_changed(Gtk.Entry entry) {
 			change_color(entry, title);
 		}
 
@@ -297,7 +297,7 @@ namespace Abraca {
 			).notifier_set( on_value_wrote);
 		}
 
-		void on_title_entry_activated(Gtk.Entry entry) {
+		void on_song_entry_activated(Gtk.Entry entry) {
 			set_str(entry, "title");
 		}
 
@@ -388,7 +388,7 @@ namespace Abraca {
 			refresh_border();
 		}
 
-		public void add(uint id) {
+		public void add_mid(uint id) {
 			ids.append(id);
 			if (current == null) {
 				current = ids;
@@ -418,9 +418,9 @@ namespace Abraca {
 			if (!val.dict_entry_get_string("title", out tmp)) {
 				tmp = "";
 			}
-			title = tmp;
-			title_entry.text = tmp;
-			title_entry.modify_base(Gtk.StateType.NORMAL, null);
+			song = tmp;
+			song_entry.text = tmp;
+			song_entry.modify_base(Gtk.StateType.NORMAL, null);
 
 			if (!val.dict_entry_get_int("tracknr", out itmp)) {
 				itmp = 0;
@@ -658,7 +658,7 @@ namespace Abraca {
 			if (info_dialog == null) {
 				info_dialog = new MedialibInfoDialog();
 			}
-			info_dialog.add(mid);
+			info_dialog.add_mid(mid);
 		}
 
 		public void create_add_url_dialog() {
