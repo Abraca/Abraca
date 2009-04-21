@@ -234,6 +234,9 @@ namespace Abraca {
 
 			d.version = Build.Config.VERSION;
 
+			d.transient_for = Abraca.instance().main_window;
+			d.window_position = Gtk.WindowPosition.CENTER_ON_PARENT;
+
 			d.run();
 			d.hide();
 		}
