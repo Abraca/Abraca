@@ -62,7 +62,7 @@ class AbracaEnvironment(SConsEnvironment):
 		opts = Options(['.scons_options'], ARGUMENTS)
 		opts.AddOptions(
 			BoolOption('verbose', 'verbose output', 'no'),
-			BoolOption('debug', 'build debug variant', 'no'),
+			BoolOption('debug', 'build debug variant', 'yes'),
 			PathOption('DESTDIR', 'staged install prefix', None,
 			           PathOption.PathAccept),
 			PathOption('PREFIX', 'install prefix', '/usr/local',
