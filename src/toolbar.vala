@@ -281,6 +281,7 @@ namespace Abraca {
 			if (val.get_bin(out data)) {
 				Gdk.PixbufLoader loader;
 				weak Gdk.Pixbuf pixbuf;
+				Gdk.Pixbuf modified;
 
 				loader = new Gdk.PixbufLoader();
 				try {
@@ -291,8 +292,8 @@ namespace Abraca {
 				}
 
 				pixbuf = loader.get_pixbuf();
-				pixbuf = pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR);
-				_coverart.set_from_pixbuf(pixbuf);
+				modified = pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR);
+				_coverart.set_from_pixbuf(modified);
 			}
 
 			return true;

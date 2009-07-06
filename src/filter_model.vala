@@ -47,10 +47,10 @@ namespace Abraca {
 		 * to accept string[] parameters for initialization. Get rid of this
 		 * hack as soon as possible!
 		 */
-		public static FilterModel create(string[] #props) {
+		public static FilterModel create(owned string[] props) {
 			FilterModel model = new FilterModel();
 
-			model._set_dynamic_columns(#props);
+			model._set_dynamic_columns((owned) props);
 
 			return model;
 		}
@@ -59,7 +59,7 @@ namespace Abraca {
 		 * TODO: Get rid of this one too...
 		 * Helper method for the factory hack above.
 		 */
-		public void _set_dynamic_columns (string[] #props) {
+		public void _set_dynamic_columns (owned string[] props) {
 			int n_columns = props.length;
 
 			GLib.Type[] types = new GLib.Type[2 + n_columns];
@@ -73,7 +73,7 @@ namespace Abraca {
 
 			set_column_types(types);
 
-			dynamic_columns = #props;
+			dynamic_columns = (owned) props;
 		}
 
 		construct {
@@ -128,7 +128,7 @@ namespace Abraca {
 				path = get_path(iter);
 				row = new Gtk.TreeRowReference(this, path);
 
-				pos_map.insert((int) id, #row);
+				pos_map.insert((int) id, (owned) row);
 			}
 
 			return true;

@@ -108,6 +108,8 @@ namespace Abraca {
 				if (e.code != 4) {
 					GLib.stderr.printf("ERROR: %s\n", e.message);
 				}
+			} catch (GLib.KeyFileError e) {
+				GLib.stderr.printf("Something went wrong");
 			}
 
 			return file;

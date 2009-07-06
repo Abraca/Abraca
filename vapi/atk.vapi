@@ -56,7 +56,7 @@ namespace Atk {
 		public virtual void threads_leave ();
 	}
 	[CCode (cheader_filename = "atk/atk.h")]
-	public class NoOpObject : Atk.Object, Atk.Text, Atk.Action, Atk.Hypertext, Atk.Selection, Atk.Table, Atk.Image, Atk.Value, Atk.Component, Atk.EditableText, Atk.Document {
+	public class NoOpObject : Atk.Object, Atk.Value, Atk.Document, Atk.Component, Atk.Text, Atk.Action, Atk.Hypertext, Atk.Selection, Atk.Table, Atk.Image, Atk.EditableText {
 		[CCode (type = "AtkObject*", has_construct_function = false)]
 		public NoOpObject (GLib.Object obj);
 	}
@@ -164,6 +164,7 @@ namespace Atk {
 		public unowned GLib.PtrArray get_target ();
 		[CCode (has_construct_function = false)]
 		public Relation (Atk.Object[] targets, Atk.RelationType relationship);
+		public bool remove_target (Atk.Object target);
 		public static Atk.RelationType type_for_name (string name);
 		public static unowned string type_get_name (Atk.RelationType type);
 		public static Atk.RelationType type_register (string name);
@@ -655,18 +656,18 @@ namespace Atk {
 		MAX,
 		BOTH
 	}
-	[CCode (cheader_filename = "atk/atk.h")]
-	public static delegate void EventListener (Atk.Object obj);
-	[CCode (cheader_filename = "atk/atk.h")]
-	public static delegate void EventListenerInit ();
-	[CCode (cheader_filename = "atk/atk.h")]
-	public static delegate void FocusHandler (Atk.Object p1, bool p2);
+	[CCode (cheader_filename = "atk/atk.h", has_target = false)]
+	public delegate void EventListener (Atk.Object obj);
+	[CCode (cheader_filename = "atk/atk.h", has_target = false)]
+	public delegate void EventListenerInit ();
+	[CCode (cheader_filename = "atk/atk.h", has_target = false)]
+	public delegate void FocusHandler (Atk.Object p1, bool p2);
 	[CCode (cheader_filename = "atk/atk.h")]
 	public delegate bool Function ();
-	[CCode (cheader_filename = "atk/atk.h")]
-	public static delegate int KeySnoopFunc (Atk.KeyEventStruct event, void* func_data);
-	[CCode (cheader_filename = "atk/atk.h")]
-	public static delegate void PropertyChangeHandler (Atk.Object p1, Atk.PropertyValues p2);
+	[CCode (cheader_filename = "atk/atk.h", has_target = false)]
+	public delegate int KeySnoopFunc (Atk.KeyEventStruct event, void* func_data);
+	[CCode (cheader_filename = "atk/atk.h", has_target = false)]
+	public delegate void PropertyChangeHandler (Atk.Object p1, Atk.PropertyValues p2);
 	[CCode (cheader_filename = "atk/atk.h")]
 	public static uint add_focus_tracker (Atk.EventListener focus_tracker);
 	[CCode (cheader_filename = "atk/atk.h")]

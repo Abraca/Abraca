@@ -678,7 +678,7 @@ namespace Abraca {
 
 			if (dialog.run() == Gtk.ResponseType.OK) {
 				Client c = Client.instance();
-				weak GLib.SList<string> filenames;
+				GLib.SList<string> filenames;
 				string url;
 				Gtk.CheckButton button = (Gtk.CheckButton) dialog.extra_widget;
 

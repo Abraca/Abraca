@@ -110,6 +110,16 @@ public struct int {
 
 	[CCode (cname = "abs")]
 	public int abs ();
+
+	[CCode (cname = "GINT_TO_BE")]
+	public int to_big_endian ();
+	[CCode (cname = "GINT_TO_LE")]
+	public int to_little_endian ();
+
+	[CCode (cname = "GINT_FROM_BE")]
+	public static int from_big_endian (int val);
+	[CCode (cname = "GINT_FROM_LE")]
+	public static int from_little_endian (int val);
 }
 
 [SimpleType]
@@ -133,6 +143,16 @@ public struct uint {
 
 	[CCode (cname = "GUINT_TO_POINTER")]
 	public void* to_pointer ();
+
+	[CCode (cname = "GUINT_TO_BE")]
+	public uint to_big_endian ();
+	[CCode (cname = "GUINT_TO_LE")]
+	public uint to_little_endian ();
+
+	[CCode (cname = "GUINT_FROM_BE")]
+	public static uint from_big_endian (uint val);
+	[CCode (cname = "GUINT_FROM_LE")]
+	public static uint from_little_endian (uint val);
 }
 
 [SimpleType]
@@ -195,6 +215,16 @@ public struct long {
 	public long clamp (long low, long high);
 	[CCode (cname = "labs")]
 	public long abs ();
+
+	[CCode (cname = "GLONG_TO_BE")]
+	public long to_big_endian ();
+	[CCode (cname = "GLONG_TO_LE")]
+	public long to_little_endian ();
+
+	[CCode (cname = "GLONG_FROM_BE")]
+	public static long from_big_endian (long val);
+	[CCode (cname = "GLONG_FROM_LE")]
+	public static long from_little_endian (long val);
 }
 
 [SimpleType]
@@ -215,6 +245,16 @@ public struct ulong {
 	public static ulong max (ulong a, ulong b);
 	[CCode (cname = "CLAMP")]
 	public ulong clamp (ulong low, ulong high);
+
+	[CCode (cname = "GULONG_TO_BE")]
+	public ulong to_big_endian ();
+	[CCode (cname = "GULONG_TO_LE")]
+	public ulong to_little_endian ();
+
+	[CCode (cname = "GULONG_FROM_BE")]
+	public static ulong from_big_endian (ulong val);
+	[CCode (cname = "GULONG_FROM_LE")]
+	public static ulong from_little_endian (ulong val);
 }
 
 [SimpleType]
@@ -333,6 +373,16 @@ public struct int16 {
 	public static int16 max (int16 a, int16 b);
 	[CCode (cname = "CLAMP")]
 	public int16 clamp (int16 low, int16 high);
+
+	[CCode (cname = "GINT16_TO_BE")]
+	public int16 to_big_endian ();
+	[CCode (cname = "GINT16_TO_LE")]
+	public int16 to_little_endian ();
+
+	[CCode (cname = "GINT16_FROM_BE")]
+	public static int16 from_big_endian (int16 val);
+	[CCode (cname = "GINT16_FROM_LE")]
+	public static int16 from_little_endian (int16 val);
 }
 
 [SimpleType]
@@ -358,6 +408,16 @@ public struct uint16 {
 	public static uint16 max (uint16 a, uint16 b);
 	[CCode (cname = "CLAMP")]
 	public uint16 clamp (uint16 low, uint16 high);
+
+	[CCode (cname = "GUINT16_TO_BE")]
+	public uint16 to_big_endian ();
+	[CCode (cname = "GUINT16_TO_LE")]
+	public uint16 to_little_endian ();
+
+	[CCode (cname = "GUINT16_FROM_BE")]
+	public static uint16 from_big_endian (uint16 val);
+	[CCode (cname = "GUINT16_FROM_LE")]
+	public static uint16 from_little_endian (uint16 val);
 }
 
 [SimpleType]
@@ -383,6 +443,16 @@ public struct int32 {
 	public static int32 max (int32 a, int32 b);
 	[CCode (cname = "CLAMP")]
 	public int32 clamp (int32 low, int32 high);
+
+	[CCode (cname = "GINT32_TO_BE")]
+	public int32 to_big_endian ();
+	[CCode (cname = "GINT32_TO_LE")]
+	public int32 to_little_endian ();
+
+	[CCode (cname = "GINT32_FROM_BE")]
+	public static int32 from_big_endian (int32 val);
+	[CCode (cname = "GINT32_FROM_LE")]
+	public static int32 from_little_endian (int32 val);
 }
 
 [SimpleType]
@@ -408,6 +478,16 @@ public struct uint32 {
 	public static uint32 max (uint32 a, uint32 b);
 	[CCode (cname = "CLAMP")]
 	public uint32 clamp (uint32 low, uint32 high);
+
+	[CCode (cname = "GUINT32_TO_BE")]
+	public uint32 to_big_endian ();
+	[CCode (cname = "GUINT32_TO_LE")]
+	public uint32 to_little_endian ();
+
+	[CCode (cname = "GUINT32_FROM_BE")]
+	public static uint32 from_big_endian (uint32 val);
+	[CCode (cname = "GUINT32_FROM_LE")]
+	public static uint32 from_little_endian (uint32 val);
 }
 
 [SimpleType]
@@ -435,6 +515,16 @@ public struct int64 {
 	public int64 clamp (int64 low, int64 high);
 	[CCode (cname = "llabs")]
 	public int64 abs ();
+
+	[CCode (cname = "GINT64_TO_BE")]
+	public int64 to_big_endian ();
+	[CCode (cname = "GINT64_TO_LE")]
+	public int64 to_little_endian ();
+
+	[CCode (cname = "GINT64_FROM_BE")]
+	public static int64 from_big_endian (int64 val);
+	[CCode (cname = "GINT64_FROM_LE")]
+	public static int64 from_little_endian (int64 val);
 }
 
 [SimpleType]
@@ -460,6 +550,16 @@ public struct uint64 {
 	public static uint64 max (uint64 a, uint64 b);
 	[CCode (cname = "CLAMP")]
 	public uint64 clamp (uint64 low, uint64 high);
+
+	[CCode (cname = "GUINT64_TO_BE")]
+	public uint64 to_big_endian ();
+	[CCode (cname = "GUINT64_TO_LE")]
+	public uint64 to_little_endian ();
+
+	[CCode (cname = "GUINT64_FROM_BE")]
+	public static uint64 from_big_endian (uint64 val);
+	[CCode (cname = "GUINT64_FROM_LE")]
+	public static uint64 from_little_endian (uint64 val);
 }
 
 [SimpleType]
@@ -565,6 +665,7 @@ public struct double {
 }
 
 [CCode (cheader_filename = "time.h")]
+[ByRef]
 [IntegerType (rank = 8)]
 public struct time_t {
 	[CCode (cname = "time")]
@@ -720,11 +821,11 @@ public class string {
 	[CCode (cname = "g_strsplit", array_length = false, array_null_terminated = true)]
 	[NoArrayLength]
 	public string[] split (string delimiter, int max_tokens = 0);
-	[CCode (cname = "g_strsplit_set", array_length = false)]
+	[CCode (cname = "g_strsplit_set", array_length = false, array_null_terminated = true)]
 	public string[] split_set (string delimiters, int max_tokens = 0);
 	[CCode (cname = "g_strjoinv")]
 	[NoArrayLength]
-	public static string joinv (string separator, [CCode (array_length = false)] string[] str_array);
+	public static string joinv (string separator, [CCode (array_length = false, array_null_terminated = true)] string[] str_array);
 	[CCode (cname = "g_strjoin")]
 	public static string join (string separator, ...);
 	[CCode (cname = "g_strnfill")]
@@ -788,6 +889,14 @@ public class string {
 	public ulong to_ulong (out weak string endptr = null, int _base = 0);
 	[CCode (cname = "g_ascii_strtoll")]
 	public int64 to_int64 (out weak string endptr = null, int _base = 0);
+	public bool to_bool () {
+		if (this == "true") {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	[CCode (cname = "strlen")]
 	public long size ();
 
@@ -841,10 +950,25 @@ namespace GLib {
 	[CCode (lower_case_cprefix = "", cheader_filename = "math.h")]
 	namespace Math {
 		[CCode (cname = "G_E")]
-		public static double E;
+		public const double E;
 		
 		[CCode (cname = "G_PI")]
-		public static double PI;
+		public const double PI;
+
+		[CCode (cname = "G_LN2")]
+		public const double LN2;
+
+		[CCode (cname = "G_LN10")]
+		public const double LN10;
+
+		[CCode (cname = "G_PI_2")]
+		public const double PI_2;
+
+		[CCode (cname = "G_PI_4")]
+		public const double PI_4;
+
+		[CCode (cname = "G_SQRT2")]
+		public const double SQRT2;
 
 		/* generated from <bits/mathcalls.h> of glibc */
 		public static double acos (double x);
@@ -1076,7 +1200,8 @@ namespace GLib {
 		public static weak Source current_source ();
 	}
 	
-	public static delegate int PollFunc (PollFD[] ufds, uint nfsd, int timeout_);
+	[CCode (has_target = false)]
+	public delegate int PollFunc (PollFD[] ufds, uint nfsd, int timeout_);
 
 	[CCode (cname = "GSource")]
 	public class TimeoutSource : Source {
@@ -1085,9 +1210,9 @@ namespace GLib {
 
 	namespace Timeout {
 		public static uint add (uint interval, SourceFunc function);
-		public static uint add_full (int priority, uint interval, SourceFunc# function);
+		public static uint add_full (int priority, uint interval, owned SourceFunc function);
 		public static uint add_seconds (uint interval, SourceFunc function);
-		public static uint add_seconds_full (int priority, uint interval, SourceFunc function, DestroyNotify? notify);
+		public static uint add_seconds_full (int priority, uint interval, owned SourceFunc function);
 	}
 
 	[CCode (cname = "GSource")]
@@ -1097,7 +1222,7 @@ namespace GLib {
 
 	namespace Idle {
 		public static uint add (SourceFunc function);
-		public static uint add_full (int priority, SourceFunc# function);
+		public static uint add_full (int priority, owned SourceFunc function);
 		public static bool remove_by_data (void* data);
 	}
 
@@ -1114,7 +1239,7 @@ namespace GLib {
 	
 	namespace ChildWatch {
 		public static uint add (Pid pid, ChildWatchFunc function);
-		public static uint add_full (int priority, Pid pid, ChildWatchFunc# function);
+		public static uint add_full (int priority, Pid pid, owned ChildWatchFunc function);
 	}
 	
 	public struct PollFD {
@@ -1137,7 +1262,7 @@ namespace GLib {
 		public bool get_can_recurse ();
 		public uint get_id ();
 		public weak MainContext get_context ();
-		public void set_callback (SourceFunc func, DestroyNotify? notify);
+		public void set_callback (owned SourceFunc func);
 		public void set_callback_indirect (void* callback_data, SourceCallbackFuncs callback_funcs);
 		public void add_poll (ref PollFD fd);
 		public void remove_poll (ref PollFD fd);
@@ -1146,14 +1271,19 @@ namespace GLib {
 		public static bool remove_by_funcs_user_data (void* user_data);
 		public static bool remove_by_user_data (void* user_data);
 	}
-	
-	public static delegate void SourceDummyMarshal ();
-	
-	public static delegate bool SourcePrepareFunc (Source source, out int timeout_);
-	public static delegate bool SourceCheckFunc (Source source);
-	public static delegate bool SourceDispatchFunc (Source source, SourceFunc _callback);
-	public static delegate void SourceFinalizeFunc (Source source);
-	
+
+	[CCode (has_target = false)]
+	public delegate void SourceDummyMarshal ();
+
+	[CCode (has_target = false)]
+	public delegate bool SourcePrepareFunc (Source source, out int timeout_);
+	[CCode (has_target = false)]
+	public delegate bool SourceCheckFunc (Source source);
+	[CCode (has_target = false)]
+	public delegate bool SourceDispatchFunc (Source source, SourceFunc _callback);
+	[CCode (has_target = false)]
+	public delegate void SourceFinalizeFunc (Source source);
+
 	[Compact]
 	public class SourceFuncs {
 		public SourcePrepareFunc prepare;
@@ -1161,11 +1291,14 @@ namespace GLib {
 		public SourceDispatchFunc dispatch;
 		public SourceFinalizeFunc finalize;
 	}
-	
-	public static delegate void SourceCallbackRefFunc (void* cb_data);
-	public static delegate void SourceCallbackUnrefFunc (void* cb_data);
-	public static delegate void SourceCallbackGetFunc (void* cb_data, Source source, SourceFunc func);
-	
+
+	[CCode (has_target = false)]
+	public delegate void SourceCallbackRefFunc (void* cb_data);
+	[CCode (has_target = false)]
+	public delegate void SourceCallbackUnrefFunc (void* cb_data);
+	[CCode (has_target = false)]
+	public delegate void SourceCallbackGetFunc (void* cb_data, Source source, SourceFunc func);
+
 	[Compact]
 	public class SourceCallbackFuncs {
 		public SourceCallbackRefFunc @ref;
@@ -1226,6 +1359,32 @@ namespace GLib {
 		public void lock_full ();
 	}
 
+	[CCode (destroy_function = "g_static_rw_lock_free")]
+	public struct StaticRWLock {
+		public StaticRWLock ();
+		public void reader_lock ();
+		public bool reader_trylock ();
+		public void reader_unlock ();
+		public void writer_lock ();
+		public bool writer_trylock ();
+		public void writer_unlock ();
+	}
+
+	[Compact]
+	[CCode (ref_function = "", unref_function = "")]
+	public class Private {
+		public Private (DestroyNotify destroy_func);
+		public void* get ();
+		public void set (void* data);
+	}
+
+	[CCode (destroy_function = "g_static_private_free")]
+	public struct StaticPrivate {
+		public StaticPrivate ();
+		public void* get ();
+		public void set (void* data, DestroyNotify? destroy_func);
+	}
+
 	[Compact]
 	[CCode (free_function = "g_cond_free")]
 	public class Cond {
@@ -1262,8 +1421,8 @@ namespace GLib {
 	[CCode (ref_function = "g_async_queue_ref", unref_function = "g_async_queue_unref")]
 	public class AsyncQueue<G> {
 		public AsyncQueue ();
-		public void push (G# data);
-		public void push_sorted (G# data, CompareDataFunc func);
+		public void push (owned G data);
+		public void push_sorted (owned G data, CompareDataFunc func);
 		public G pop ();
 		public G try_pop ();
 		public G timed_pop (ref TimeVal end_time);
@@ -1273,8 +1432,8 @@ namespace GLib {
 		public void unlock ();
 		public void ref_unlocked ();
 		public void unref_and_unlock ();
-		public void push_unlocked (G# data);
-		public void push_sorted_unlocked (G# data, CompareDataFunc func);
+		public void push_unlocked (owned G data);
+		public void push_sorted_unlocked (owned G data, CompareDataFunc func);
 		public G pop_unlocked ();
 		public G try_pop_unlocked ();
 		public G timed_pop_unlocked (ref TimeVal end_time);
@@ -1343,6 +1502,8 @@ namespace GLib {
 		public GLib.Source create_watch (IOCondition condition);
 		[CCode (cname = "g_io_add_watch")]
 		public uint add_watch (IOCondition condition, IOFunc func);
+		[CCode (cname = "g_io_add_watch_full")]
+		public uint add_watch_full (int priority, IOCondition condition, owned IOFunc func);
 		public size_t get_buffer_size ();
 		public void set_buffer_size (size_t size);
 		public IOCondition get_buffer_condition ();
@@ -1430,7 +1591,8 @@ namespace GLib {
 	[PrintfFormat]
 	public static void print (string format, ...);
 	public static void set_print_handler (PrintFunc func);
-	public static delegate void PrintFunc (string text);
+	[CCode (has_target = false)]
+	public delegate void PrintFunc (string text);
 	[PrintfFormat]
 	public static void printerr (string format, ...);
 	public static void set_printerr_handler (PrintFunc func);
@@ -1507,7 +1669,7 @@ namespace GLib {
 
 	/* String Utility Functions */
 
-	public uint strv_length ([CCode (array_length = false)] string[] str_array);
+	public uint strv_length ([CCode (array_length = false, array_null_terminated = true)] string[] str_array);
 
 	[CCode (cname = "errno", cheader_filename = "errno.h")]
 	public int errno;
@@ -1516,6 +1678,7 @@ namespace GLib {
 	/* Character Set Conversions */
 	
 	public static string convert (string str, long len, string to_codeset, string from_codeset, out int bytes_read = null, out int bytes_written = null) throws ConvertError;
+	public static bool get_charset (out weak string charset);
 
 	public struct IConv {
 		[CCode (cname = "g_iconv_open")]
@@ -1654,6 +1817,13 @@ namespace GLib {
 
 		[CCode (cname = "g_date_valid_weekday")]
 		public bool valid (); 
+	}
+
+	[CCode (cprefix = "G_DATE_", has_type_id = false)]
+	public enum DateDMY {
+		DAY,
+		MONTH,
+		YEAR
 	}
 
 	public struct Date {
@@ -1807,7 +1977,8 @@ namespace GLib {
 		[CCode (cname = "g_get_system_data_dirs", array_length = false, array_null_terminated = true)]
 		[NoArrayLength]
 		public static weak string[] get_system_data_dirs ();
-		[CCode (cname = "g_get_system_config_dirs")]
+		[CCode (cname = "g_get_system_config_dirs", array_length = false, array_null_terminated = true)]
+		[NoArrayLength]
 		public static weak string[] get_system_config_dirs ();
 		[CCode (cname = "g_get_host_name")]
 		public static weak string get_host_name ();
@@ -1818,7 +1989,7 @@ namespace GLib {
 		[CCode (cname = "g_get_current_dir")]
 		public static string get_current_dir ();
 		[CCode (cname = "g_find_program_in_path")]
-		public static string find_program_in_path (string program);
+		public static string? find_program_in_path (string program);
 		[CCode (cname = "g_atexit")]
 		public static void atexit (VoidFunc func);
 		[CCode (cname = "g_chdir")]
@@ -1867,8 +2038,12 @@ namespace GLib {
 		public static uint closest (uint num);
 	}
 
-	public static delegate void FreeFunc (void* data);
-	public static delegate void VoidFunc ();
+	[CCode (has_target = false)]
+	public delegate void FreeFunc (void* data);
+	[CCode (has_target = false)]
+	public delegate void VoidFunc ();
+
+	public string format_size_for_display (int64 size);
 
 	/* Lexical Scanner */
 
@@ -2030,8 +2205,10 @@ namespace GLib {
 		public weak List<void*> complete_utf8 (string prefix, out string? new_prefix = null);
 	}
 
-	public static delegate string CompletionFunc (void* item);
-	public static delegate int CompletionStrncmpFunc (string s1, string s2, size_t n);
+	[CCode (has_target = false)]
+	public delegate string CompletionFunc (void* item);
+	[CCode (has_target = false)]
+	public delegate int CompletionStrncmpFunc (string s1, string s2, size_t n);
 
 	/* Timers */
 
@@ -2086,9 +2263,9 @@ namespace GLib {
 
 	[CCode (lower_case_cprefix = "g_")]
 	namespace Process {
-		public static bool spawn_async_with_pipes (string? working_directory, [CCode (array_length = false)] string[] argv, [CCode (array_length = false)] string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out Pid child_pid, out int standard_input = null, out int standard_output = null, out int standard_error = null) throws SpawnError;
-		public static bool spawn_async (string? working_directory, [CCode (array_length = false)] string[] argv, [CCode (array_length = false)] string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out Pid child_pid) throws SpawnError;
-		public static bool spawn_sync (string? working_directory, [CCode (array_length = false)] string[] argv, [CCode (array_length = false)] string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out string standard_output = null, out string standard_error = null, out int exit_status = null) throws SpawnError;
+		public static bool spawn_async_with_pipes (string? working_directory, [CCode (array_length = false, array_null_terminated = true)] string[] argv, [CCode (array_length = false, array_null_terminated = true)] string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out Pid child_pid, out int standard_input = null, out int standard_output = null, out int standard_error = null) throws SpawnError;
+		public static bool spawn_async (string? working_directory, [CCode (array_length = false, array_null_terminated = true)] string[] argv, [CCode (array_length = false, array_null_terminated = true)] string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out Pid child_pid) throws SpawnError;
+		public static bool spawn_sync (string? working_directory, [CCode (array_length = false, array_null_terminated = true)] string[] argv, [CCode (array_length = false, array_null_terminated = true)] string[]? envp, SpawnFlags _flags, SpawnChildSetupFunc? child_setup, out string standard_output = null, out string standard_error = null, out int exit_status = null) throws SpawnError;
 		public static bool spawn_command_line_async (string command_line) throws SpawnError;
 		public static bool spawn_command_line_sync (string command_line, out string standard_output = null, out string standard_error = null, out int exit_status = null) throws SpawnError;
 		[CCode (cname = "g_spawn_close_pid")]
@@ -2113,7 +2290,7 @@ namespace GLib {
 		public static bool if_continued (int status);
 	}
 	
-	[CCode (cname = "int", has_type_id = false)]
+	[CCode (cname = "int", has_type_id = false, cheader_filename = "signal.h", cprefix = "SIG")]
 	public enum ProcessSignal {
 		HUP,
 		INT,
@@ -2300,6 +2477,8 @@ namespace GLib {
 		public static string escape_string (string unescaped, string reserved_chars_allowed, bool allow_utf8);
 		public static string unescape_string (string escaped_string, string? illegal_characters=null);
 		public static string unescape_segment (string escaped_string, string escaped_string_end, string illegal_characters);
+		[CCode (array_length = false, array_null_terminated = true)]
+		public static string[] list_extract_uris (string uri_list);
 	}
 
 	/* Shell-related Utilities */
@@ -2342,8 +2521,8 @@ namespace GLib {
 		public string get_help (bool main_help, OptionGroup? group);
 		[NoArrayLength]
 		public void add_main_entries ([CCode (array_length = false)] OptionEntry[] entries, string? translation_domain);
-		public void add_group (OptionGroup# group);
-		public void set_main_group (OptionGroup# group);
+		public void add_group (owned OptionGroup group);
+		public void set_main_group (owned OptionGroup group);
 		public weak OptionGroup get_main_group ();
 	}
 
@@ -2397,8 +2576,10 @@ namespace GLib {
 		public void set_translation_domain (string domain);
 	}
 
-	public static delegate bool OptionParseFunc (OptionContext context, OptionGroup group, void* data) throws OptionError;
-	public static delegate void OptionErrorFunc (OptionContext context, OptionGroup group, void* data, ref Error error);
+	[CCode (has_target = false)]
+	public delegate bool OptionParseFunc (OptionContext context, OptionGroup group, void* data) throws OptionError;
+	[CCode (has_target = false)]
+	public delegate void OptionErrorFunc (OptionContext context, OptionGroup group, void* data, ref Error error);
 
 	/* Perl-compatible regular expressions */
 
@@ -2454,11 +2635,11 @@ namespace GLib {
 		public bool match_full (string str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, out MatchInfo match_info = null) throws RegexError;
 		public bool match_all (string str, RegexMatchFlags match_options = 0, out MatchInfo match_info = null);
 		public bool match_all_full (string str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, out MatchInfo match_info = null) throws RegexError;
-		[CCode (array_length = false)]
+		[CCode (array_length = false, array_null_terminated = true)]
 		public static string[] split_simple (string pattern, string str, RegexCompileFlags compile_options = 0, RegexMatchFlags match_options = 0);
-		[CCode (array_length = false)]
+		[CCode (array_length = false, array_null_terminated = true)]
 		public string[] split (string str, RegexMatchFlags match_options = 0);
-		[CCode (array_length = false)]
+		[CCode (array_length = false, array_null_terminated = true)]
 		public string[] split_full (string str, long string_len = -1, int start_position = 0, RegexMatchFlags match_options = 0, int max_tokens = 0) throws RegexError;
 		public string replace (string str, long string_len, int start_position, string replacement, RegexMatchFlags match_options = 0) throws RegexError;
 		public string replace_literal (string str, long string_len, int start_position, string replacement, RegexMatchFlags match_options = 0) throws RegexError;
@@ -2466,7 +2647,8 @@ namespace GLib {
 		public static bool check_replacement (out bool has_references = null) throws RegexError;
 	}
 
-	public static delegate bool RegexEvalCallback (MatchInfo match_info, StringBuilder result, void* user_data);
+	[CCode (has_target = false)]
+	public delegate bool RegexEvalCallback (MatchInfo match_info, StringBuilder result, void* user_data);
 
 	[Compact]
 	[CCode (free_function = "g_match_info_free")]
@@ -2478,11 +2660,11 @@ namespace GLib {
 		public int get_match_count ();
 		public bool is_partial_match ();
 		public string expand_references (string string_to_expand) throws RegexError;
-		public string fetch (int match_num);
+		public string? fetch (int match_num);
 		public bool fetch_pos (int match_num, out int start_pos, out int end_pos);
-		public string fetch_named (string name);
+		public string? fetch_named (string name);
 		public bool fetch_named_pos (string name, out int start_pos, out int end_pos);
-		[CCode (array_length = false)]
+		[CCode (array_length = false, array_null_terminated = true)]
 		public string[] fetch_all ();
 	}
 
@@ -2553,11 +2735,12 @@ namespace GLib {
 	public class KeyFile {
 		public KeyFile ();
 		public void set_list_separator (char separator);
-		public bool load_from_file (string file, KeyFileFlags @flags) throws KeyFileError;
-		public bool load_from_dirs (string file, [CCode (array_length = false)] string[] search_dirs, out string full_path, KeyFileFlags @flags) throws KeyFileError;
+		public bool load_from_file (string file, KeyFileFlags @flags) throws KeyFileError, FileError;
+		public bool load_from_dirs (string file, [CCode (array_length = false, array_null_terminated = true)] string[] search_dirs, out string full_path, KeyFileFlags @flags) throws KeyFileError, FileError;
 		public bool load_from_data (string data, ulong length, KeyFileFlags @flags) throws KeyFileError;
-		public bool load_from_data_dirs (string file, out string full_path, KeyFileFlags @flags) throws KeyFileError;
-		public string to_data (out size_t length) throws KeyFileError;
+		public bool load_from_data_dirs (string file, out string full_path, KeyFileFlags @flags) throws KeyFileError, FileError;
+		// g_key_file_to_data never throws an error according to the documentation
+		public string to_data (out size_t length = null, out GLib.Error error = null);
 		public string get_start_group ();
 		[CCode (array_length_type = "gsize")]
 		public string[] get_groups ();
@@ -2702,6 +2885,27 @@ namespace GLib {
 		public static double rand_double_range ();
 	}
 
+	[Compact]
+	[CCode (cname = "GTestCase", ref_function = "", unref_function = "")]
+	public class TestCase {
+		[CCode (cname = "g_test_create_case")]
+		public TestCase (string test_name, size_t data_size, [CCode (delegate_target_pos = 2.9)] TestFunc data_setupvoid, [CCode (delegate_target_pos = 2.9)] TestFunc data_funcvoid, [CCode (delegate_target_pos = 2.9)] TestFunc data_teardownvoid);
+	}
+
+	[Compact]
+	[CCode (cname = "GTestSuite", ref_function = "", unref_function = "")]
+	public class TestSuite {
+		[CCode (cname = "g_test_create_suite")]
+		public TestSuite (string name);
+		[CCode (cname = "g_test_get_root")]
+		public static TestSuite get_root ();
+		[CCode (cname = "g_test_suite_add")]
+		public void add (TestCase test_case);
+		[CCode (cname = "g_test_suite_add_suite")]
+		public void add_suite (TestSuite test_suite);
+	}
+
+	public delegate void TestFunc (void* fixture);
 	public delegate void DataTestFunc ();
 
 	[Flags]
@@ -2718,15 +2922,15 @@ namespace GLib {
 	[CCode (dup_function = "g_list_copy", free_function = "g_list_free")]
 	public class List<G> {
 		[ReturnsModifiedPointer ()]
-		public void append (G# data);
+		public void append (owned G data);
 		[ReturnsModifiedPointer ()]
-		public void prepend (G# data);
+		public void prepend (owned G data);
 		[ReturnsModifiedPointer ()]
-		public void insert (G# data, int position);
+		public void insert (owned G data, int position);
 		[ReturnsModifiedPointer ()]
-		public void insert_before (List<G> sibling, G# data);
+		public void insert_before (List<G> sibling, owned G data);
 		[ReturnsModifiedPointer ()]
-		public void insert_sorted (G# data, CompareFunc compare_func);
+		public void insert_sorted (owned G data, CompareFunc compare_func);
 		[ReturnsModifiedPointer ()]
 		public void remove (G data);
 		[ReturnsModifiedPointer ()]
@@ -2743,11 +2947,11 @@ namespace GLib {
 		[ReturnsModifiedPointer ()]
 		public void sort (CompareFunc compare_func);
 		[ReturnsModifiedPointer ()]
-		public void insert_sorted_with_data (G# data, CompareDataFunc compare_func);
+		public void insert_sorted_with_data (owned G data, CompareDataFunc compare_func);
 		[ReturnsModifiedPointer ()]
 		public void sort_with_data (CompareDataFunc compare_func);
 		[ReturnsModifiedPointer ()]
-		public void concat (List<G># list2);
+		public void concat (owned List<G> list2);
 		public void @foreach (Func func);
 
 		public weak List<G> first ();
@@ -2772,15 +2976,15 @@ namespace GLib {
 	[CCode (dup_function = "g_slist_copy", free_function = "g_slist_free")]
 	public class SList<G> {
 		[ReturnsModifiedPointer ()]
-		public void append (G# data);
+		public void append (owned G data);
 		[ReturnsModifiedPointer ()]
-		public void prepend (G# data);
+		public void prepend (owned G data);
 		[ReturnsModifiedPointer ()]
-		public void insert (G# data, int position);
+		public void insert (owned G data, int position);
 		[ReturnsModifiedPointer ()]
-		public void insert_before (SList<G> sibling, G# data);
+		public void insert_before (SList<G> sibling, owned G data);
 		[ReturnsModifiedPointer ()]
-		public void insert_sorted (G# data, CompareFunc compare_func);
+		public void insert_sorted (owned G data, CompareFunc compare_func);
 		[ReturnsModifiedPointer ()]
 		public void remove (G data);
 		[ReturnsModifiedPointer ()]
@@ -2795,13 +2999,13 @@ namespace GLib {
 		[ReturnsModifiedPointer ()]
 		public void reverse ();
 		[ReturnsModifiedPointer ()]
-		public void insert_sorted_with_data (G# data, CompareDataFunc compare_func);
+		public void insert_sorted_with_data (owned G data, CompareDataFunc compare_func);
 		[ReturnsModifiedPointer ()]
 		public void sort (CompareFunc compare_func);
 		[ReturnsModifiedPointer ()]
 		public void sort_with_data (CompareDataFunc compare_func);
 		[ReturnsModifiedPointer ()]
-		public void concat (SList<G># list2);
+		public void concat (owned SList<G> list2);
 		public void @foreach (Func func);
 
 		public weak SList<G> last ();
@@ -2816,8 +3020,9 @@ namespace GLib {
 		public G data;
 		public SList<G> next;
 	}
-	
-	public static delegate int CompareFunc (void* a, void* b);
+
+	[CCode (has_target = false)]
+	public delegate int CompareFunc (void* a, void* b);
 
 	public delegate int CompareDataFunc (void* a, void* b);
 	
@@ -2842,10 +3047,10 @@ namespace GLib {
 		public Queue copy ();
 		public weak List<G> find (G data);
 		public weak List<G> find_custom (G data, CompareFunc func);
-		public void sort (CompareDataFunc compare_func, void* user_data);
-		public void push_head (G# data);
-		public void push_tail (G# data);
-		public void push_nth (G# data, int n);
+		public void sort (CompareDataFunc compare_func);
+		public void push_head (owned G data);
+		public void push_tail (owned G data);
+		public void push_nth (owned G data, int n);
 		public G pop_head ();
 		public G pop_tail ();
 		public G pop_nth (uint n);
@@ -2855,9 +3060,9 @@ namespace GLib {
 		public int index (G data);
 		public void remove (G data);
 		public void remove_all (G data);
-		public void insert_before (List<G> sibling, G# data);
-		public void insert_after (List<G> sibling, G# data);
-		public void insert_sorted (List<G> sibling, G# data, CompareDataFunc func, void* user_data);
+		public void insert_before (List<G> sibling, owned G data);
+		public void insert_after (List<G> sibling, owned G data);
+		public void insert_sorted (owned G data, CompareDataFunc func);
 	}
 
 	/* Sequences */
@@ -2874,13 +3079,13 @@ namespace GLib {
 		public SequenceIter<G> get_begin_iter ();
 		public SequenceIter<G> get_end_iter ();
 		public SequenceIter<G> get_iter_at_pos (int pos);
-		public SequenceIter<G> append (G# data);
-		public SequenceIter<G> prepend (G# data);
-		public static SequenceIter<G> insert_before (SequenceIter<G> iter, G# data);
+		public SequenceIter<G> append (owned G data);
+		public SequenceIter<G> prepend (owned G data);
+		public static SequenceIter<G> insert_before (SequenceIter<G> iter, owned G data);
 		public static void move (SequenceIter<G> src, SequenceIter<G> dest);
 		public static void swap (SequenceIter<G> src, SequenceIter<G> dest);
-		public SequenceIter<G> insert_sorted (G# data, CompareDataFunc cmp_func);
-		public SequenceIter<G> insert_sorted_iter (G# data, SequenceIterCompareFunc<G> iter_cmp);
+		public SequenceIter<G> insert_sorted (owned G data, CompareDataFunc cmp_func);
+		public SequenceIter<G> insert_sorted_iter (owned G data, SequenceIterCompareFunc<G> iter_cmp);
 		public static void sort_changed (SequenceIter<G> iter, CompareDataFunc cmp_func);
 		public static void sort_changed_iter (SequenceIter<G> iter, SequenceIterCompareFunc<G> iter_cmp);
 		public static void remove (SequenceIter<G> iter);
@@ -2889,7 +3094,7 @@ namespace GLib {
 		public SequenceIter<G> search (G data, CompareDataFunc cmp_func);
 		public SequenceIter<G> search_iter (G data, SequenceIterCompareFunc<G> iter_cmp);
 		public static weak G get (SequenceIter<G> iter);
-		public static void set (SequenceIter<G> iter, G# data);
+		public static void set (SequenceIter<G> iter, owned G data);
 		public static SequenceIter<G> range_get_midpoint (SequenceIter<G> begin, SequenceIter<G> end);
 	}
 
@@ -2916,10 +3121,10 @@ namespace GLib {
 	[Compact]
 	[CCode (ref_function = "g_hash_table_ref", unref_function = "g_hash_table_unref", type_id = "G_TYPE_HASH_TABLE", type_signature = "a{%s}")]
 	public class HashTable<K,V> : Boxed {
-		public HashTable (HashFunc hash_func, EqualFunc key_equal_func);
-		public HashTable.full (HashFunc hash_func, EqualFunc key_equal_func, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
-		public void insert (K# key, V# value);
-		public void replace (K# key, V# value);
+		public HashTable (HashFunc? hash_func, EqualFunc? key_equal_func);
+		public HashTable.full (HashFunc? hash_func, EqualFunc? key_equal_func, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
+		public void insert (owned K key, owned V value);
+		public void replace (owned K key, owned V value);
 		public weak V lookup (K key);
 		public bool remove (K key);
 		public void remove_all ();
@@ -2931,13 +3136,16 @@ namespace GLib {
 		public bool steal (K key);
 		public void steal_all ();
 	}
-	
+
+	[CCode (has_target = false)]
 	public static delegate uint HashFunc (void* key);
+	[CCode (has_target = false)]
 	public static delegate bool EqualFunc (void* a, void* b);
 	public delegate void HFunc (void* key, void* value);
 
+	[CCode (has_target = false)]
 	public static delegate void DestroyNotify (void* data);
-	
+
 	[CCode (cname = "g_direct_hash")]
 	public static GLib.HashFunc direct_hash;
 	[CCode (cname = "g_direct_equal")]
@@ -3005,6 +3213,20 @@ namespace GLib {
 	[Compact]
 	[CCode (free_function = "g_ptr_array_free")]
 	public class PtrArray {
+		public PtrArray ();
+		[CCode (cname = "g_ptr_array_sized_new")]
+		public PtrArray.sized (uint reserved_size);
+		public void add (void* data);
+		public bool remove (void* data);
+		public void* remove_index (uint index);
+		public bool remove_fast (void *data);
+		public void remove_range (uint index, uint length);
+		public void sort (CompareFunc compare_func);
+		public void sort_with_data (CompareDataFunc compare_func);
+		public void set_size (uint length);
+
+		public uint len;
+		public void** pdata;
 	}
 
 	/* Byte Arrays */
@@ -3023,6 +3245,9 @@ namespace GLib {
 		public void sort (CompareFunc compare_func);
 		public void sort_with_data (CompareDataFunc compare_func);
 		public void set_size (uint length);
+
+		public uint len;
+		public uint8[] data;
 	}
 
 	/* N-ary Trees */
@@ -3052,15 +3277,15 @@ namespace GLib {
 		public Datalist ();
 		public void clear ();
 		public weak G id_get_data (Quark key_id);
-		public void id_set_data (Quark key_id, G# data);
-		public void id_set_data_full (Quark key_id, G# data, DestroyNotify? destroy_func);
+		public void id_set_data (Quark key_id, owned G data);
+		public void id_set_data_full (Quark key_id, owned G data, DestroyNotify? destroy_func);
 		public void id_remove_data (Quark key_id);
 		public G id_remove_no_notify (Quark key_id);
 		public void @foreach (DataForeachFunc func);
 		public weak G get_data (string key);
-		public void set_data_full (string key, G# data, DestroyNotify? destry_func);
+		public void set_data_full (string key, owned G data, DestroyNotify? destry_func);
 		public G remove_no_notify (string key);
-		public void set_data (string key, G# data);
+		public void set_data (string key, owned G data);
 		public void remove_data (string key);
 	}
 
@@ -3086,7 +3311,7 @@ namespace GLib {
 		public void remove_index_fast (uint index);
 		public void remove_range (uint index, uint length);
 		public void sort (CompareFunc compare_func);
-		public void sort_with_data (CompareDataFunc compare_func, void* user_data);
+		public void sort_with_data (CompareDataFunc compare_func);
 		public G index (uint index);
 		public void set_size (uint length);
 	}
@@ -3109,8 +3334,8 @@ namespace GLib {
 		public Tree (CompareFunc key_compare_func);
 		public Tree.with_data (CompareDataFunc key_compare_func);
 		public Tree.full (CompareDataFunc key_compare_func, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
-		public void insert (K# key, V# value);
-		public void replace (K# key, V# value);
+		public void insert (owned K key, owned V value);
+		public void replace (owned K key, owned V value);
 		public int nnodes ();
 		public int height ();
 		public weak V lookup (K key);

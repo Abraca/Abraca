@@ -140,8 +140,9 @@ namespace Xmms {
 	public const string COLLECTION_NS_COLLECTIONS;
 	public const string COLLECTION_NS_PLAYLISTS;
 
+	[Compact]
 	[CCode (cname="xmmsc_coll_token_t")]
-	public struct CollectionToken {
+	public class CollectionToken {
 			public Xmms.CollectionTokenType type;
 			[CCode(cname="string")]
 			public string str;

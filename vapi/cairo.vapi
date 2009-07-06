@@ -145,13 +145,14 @@ namespace Cairo {
 		public void show_glyphs (Glyph[] glyphs);
 		
 		public weak FontFace get_font_face ();
-		public void font_extents (ref FontExtents extents);
+		public void font_extents (out FontExtents extents);
 		public void set_font_face (FontFace font_face);
 		public void set_scaled_font (ScaledFont font);
-		public void text_extents (string utf8, ref TextExtents extents);
-		public void glyph_extents (Glyph[] glyphs, ref TextExtents extents);
+		public void text_extents (string utf8, out TextExtents extents);
+		public void glyph_extents (Glyph[] glyphs, out TextExtents extents);
 	}
 	
+	[CCode (cname = "cairo_antialias_t")]
 	public enum Antialias {
 		DEFAULT,
 		NONE,
@@ -159,23 +160,27 @@ namespace Cairo {
 		SUBPIXEL
 	}
 	
+	[CCode (cname = "cairo_fill_rule_t")]
 	public enum FillRule {
 		WINDING,
 		EVEN_ODD
 	}
 	
+	[CCode (cname = "cairo_line_cap_t")]
 	public enum LineCap {
 		BUTT,
 		ROUND,
 		SQUARE
 	}
 	
+	[CCode (cname = "cairo_line_join_t")]
 	public enum LineJoin {
 		MITER,
 		ROUND,
 		BEVEL
 	}
 	
+	[CCode (cname = "cairo_operator_t")]
 	public enum Operator {
 		CLEAR,
 		SOURCE,
@@ -415,12 +420,14 @@ namespace Cairo {
 		public Status write_to_png_stream (WriteFunc write_func, void* closure);
 	}
 	
+	[CCode (cname = "cairo_content_t")]
 	public enum Content {
 		COLOR,
 		ALPHA,
 		COLOR_ALPHA
 	}
 	
+	[CCode (cname = "cairo_surface_type_t")]
 	public enum SurfaceType {
 		IMAGE,
 		PDF,
@@ -435,6 +442,7 @@ namespace Cairo {
 		SVG
 	}
 	
+	[CCode (cname = "cairo_format_t")]
 	public enum Format {
 		ARGB32,
 		RGB24,
@@ -450,6 +458,7 @@ namespace Cairo {
 		public ImageSurface (Format format, int width, int height);
 		[CCode (cname = "cairo_image_surface_create_for_data")]
 		public ImageSurface.for_data ([CCode (array_length = false)] uchar[] data, Format format, int width, int height, int stride);
+		[CCode (array_length = false)]
 		public uchar[] get_data ();
 		public Format get_format ();
 		public int get_width ();
@@ -539,6 +548,7 @@ namespace Cairo {
 		public void transform_point (ref double x, ref double y);
 	}
 	
+	[CCode (cname = "cairo_status_t")]
 	public enum Status {
 		SUCCESS,
 		NO_MEMORY,
