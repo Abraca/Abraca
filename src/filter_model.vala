@@ -188,7 +188,7 @@ namespace Abraca {
 				}
 			}
 
-			return true;
+			return false;
 		}
 
 		private bool get_string_from_dict (Xmms.Value val, string key, out string repr) {
