@@ -22,9 +22,6 @@ def vala_emitter(target, source, env):
 		tmp = src.target_from_source('', '.c')
 		target.append(tmp)
 
-		tmp = src.target_from_source('', '.h')
-		target.append(tmp)
-
 	# Scan for local .vapi files to depend on.
 	for pkg in env['VALAPKGS']:
 		for path in env['VALAPKGPATH']:
