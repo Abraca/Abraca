@@ -18,28 +18,10 @@
  */
 
 using GLib;
+using Resources.XML;
 
 namespace Abraca {
 	public class MenuBar : Gtk.MenuBar {
-
-		private const string[] _authors = {
-				"Erik Massop <e.massop@hccnet.nl>",
-				"Christopher Rosell <chrippa@tanuki.se>",
-				"Martin Salzer <stoky@gmx.net>",
-				"Sebastian Sareyko <smoon@nooms.de>",
-				"Tilman Sauerbeck <tilman@xmms.org>",
-				"Daniel Svensson <dsvensson@gmail.com>",
-				null
-		};
-
-		private const string[] _artists = {
-				"Johan Slikkie van der Slikke <johan@slikkie.nl>",
-				"Jakub Steiner <jimmac@ximian.com>",
-				null
-		};
-
-		private const string _license = "Abraca, an XMMS2 client.\nCopyright (C) 2008  Abraca Team\n\nThis program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.";
-
 		construct {
 			append(create_music_menu());
 			append(create_playlist_menu());
@@ -204,10 +186,12 @@ namespace Abraca {
 		}
 
 		private void on_help_about(Gtk.MenuItem item) {
+			Gtk.Builder builder = new Gtk.Builder ();
 			Gtk.AboutDialog d;
 			Gdk.Pixbuf buf;
 
-			d = new Gtk.AboutDialog();
+			builder.add_from_string(Resources.XML.about, Resources.XML.about.length);
+			d = builder.get_object("abraca_about") as Gtk.AboutDialog;
 
 			try {
 				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
@@ -219,23 +203,9 @@ namespace Abraca {
 				GLib.stderr.printf("ERROR: %s\n", e.message);
 			}
 
-			d.name = GLib.Environment.get_application_name();
-			d.comments = _("A client for the XMMS2 music player");
-
-			d.authors = _authors;
-			d.artists = _artists;
-
-			d.copyright = _("Copyright © 2007-2008 Abraca Developers");
-
-			d.license = _license;
-			d.wrap_license = true;
-
-			d.website = "http://abraca.xmms.se/";
-
 			d.version = Build.Config.VERSION;
 
 			d.transient_for = Abraca.instance().main_window;
-			d.window_position = Gtk.WindowPosition.CENTER_ON_PARENT;
 
 			d.run();
 			d.hide();

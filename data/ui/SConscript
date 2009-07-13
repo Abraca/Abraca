@@ -1,0 +1,13 @@
+Import('env')
+
+lst = Split("""
+    about.xml
+""")
+
+ui, header, vapi = env.BinaryBlob('abraca_ui', lst)
+
+env.Append(CPPPATH = [Dir('.')])
+env.Append(VALAPKGPATH = [Dir('.')])
+env.Append(VALAPKGS = ['abraca_ui'])
+
+Export('ui')

@@ -1,5 +1,6 @@
 Import('env')
 Import('images')
+Import('ui')
 
 vala_sources = """
 	client.vala
@@ -32,6 +33,6 @@ extra = [
 	'utils/playlist_map.c',
 ]
 
-prog = env.Program('abraca', sources + extra + [images], install=True)
+prog = env.Program('abraca', sources + extra + [images, ui], install=True)
 
 env.Append(CPPPATH = ['utils'])

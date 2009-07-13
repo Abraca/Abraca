@@ -32,6 +32,7 @@ else:
 	env.Append(CCFLAGS = ['-O2'])
 
 env.SConscript('build/data/SConscript', exports='env', duplicate=0)
+env.SConscript('build/data/ui/SConscript', exports='env', duplicate=0)
 env.SConscript('build/src/SConscript', exports='env', duplicate=0)
 
 if env['HAVE_MSGFMT']:
