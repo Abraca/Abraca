@@ -36,7 +36,7 @@ class AbracaEnvironment(SConsEnvironment):
 			if val:
 				kwargs[key] = [val]
 
-		kwargs['tools'] = ['gcc', 'gnulink']
+		kwargs['tools'] = ['gcc', 'gnulink', 'gas']
 
 		SConsEnvironment.__init__(self, *args, **kwargs)
 
@@ -54,6 +54,7 @@ class AbracaEnvironment(SConsEnvironment):
 		self.Tool('vala')
 		self.Tool('msgfmt')
 		self.Tool('gdkpixbufcsource')
+		self.Tool('binaryblob')
 
 		# Beef up performance a bit by caching implicit deps
 		self.SetOption('implicit_cache', True)
@@ -88,6 +89,8 @@ class AbracaEnvironment(SConsEnvironment):
 			self['MSGFMTCOMSTR']      = '  Localize: $TARGET'
 			self['STRIPCOMSTR']       = ' Stripping: $TARGET'
 			self['GDKPBUFCOMSTR']     = ' Embedding: $SOURCES'
+			self['BINARYBLOBCOMSTR']  = ' Embedding: $SOURCES'
+			self['ASCOMSTR']          = 'Assembling: $SOURCES'
 
 		self.SConsInstall = self.Install
 		self.Install = self._install
