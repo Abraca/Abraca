@@ -75,13 +75,15 @@
           </object>
         </child>
         <child>
-          <object class="GtkAction" id="PlaylistMenuRepeatAll">
+          <object class="GtkToggleAction" id="PlaylistMenuRepeatAll">
             <property name="label" translatable="yes">Repeat All</property>
+            <property name="sensitive">False</property>
           </object>
         </child>
         <child>
-          <object class="GtkAction" id="PlaylistMenuRepeatOne">
+          <object class="GtkToggleAction" id="PlaylistMenuRepeatOne">
             <property name="label" translatable="yes">Repeat One</property>
+            <property name="sensitive">False</property>
           </object>
         </child>
 
