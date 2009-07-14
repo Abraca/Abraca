@@ -52,7 +52,10 @@ namespace Abraca {
 			height_request = 600;
 			allow_shrink = true;
 
-			delete_event += on_quit;
+			delete_event += (ev) => {
+				Abraca.instance().quit();
+				return false;
+			};
 
 			main_hpaned.set_sensitive(false);
 			toolbar.set_sensitive(false);
@@ -194,12 +197,6 @@ namespace Abraca {
 			};
 
 			return menubar;
-		}
-
-		private bool on_quit(Gdk.Event e) {
-			Abraca.instance().quit();
-
-			return false;
 		}
 	}
 }
