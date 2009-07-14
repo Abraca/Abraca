@@ -114,8 +114,6 @@ namespace Abraca {
 			_toolbar = new ToolBar();
 			vbox.pack_start(_toolbar, false, false, 6);
 
-			vbox.pack_start(new Gtk.HSeparator(), false, true, 0);
-
 			_main_hpaned = new MainHPaned();
 			vbox.pack_start(_main_hpaned, true, true, 0);
 
