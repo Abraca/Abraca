@@ -19,18 +19,11 @@
 
 namespace Abraca {
 	public class MainWindow : Gtk.Window, IConfigurable {
-		private ToolBar _toolbar;
 		private MainHPaned _main_hpaned;
 
 		public MainHPaned main_hpaned {
 			get {
 				return _main_hpaned;
-			}
-		}
-
-		public ToolBar toolbar {
-			get {
-				return _toolbar;
 			}
 		}
 
@@ -58,17 +51,13 @@ namespace Abraca {
 			};
 
 			main_hpaned.set_sensitive(false);
-			toolbar.set_sensitive(false);
-
 
 			c.disconnected += c => {
 				main_hpaned.set_sensitive(false);
-				toolbar.set_sensitive(false);
 			};
 
 			c.connected += c => {
 				main_hpaned.set_sensitive(true);
-				toolbar.set_sensitive(true);
 			};
 
 			Configurable.register(this);
@@ -114,8 +103,8 @@ namespace Abraca {
 			var menubar = create_menubar();
 			vbox.pack_start(menubar, false, true, 0);
 
-			_toolbar = new ToolBar();
-			vbox.pack_start(_toolbar, false, false, 6);
+			var toolbar = new ToolBar();
+			vbox.pack_start(toolbar, false, false, 6);
 
 			_main_hpaned = new MainHPaned();
 			vbox.pack_start(_main_hpaned, true, true, 0);

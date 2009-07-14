@@ -72,6 +72,16 @@ namespace Abraca {
 			c.medialib_entry_changed += (client, res) => {
 				on_media_info(res);
 			};
+
+			c.disconnected += (c) => {
+				set_sensitive(false);
+			};
+
+			c.connected += (c) => {
+				set_sensitive(true);
+			};
+
+			set_sensitive(false);
 		}
 
 
