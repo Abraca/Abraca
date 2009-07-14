@@ -13,7 +13,6 @@ vala_sources = """
 	medialib.vala
 	main_hpaned.vala
 	main_window.vala
-	menubar.vala
 	playlist_view.vala
 	playlist_model.vala
 	rating_entry.vala

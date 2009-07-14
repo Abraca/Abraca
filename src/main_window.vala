@@ -19,7 +19,6 @@
 
 namespace Abraca {
 	public class MainWindow : Gtk.Window, IConfigurable {
-		private MenuBar menubar;
 		private ToolBar _toolbar;
 		private MainHPaned _main_hpaned;
 
@@ -109,7 +108,7 @@ namespace Abraca {
 		private void create_widgets() {
 			Gtk.VBox vbox6 = new Gtk.VBox(false, 0);
 
-			menubar = new MenuBar();
+			var menubar = create_menubar();
 			vbox6.pack_start(menubar, false, true, 0);
 
 			_toolbar = new ToolBar();
@@ -122,6 +121,83 @@ namespace Abraca {
 
 			add(vbox6);
 		}
+
+
+		private Gtk.Widget create_menubar() {
+			var builder = new Gtk.Builder ();
+
+			try {
+				builder.add_from_string(
+					Resources.XML.main_menu, Resources.XML.main_menu.length
+				);
+			} catch (GLib.Error e) {
+				GLib.assert_not_reached ();
+			}
+
+			var uiman = builder.get_object("uimanager") as Gtk.UIManager;
+
+			var menubar = uiman.get_widget("/Menu");
+
+			uiman.get_action("/Menu/Music/Quit").activate += (action) => {
+				Abraca.instance().quit();
+			};
+
+			uiman.get_action("/Menu/Music/Add/Files").activate += (action) => {
+				Abraca.instance().medialib.create_add_file_dialog(Gtk.FileChooserAction.OPEN);
+			};
+
+			uiman.get_action("/Menu/Music/Add/Directory").activate += (action) => {
+				Abraca.instance().medialib.create_add_file_dialog(Gtk.FileChooserAction.SELECT_FOLDER);
+			};
+
+			uiman.get_action("/Menu/Music/Add/URL").activate += (action) => {
+				Abraca.instance().medialib.create_add_url_dialog();
+			};
+
+			uiman.get_action("/Menu/Playlist/ConfigureSorting").activate += (action) => {
+				Config.instance().show_sorting_dialog();
+			};
+
+			uiman.get_action("/Menu/Playlist/Clear").activate += (action) => {
+				Client.instance().xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
+			};
+
+			uiman.get_action("/Menu/Playlist/Shuffle").activate += (action) => {
+				Client.instance().xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
+			};
+
+			uiman.get_action("/Menu/Help/About").activate += (action) => {
+				var about_builder = new Gtk.Builder ();
+
+				try {
+					about_builder.add_from_string(
+						Resources.XML.about, Resources.XML.about.length
+					);
+				} catch (GLib.Error e) {
+					GLib.assert_not_reached ();
+				}
+
+				var about = about_builder.get_object("abraca_about") as Gtk.AboutDialog;
+
+				try {
+					about.set_logo(new Gdk.Pixbuf.from_inline (
+						-1, Resources.abraca_192, false
+					));
+				} catch (GLib.Error e) {
+					GLib.assert_not_reached ();
+				}
+
+				about.version = Build.Config.VERSION;
+
+				about.transient_for = Abraca.instance().main_window;
+
+				about.run();
+				about.hide();
+			};
+
+			return menubar;
+		}
+
 		private bool on_quit(Gdk.Event e) {
 			Abraca.instance().quit();
 
