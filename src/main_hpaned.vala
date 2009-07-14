@@ -38,9 +38,15 @@ namespace Abraca {
 
 
 		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
-			int pos = file.get_integer("panes", "pos1");
-			if (pos >= 0) {
-				position = pos;
+			if (!file.has_group("panes")) {
+				return;
+			}
+
+			if (file.has_key("panes", "pos1")) {
+				int pos = file.get_integer("panes", "pos1");
+				if (pos >= 0) {
+					position = pos;
+				}
 			}
 		}
 

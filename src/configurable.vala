@@ -44,6 +44,7 @@ namespace Abraca {
 				try {
 					obj.set_configuration(file);
 				} catch (GLib.KeyFileError e) {
+					GLib.error(e.message);
 				}
 			}
 
@@ -128,7 +129,7 @@ namespace Abraca {
 				stream = GLib.FileStream.open(filename, "w");
 				stream.puts(file.to_data(out length));
 			} catch (GLib.FileError e) {
-				GLib.stderr.printf("ERROR: %s\n", e.message);
+				GLib.error(e.message);
 			}
 		}
 
@@ -143,6 +144,7 @@ namespace Abraca {
 				try {
 					obj.set_configuration(file);
 				} catch (GLib.KeyFileError e) {
+					GLib.error(e.message);
 				}
 			}
 

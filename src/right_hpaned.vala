@@ -42,12 +42,14 @@ namespace Abraca {
 
 
 		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
-			int pos = file.get_integer("panes", "pos2");
-			if (pos >= 0) {
-				position = pos;
+			if (file.has_group("panes") && file.has_key("panes", "pos2")) {
+				int pos = file.get_integer("panes", "pos2");
+				if (pos >= 0) {
+					position = pos;
+				}
 			}
 
-			if (file.has_key("filter", "patterns")) {
+			if (file.has_group("filter") && file.has_key("filter", "patterns")) {
 				Gtk.ListStore store = (Gtk.ListStore) _filter_cbox.model;
 				Gtk.TreeIter iter;
 				string[] list = file.get_string_list("filter", "patterns");
