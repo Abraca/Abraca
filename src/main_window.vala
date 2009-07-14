@@ -33,12 +33,11 @@ namespace Abraca {
 			create_widgets();
 
 			try {
-				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
+				set_icon(new Gdk.Pixbuf.from_inline (
 					-1, Resources.abraca_32, false
-				);
-				set_icon(tmp);
+				));
 			} catch (GLib.Error e) {
-				GLib.stderr.printf("ERROR: %s\n", e.message);
+				GLib.assert_not_reached ();
 			}
 
 			width_request = 800;
