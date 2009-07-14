@@ -106,20 +106,20 @@ namespace Abraca {
 
 
 		private void create_widgets() {
-			Gtk.VBox vbox6 = new Gtk.VBox(false, 0);
+			var vbox = new Gtk.VBox(false, 0);
 
 			var menubar = create_menubar();
-			vbox6.pack_start(menubar, false, true, 0);
+			vbox.pack_start(menubar, false, true, 0);
 
 			_toolbar = new ToolBar();
-			vbox6.pack_start(_toolbar, false, false, 6);
+			vbox.pack_start(_toolbar, false, false, 6);
 
-			vbox6.pack_start(new Gtk.HSeparator(), false, true, 0);
+			vbox.pack_start(new Gtk.HSeparator(), false, true, 0);
 
 			_main_hpaned = new MainHPaned();
-			vbox6.pack_start(_main_hpaned, true, true, 0);
+			vbox.pack_start(_main_hpaned, true, true, 0);
 
-			add(vbox6);
+			add(vbox);
 		}
 
 
