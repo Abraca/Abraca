@@ -3,6 +3,7 @@ Import('env')
 lst = Split("""
     about.xml
     main_menu.xml
+    mediainfo.xml
 """)
 
 ui, header, vapi = env.BinaryBlob('abraca_ui', lst)

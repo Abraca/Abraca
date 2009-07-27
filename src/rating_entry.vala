@@ -18,7 +18,7 @@
  */
 
 namespace Abraca {
-	public class RatingEntry : Gtk.EventBox {
+	public class RatingEntry : Gtk.EventBox, Gtk.Buildable {
 		private Gdk.Pixbuf _canvas;
 
 		public int min_rating {
