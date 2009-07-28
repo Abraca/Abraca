@@ -406,69 +406,69 @@ namespace Abraca {
 			return true;
 		}
 
-		public static bool transform_dict (Xmms.Value dict, string key, out string result)
+		public static bool transform_dict (Xmms.Value dict, string key, out string repr)
 		{
 			weak Xmms.Value value;
 
 			if (!dict.dict_get (key, out value)) {
-				result = "%s".printf(_("Unknown"));
+				repr = "%s".printf(_("Unknown"));
 				return false;
 			}
 
-			return transform_value (value, key, out result);
+			return transform_value (value, key, out repr);
 		}
 
-		public static bool transform_value (Xmms.Value value, string key, out string result)
+		public static bool transform_value (Xmms.Value value, string key, out string repr)
 		{
 			switch (key) {
 			case "duration":
-				if (transform_duration (value, out result))
+				if (transform_duration (value, out repr))
 					return true;
 				break;
 			case "bitrate":
-				if (transform_bitrate (value, out result))
+				if (transform_bitrate (value, out repr))
 					return true;
 				break;
 			case "laststarted":
-				if (transform_date (value, "laststarted", out result))
+				if (transform_date (value, "laststarted", out repr))
 					return true;
 				break;
 			case "added":
-				if (transform_date (value, "added", out result))
+				if (transform_date (value, "added", out repr))
 					return true;
 				break;
 			case "lmod":
-				if (transform_date (value, "lmod", out result))
+				if (transform_date (value, "lmod", out repr))
 					return true;
 				break;
 			case "size":
-				if (transform_size (value, out result))
+				if (transform_size (value, out repr))
 					return true;
 				break;
 			default:
-				if (transform_generic (value, key, out result))
+				if (transform_generic (value, key, out repr))
 					return true;
 				break;
 			}
 
-			result = "%s".printf(_("Unknown"));
+			repr = "%s".printf(_("Unknown"));
 
 			return false;
 		}
 
-		public static bool transform_size (Xmms.Value val, out string result)
+		public static bool transform_size (Xmms.Value val, out string repr)
 		{
 			int size;
 
 			if (!val.get_int (out size))
 				return false;
 
-			result = "%dkB".printf (size / 1024);
+			repr = "%dkB".printf (size / 1024);
 
 			return true;
 		}
 
-		public static bool transform_duration (Xmms.Value val, out string result)
+		public static bool transform_duration (Xmms.Value val, out string repr)
 		{
 			int dur_sec, dur_min, duration;
 
@@ -479,12 +479,12 @@ namespace Abraca {
 			dur_min = duration / 60000;
 			dur_sec = (duration % 60000) / 1000;
 
-			result = "%d:%02d".printf(dur_min, dur_sec);
+			repr = "%d:%02d".printf (dur_min, dur_sec);
 
 			return true;
 		}
 
-		public static bool transform_bitrate (Xmms.Value val, out string result)
+		public static bool transform_bitrate (Xmms.Value val, out string repr)
 		{
 			int bitrate;
 
@@ -492,12 +492,12 @@ namespace Abraca {
 				return false;
 			}
 
-			result = "%.1f kbps".printf(bitrate / 1000.0 );
+			repr = "%.1f kbps".printf (bitrate / 1000.0 );
 
 			return true;
 		}
 
-		public static bool transform_date (Xmms.Value val, string key, out string result)
+		public static bool transform_date (Xmms.Value val, string key, out string repr)
 		{
 			int unxtime;
 
@@ -509,11 +509,11 @@ namespace Abraca {
 				GLib.Time time;
 
 				time = Time.gm((time_t) unxtime);
-				result = (string) new char[4+1+2+1+2+1]; // yyyy-mm-dd\0
+				repr = (string) new char[4+1+2+1+2+1]; // yyyy-mm-dd\0
 
-				time.strftime((char[]) result, "%Y-%0m-%0d");
+				time.strftime ((char[]) repr, "%Y-%0m-%0d");
 			} else {
-				result = _("Never");
+				repr = _("Never");
 			}
 
 			return true;
