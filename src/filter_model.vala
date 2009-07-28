@@ -181,50 +181,11 @@ namespace Abraca {
 
 				int pos = 2;
 				foreach (weak string key in dynamic_columns) {
-					string tmp;
-					if (get_string_from_dict(val, key, out tmp)) {
-						set(iter, pos++, tmp);
-					}
+					set(iter, pos++, Client.transform_value (val, key));
 				}
 			}
 
 			return false;
-		}
-
-		private bool get_string_from_dict (Xmms.Value val, string key, out string repr) {
-			bool ret = true;
-			//string repr;
-
-			if (key == "duration") {
-				if (!Client.transform_duration(val, out repr)) {
-					repr = "%s".printf(_("Unknown"));
-				}
-			} else if (key == "bitrate") {
-				if (!Client.transform_bitrate(val, out repr)) {
-					repr = "%s".printf(_("Unknown"));
-				}
-			} else if (key == "laststarted") {
-				if (!Client.transform_date(val, "laststarted", out repr)) {
-					repr = "%s".printf(_("Unknown"));
-				}
-			} else if (key == "added") {
-				if (!Client.transform_date(val, "added", out repr)) {
-					repr = "%s".printf(_("Unknown"));
-				}
-			} else if (key == "lmod") {
-				if (!Client.transform_date(val, "lmod", out repr)) {
-					repr = "%s".printf(_("Unknown"));
-				}
-			} else {
-				if (!Client.transform_generic(val, key, out repr)) {
-					repr = "%s".printf(_("Unknown"));
-				}
-			}
-
-			//val = GLib.Value(typeof(string));
-			//val.take_string(repr);
-
-			return ret;
 		}
 	}
 }

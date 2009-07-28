@@ -406,6 +406,30 @@ namespace Abraca {
 			return true;
 		}
 
+		public static string transform_value (Xmms.Value val, string key)
+		{
+			string result = "";
+
+			if (key == "duration" && transform_duration (val, out result))
+				return result;
+
+			if (key == "bitrate" && transform_bitrate(val, out result))
+				return result;
+
+			if (key == "laststarted" && transform_date(val, "laststarted", out result))
+				return result;
+
+			if (key == "added" && transform_date(val, "added", out result))
+				return result;
+
+			if (key == "lmod" && transform_date(val, "lmod", out result))
+				return result;
+
+			if (transform_generic(val, key, out result))
+				return result;
+
+			return "%s".printf(_("Unknown"));
+		}
 
 		/** Here comes default Xmms.Result filters, need a good place to live... */
 		public static bool transform_duration (Xmms.Value val, out string result)
