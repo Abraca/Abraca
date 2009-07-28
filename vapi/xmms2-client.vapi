@@ -395,7 +395,7 @@ namespace Xmms {
 		public bool list_foreach(Xmms.ListForeachFunc func);
 		public int  list_get_size();
 
-		public bool dict_get(string key, out Xmms.Value val);
+		public bool dict_get(string key, out weak Xmms.Value val);
 		public bool dict_set(string key, Xmms.Value val);
 		public bool dict_remove(string key);
 		public bool dict_clear();

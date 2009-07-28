@@ -406,37 +406,73 @@ namespace Abraca {
 			return true;
 		}
 
-		public static string transform_value (Xmms.Value val, string key)
+		public static bool transform_dict (Xmms.Value dict, string key, out string result)
 		{
-			string result = "";
+			weak Xmms.Value value;
 
-			if (key == "duration" && transform_duration (val, out result))
-				return result;
+			if (!dict.dict_get (key, out value)) {
+				result = "%s".printf(_("Unknown"));
+				return false;
+			}
 
-			if (key == "bitrate" && transform_bitrate(val, out result))
-				return result;
-
-			if (key == "laststarted" && transform_date(val, "laststarted", out result))
-				return result;
-
-			if (key == "added" && transform_date(val, "added", out result))
-				return result;
-
-			if (key == "lmod" && transform_date(val, "lmod", out result))
-				return result;
-
-			if (transform_generic(val, key, out result))
-				return result;
-
-			return "%s".printf(_("Unknown"));
+			return transform_value (value, key, out result);
 		}
 
-		/** Here comes default Xmms.Result filters, need a good place to live... */
+		public static bool transform_value (Xmms.Value value, string key, out string result)
+		{
+			switch (key) {
+			case "duration":
+				if (transform_duration (value, out result))
+					return true;
+				break;
+			case "bitrate":
+				if (transform_bitrate (value, out result))
+					return true;
+				break;
+			case "laststarted":
+				if (transform_date (value, "laststarted", out result))
+					return true;
+				break;
+			case "added":
+				if (transform_date (value, "added", out result))
+					return true;
+				break;
+			case "lmod":
+				if (transform_date (value, "lmod", out result))
+					return true;
+				break;
+			case "size":
+				if (transform_size (value, out result))
+					return true;
+				break;
+			default:
+				if (transform_generic (value, key, out result))
+					return true;
+				break;
+			}
+
+			result = "%s".printf(_("Unknown"));
+
+			return false;
+		}
+
+		public static bool transform_size (Xmms.Value val, out string result)
+		{
+			int size;
+
+			if (!val.get_int (out size))
+				return false;
+
+			result = "%dkB".printf (size / 1024);
+
+			return true;
+		}
+
 		public static bool transform_duration (Xmms.Value val, out string result)
 		{
 			int dur_sec, dur_min, duration;
 
-			if (!val.dict_entry_get_int("duration", out duration)) {
+			if (!val.get_int(out duration)) {
 				return false;
 			}
 
@@ -452,7 +488,7 @@ namespace Abraca {
 		{
 			int bitrate;
 
-			if (!val.dict_entry_get_int("bitrate", out bitrate)) {
+			if (!val.get_int(out bitrate)) {
 				return false;
 			}
 
@@ -465,7 +501,7 @@ namespace Abraca {
 		{
 			int unxtime;
 
-			if (!val.dict_entry_get_int(key, out unxtime)) {
+			if (!val.get_int(out unxtime)) {
 				return false;
 			}
 
@@ -485,16 +521,16 @@ namespace Abraca {
 
 		public static bool transform_generic (Xmms.Value val, string key, out string repr)
 		{
-			switch (val.dict_entry_get_type(key)) {
+			switch (val.get_type()) {
 				case Xmms.ValueType.INT32:
 					int tmp;
-					if (!val.dict_entry_get_int(key, out tmp)) {
+					if (!val.get_int(out tmp)) {
 						return false;
 					}
 					repr = "%d".printf(tmp);
 					break;
 				case Xmms.ValueType.STRING:
-					if (!val.dict_entry_get_string(key, out repr)) {
+					if (!val.get_string(out repr)) {
 						return false;
 					}
 					repr = "%s".printf(repr);

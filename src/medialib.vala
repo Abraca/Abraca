@@ -357,27 +357,7 @@ namespace Abraca {
 					store.set(parent, 0, source);
 				}
 
-				val_str = "%s".printf("Unknown");
-
-				switch (entry.get_type()) {
-				    case Xmms.ValueType.INT32: {
-						int tmp;
-						if (entry.get_int(out tmp)) {
-							val_str= "%d".printf(tmp);
-						}
-						break;
-					}
-				    case Xmms.ValueType.STRING: {
-						string tmp;
-						if (entry.get_string(out tmp)) {
-							val_str  = "%s".printf(tmp);
-						}
-						break;
-					}
-				    default: {
-						return;
-					}
-				}
+				Client.transform_value (entry, key, out val_str);
 
 				store.append(out iter, parent);
 				store.set(iter, 0, (string) key, 1, val_str);

@@ -181,7 +181,9 @@ namespace Abraca {
 
 				int pos = 2;
 				foreach (weak string key in dynamic_columns) {
-					set(iter, pos++, Client.transform_value (val, key));
+					string formatted = "";
+					Client.transform_dict (val, key, out formatted);
+					set(iter, pos++, formatted);
 				}
 			}
 

@@ -355,7 +355,7 @@ namespace Abraca {
 					artist = _("Unknown");
 				}
 
-				if (Client.transform_duration(val, out duration)) {
+				if (Client.transform_dict(val, "duration", out duration)) {
 					info = GLib.Markup.printf_escaped(
 						_("<b>%s</b> - <small>%s</small>\n" +
 						"<small>by</small> %s <small>from</small> %s"),
