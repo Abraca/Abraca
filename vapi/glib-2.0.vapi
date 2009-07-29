@@ -156,7 +156,7 @@ public struct uint {
 }
 
 [SimpleType]
-[CCode (cname = "gshort", cheader_filename = "glib.h", default_value = "0", type_signature = "n")]
+[CCode (cname = "gshort", cheader_filename = "glib.h", has_type_id = false, default_value = "0", type_signature = "n")]
 [IntegerType (rank = 4, min = -32768, max = 32767)]
 public struct short {
 	[CCode (cname = "G_MINSHORT")]
@@ -176,7 +176,7 @@ public struct short {
 }
 
 [SimpleType]
-[CCode (cname = "gushort", cheader_filename = "glib.h", default_value = "0U", type_signature = "q")]
+[CCode (cname = "gushort", cheader_filename = "glib.h", has_type_id = false, default_value = "0U", type_signature = "q")]
 [IntegerType (rank = 5, min = 0, max = 65535)]
 public struct ushort {
 	[CCode (cname = "0U")]
@@ -653,15 +653,23 @@ public struct double {
 	[CCode (cname = "isinf")]
 	public int is_infinity ();
 
-	[CCode (cname = "g_strdup_printf", instance_pos = -1)]
-	public string to_string (string format = "%g");
-
 	[CCode (cname = "MIN")]
 	public static double min (double a, double b);
 	[CCode (cname = "MAX")]
 	public static double max (double a, double b);
 	[CCode (cname = "CLAMP")]
 	public double clamp (double low, double high);
+
+	[CCode (cname = "G_ASCII_DTOSTR_BUF_SIZE")]
+	public const int DTOSTR_BUF_SIZE;
+	[CCode (cname = "g_ascii_dtostr", instance_pos = -1)]
+	public weak string to_str (char[] buffer);
+	[CCode (cname = "g_ascii_formatd", instance_pos = -1)]
+	public weak string format (char[] buffer, string format = "%g");
+
+	public string to_string () {
+		return this.to_str(new char[DTOSTR_BUF_SIZE]);
+	}
 }
 
 [CCode (cheader_filename = "time.h")]
@@ -829,7 +837,7 @@ public class string {
 	[CCode (cname = "g_strjoin")]
 	public static string join (string separator, ...);
 	[CCode (cname = "g_strnfill")]
-	public static string nfill (ulong length, char fill_char);
+	public static string nfill (size_t length, char fill_char);
 
 	[CCode (cname = "g_utf8_next_char")]
 	public weak string next_char ();
@@ -845,29 +853,29 @@ public class string {
 	[CCode (cname = "g_utf8_prev_char")]
 	public weak string prev_char ();
 	[CCode (cname = "g_utf8_strlen")]
-	public long len (long max = -1);
+	public long len (ssize_t max = -1);
 	[CCode (cname = "g_utf8_strchr")]
-	public weak string chr (long len, unichar c);
+	public weak string chr (ssize_t len, unichar c);
 	[CCode (cname = "g_utf8_strrchr")]
-	public weak string rchr (long len, unichar c);
+	public weak string rchr (ssize_t len, unichar c);
 	[CCode (cname = "g_utf8_strreverse")]
-	public string reverse (int len = -1);
+	public string reverse (ssize_t len = -1);
 	[CCode (cname = "g_utf8_validate")]
-	public bool validate (long max_len = -1, out string end = null);
+	public bool validate (ssize_t max_len = -1, out string end = null);
 	[CCode (cname = "g_utf8_normalize")]
-	public string normalize (long len = -1, NormalizeMode mode = NormalizeMode.DEFAULT);
+	public string normalize (ssize_t len = -1, NormalizeMode mode = NormalizeMode.DEFAULT);
 	
 	[CCode (cname = "g_utf8_strup")]
-	public string up (long len = -1);
+	public string up (ssize_t len = -1);
 	[CCode (cname = "g_utf8_strdown")]
-	public string down (long len = -1);
+	public string down (ssize_t len = -1);
 	[CCode (cname = "g_utf8_casefold")]
-	public string casefold (long len = -1);
+	public string casefold (ssize_t len = -1);
 	[CCode (cname = "g_utf8_collate")]
 	public int collate (string str2);
 
 	[CCode (cname = "g_locale_to_utf8")]
-	public string locale_to_utf8 (long len, out ulong bytes_read, out ulong bytes_written, out GLib.Error error = null);
+	public string locale_to_utf8 (ssize_t len, out size_t bytes_read, out size_t bytes_written, out GLib.Error error = null);
   
 	[CCode (cname = "g_strchomp")]
 	public weak string chomp();
@@ -883,7 +891,7 @@ public class string {
 	public int to_int ();
 	[CCode (cname = "atol")]
 	public long to_long ();
-	[CCode (cname = "strtod")]
+	[CCode (cname = "g_ascii_strtod")]
 	public double to_double (out weak string endptr = null);
 	[CCode (cname = "strtoul")]
 	public ulong to_ulong (out weak string endptr = null, int _base = 0);
@@ -898,7 +906,7 @@ public class string {
 	}
 
 	[CCode (cname = "strlen")]
-	public long size ();
+	public size_t size ();
 
 	[CCode (cname = "g_utf8_skip")]
 	public static char[] skip;
@@ -1350,6 +1358,15 @@ namespace GLib {
 		public void unlock ();
 	}
 
+	[CCode (destroy_function = "g_static_mutex_free")]
+	public struct StaticMutex {
+		public StaticMutex ();
+		public void lock ();
+		public bool trylock ();
+		public void unlock ();
+		public void lock_full ();
+	}
+
 	[CCode (destroy_function = "g_static_rec_mutex_free")]
 	public struct StaticRecMutex {
 		public StaticRecMutex ();
@@ -1480,7 +1497,7 @@ namespace GLib {
 
 	[Compact]
 	[CCode (ref_function = "g_io_channel_ref", unref_function = "g_io_channel_unref")]
-	public class IOChannel : Boxed {
+	public class IOChannel {
 		[CCode (cname = "g_io_channel_unix_new")]
 		public IOChannel.unix_new (int fd);
 		public int unix_get_fd ();
@@ -1563,9 +1580,9 @@ namespace GLib {
 	public enum IOFlags {
 		APPEND,
 		NONBLOCK,
-		READABLE,
-		WRITEABLE,
-		SEEKABLE,
+		IS_READABLE,
+		IS_WRITEABLE,
+		IS_SEEKABLE,
 		MASK,
 		GET_MASK,
 		SET_MASK
@@ -2365,6 +2382,9 @@ namespace GLib {
 	[Compact]
 	[CCode (cname = "FILE", free_function = "fclose", cheader_filename = "stdio.h")]
 	public class FileStream {
+		[CCode (cname = "EOF", cheader_filename = "stdio.h")]
+		public const int EOF;
+
 		[CCode (cname = "fopen")]
 		public static FileStream? open (string path, string mode);
 		[CCode (cname = "fdopen")]
@@ -2398,6 +2418,21 @@ namespace GLib {
 		public int error ();
 		[CCode (cname = "clearerr")]
 		public void clearerr ();
+
+		public string? read_line () {
+			int c;
+			StringBuilder ret = null;
+			while ((c = getc ()) != EOF) {
+				if (ret == null) {
+					ret = new StringBuilder ();
+				}
+				if (c == '\n') {
+					break;
+				}
+				ret.append_c ((char) c);
+			}
+			return ret == null ? null : ret.str;
+		}
 	}
 
 	[CCode (lower_case_cprefix = "g_file_", cheader_filename = "glib/gstdio.h")]
@@ -2475,8 +2510,8 @@ namespace GLib {
 
 		public static string parse_scheme (string uri);
 		public static string escape_string (string unescaped, string reserved_chars_allowed, bool allow_utf8);
-		public static string unescape_string (string escaped_string, string? illegal_characters=null);
-		public static string unescape_segment (string escaped_string, string escaped_string_end, string illegal_characters);
+		public static string unescape_string (string escaped_string, string? illegal_characters = null);
+		public static string unescape_segment (string escaped_string, string escaped_string_end, string? illegal_characters = null);
 		[CCode (array_length = false, array_null_terminated = true)]
 		public static string[] list_extract_uris (string uri_list);
 	}
@@ -2623,7 +2658,7 @@ namespace GLib {
 
 	[Compact]
 	[CCode (ref_function = "g_regex_ref", unref_function = "g_regex_unref")]
-	public class Regex : Boxed {
+	public class Regex {
 		public Regex (string pattern, RegexCompileFlags compile_options = 0, RegexMatchFlags match_options = 0) throws RegexError;
 		public string get_pattern ();
 		public int get_max_backref ();
@@ -2676,7 +2711,8 @@ namespace GLib {
 		PARSE,
 		UNKNOWN_ELEMENT,
 		UNKNOWN_ATTRIBUTE,
-		INVALID_CONTENT
+		INVALID_CONTENT,
+		MISSING_ATTRIBUTE
 	}
 
 	[CCode (cprefix = "G_MARKUP_", has_type_id = false)]
@@ -2693,6 +2729,8 @@ namespace GLib {
 		public weak string get_element ();
 		public weak SList<string> get_element_stack ();
 		public void get_position (out int line_number, out int char_number);
+		public void push (MarkupParser parser, void* user_data);
+		public void* pop (MarkupParser parser);
 	}
 	
 	public delegate void MarkupParserStartElementFunc (MarkupParseContext context, string element_name, [CCode (array_length = false, array_null_terminated = true)] string[] attribute_names, [CCode (array_length = false, array_null_terminated = true)] string[] attribute_values) throws MarkupError;
@@ -2714,9 +2752,21 @@ namespace GLib {
 	}
 
 	namespace Markup {
+		[CCode (cprefix = "G_MARKUP_COLLECT_", has_type_id = false)]
+		public enum CollectType {
+			INVALID,
+			STRING,
+			STRDUP,
+			BOOLEAN,
+			TRISTATE,
+			OPTIONAL
+		}
+
 		public static string escape_text (string text, long length = -1);
 		[PrintfFormat]
 		public static string printf_escaped (string format, ...);
+		[CCode (sentinel = "G_MARKUP_COLLECT_INVALID")]
+		public static bool collect_attributes (string element_name, string[] attribute_names, string[] attribute_values, ...) throws MarkupError;
 	}
 
 	/* Key-value file parser */
@@ -3120,7 +3170,7 @@ namespace GLib {
 
 	[Compact]
 	[CCode (ref_function = "g_hash_table_ref", unref_function = "g_hash_table_unref", type_id = "G_TYPE_HASH_TABLE", type_signature = "a{%s}")]
-	public class HashTable<K,V> : Boxed {
+	public class HashTable<K,V> {
 		public HashTable (HashFunc? hash_func, EqualFunc? key_equal_func);
 		public HashTable.full (HashFunc? hash_func, EqualFunc? key_equal_func, DestroyNotify? key_destroy_func, DestroyNotify? value_destroy_func);
 		public void insert (owned K key, owned V value);
@@ -3135,6 +3185,14 @@ namespace GLib {
 		public uint size ();
 		public bool steal (K key);
 		public void steal_all ();
+	}
+
+	public struct HashTableIter<K,V> {
+		public HashTableIter (GLib.HashTable<K,V> table);
+		public bool next (out unowned K key, out unowned V value);
+		public void remove ();
+		public void steal ();
+		public unowned GLib.HashTable<K,V> get_hash_table ();
 	}
 
 	[CCode (has_target = false)]
@@ -3169,7 +3227,7 @@ namespace GLib {
 
 	[Compact]
 	[CCode (cname = "GString", cprefix = "g_string_", free_function = "g_string_free", type_id = "G_TYPE_GSTRING")]
-	public class StringBuilder : Boxed {
+	public class StringBuilder {
 		public StringBuilder (string init = "");
 		[CCode (cname = "g_string_sized_new")]
 		public StringBuilder.sized (ulong dfl_size);
@@ -3247,6 +3305,7 @@ namespace GLib {
 		public void set_size (uint length);
 
 		public uint len;
+		[CCode (array_length_cname = "len", array_length_type = "guint")]
 		public uint8[] data;
 	}
 
@@ -3263,7 +3322,8 @@ namespace GLib {
 	}
 
 	/* Quarks */
-	
+
+	[CCode (type_id = "G_TYPE_UINT")]
 	public struct Quark : uint32 {
 		public static Quark from_string (string str);
 		public static Quark try_string (string str);
@@ -3354,6 +3414,8 @@ namespace GLib {
 	public static weak string Q_ (string str);
 	[CCode (cname = "N_", cheader_filename = "glib.h,glib/gi18n-lib.h")]
 	public static weak string N_ (string str);
+	[CCode (cname = "ngettext", cheader_filename = "glib.h,glib/gi18n-lib.h")]
+	public static weak string ngettext (string msgid, string msgid_plural, ulong n);
 	
 	[CCode (cname = "int", cprefix = "LC_", cheader_filename = "locale.h", has_type_id = false)]
 	public enum LocaleCategory {
@@ -3387,5 +3449,17 @@ namespace GLib {
 		public bool match_string (string str);
 		[CCode (cname = "g_pattern_match_simple")]
 		public static bool match_simple (string pattern, string str);
+	}
+
+	namespace Win32 {
+		public string error_message (int error);
+		public string getlocale ();
+		public string get_package_installation_directory_of_module (void* hmodule);
+		public uint get_windows_version ();
+		public string locale_filename_from_utf8 (string utf8filename);
+		[CCode (cname = "G_WIN32_HAVE_WIDECHAR_API")]
+		public bool have_widechar_api ();
+		[CCode (cname = "G_WIN32_IS_NT_BASED")]
+		public bool is_nt_based ();
 	}
 }

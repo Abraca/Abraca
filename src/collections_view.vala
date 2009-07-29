@@ -448,7 +448,7 @@ namespace Abraca {
 				if (path.get_depth() == 2) {
 					weak GLib.List<Gtk.CellRenderer> renderers;
 					Gtk.CellRendererText renderer;
-					weak GLib.List<Gtk.TreeViewColumn> cols;
+					GLib.List<Gtk.TreeViewColumn> cols;
 					Gtk.TreeViewColumn col;
 
 					cols = get_columns();
