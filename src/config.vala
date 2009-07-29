@@ -133,7 +133,7 @@ namespace Abraca {
 				table.attach_defaults(entrys[i], 1, 2, i + 0, i + 1);
 			}
 
-			dialog.vbox.pack_start_defaults(table);
+			dialog.vbox.pack_start(table, true, true, 0);
 			dialog.show_all();
 
 			response_id = dialog.run();

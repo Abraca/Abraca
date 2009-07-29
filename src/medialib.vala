@@ -391,7 +391,7 @@ namespace Abraca {
 			entry = (Gtk.Entry) combo.child;
 			entry.set_completion(comp);
 			entry.activates_default = true;
-			vbox.pack_start_defaults(combo);
+			vbox.pack_start(combo, true, true, 0);
 
 			close += on_close;
 			response += on_response;
