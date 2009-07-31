@@ -62,9 +62,25 @@ namespace Abraca {
 			"Southern Rock", "Space", "Techno", "Techno-Industrial", "Top 40",
 			"Trailer", "Trance", "Tribal", "Trip-Hop", "Vocal"};
 
+		public static MedialibInfoDialog build() {
+			var builder = new Gtk.Builder ();
+
+			try {
+				builder.add_from_string(
+					Resources.XML.mediainfo, Resources.XML.mediainfo.length
+				);
+			} catch (GLib.Error e) {
+				GLib.error(e.message);
+			}
+
+			var instance = builder.get_object("mediainfo_dialog") as MedialibInfoDialog;
+			instance.transient_for = Abraca.instance().main_window;
+
+			return instance;
+		}
+
 		construct {
 			ids = new GLib.List<uint>();
-			transient_for = Abraca.instance().main_window;
 		}
 
 		public void parser_finished (Gtk.Builder builder) {
@@ -92,14 +108,6 @@ namespace Abraca {
 			prev_button = builder.get_object("button_prev") as Gtk.Button;
 
 			builder.connect_signals(this);
-		}
-
-		[CCode (instance_pos = -1)]
-		public bool on_delete_event (Gdk.Event e) {
-			Abraca abraca = Abraca.instance();
-			abraca.medialib.info_dialog = null;
-
-			return false;
 		}
 
 		void change_color(Gtk.Entry editable, string origin) {
@@ -511,18 +519,10 @@ namespace Abraca {
 
 		public void info_dialog_add_id(uint mid) {
 			if (info_dialog == null) {
-				var builder = new Gtk.Builder ();
-
-				try {
-					builder.add_from_string(
-						Resources.XML.mediainfo, Resources.XML.mediainfo.length
-					);
-				} catch (GLib.Error e) {
-					GLib.error(e.message);
-					GLib.assert_not_reached ();
-				}
-
-				info_dialog = builder.get_object("mediainfo_dialog") as MedialibInfoDialog;
+				info_dialog = MedialibInfoDialog.build();
+				info_dialog.delete_event += (ev) => {
+					info_dialog = null;
+				};
 				info_dialog.show_all();
 			}
 			info_dialog.add_mid(mid);

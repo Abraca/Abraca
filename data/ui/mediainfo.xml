@@ -311,6 +311,5 @@
         </child>
       </object>
     </child>
-    <signal name="delete_event" handler="abraca_medialib_info_dialog_on_delete_event"/>
   </object>
 </interface>
