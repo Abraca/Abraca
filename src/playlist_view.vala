@@ -666,6 +666,8 @@ namespace Abraca {
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
 
+			GLib.stdout.printf("apan: %s\n", (string) sel.data);
+
 			string[] collection_data = ((string) sel.data).split("/");
 			string coll_ns = collection_data[0];
 			string coll_name = collection_data[1];

@@ -506,12 +506,8 @@ namespace Abraca {
 			}
 
 			if (unxtime > 0) {
-				GLib.Time time;
-
-				time = Time.gm((time_t) unxtime);
-				repr = (string) new char[4+1+2+1+2+1]; // yyyy-mm-dd\0
-
-				time.strftime ((char[]) repr, "%Y-%0m-%0d");
+				var time = Time.gm ((time_t) unxtime);
+				repr = time.format ("%Y-%0m-%0d");
 			} else {
 				repr = _("Never");
 			}

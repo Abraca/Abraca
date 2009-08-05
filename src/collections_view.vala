@@ -137,8 +137,10 @@ namespace Abraca {
 			}
 
 			/* This should be removed as #515408 gets fixed. */
-			weak uchar[] data = (uchar[]) name;
-			data.length = (int) name.len() * 8;
+			var data = new uchar[name.size () + 1];
+			GLib.Memory.copy (data, name, name.size ());
+
+			GLib.stdout.printf("%s\n", (string) data);
 
 			selection_data.set(
 				Gdk.Atom.intern(_target_entries[1].target, true),
