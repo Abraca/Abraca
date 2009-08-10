@@ -1,68 +1,17 @@
 #!/usr/bin/make -f
 
-CFLAGS = -Wall -g
+%:
+	dh $@
 
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -O0
-else
-	CFLAGS += -O2
-endif
+override_dh_auto_build:
+	./scons DESTDIR=$(CURDIR)/debian/abraca PREFIX=/usr verbose=yes
 
-export NOCOLOR=1
-WAF_HOME = debian/tmp-waf-home
+override_dh_auto_install:
+	./scons install
 
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	HOME=$(WAF_HOME) ./waf configure --prefix=/usr
-	touch configure-stamp
-
-build: build-stamp
-
-build-stamp: configure-stamp
-	dh_testdir
-	HOME=$(WAF_HOME) ./waf -v
-	xsltproc --nonet /usr/share/sgml/docbook/stylesheet/xsl/nwalsh/manpages/docbook.xsl debian/abraca.xml
-	touch $@
-
-clean:
-	dh_testdir
-	dh_testroot
-	rm -f build-stamp configure-stamp
-	rm -f abraca.1
-	HOME=$(WAF_HOME) ./waf distclean
-	rm -rf debian/tmp-waf-home
-	dh_clean
-
-install: build
-	dh_testdir
-	dh_testroot
-	dh_clean -k
-	dh_installdirs
-	HOME=$(WAF_HOME) ./waf install --destdir=$(CURDIR)/debian/abraca install
-	dh_install debian/abraca.desktop usr/share/applications
-
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
-
-# Build architecture-dependent files here.
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_installdocs
-	dh_installchangelogs
-	dh_installmenu
-	dh_desktop
-	dh_installman abraca.1
-	dh_strip
-	dh_compress
-	dh_fixperms
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
+override_dh_auto_clean:
+	./scons -c
+	# Cleanup behind scons
+	rm -rf build .sconf_temp
+	rm -f config.log .sconsign.dblite .scons_options
+	find site_scons -name '*.pyc' -type f -delete
