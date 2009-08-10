@@ -2,7 +2,6 @@ Source: abraca
 Section: sound
 Priority: extra
 Maintainer: Benjamin Drung <bdrung@ubuntu.com>
-Uploaders: Florian Ragwitz <rafl@debian.org>, Anders Waldenborg <anders@0x63.nu>
 Build-Depends: debhelper (>= 5), libxmmsclient-glib-dev (>= 0.2DrJekyll), libglade2-dev, python, docbook-xsl, xsltproc
 Standards-Version: 3.7.2
 Vcs-Git: git://git.debian.org/git/pkg-xmms2/abraca
