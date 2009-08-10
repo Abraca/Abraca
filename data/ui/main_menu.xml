@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<interface>
+  <object class="GtkUIManager" id="uimanager">
+    <child>
+      <object class="GtkActionGroup" id="actiongroup">
+        <child>
+          <object class="GtkAction" id="MusicMenuAction">
+            <property name="label" translatable="yes">_Music</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="MusicMenuAddAction">
+            <property name="label" translatable="yes">_Add</property>
+            <property name="stock-id">gtk-add</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="MusicMenuAddFilesAction">
+            <property name="label" translatable="yes">_Files</property>
+            <property name="stock-id">gtk-file</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="MusicMenuAddDirectoryAction">
+            <property name="label" translatable="yes">_Directory</property>
+            <property name="stock-id">gtk-directory</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="MusicMenuAddURLAction">
+            <property name="label" translatable="yes">_URL</property>
+            <property name="stock-id">gtk-network</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="MusicMenuQuitAction">
+            <property name="label" translatable="yes">_Quit</property>
+            <property name="stock-id">gtk-quit</property>
+          </object>
+        </child>
+
+
+        <child>
+          <object class="GtkAction" id="PlaylistMenuAction">
+            <property name="label" translatable="yes">_Playlist</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="PlaylistMenuNewAction">
+            <property name="label" translatable="yes">_New</property>
+            <property name="stock-id">gtk-new</property>
+            <property name="sensitive">False</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="PlaylistMenuNewFromFilterAction">
+            <property name="label" translatable="yes">New from filter</property>
+            <property name="sensitive">False</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="PlaylistMenuConfigureSortingAction">
+            <property name="label" translatable="yes">Configure Sorting</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="PlaylistMenuClearAction">
+            <property name="label" translatable="yes">Clear</property>
+            <property name="stock-id">gtk-clear</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="PlaylistMenuShuffleAction">
+            <property name="label" translatable="yes">Shuffle</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkToggleAction" id="PlaylistMenuRepeatAll">
+            <property name="label" translatable="yes">Repeat All</property>
+            <property name="sensitive">False</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkToggleAction" id="PlaylistMenuRepeatOne">
+            <property name="label" translatable="yes">Repeat One</property>
+            <property name="sensitive">False</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkAction" id="HelpMenuAction">
+            <property name="label" translatable="yes">_Help</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="HelpMenuAboutAction">
+            <property name="label" translatable="yes">_About</property>
+            <property name="stock-id">gtk-about</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <ui>
+      <menubar name="Menu">
+        <menu name="Music" action="MusicMenuAction">
+           <menu name="Add" action="MusicMenuAddAction">
+            <menuitem name="Files" action="MusicMenuAddFilesAction"/>
+            <menuitem name="Directory" action="MusicMenuAddDirectoryAction"/>
+            <menuitem name="URL" action="MusicMenuAddURLAction"/>
+          </menu>
+          <menuitem name="Quit" action="MusicMenuQuitAction"/>
+        </menu>
+      <menu name="Playlist" action="PlaylistMenuAction">
+        <menuitem name="New" action="PlaylistMenuNewAction"/>
+        <menuitem name="NewFromFilter" action="PlaylistMenuNewFromFilterAction"/>
+        <separator/>
+        <menuitem name="ConfigureSorting" action="PlaylistMenuConfigureSortingAction"/>
+        <menuitem name="Clear" action="PlaylistMenuClearAction"/>
+        <menuitem name="Shuffle" action="PlaylistMenuShuffleAction"/>
+        <separator/>
+        <menuitem name="RepeatAll" action="PlaylistMenuRepeatAll"/>
+        <menuitem name="RepeatOne" action="PlaylistMenuRepeatOne"/>
+      </menu>
+      <menu name="Help" action="HelpMenuAction">
+        <menuitem name="About" action="HelpMenuAboutAction"/>
+      </menu>
+      </menubar>
+    </ui>
+  </object>
+</interface>
+
