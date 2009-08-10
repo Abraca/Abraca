@@ -1,10 +1,17 @@
-abraca (0.2-3) unstable; urgency=low
+abraca (0.4-1) UNRELEASED; urgency=high
 
-  * Recompile for xmms2 0.4DrKosmos
-  * Add myself and rafl to uploaders
-  * Add Vcs-* fields
+  * New upstream release (Closes: #538380)
+    + Compatible to xmms2 0.6DrMattDestruction (Closes: #533988, LP: #394938)
+    + Provides an icon (LP: #180014)
+  * New maintainer (Closes: #540568)
+  * Remove debian/abraca.desktop and debian/abraca.menu. Upstream provides a
+    desktop file now.
+  * Rewrite debian/rules using debhelper 7.
+  * Redo Build-Depends list.
+  * Bump Standards-Version to 3.8.2.
+  * Add Homepage field.
 
- -- Anders Waldenborg <anders@0x63.nu>  Wed, 06 Feb 2008 19:29:00 +0100
+ -- Benjamin Drung <bdrung@ubuntu.com>  Mon, 10 Aug 2009 23:51:00 +0200
 
 abraca (0.2-2) unstable; urgency=low
 
