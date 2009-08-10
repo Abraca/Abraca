@@ -1,0 +1,37 @@
+Import('env')
+Import('images')
+Import('ui')
+
+vala_sources = """
+	client.vala
+	collections_view.vala
+	collections_model.vala
+	config.vala
+        filter_editor.vala
+	filter_view.vala
+	filter_model.vala
+	medialib.vala
+	main_hpaned.vala
+	main_window.vala
+	playlist_view.vala
+	playlist_model.vala
+	rating_entry.vala
+	right_hpaned.vala
+	toolbar.vala
+	abraca.vala
+	dragdroptarget.vala
+	collection_cellrenderer.vala
+	configurable.vala
+	volume_button.vala
+	widgets.vala
+""".split()
+
+sources = env.Vala(vala_sources)
+
+extra = [
+	'utils/playlist_map.c',
+]
+
+prog = env.Program('abraca', sources + extra + [images, ui], install=True)
+
+env.Append(CPPPATH = ['utils'])

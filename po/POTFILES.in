@@ -1,0 +1,16 @@
+[encoding: UTF-8]
+src/collection_cellrenderer.vala
+src/config.vala
+src/dragdroptarget.vala
+src/medialib.vala
+src/filter_tree.vala
+src/collections_tree.vala
+src/main_window.vala
+src/menubar.vala
+src/playlist_tree.vala
+src/server_browser.vala
+src/main_hpaned.vala
+src/right_hpaned.vala
+src/client.vala
+src/toolbar.vala
+src/abraca.vala
