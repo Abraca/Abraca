@@ -9,6 +9,7 @@ Build-Depends: debhelper (>= 7.0.50),
                python,
                valac (>= 0.7.5)
 Standards-Version: 3.8.2
+Homepage: http://abraca.xmms.se/
 Vcs-Git: git://git.debian.org/git/pkg-xmms2/abraca
 Vcs-Browser: http://git.debian.org/?p=pkg-xmms2/abraca.git
 
