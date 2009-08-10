@@ -1,1 +1,0 @@
-?package(abraca):needs="X11" section="Applications/Sound" title="Abraca" command="/usr/bin/abraca"

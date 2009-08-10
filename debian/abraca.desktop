@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Encoding=UTF-8
-Name=Abraca
-GenericName=Simple GTK+ XMMS2 client
-Exec=abraca
-Terminal=false
-Type=Application
-Categories=AudioVideo;Audio;Player;GTK
