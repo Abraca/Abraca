@@ -16,8 +16,7 @@ Vcs-Browser: http://git.debian.org/?p=pkg-xmms2/abraca.git
 Package: abraca
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: xmms2-core, xmms2-plugin-vorbis, xmms2-plugin-mad, xmms2-plugin-id3v2, xmms2-plugin-alsa
-Suggests: xmms2-client-cli
+Recommends: xmms2
 Description: A simple and powerful graphical client for XMMS2
  Abraca is a GTK2 client for the XMMS2 music player. It is designed with
  collections in mind, which makes managing your music a breeze.
