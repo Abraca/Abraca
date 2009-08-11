@@ -1,0 +1,3 @@
+version=3
+http://abraca.xmms.se/projects/list_files/abraca \
+	/attachments/download/[0-9]+/abraca-(.*)\.tar\.gz
