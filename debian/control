@@ -1,6 +1,6 @@
 Source: abraca
 Section: sound
-Priority: extra
+Priority: optional
 Maintainer: Benjamin Drung <bdrung@ubuntu.com>
 Build-Depends: debhelper (>= 7.0.50),
                libgtk2.0-dev,
