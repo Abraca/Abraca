@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 7.0.50),
                libgtk2.0-dev,
                libxmmsclient-glib-dev (>= 0.6DrMattDestruction),
                pkg-config,
-               python,
+               scons,
                valac (>= 0.7.5)
 Standards-Version: 3.8.2
 Homepage: http://abraca.xmms.se/
