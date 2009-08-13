@@ -27,6 +27,12 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 	};
 
 	private bool _accept_updates = true;
+
+	// TODO: Remove this when vala supports proper closures.
+	private int _tmp_apply_volume_value = 0;
+	private int _tmp_channel_count = 0;
+	private double _tmp_total_volume = 0;
+
 	construct {
 		has_tooltip = true;
 		relief = Gtk.ReliefStyle.NONE;
@@ -49,35 +55,39 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 		Client c = Client.instance();
 		c.playback_volume += (client, val) => {
 			if (_accept_updates) {
-				value = 0;
+				// TODO: Remove this once vala supports proper closures.
+				_tmp_total_volume = 0.0;
+				_tmp_channel_count = 0;
+
 				val.dict_foreach((key, val) => {
 					int tmp;
-					val.get_int(out tmp);
-
-					if (value == 0) {
-						value = (int) tmp;
-					} else {
-						value = (value + (int) tmp) / 2;
+					if (val.get_int(out tmp)) {
+						if (_tmp_total_volume == 0) {
+							_tmp_total_volume = (double) tmp;
+						} else {
+							_tmp_total_volume = (double) (_tmp_total_volume + tmp) / 2.0;
+						}
+						_tmp_channel_count += 1;
 					}
 				});
+				_tmp_apply_volume_value = (int) (_tmp_total_volume / _tmp_channel_count * 1.0);
+				value = _tmp_apply_volume_value;
 			}
 		};
 
 		value_changed += (w, volume) => {
-			_apply_volume((uint) volume);
+			// TODO: Remove this once vala supports proper closures.
+			_tmp_apply_volume_value = (int) value;
+			_apply_volume((int) volume);
 		};
 	}
 
-	private void _apply_volume (uint volume) {
+	private void _apply_volume (int volume) {
 		Client c = Client.instance();
 		c.xmms.playback_volume_get().notifier_set((val) => {
 			val.dict_foreach((key, val) => {
-				// TODO: Use outer variable when supported by Vala
 				Client c2 = Client.instance();
-				int tmp;
-				if (val.get_int(out tmp)) {
-					c2.xmms.playback_volume_set(key, tmp);
-				}
+				c2.xmms.playback_volume_set (key, _tmp_apply_volume_value);
 			});
 			return true;
 		});
@@ -96,7 +106,10 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 			return true;
 		}
 
-		_apply_volume(tmp);
+		// TODO: Remove this once vala supports proper closures.
+		_tmp_apply_volume_value = (int) tmp;
+
+		_apply_volume (0);
 
 		return true;
 	}
