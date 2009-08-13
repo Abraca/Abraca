@@ -40,9 +40,6 @@ namespace Abraca {
 			INFO
 		}
 
-		/** have we scrolled to current position? */
-		private bool _have_scrolled;
-
 		/** keep track of current playlist position */
 		private Gtk.TreeRowReference _position = null;
 
@@ -183,13 +180,6 @@ namespace Abraca {
 				path = get_path(iter);
 
 				_position = new Gtk.TreeRowReference(this, path);
-
-				/*
-				if (!_have_scrolled) {
-					scroll_to_cell(path, null, true, (float) 0.25, (float) 0);
-					_have_scrolled = true;
-				}
-				*/
 			}
 		}
 
@@ -242,8 +232,6 @@ namespace Abraca {
 		 * the mids of that playlist.
 		 */
 		private void on_playlist_loaded(Client c, string name) {
-			_have_scrolled = false;
-
 			c.xmms.playlist_list_entries(name).notifier_set(
 				on_playlist_list_entries
 			);
