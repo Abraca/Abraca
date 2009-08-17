@@ -52,6 +52,7 @@ class AbracaEnvironment(SConsEnvironment):
 
 		# Load the custom vala builder
 		self.Tool('vala')
+		self.Tool('gzip')
 		self.Tool('msgfmt')
 		self.Tool('gdkpixbufcsource')
 		self.Tool('binaryblob')
@@ -74,6 +75,8 @@ class AbracaEnvironment(SConsEnvironment):
 			           PathOption.PathAccept),
 			PathOption('LOCALEDIR', 'locale dir', '$DATADIR/locale',
 			           PathOption.PathAccept),
+			PathOption('MANDIR', 'man page dir', '$DATADIR/man',
+			           PathOption.PathAccept),
 		)
 		opts.Update(self)
 		opts.Save('.scons_options', self)
@@ -82,15 +85,16 @@ class AbracaEnvironment(SConsEnvironment):
 
 		# Hide compiler command line if silent mode on
 		if not self['verbose']:
-			self['VALADEFINESCOMSTR'] = '   Defines: $TARGET'
-			self['VALACOMSTR']        = 'Generating: $TARGETS'
-			self['CCCOMSTR']          = '  Building: $TARGET'
-			self['LINKCOMSTR']        = '   Linking: $TARGET'
-			self['MSGFMTCOMSTR']      = '  Localize: $TARGET'
-			self['STRIPCOMSTR']       = ' Stripping: $TARGET'
-			self['GDKPBUFCOMSTR']     = ' Embedding: $SOURCES'
-			self['BINARYBLOBCOMSTR']  = ' Embedding: $SOURCES'
-			self['ASCOMSTR']          = 'Assembling: $SOURCES'
+			self['VALADEFINESCOMSTR'] = '    Defines: $TARGET'
+			self['VALACOMSTR']        = ' Generating: $TARGETS'
+			self['CCCOMSTR']          = '   Building: $TARGET'
+			self['LINKCOMSTR']        = '    Linking: $TARGET'
+			self['MSGFMTCOMSTR']      = '   Localize: $TARGET'
+			self['STRIPCOMSTR']       = '  Stripping: $TARGET'
+			self['GDKPBUFCOMSTR']     = '  Embedding: $SOURCES'
+			self['BINARYBLOBCOMSTR']  = '  Embedding: $SOURCES'
+			self['ASCOMSTR']          = ' Assembling: $SOURCES'
+			self['GZIPCOMSTR']        = 'Compressing: $SOURCE'
 
 		self.SConsInstall = self.Install
 		self.Install = self._install
@@ -123,6 +127,11 @@ class AbracaEnvironment(SConsEnvironment):
 		if self.has_key('DESTDIR') and self['DESTDIR']:
 			dst = os.path.join(self['DESTDIR'], dst)
 		return self.SConsInstallAs(dst, src)
+
+	def InstallMan(self, source):
+		assert(str(source).count('.') == 2)
+		name, section, ext = str(source).split('.', 2)
+		self.Alias('install', self.Install(os.path.join('$MANDIR/man%s' % section), source))
 
 	def InstallData(self, target, source):
 		self.Alias('install', self.Install(os.path.join('$DATADIR', target), source))

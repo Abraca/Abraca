@@ -17,6 +17,7 @@ env.Append(VALAPKGS = ['abraca_images'])
 
 Export('images')
 
+env.InstallMan(env.GZip('abraca.1'))
 env.InstallData('icons', 'abraca.svg')
 env.InstallData('applications', 'abraca.desktop')
 
