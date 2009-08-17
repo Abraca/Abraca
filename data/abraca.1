@@ -1,0 +1,56 @@
+.\" Copyright (C) 2009  Daniel Svensson <daniel.svensson@purplescout.se>
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer
+.\"    in this position and unchanged.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. The name of the author may not be used to endorse or promote products
+.\"    derived from this software without specific prior written permission
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+.\" IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+.\" OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+.\" IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+.\" INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+.\" NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+.\" DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+.\" THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.TH ABRACA 1 "2009-08-17"
+.SH NAME
+abraca \- XMMS2 client for the GNOME desktop
+.SH SYNOPSIS
+.B abraca
+.SH DESCRIPTION
+Abraca is a GTK2 client for the XMMS2 music player. It is designed with
+collections in mind, which makes managing your music a breeze.
+.SH FILES
+.TP
+.I $XDG_CONFIG_HOME/xmms2/clients/abraca.conf
+A configuration file containing basic configuration values for
+.I abraca.
+.SH ENVIRONMENTAL VARIABLES
+.TP
+.I XMMS_PATH
+The URL path to
+.I xmms2d.
+in the format unix:///path/to/socket, or tcp://a.b.c.d:port.
+.TP
+.I XDG_CONFIG_HOME
+The path where the Abraca configuration file is located.
+
+.SH SEE ALSO
+xmms2d(8), http://xmms2.xmms.org, http://abraca.xmms.se
+.SH HISTORY
+Abraca was first written in C by Sebastian Sareyko, but was later
+rewritten in Vala by the current Abraca Team.
+.SH AUTHORS
+Abraca was written by the Abraca Team.
+.PP
+This manual page was written by Daniel Svensson <daniel.svensson@purplescout.se>
