@@ -115,7 +115,7 @@ namespace Abraca {
 			_time_label = new Gtk.Label("");
 			vbox.pack_start(_time_label, true, true, 0);
 
-			pack_start(vbox, false, true, 0);
+			pack_start(vbox, false, false, 0);
 		}
 
 
@@ -161,7 +161,7 @@ namespace Abraca {
 				Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR
 			);
 
-			pack_start(_coverart, false, true, 4);
+			pack_start(_coverart, false, false, 4);
 		}
 
 
@@ -170,6 +170,7 @@ namespace Abraca {
 				_("No Track")
 			);
 			_track_label.ellipsize = Pango.EllipsizeMode.END;
+			_track_label.set_alignment (0.0f, 0.5f);
 
 			pack_start(_track_label, true, true, 4);
 		}
