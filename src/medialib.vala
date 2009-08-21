@@ -365,7 +365,7 @@ namespace Abraca {
 					store.set(parent, 0, source);
 				}
 
-				Client.transform_value (entry, key, out val_str);
+				Transform.normalize_value (entry, key, out val_str);
 
 				store.append(out iter, parent);
 				store.set(iter, 0, (string) key, 1, val_str);
