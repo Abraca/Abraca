@@ -114,14 +114,22 @@ namespace Abraca {
 
 		public static bool date (Xmms.Value val, string key, out string repr)
 		{
-			int unxtime;
+			int timestamp;
 
-			if (!val.get_int(out unxtime)) {
+			if (!val.get_int(out timestamp)) {
 				return false;
 			}
 
-			if (unxtime > 0) {
-				var time = Time.gm ((time_t) unxtime);
+			var now = TimeVal();
+			var today_start = now.tv_sec - (now.tv_sec % (60 * 60 * 24));
+			var yesterday_start = today_start - (60 * 60 * 24);
+
+			if (today_start < timestamp) {
+				repr = _("Today");
+			} else if (yesterday_start < timestamp) {
+				repr = _("Yesterday");
+			} else if (timestamp > 0) {
+				var time = Time.gm ((time_t) timestamp);
 				repr = time.format ("%Y-%0m-%0d");
 			} else {
 				repr = _("Never");
