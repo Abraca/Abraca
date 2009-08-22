@@ -1,4 +1,4 @@
-abraca (0.4-1) UNRELEASED; urgency=medium
+abraca (0.4-1) unstable; urgency=medium
 
   * New upstream release (Closes: #538380)
     + Compatible to xmms2 0.6DrMattDestruction (Closes: #533988, LP: #394938)
@@ -16,7 +16,7 @@ abraca (0.4-1) UNRELEASED; urgency=medium
   * Rewrite debian/copyright from scratch using DEP 5 proposal.
   * Remove debian/abraca.xml, upstream provides a man page.
 
- -- Benjamin Drung <bdrung@ubuntu.com>  Sat, 22 Aug 2009 17:46:51 +0200
+ -- Benjamin Drung <bdrung@ubuntu.com>  Sat, 22 Aug 2009 22:04:29 +0200
 
 abraca (0.2-2) unstable; urgency=low
 
