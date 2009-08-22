@@ -3,7 +3,7 @@ You'll need the following applications and libraries to build and run Abraca:
     o XMMS2 0.6DrMattDestruction
     o GTK 2.16.3 (older may work)
     o pkg-config 0.22 (older may work)
-    o vala 0.7.4
+    o vala 0.7.5
     o gcc 4.2.3 (older may work)
     o gettext for localization
     o python for running SCons

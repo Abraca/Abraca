@@ -4,10 +4,11 @@ Import('ui')
 
 vala_sources = """
 	client.vala
+	transform.vala
 	collections_view.vala
 	collections_model.vala
 	config.vala
-        filter_editor.vala
+	filter_editor.vala
 	filter_view.vala
 	filter_model.vala
 	medialib.vala
