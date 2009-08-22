@@ -30,8 +30,6 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 
 	// TODO: Remove this when vala supports proper closures.
 	private int _tmp_apply_volume_value = 0;
-	private int _tmp_channel_count = 0;
-	private double _tmp_total_volume = 0;
 
 	construct {
 		has_tooltip = true;
@@ -53,27 +51,7 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 		scroll_event += on_scroll_event;
 
 		Client c = Client.instance();
-		c.playback_volume += (client, val) => {
-			if (_accept_updates) {
-				// TODO: Remove this once vala supports proper closures.
-				_tmp_total_volume = 0.0;
-				_tmp_channel_count = 0;
-
-				val.dict_foreach((key, val) => {
-					int tmp;
-					if (val.get_int(out tmp)) {
-						if (_tmp_total_volume == 0) {
-							_tmp_total_volume = (double) tmp;
-						} else {
-							_tmp_total_volume = (double) (_tmp_total_volume + tmp) / 2.0;
-						}
-						_tmp_channel_count += 1;
-					}
-				});
-				_tmp_apply_volume_value = (int) (_tmp_total_volume / _tmp_channel_count * 1.0);
-				value = _tmp_apply_volume_value;
-			}
-		};
+		c.playback_volume += on_volume_changed;
 
 		value_changed += (w, volume) => {
 			// TODO: Remove this once vala supports proper closures.
@@ -112,5 +90,37 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 		_apply_volume (0);
 
 		return true;
+	}
+
+	public void on_volume_changed (Client c, Xmms.Value val) {
+		weak Xmms.DictIter iter;
+		int total_volume, channels;
+
+		if (!_accept_updates) {
+			return;
+		}
+
+		total_volume = 0;
+		channels = 0;
+
+		val.get_dict_iter (out iter);
+		while (iter.valid ()) {
+			weak Xmms.Value volume;
+			weak string name;
+			int tmp = 0;
+
+			if (iter.pair (out name, out volume)) {
+				if (volume.get_int (out tmp)) {
+					total_volume += tmp;
+					channels++;
+				}
+			}
+			iter.next ();
+		}
+
+		if (channels > 0) {
+			_tmp_apply_volume_value = (int) (total_volume / channels * 1.0);
+			value = _tmp_apply_volume_value;
+		}
 	}
 }

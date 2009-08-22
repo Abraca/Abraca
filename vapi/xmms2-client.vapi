@@ -426,7 +426,7 @@ namespace Xmms {
 	[Compact]
 	[CCode(cname = "xmmsv_dict_iter_t",	cprefix = "xmmsv_dict_iter_", free_function="")]
 	public class DictIter {
-		public bool pair(out weak string key, out Xmms.Value val);
+		public bool pair(out weak string key, out weak Xmms.Value val);
 		public bool valid();
 		public void first();
 		public void next();

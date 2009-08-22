@@ -10,12 +10,13 @@
     <property name="website">http://abraca.xmms.se</property>
 
     <property name="authors">
+Carl-Emil Kjellstrand &lt;carl-emil.kjellstrand@purplescout.se&gt;
 Erik Massop &lt;e.massop@hccnet.nl&gt;
 Christopher Rosell &lt;chrippa@tanuki.se&gt;
 Martin Salzer &lt;stoky@gmx.net&gt;
 Sebastian Sareyko &lt;smoon@nooms.de&gt;
 Tilman Sauerbeck &lt;tilman@xmms.org&gt;
-Daniel Svensson &lt;dsvensson@gmail.com&gt;
+Daniel Svensson &lt;daniel.svensson@purplescout.se&gt;
     </property>
 
     <property name="artists">
