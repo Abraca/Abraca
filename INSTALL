@@ -37,7 +37,7 @@ SCons related options:
 
 Environment variables SCons listens to:
 
-    VALAC, CC, LINKFLAGS, PROGSUFFIX
+    VALAC, CC, AS, LINKFLAGS, PROGSUFFIX
     PKG_CONFIG_FLAGS, PKG_CONFIG_LIBDIR, PKG_CONFIG_PATH,
 
 
