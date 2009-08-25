@@ -1,3 +1,14 @@
+abraca (0.4-2) UNRELEASED; urgency=low
+
+  * Add quilt as patch system and state this in debian/README.source.
+  * Add debian/patches/version-fix.patch to remove the WIP from the upstream
+    version string.
+  * Add debian/patches/fix-binaryblob-comment.patch to hopefully fix the
+    FTBFS on sparc (Closes: #543251).
+  * Allow uploads done by Debian Maintainers.
+
+ -- Benjamin Drung <bdrung@ubuntu.com>  Tue, 25 Aug 2009 18:04:52 +0200
+
 abraca (0.4-1) unstable; urgency=medium
 
   * New upstream release (Closes: #538380)
