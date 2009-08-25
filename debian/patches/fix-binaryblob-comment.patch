@@ -1,0 +1,22 @@
+From: Daniel Svensson <daniel.svensson@purplescout.se>
+Date: Sun, 23 Aug 2009 16:36:08 +0000 (+0200)
+Subject: OTHER: Fix binaryblob comment.
+X-Git-Url: http://git.xmms.se/?p=abraca.git;a=commitdiff_plain;h=e7dbe2ec72411baf424d7face6176020d6a000ba
+
+Hopefully fix the FTBFS on sparc
+Debian: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=543251
+---
+
+diff --git a/site_scons/site_tools/binaryblob.py b/site_scons/site_tools/binaryblob.py
+index 1d20b70..64e78db 100644
+--- a/site_scons/site_tools/binaryblob.py
++++ b/site_scons/site_tools/binaryblob.py
+@@ -22,7 +22,7 @@ _assembly_template = """
+   .globl %(full_name)s
+   .type %(full_name)s, @object
+ %(full_name)s:
+-  .incbin "%(file)s" # MD5: %(md5)s
++  .incbin "%(file)s" /* MD5: %(md5)s */
+   .byte 0
+   .size %(full_name)s, .-%(full_name)s
+ """
