@@ -10,6 +10,7 @@ Build-Depends: debhelper (>= 7.0.50~),
                scons,
                valac (>= 0.7.5)
 Standards-Version: 3.8.3
+DM-Upload-Allowed: yes
 Homepage: http://abraca.xmms.se/
 Vcs-Git: git://git.debian.org/git/pkg-xmms2/abraca.git
 Vcs-Browser: http://git.debian.org/?p=pkg-xmms2/abraca.git
