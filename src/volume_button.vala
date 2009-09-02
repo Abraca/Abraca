@@ -23,7 +23,8 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 		"stock_volume-max",
 		"stock_volume-0",
 		"stock_volume-min",
-		"stock_volume-med"
+		"stock_volume-med",
+		null
 	};
 
 	private bool _accept_updates = true;
