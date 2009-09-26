@@ -414,7 +414,7 @@ namespace Xmms {
 	[Compact]
 	[CCode(cname = "xmmsv_list_iter_t",	cprefix = "xmmsv_list_iter_")]
 	public class ListIter {
-		public bool entry(out Xmms.Value val);
+		public bool entry(out unowned Xmms.Value val);
 		public bool valid();
 		public void first();
 		public bool next();
