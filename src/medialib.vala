@@ -522,6 +522,7 @@ namespace Abraca {
 				info_dialog = MedialibInfoDialog.build();
 				info_dialog.delete_event += (ev) => {
 					info_dialog = null;
+					return false;
 				};
 				info_dialog.show_all();
 			}
