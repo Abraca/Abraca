@@ -18,6 +18,7 @@
  */
 
 using GLib;
+using Gee;
 
 namespace Abraca {
 	public class Client : GLib.Object {
@@ -48,6 +49,8 @@ namespace Abraca {
 		public signal void medialib_entry_changed(Xmms.Value res);
 
 		public signal void configval_changed(string key, string val);
+
+		private Gee.List<Xmms.Result> _recallable_references = new LinkedList<Xmms.Result>();
 
 		/** current playback status */
 		public int current_playback_status {
@@ -108,10 +111,12 @@ namespace Abraca {
 				path = GLib.Environment.get_variable("XMMS_PATH");
 			}
 
+			detach_callbacks();
+
 			if (_xmms.connect(path)) {
 				_gmain = Xmms.MainLoop.GMain.init(_xmms);
 				_xmms.disconnect_callback_set(on_disconnect);
-				create_callbacks();
+				attach_callbacks();
 
 				connected();
 
@@ -121,71 +126,100 @@ namespace Abraca {
 			return false;
 		}
 
-
 		public bool reconnect() {
 			return !try_connect();
 		}
 
+		private void detach_callbacks() {
+			foreach (var result in _recallable_references) {
+				result.disconnect();
+			}
+			_recallable_references.clear();
+		}
 
-		private void create_callbacks() {
+		private void attach_callbacks() {
+			Xmms.Result recallable;
+
 			_xmms.playback_status().notifier_set(
 				on_playback_status
 			);
 
-			_xmms.broadcast_playback_status().notifier_set(
+			recallable = _xmms.broadcast_playback_status();
+			recallable.notifier_set(
 				on_playback_status
 			);
+			_recallable_references.add(recallable);
 
 			_xmms.playback_current_id().notifier_set(
 				on_playback_current_id
 			);
 
-			_xmms.broadcast_playback_current_id().notifier_set(
+			recallable = _xmms.broadcast_playback_current_id();
+			recallable.notifier_set(
 				on_playback_current_id
 			);
+			_recallable_references.add(recallable);
+
 
 			_xmms.playback_playtime().notifier_set(
 				on_playback_playtime
 			);
 
-			_xmms.signal_playback_playtime().notifier_set(
+			recallable = _xmms.signal_playback_playtime();
+			recallable.notifier_set(
 				on_playback_playtime
 			);
+			_recallable_references.add(recallable);
 
 			_xmms.playback_volume_get().notifier_set(
 				on_playback_volume
 			);
-			_xmms.broadcast_playback_volume_changed().notifier_set(
+
+			recallable = _xmms.broadcast_playback_volume_changed();
+			recallable.notifier_set(
 				on_playback_volume
 			);
+			_recallable_references.add(recallable);
 
 			_xmms.playlist_current_active().notifier_set(
 				on_playlist_loaded
 			);
 
-			_xmms.broadcast_playlist_loaded().notifier_set(
+			recallable = _xmms.broadcast_playlist_loaded();
+			recallable.notifier_set(
 				on_playlist_loaded
 			);
+			_recallable_references.add(recallable);
 
-			_xmms.broadcast_playlist_changed().notifier_set(
+			recallable = _xmms.broadcast_playlist_changed();
+			recallable.notifier_set(
 				on_playlist_changed
 			);
+			_recallable_references.add(recallable);
 
-			_xmms.broadcast_collection_changed().notifier_set(
+			recallable = _xmms.broadcast_collection_changed();
+			recallable.notifier_set(
 				on_collection_changed
 			);
+			_recallable_references.add(recallable);
 
-			_xmms.broadcast_medialib_entry_changed().notifier_set(
+			recallable = _xmms.broadcast_medialib_entry_changed();
+			recallable.notifier_set(
 				on_medialib_entry_changed
 			);
+			_recallable_references.add(recallable);
 
-			_xmms.broadcast_playlist_current_pos().notifier_set(
+			recallable = _xmms.broadcast_playlist_current_pos();
+			recallable.notifier_set(
 				on_playlist_position
 			);
+			_recallable_references.add(recallable);
 
-			_xmms.broadcast_configval_changed().notifier_set(
+			recallable = _xmms.broadcast_configval_changed();
+			recallable.notifier_set(
 					on_configval_changed
 			);
+			_recallable_references.add(recallable);
 		}
 
 

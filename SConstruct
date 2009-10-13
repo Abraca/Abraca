@@ -11,7 +11,7 @@ conf.CheckPkgConfig()
 conf.CheckApp('msgfmt')
 conf.CheckApp('gdk-pixbuf-csource')
 
-for pkg in ['gtk+-2.0', 'gmodule-2.0', 'xmms2-client', 'xmms2-client-glib']:
+for pkg in ['gtk+-2.0', 'gmodule-2.0', 'xmms2-client', 'xmms2-client-glib', 'gee-1.0']:
 	if conf.CheckPkg(pkg):
 		env.AppendPkg(pkg)
 		env.Append(VALAPKGS = [pkg])
