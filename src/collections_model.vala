@@ -275,7 +275,7 @@ namespace Abraca {
 			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
 				Pango.Weight weight = Pango.Weight.NORMAL;
 				Pango.Style style = Pango.Style.NORMAL;
-				Xmms.Value entry;
+				unowned Xmms.Value entry;
 				Gtk.TreeIter iter;
 				string? name = null;
 
