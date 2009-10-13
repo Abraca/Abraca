@@ -38,8 +38,7 @@ namespace Abraca {
 		public string[] dynamic_columns;
 
 		/* Map medialib id to row */
-		/* TODO: Should probably be iters instead */
-		private GLib.HashTable<int,Gtk.TreeRowReference> pos_map;
+		private Gee.Map<int,Gtk.TreeRowReference> pos_map;
 
 		/**
 		 * TODO: Get rid of this one...
@@ -77,8 +76,7 @@ namespace Abraca {
 		}
 
 		construct {
-			// TODO: Add proper unreffing here
-			pos_map = new GLib.HashTable<int,Gtk.TreeRowReference>(GLib.direct_hash, GLib.direct_equal);
+			pos_map = new Gee.HashMap<int,Gtk.TreeRowReference>();
 
 			Client c = Client.instance();
 			c.medialib_entry_changed += (client, res) => {
@@ -97,7 +95,7 @@ namespace Abraca {
 
 			clear();
 
-			pos_map.remove_all();
+			pos_map.clear();
 
 			
 			weak Xmms.ListIter list_iter;
@@ -128,7 +126,7 @@ namespace Abraca {
 				path = get_path(iter);
 				row = new Gtk.TreeRowReference(this, path);
 
-				pos_map.insert((int) id, (owned) row);
+				pos_map.set((int) id, row);
 			}
 
 			return true;
@@ -160,7 +158,7 @@ namespace Abraca {
 		}
 
 		private bool on_medialib_info(Xmms.Value propdict) {
-			weak Gtk.TreeRowReference row;
+			Gtk.TreeRowReference row;
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 			int mid;
@@ -169,7 +167,7 @@ namespace Abraca {
 
 			val.dict_entry_get_int("id", out mid);
 
-			row = (Gtk.TreeRowReference) pos_map.lookup(mid);
+			row = pos_map.get(mid);
 			if (row == null || !row.valid()) {
 				return false;
 			}
