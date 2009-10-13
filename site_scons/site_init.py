@@ -28,7 +28,7 @@ SCons.Defaults.DefaultEnvironment(tools = [])
 class AbracaEnvironment(SConsEnvironment):
 	def __init__(self, *args, **kwargs):
 		variables = [
-			'VALAC', 'CC', 'LINKFLAGS', 'PKG_CONFIG_FLAGS',
+			'VALAC', 'CC', 'AS', 'LINKFLAGS', 'PKG_CONFIG_FLAGS',
 			'PROGSUFFIX', 'CPPPATH', 'MSGFMT',
 		]
 		for key in variables:

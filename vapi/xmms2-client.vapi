@@ -146,7 +146,7 @@ namespace Xmms {
 			public Xmms.CollectionTokenType type;
 			[CCode(cname="string")]
 			public string str;
-			public weak CollectionToken next;
+			public unowned CollectionToken next;
 	}
 
 	[Compact]
@@ -282,7 +282,7 @@ namespace Xmms {
 		 * Other functions
 		 */
 		public static int entry_format (string target, int len, string fmt, Xmms.Value val);
-		public static weak string userconfdir_get (char[] buffer);
+		public static unowned string userconfdir_get (char[] buffer);
 		public string get_last_error ();
 		public Result quit();
 		public Result broadcast_quit ();
@@ -325,18 +325,18 @@ namespace Xmms {
 
 		public void attribute_list_first();
 		public bool attribute_list_valid();
-		public void attribute_list_entry(out weak string key, out weak string val);
+		public void attribute_list_entry(out unowned string key, out unowned string val);
 		public void attribute_list_next();
 		public void attribute_set(string key, string val);
 		public bool attribute_remove(string key);
-		public bool attribute_get(string key, out weak string val);
+		public bool attribute_get(string key, out unowned string val);
 		public void attribute_foreach(CollectionAttributeForeachFunc func);
 
 		public static Collection universe();
 		public static bool parse(string pattern, out Collection coll);
 		public static bool parse_custom(string pattern, CollectionParseTokensFunc tokens_func, CollectionParseBuildFunc build_func, out Collection coll);
 		public static Collection default_parse_build(CollectionToken[] tokens);
-		public static CollectionToken[] default_parse_tokens(string str, out weak string newpos);
+		public static CollectionToken[] default_parse_tokens(string str, out unowned string newpos);
 	}
 
 
@@ -377,14 +377,14 @@ namespace Xmms {
 
 		public Xmms.ValueType get_type();
 
-		public bool get_error (out weak string error);
+		public bool get_error (out unowned string error);
 		public bool get_int (out int val);
-		public bool get_string (out weak string val);
+		public bool get_string (out unowned string val);
 		public bool get_coll (out Xmms.Collection coll);
-		public bool get_bin ([CCode(array_length_type="uint")] out weak uchar[] val);
+		public bool get_bin ([CCode(array_length_type="uint")] out unowned uchar[] val);
 
-		public bool get_list_iter (out weak Xmms.ListIter iter);
-		public bool get_dict_iter (out weak Xmms.DictIter iter);
+		public bool get_list_iter (out unowned Xmms.ListIter iter);
+		public bool get_dict_iter (out unowned Xmms.DictIter iter);
 
 		public bool list_get(int pos, out Xmms.Value val);
 		public bool list_set(Xmms.Value val);
@@ -395,7 +395,7 @@ namespace Xmms {
 		public bool list_foreach(Xmms.ListForeachFunc func);
 		public int  list_get_size();
 
-		public bool dict_get(string key, out weak Xmms.Value val);
+		public bool dict_get(string key, out unowned Xmms.Value val);
 		public bool dict_set(string key, Xmms.Value val);
 		public bool dict_remove(string key);
 		public bool dict_clear();
@@ -403,7 +403,7 @@ namespace Xmms {
 		public int dict_get_size();
 
 		public Xmms.ValueType dict_entry_get_type(string key);
-		public bool dict_entry_get_string(string key, out weak string val);
+		public bool dict_entry_get_string(string key, out unowned string val);
 		public bool dict_entry_get_int(string key, out int val);
 		public bool dict_entry_get_uint(string key, out uint val);
 		public bool dict_entry_get_collection(string key, out Xmms.Collection coll);
@@ -414,7 +414,7 @@ namespace Xmms {
 	[Compact]
 	[CCode(cname = "xmmsv_list_iter_t",	cprefix = "xmmsv_list_iter_")]
 	public class ListIter {
-		public bool entry(out Xmms.Value val);
+		public bool entry(out unowned Xmms.Value val);
 		public bool valid();
 		public void first();
 		public bool next();
@@ -426,7 +426,7 @@ namespace Xmms {
 	[Compact]
 	[CCode(cname = "xmmsv_dict_iter_t",	cprefix = "xmmsv_dict_iter_", free_function="")]
 	public class DictIter {
-		public bool pair(out weak string key, out weak Xmms.Value val);
+		public bool pair(out unowned string key, out unowned Xmms.Value val);
 		public bool valid();
 		public void first();
 		public void next();
