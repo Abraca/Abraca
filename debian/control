@@ -19,6 +19,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: xmms2
 Description: A simple and powerful graphical client for XMMS2
- Abraca is a GTK2 client for the XMMS2 music player. It is designed with
+ Abraca is a client for the XMMS2 music player. It is designed with
  collections in mind, which makes managing your music a breeze.
-
+ .
+ It is written in Vala and uses GTK+.

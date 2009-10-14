@@ -1,3 +1,13 @@
+abraca (0.4.1-1) unstable; urgency=low
+
+  * New upstream release.
+    - Compatible to vala 0.7.7 (Closes: #549787).
+  * Drop fix-binaryblob-comment.patch (applied upstream).
+  * Drop version-fix.patch (no longer required).
+  * Remove patch system (no patches remaining).
+
+ -- Benjamin Drung <bdrung@ubuntu.com>  Wed, 14 Oct 2009 20:29:18 +0200
+
 abraca (0.4-2) unstable; urgency=low
 
   * Add quilt as patch system and state this in debian/README.source.
