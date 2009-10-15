@@ -1,0 +1,48 @@
+Description: I used the wrong source tarball
+ This patch adds the missing bits to the wrong source tarball.
+Author: Benjamin Drung <bdrung@ubuntu.com>
+
+diff -pruN a/INSTALL b/INSTALL
+--- a/INSTALL	2009-09-26 10:25:51.000000000 +0200
++++ b/INSTALL	2009-10-13 16:30:12.000000000 +0200
+@@ -3,7 +3,7 @@ You'll need the following applications a
+     o XMMS2 0.6DrMattDestruction
+     o GTK 2.16.3 (older may work)
+     o pkg-config 0.22 (older may work)
+-    o vala 0.7.5
++    o vala 0.7.7
+     o gcc 4.2.3 (older may work)
+     o gettext for localization
+     o python for running SCons
+diff -pruN a/SConstruct b/SConstruct
+--- a/SConstruct	2009-09-26 10:25:51.000000000 +0200
++++ b/SConstruct	2009-10-13 16:30:12.000000000 +0200
+@@ -1,4 +1,4 @@
+-env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.4.1-WiP')
++env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.4.1')
+ 
+ env.VariantDir('build', '.')
+ 
+diff -pruN a/src/medialib.vala b/src/medialib.vala
+--- a/src/medialib.vala	2009-09-26 10:25:51.000000000 +0200
++++ b/src/medialib.vala	2009-10-13 16:30:12.000000000 +0200
+@@ -522,6 +522,7 @@ namespace Abraca {
+ 				info_dialog = MedialibInfoDialog.build();
+ 				info_dialog.delete_event += (ev) => {
+ 					info_dialog = null;
++					return false;
+ 				};
+ 				info_dialog.show_all();
+ 			}
+diff -pruN a/vapi/xmms2-client.vapi b/vapi/xmms2-client.vapi
+--- a/vapi/xmms2-client.vapi	2009-09-26 10:25:51.000000000 +0200
++++ b/vapi/xmms2-client.vapi	2009-10-13 16:30:12.000000000 +0200
+@@ -380,7 +380,7 @@ namespace Xmms {
+ 		public bool get_error (out unowned string error);
+ 		public bool get_int (out int val);
+ 		public bool get_string (out unowned string val);
+-		public bool get_coll (out Xmms.Collection coll);
++		public bool get_coll (out unowned Xmms.Collection coll);
+ 		public bool get_bin ([CCode(array_length_type="uint")] out unowned uchar[] val);
+ 
+ 		public bool get_list_iter (out unowned Xmms.ListIter iter);
