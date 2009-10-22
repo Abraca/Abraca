@@ -23,6 +23,8 @@ namespace Abraca {
 	public class RightHPaned : Gtk.HPaned, IConfigurable {
 		private Gtk.ComboBoxEntry _filter_cbox;
 		private FilterView _filter_tree;
+		private Gee.Queue<string> _pending_queries;
+		private string _unsaved_query;
 
 		public FilterView filter_tree {
 			get {
@@ -36,6 +38,8 @@ namespace Abraca {
 
 			pack1(create_left_box(), true, true);
 			pack2(create_right_box(), false, true);
+
+			_pending_queries = new Gee.LinkedList<string>();
 
 			Configurable.register(this);
 		}
@@ -79,21 +83,6 @@ namespace Abraca {
 			file.set_string_list("filter", "patterns", list);
 		}
 
-		private void on_filter_entry_changed(Gtk.Entry entry) {
-			Gdk.Color? color = null;
-			Xmms.Collection coll;
-
-			unowned string text = entry.get_text();
-
-			if (text.size() > 0 && !Xmms.Collection.parse(text, out coll)) {
-				if (!Gdk.Color.parse("#ff6666", out color)) {
-					color = null;
-				}
-			}
-
-			entry.modify_base(Gtk.StateType.NORMAL, color);
-		}
-
 		private void _filter_save (string pattern) {
 			Gtk.ListStore store = (Gtk.ListStore) _filter_cbox.model;
 			Gtk.TreeIter iter;
@@ -112,15 +101,41 @@ namespace Abraca {
 			store.insert_with_values(out iter, 0, 0, pattern);
 		}
 
-		private void on_filter_entry_activate(Gtk.Entry entry) {
+		private void on_filter_entry_changed(Gtk.Entry entry) {
+			Gdk.Color? color = null;
 			Xmms.Collection coll;
+			var text = entry.get_text();
 
-			unowned string pattern = entry.get_text();
-
-			if (Xmms.Collection.parse(pattern, out coll)) {
-				_filter_tree.query_collection(coll);
-				_filter_save(pattern);
+			if (text.size() > 0) {
+				if (Xmms.Collection.parse(text, out coll)) {
+					_pending_queries.offer(text);
+					_filter_tree.query_collection(coll, (val) => {
+						var s = _pending_queries.poll();
+						if (s != null && val.list_get_size() > 0) {
+							if (_filter_cbox.child.has_focus) {
+								_unsaved_query = s;
+							} else if (_pending_queries.is_empty) {
+								_filter_save(s);
+							}
+						}
+						return true;
+					});
+				} else if (!Gdk.Color.parse("#ff6666", out color)) {
+					color = null;
+				}
 			}
+
+			entry.modify_base(Gtk.StateType.NORMAL, color);
+		}
+
+		private bool on_filter_entry_focus_out_event(Gtk.Entry entry, Gdk.EventFocus e) {
+			if (_unsaved_query != null && _unsaved_query == entry.text) {
+				_filter_save(_unsaved_query);
+			}
+
+			_unsaved_query = null;
+
+			return false;
 		}
 
 		public void filter_entry_set_text(string text) {
@@ -143,7 +158,7 @@ namespace Abraca {
 			Gtk.Entry entry = (Gtk.Entry) _filter_cbox.child;
 
 			entry.changed += on_filter_entry_changed;
-			entry.activate += on_filter_entry_activate;
+			entry.focus_out_event += on_filter_entry_focus_out_event;
 
 			Gtk.EntryCompletion comp = new Gtk.EntryCompletion();
 			comp.model = _filter_cbox.model;

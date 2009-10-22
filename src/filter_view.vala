@@ -113,12 +113,14 @@ namespace Abraca {
 		}
 
 
-		public void query_collection(Xmms.Collection coll) {
+		public void query_collection(Xmms.Collection coll, Xmms.NotifierFunc? callback=null) {
 			Client c = Client.instance();
+			Xmms.Result res = c.xmms.coll_query_ids(coll, _sort_order);
 
-			c.xmms.coll_query_ids(coll, _sort_order).notifier_set(
-				on_coll_query_ids
-			);
+			res.notifier_set(on_coll_query_ids);
+			if (callback != null) {
+				res.notifier_set(callback);
+			}
 		}
 
 
