@@ -19,6 +19,7 @@ for pkg in ['gtk+-2.0', 'gmodule-2.0', 'xmms2-client', 'xmms2-client-glib', 'gee
 conf.Define('APPNAME', env.subst('"$APPNAME"'))
 conf.Define('VERSION', env.subst('"$VERSION"'))
 conf.Define('DATADIR', '"' + env.subst(env['DATADIR']) + '"')
+conf.Define('LOCALEDIR', '"' + env.subst(env['LOCALEDIR']) + '"')
 
 conf.Finish()
 

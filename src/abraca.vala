@@ -61,6 +61,7 @@ namespace Abraca {
 			GLib.Environment.set_application_name("Abraca");
 
 			GLib.Intl.textdomain(Build.Config.APPNAME);
+			GLib.Intl.bindtextdomain(Build.Config.APPNAME, Build.Config.LOCALEDIR);
 
 			Abraca a = Abraca.instance();
 
