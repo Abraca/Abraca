@@ -94,7 +94,7 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 	}
 
 	public void on_volume_changed (Client c, Xmms.Value val) {
-		weak Xmms.DictIter iter;
+		unowned Xmms.DictIter iter;
 		int total_volume, channels;
 
 		if (!_accept_updates) {
@@ -106,8 +106,8 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 
 		val.get_dict_iter (out iter);
 		while (iter.valid ()) {
-			weak Xmms.Value volume;
-			weak string name;
+			unowned Xmms.Value volume;
+			unowned string name;
 			int tmp = 0;
 
 			if (iter.pair (out name, out volume)) {
