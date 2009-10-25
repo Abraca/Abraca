@@ -83,7 +83,7 @@ namespace Abraca {
 			Gdk.Color? color = null;
 			Xmms.Collection coll;
 
-			weak string text = entry.get_text();
+			unowned string text = entry.get_text();
 
 			if (text.size() > 0 && !Xmms.Collection.parse(text, out coll)) {
 				if (!Gdk.Color.parse("#ff6666", out color)) {
@@ -114,9 +114,8 @@ namespace Abraca {
 
 		private void on_filter_entry_activate(Gtk.Entry entry) {
 			Xmms.Collection coll;
-			weak string pattern;
 
-			pattern = entry.get_text();
+			unowned string pattern = entry.get_text();
 
 			if (Xmms.Collection.parse(pattern, out coll)) {
 				_filter_tree.query_collection(coll);
