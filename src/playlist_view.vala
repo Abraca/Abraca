@@ -66,7 +66,7 @@ namespace Abraca {
 			rules_hint = true;
 			fixed_height_mode = true;
 
-			weak Gtk.TreeSelection sel = get_selection();
+			var sel = get_selection();
 			sel.set_mode(Gtk.SelectionMode.MULTIPLE);
 
 			create_columns ();
@@ -90,18 +90,15 @@ namespace Abraca {
 		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
 			int n = s.count_selected_rows();
 
-			foreach (weak Gtk.MenuItem i
-			         in _playlist_menu_item_when_none_selected) {
+			foreach (var i in _playlist_menu_item_when_none_selected) {
 				i.sensitive = (n == 0);
 			}
 
-			foreach (weak Gtk.MenuItem i
-			         in _playlist_menu_item_when_one_selected) {
+			foreach (var i in _playlist_menu_item_when_one_selected) {
 				i.sensitive = (n == 1);
 			}
 
-			foreach (weak Gtk.MenuItem i
-			         in _playlist_menu_item_when_some_selected) {
+			foreach (var i in _playlist_menu_item_when_some_selected) {
 				i.sensitive = (n > 0);
 			}
 		}
@@ -127,7 +124,7 @@ namespace Abraca {
 			/* Prevent selection-handling when right-clicking on an already
 			   selected entry */
 			if (get_path_at_pos(x, y, out path, null, null, null)) {
-				weak Gtk.TreeSelection sel = get_selection();
+				var sel = get_selection();
 				if (sel.path_is_selected(path)) {
 					return true;
 				}
@@ -138,15 +135,11 @@ namespace Abraca {
 
 
 		private void delete_selected() {
-			GLib.List<Gtk.TreePath> paths;
-			weak Gtk.TreeSelection sel;
-			GLib.List<uint> lst;
+			var sel = get_selection();
+			var paths = sel.get_selected_rows(null);
+			var lst = new GLib.List<uint>();
 
-			sel = get_selection();
-			paths = sel.get_selected_rows(null);
-			lst = new GLib.List<uint>();
-
-			foreach (weak Gtk.TreePath path in paths) {
+			foreach (unowned Gtk.TreePath path in paths) {
 				lst.prepend(path.get_indices()[0]);
 			}
 
@@ -179,9 +172,9 @@ namespace Abraca {
 			Gtk.CellRendererText text_renderer;
 			Gtk.CellRendererPixbuf pbuf_renderer;
 			Gtk.TreeViewColumn column;
-			weak Gtk.Settings settings;
+			unowned Gtk.Settings settings;
 			Pango.FontDescription desc;
-			weak Pango.Context ctx;
+			unowned Pango.Context ctx;
 			Pango.Layout layout;
 			Gdk.Pixbuf pbuf;
 			int w, h;
@@ -414,7 +407,7 @@ namespace Abraca {
 			Xmms.Collection universe = Xmms.Collection.universe();
 			Xmms.Collection coll;
 
-			foreach(weak Gtk.TreePath path in list) {
+			foreach(unowned Gtk.TreePath path in list) {
 				model.get_iter(out iter, path);
 				model.get(iter, column, out val);
 
@@ -451,12 +444,12 @@ namespace Abraca {
 
 		private void on_menu_playlist_info(Gtk.MenuItem item) {
 			GLib.List<Gtk.TreePath> list;
-			weak Gtk.TreeModel mod;
+			unowned Gtk.TreeModel mod;
 			Gtk.TreeIter iter;
 			uint id;
 
 			list = get_selection().get_selected_rows(out mod);
-			foreach (weak Gtk.TreePath path in list) {
+			foreach (unowned Gtk.TreePath path in list) {
 				model.get_iter(out iter, path);
 				model.get(iter, PlaylistModel.Column.ID, out id);
 				Abraca.instance().medialib.info_dialog_add_id(id);
@@ -483,20 +476,21 @@ namespace Abraca {
 		private void on_drag_data_get(PlaylistView w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
-			weak Gtk.TreeSelection sel = get_selection();
-			GLib.List<Gtk.TreePath> lst = sel.get_selected_rows(null);
 			GLib.List<uint> pos_list = new GLib.List<uint>();
 			Gdk.Atom dnd_atom;
 
+			var sel = get_selection();
+			var lst = sel.get_selected_rows(null);
+
 			if (info == (uint) DragDropTargetType.ROW) {
-				foreach (weak Gtk.TreePath p in lst) {
+				foreach (unowned Gtk.TreePath p in lst) {
 					pos_list.prepend(p.get_indices()[0]);
 				}
 				dnd_atom = Gdk.Atom.intern(_source_entries[0].target, true);
 			} else {
 				Gtk.TreeIter iter;
 				uint mid;
-				foreach (weak Gtk.TreePath p in lst) {
+				foreach (unowned Gtk.TreePath p in lst) {
 					model.get_iter(out iter, p);
 					model.get(iter, PlaylistModel.Column.ID, out mid);
 					pos_list.prepend(mid);
@@ -513,7 +507,7 @@ namespace Abraca {
 			}
 
 			/* This should be removed as #515408 gets fixed. */
-			weak uchar[] data = (uchar[]) pos_array;
+			unowned uchar[] data = (uchar[]) pos_array;
 			data.length = (int)(pos_array.length * sizeof(uint));
 
 			selection_data.set(dnd_atom, 8, data);
@@ -556,7 +550,7 @@ namespace Abraca {
 			Client c = Client.instance();
 
 			/* TODO: Updated when #515408 vala bug has been fixed */
-			weak uint[] source = (uint[]) sel.data;
+			unowned uint[] source = (uint[]) sel.data;
 			source.length = (int)(sel.length / sizeof(uint));
 
 			if (get_dest_row_at_pos(x, y, out path, out align)) {
@@ -595,7 +589,7 @@ namespace Abraca {
 			Client c = Client.instance();
 
 			/* TODO: Updated when #515408 vala bug has been fixed */
-			weak uint[] ids = (uint[]) sel.data;
+			unowned uint[] ids = (uint[]) sel.data;
 			ids.length = (int)(sel.length / sizeof(uint));
 
 			if (get_dest_row_at_pos(x, y, out path, out align)) {
