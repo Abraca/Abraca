@@ -140,7 +140,7 @@ namespace Abraca {
 		{
 			GLib.KeyFile file = read_config();
 
-			foreach (weak IConfigurable obj in configurables) {
+			foreach (unowned IConfigurable obj in configurables) {
 				try {
 					obj.set_configuration(file);
 				} catch (GLib.KeyFileError e) {
@@ -158,7 +158,7 @@ namespace Abraca {
 		{
 			GLib.KeyFile file = read_config();
 
-			foreach (weak IConfigurable obj in configurables) {
+			foreach (unowned IConfigurable obj in configurables) {
 					obj.get_configuration(file);
 			}
 
