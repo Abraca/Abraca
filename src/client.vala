@@ -265,7 +265,7 @@ namespace Abraca {
 		}
 
 		private bool on_playlist_loaded(Xmms.Value val) {
-			weak string name;
+			unowned string name;
 
 			if (val.get_string(out name)) {
 				current_playlist = name;
