@@ -272,7 +272,7 @@ namespace Abraca {
 			set_model(null);
 			*/
 
-			weak Xmms.ListIter list_iter;
+			unowned Xmms.ListIter list_iter;
 			val.get_list_iter(out list_iter);
 
 			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
@@ -311,7 +311,7 @@ namespace Abraca {
 
 
 		private bool on_medialib_info(Xmms.Value propdict) {
-			weak GLib.SList<Gtk.TreeRowReference> lst;
+			unowned GLib.SList<Gtk.TreeRowReference> lst;
 			string album, title, genre, artist = null;
 			string info;
 			int status, mid;
@@ -375,7 +375,7 @@ namespace Abraca {
 			}
 
 
-			foreach (weak Gtk.TreeRowReference row in lst) {
+			foreach (unowned Gtk.TreeRowReference row in lst) {
 				Gtk.TreePath path;
 				Gtk.TreeIter? iter = null;
 
