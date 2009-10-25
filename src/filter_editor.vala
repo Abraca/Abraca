@@ -99,11 +99,11 @@ namespace Abraca {
 
 			model.get_iter_first(out iter);
 			do {
-				weak string prop;
+				unowned string prop;
 
 				model.get(iter, Column.NAME, out prop);
 
-				foreach (weak string active_prop in active) {
+				foreach (unowned string active_prop in active) {
 					if (prop == active_prop) {
 						model.set(iter, Column.ACTIVE, true);
 						break;
@@ -120,7 +120,7 @@ namespace Abraca {
 
 			model = new Gtk.ListStore(2, typeof(bool), typeof(string));
 
-			foreach (weak string prop in _properties) {
+			foreach (unowned string prop in _properties) {
 				Gtk.TreeIter iter;
 
 				model.append(out iter);
@@ -164,7 +164,7 @@ namespace Abraca {
 			Gtk.ListStore store;
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
-			weak string property;
+			unowned string property;
 			bool state;
 
 			store = (Gtk.ListStore) _view.model;
