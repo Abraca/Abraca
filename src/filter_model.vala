@@ -98,7 +98,7 @@ namespace Abraca {
 			pos_map.clear();
 
 			
-			weak Xmms.ListIter list_iter;
+			unowned Xmms.ListIter list_iter;
 			val.get_list_iter(out list_iter);
 
 			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
@@ -178,7 +178,7 @@ namespace Abraca {
 				set(iter, Column.STATUS, Status.RESOLVED);
 
 				int pos = 2;
-				foreach (weak string key in dynamic_columns) {
+				foreach (unowned string key in dynamic_columns) {
 					string formatted = "";
 					Transform.normalize_dict (val, key, out formatted);
 					set(iter, pos++, formatted);
