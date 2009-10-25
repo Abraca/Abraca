@@ -100,13 +100,11 @@ namespace Abraca {
 				n = model.get_path(iter).get_depth();
 			}
 
-			foreach (weak Gtk.MenuItem i
-			         in _collection_menu_item_when_coll_selected) {
+			foreach (var i in _collection_menu_item_when_coll_selected) {
 				i.sensitive = (n == 2);
 			}
 
-			foreach (weak Gtk.MenuItem i
-			         in _collection_menu_item_when_ns_selected) {
+			foreach (var i in _collection_menu_item_when_ns_selected) {
 				i.sensitive = (n == 1);
 			}
 		}
@@ -116,11 +114,12 @@ namespace Abraca {
 		                               Gtk.SelectionData selection_data,
 		                               uint info, uint time)
 		{
-			weak Gtk.TreeSelection sel = get_selection();
-			GLib.List<Gtk.TreePath> lst = sel.get_selected_rows(null);
 			Gtk.TreeIter iter;
 			string name;
 			int type;
+
+			var sel = get_selection();
+			var lst = sel.get_selected_rows(null);
 
 			model.get_iter(out iter, lst.data);
 
@@ -170,7 +169,7 @@ namespace Abraca {
 			/* Prevent selection-handling when right-clicking on an already
 			   selected entry */
 			if (get_path_at_pos(x, y, out path, null, null, null)) {
-				weak Gtk.TreeSelection sel = get_selection();
+				var sel = get_selection();
 				if (sel.path_is_selected(path)) {
 					return true;
 				}
@@ -335,7 +334,7 @@ namespace Abraca {
 
 			if (info == (uint) DragDropTargetType.MID) {
 				/* This should be removed as #515408 gets fixed. */
-				weak uint[] ids = (uint[]) sel.data;
+				unowned uint[] ids = (uint[]) sel.data;
 				ids.length = (int)(sel.length / sizeof(uint));
 
 				for(int i = ids.length -1; i >= 0; i--) {
@@ -394,10 +393,9 @@ namespace Abraca {
 
 
 		private void on_menu_collection_get(Gtk.ImageMenuItem item) {
-			weak Gtk.TreeSelection selection;
 			Gtk.TreeIter iter;
 
-			selection = get_selection();
+			var selection = get_selection();
 
 			if (selection.get_selected(null, out iter)) {
 				CollectionsModel store = (CollectionsModel) model;
@@ -406,7 +404,7 @@ namespace Abraca {
 				if (path.get_depth() == 2) {
 					CollectionsModel.CollectionType type;
 					Client c = Client.instance();
-					weak string ns;
+					unowned string ns;
 					string name;
 
 					store.get(iter, CollectionsModel.Column.Name, out name);
@@ -439,18 +437,17 @@ namespace Abraca {
 
 		private void selected_collection_rename ()
 		{
-			weak Gtk.TreeSelection selection;
 			Gtk.TreeIter iter;
 
-			selection = get_selection();
+			var selection = get_selection();
 
 			if (selection.get_selected(null, out iter)) {
 				Gtk.TreePath path = model.get_path(iter);
 
 				if (path.get_depth() == 2) {
-					weak GLib.List<Gtk.CellRenderer> renderers;
+					unowned GLib.List<Gtk.CellRenderer> renderers;
 					Gtk.CellRendererText renderer;
-					GLib.List<weak Gtk.TreeViewColumn> cols;
+					GLib.List<unowned Gtk.TreeViewColumn> cols;
 					Gtk.TreeViewColumn col;
 
 					cols = get_columns();
@@ -469,10 +466,9 @@ namespace Abraca {
 
 		private void selected_collection_delete ()
 		{
-			weak Gtk.TreeSelection selection;
 			Gtk.TreeIter iter;
 
-			selection = get_selection();
+			var selection = get_selection();
 
 			if (selection.get_selected(null, out iter)) {
 				CollectionsModel store = (CollectionsModel) model;
@@ -481,7 +477,7 @@ namespace Abraca {
 				if (path.get_depth() == 2) {
 					CollectionsModel.CollectionType type;
 					Client c = Client.instance();
-					weak string ns = Xmms.COLLECTION_NS_PLAYLISTS;
+					var ns = Xmms.COLLECTION_NS_PLAYLISTS;
 					string name;
 
 					store.get(iter, CollectionsModel.Column.Name, out name);
