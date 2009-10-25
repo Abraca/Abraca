@@ -127,8 +127,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_time_slider_release(Gtk.HScale widget, Gdk.EventButton button) {
-			weak Gtk.HScale scale = (Gtk.HScale) widget;
+		private bool on_time_slider_release(Gtk.HScale scale, Gdk.EventButton button) {
 			Client c = Client.instance();
 
 			double percent = scale.get_value();
@@ -144,9 +143,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_time_slider_motion_notify(Gtk.HScale widget, Gdk.EventMotion motion) {
-			weak Gtk.HScale scale = (Gtk.HScale) widget;
-
+		private bool on_time_slider_motion_notify(Gtk.HScale scale, Gdk.EventMotion motion) {
 			double percent = scale.get_value();
 			_pos = (uint)(_duration * percent);
 
@@ -287,11 +284,11 @@ namespace Abraca {
 
 
 		private bool on_bindata_retrieve(Xmms.Value val) {
-			weak uchar[] data;
+			unowned uchar[] data;
 
 			if (val.get_bin(out data)) {
 				Gdk.PixbufLoader loader;
-				weak Gdk.Pixbuf pixbuf;
+				unowned Gdk.Pixbuf pixbuf;
 				Gdk.Pixbuf modified;
 
 				loader = new Gdk.PixbufLoader();
