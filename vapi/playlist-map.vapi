@@ -17,10 +17,10 @@ namespace Abraca {
 		);
 		public void clear (
 		);
-		public weak GLib.SList<Gtk.TreeRowReference> lookup (
+		public unowned GLib.SList<Gtk.TreeRowReference> lookup (
 			uint id
 		);
-		public weak GLib.List<uint>get_ids (
+		public unowned GLib.List<uint>get_ids (
 		);
 	}
 }
