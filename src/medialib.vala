@@ -22,7 +22,7 @@ using GLib;
 namespace Abraca {
 	public class MedialibInfoDialog : Gtk.Dialog, Gtk.Buildable {
 		private GLib.List<uint> ids;
-		private weak GLib.List<uint> current;
+		private unowned GLib.List<uint> current;
 
 		private string artist;
 		private string album;
@@ -156,7 +156,7 @@ namespace Abraca {
 
 		private void set_str(Gtk.Editable editable, string key) {
 			Client c = Client.instance();
-			weak string val = editable.get_chars(0, -1);
+			unowned string val = editable.get_chars(0, -1);
 
 			c.xmms.medialib_entry_property_set_str(
 				current.data, key, val
@@ -340,12 +340,12 @@ namespace Abraca {
 			string? val_str, parent_source = null;
 			Gtk.TreeIter parent, iter;
 
-			weak Xmms.DictIter dict_iter;
+			unowned Xmms.DictIter dict_iter;
 			val.get_dict_iter(out dict_iter);
 
 			for (dict_iter.first(); dict_iter.valid(); dict_iter.next()) {
 				Xmms.Value entry;
-				weak string source;
+				unowned string source;
 
 				if (!dict_iter.pair(out source, out entry)) {
 					continue;
