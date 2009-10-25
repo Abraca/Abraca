@@ -253,7 +253,7 @@ namespace Abraca {
 		private bool on_list_collections (Xmms.Value val, CollectionType type)
 		{
 			Gtk.TreeIter child, parent;
-			weak Gdk.Pixbuf pixbuf;
+			unowned Gdk.Pixbuf pixbuf;
 
 			if (type == CollectionType.Collection) {
 				parent = _collection_iter;
@@ -269,7 +269,7 @@ namespace Abraca {
 
 			int pos = iter_n_children(parent);
 
-			weak Xmms.ListIter list_iter;
+			unowned Xmms.ListIter list_iter;
 			val.get_list_iter(out list_iter);
 
 			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
@@ -349,7 +349,7 @@ namespace Abraca {
 		private void on_collection_add (Client c, string name, string ns)
 		{
 			Gtk.TreeIter iter, parent;
-			weak Gdk.Pixbuf pixbuf;
+			unowned Gdk.Pixbuf pixbuf;
 			CollectionType type;
 
 			if (name[0] == '_') {
