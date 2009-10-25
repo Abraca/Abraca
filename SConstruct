@@ -23,7 +23,7 @@ conf.Define('LOCALEDIR', '"' + env.subst(env['LOCALEDIR']) + '"')
 
 conf.Finish()
 
-env.Append(VALAPKGS = ['playlist-map', 'build-config', 'gdk-keysyms'])
+env.Append(VALAPKGS = ['build-config', 'gdk-keysyms'])
 env.Append(CCFLAGS = ['-Wall', '-Wno-unused-variable'])
 env.Append(CPPPATH = Dir('build'))
 

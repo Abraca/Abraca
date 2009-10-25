@@ -23,16 +23,13 @@ vala_sources = """
 	right_hpaned.vala
 	toolbar.vala
 	transform.vala
+	treerow_map.vala
 	volume_button.vala
 	widgets.vala
 """.split()
 
 sources = env.Vala(vala_sources)
 
-extra = [
-	'utils/playlist_map.c',
-]
-
-prog = env.Program('abraca', sources + extra + [images, ui], install=True)
+prog = env.Program('abraca', sources + [images, ui], install=True)
 
 env.Append(CPPPATH = ['utils'])

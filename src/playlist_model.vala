@@ -44,7 +44,7 @@ namespace Abraca {
 		private Gtk.TreeRowReference _position = null;
 
 		/** keep track of playlist position <-> medialib id */
-		private PlaylistMap playlist_map;
+		private TreeRowMap playlist_map;
 
 		private GLib.Type[] _types = new GLib.Type[] {
 			typeof(int),
@@ -63,7 +63,7 @@ namespace Abraca {
 
 			set_column_types(_types);
 
-			playlist_map = new PlaylistMap();
+			playlist_map = new TreeRowMap(this);
 
 			c.playlist_loaded += on_playlist_loaded;
 
@@ -123,7 +123,7 @@ namespace Abraca {
 
 				get(iter, Column.ID, out mid);
 
-				playlist_map.remove(mid, path);
+				playlist_map.remove_path((int) mid, path);
 				remove(iter);
 			}
 		}
@@ -203,9 +203,7 @@ namespace Abraca {
 
 				set(added, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
 
-				path = get_path(added);
-				Gtk.TreeRowReference row = new Gtk.TreeRowReference(this, path);
-				playlist_map.insert(mid, row);
+				playlist_map.add_iter((int) mid, iter);
 			}
 		}
 
@@ -239,8 +237,6 @@ namespace Abraca {
 
 
 		private void on_playlist_add(Client c, string playlist, uint mid) {
-			Gtk.TreeRowReference row;
-			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 
 			if (playlist != c.current_playlist) {
@@ -250,10 +246,7 @@ namespace Abraca {
 			append(out iter);
 			set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
 
-			path = get_path(iter);
-			row = new Gtk.TreeRowReference(this, path);
-
-			playlist_map.insert(mid, row);
+			playlist_map.add_iter((int) mid, iter);
 		}
 
 
@@ -276,8 +269,6 @@ namespace Abraca {
 			val.get_list_iter(out list_iter);
 
 			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
-				Gtk.TreeRowReference row;
-				Gtk.TreePath path;
 				Xmms.Value entry;
 				int mid = 0;
 
@@ -295,10 +286,7 @@ namespace Abraca {
 
 				sibling = iter;
 
-				path = get_path(iter);
-				row = new Gtk.TreeRowReference(this, path);
-
-				playlist_map.insert(mid, row);
+				playlist_map.add_iter(mid, iter);
 			}
 
 			/* reconnect the model again */
@@ -311,7 +299,6 @@ namespace Abraca {
 
 
 		private bool on_medialib_info(Xmms.Value propdict) {
-			unowned GLib.SList<Gtk.TreeRowReference> lst;
 			string album, title, genre, artist = null;
 			string info;
 			int status, mid;
@@ -319,14 +306,6 @@ namespace Abraca {
 			Xmms.Value val = propdict.propdict_to_dict();
 
 			val.dict_entry_get_int("id", out mid);
-
-			lst = playlist_map.lookup(mid);
-			if (lst == null) {
-				// the given mid doesn't match any of our rows 
-				GLib.stdout.printf("omg %d\n", mid);
-				return false;
-			}
-
 			val.dict_entry_get_int("status", out status);
 
 			if (!val.dict_entry_get_string("album", out album)) {
@@ -374,8 +353,7 @@ namespace Abraca {
 				}
 			}
 
-
-			foreach (unowned Gtk.TreeRowReference row in lst) {
+			foreach (var row in playlist_map.get_paths(mid)) {
 				Gtk.TreePath path;
 				Gtk.TreeIter? iter = null;
 
