@@ -98,18 +98,15 @@ namespace Abraca {
 		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
 			int n = s.count_selected_rows();
 
-			foreach (weak Gtk.MenuItem i
-			         in filter_menu_item_when_none_selected) {
+			foreach (var i in filter_menu_item_when_none_selected) {
 				i.sensitive = (n == 0);
 			}
 
-			foreach (weak Gtk.MenuItem i
-			         in filter_menu_item_when_one_selected) {
+			foreach (var i in filter_menu_item_when_one_selected) {
 				i.sensitive = (n == 1);
 			}
 
-			foreach (weak Gtk.MenuItem i
-			         in filter_menu_item_when_some_selected) {
+			foreach (var i in filter_menu_item_when_some_selected) {
 				i.sensitive = (n > 0);
 			}
 		}
@@ -192,7 +189,7 @@ namespace Abraca {
 			/* Prevent selection-handling when right-clicking on an already
 			   selected entry */
 			if (get_path_at_pos(x, y, out path, null, null, null)) {
-				weak Gtk.TreeSelection sel = get_selection();
+				var sel = get_selection();
 				if (sel.path_is_selected(path)) {
 					return true;
 				}
@@ -218,12 +215,12 @@ namespace Abraca {
 
 		private void on_menu_info(Gtk.MenuItem item) {
 			GLib.List<Gtk.TreePath> list;
-			weak Gtk.TreeModel mod;
+			unowned Gtk.TreeModel mod;
 			Gtk.TreeIter iter;
 			uint id;
 
 			list = get_selection().get_selected_rows(out mod);
-			foreach (weak Gtk.TreePath path in list) {
+			foreach (var path in list) {
 				model.get_iter(out iter, path);
 				model.get(iter, FilterColumn.ID, out id);
 
@@ -235,12 +232,12 @@ namespace Abraca {
 		private void on_menu_add(Gtk.MenuItem item) {
 			Client c = Client.instance();
 			GLib.List<Gtk.TreePath> list;
-			weak Gtk.TreeModel mod;
+			unowned Gtk.TreeModel mod;
 			Gtk.TreeIter iter;
 			uint id;
 
 			list = get_selection().get_selected_rows(out mod);
-			foreach (weak Gtk.TreePath path in list) {
+			foreach (var path in list) {
 				model.get_iter(out iter, path);
 				model.get(iter, FilterColumn.ID, out id);
 
@@ -252,14 +249,14 @@ namespace Abraca {
 		private void on_menu_replace(Gtk.MenuItem item) {
 			Client c = Client.instance();
 			GLib.List<Gtk.TreePath> list;
-			weak Gtk.TreeModel mod;
+			unowned Gtk.TreeModel mod;
 			Gtk.TreeIter iter;
 			uint id;
 
 			c.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
 
 			list = get_selection().get_selected_rows(out mod);
-			foreach (weak Gtk.TreePath path in list) {
+			foreach (var path in list) {
 				model.get_iter(out iter, path);
 				model.get(iter, FilterColumn.ID, out id);
 
@@ -278,7 +275,7 @@ namespace Abraca {
 			cell.ellipsize = Pango.EllipsizeMode.END;
 
 			int pos = 2;
-			foreach (weak string key in store.dynamic_columns) {
+			foreach (unowned string key in store.dynamic_columns) {
 				column = new Gtk.TreeViewColumn.with_attributes(
 					key, cell, "text", pos++, null
 				);
@@ -317,7 +314,7 @@ namespace Abraca {
 			 * handlers from what I can tell...
 			 */
 			Gtk.Container container = (Gtk.Container) ((Gtk.Button) w).child;
-			foreach (weak Gtk.Widget widget in container.get_children()) {
+			foreach (var widget in container.get_children()) {
 				if (widget is Gtk.Alignment) {
 					Gtk.Label lbl = (Gtk.Label) ((Gtk.Alignment) widget).child;
 					menu.set_title(lbl.get_label());
@@ -357,7 +354,7 @@ namespace Abraca {
 					modified = new string[tmp_store.dynamic_columns.length - 1];
 				}
 
-				foreach (weak string s in tmp_store.dynamic_columns) {
+				foreach (unowned string s in tmp_store.dynamic_columns) {
 					if (!enabled && s == prop) {
 						continue;
 					}
@@ -386,13 +383,13 @@ namespace Abraca {
 		 */
 		private void on_header_remove (Gtk.MenuItem item) {
 			Gtk.Menu menu = (Gtk.Menu) item.parent;
-			weak string title = menu.get_title();
+			var title = menu.get_title();
 
 			remove_column_by_name(title);
 		}
 
 		private void remove_column_by_name(string name) {
-			foreach (weak Gtk.TreeViewColumn column in get_columns()) {
+			foreach (var column in get_columns()) {
 				Gtk.Label lbl = (Gtk.Label) column.widget;
 				if (lbl.get_label() == name) {
 					remove_column(column);
@@ -450,11 +447,12 @@ namespace Abraca {
 		private void on_drag_data_get(FilterView w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
-			weak Gtk.TreeSelection sel = get_selection();
-			GLib.List<Gtk.TreePath> lst = sel.get_selected_rows(null);
 			GLib.List<uint> mid_list = new GLib.List<uint>();
 
-			foreach (weak Gtk.TreePath p in lst) {
+			var sel = get_selection();
+			var lst = sel.get_selected_rows(null);
+
+			foreach (unowned Gtk.TreePath p in lst) {
 				Gtk.TreeIter iter;
 				uint mid;
 
@@ -473,7 +471,7 @@ namespace Abraca {
 			}
 
 			/* This should be removed as #515408 gets fixed. */
-			weak uchar[] data = (uchar[]) mid_array;
+			unowned uchar[] data = (uchar[]) mid_array;
 			data.length = (int)(mid_array.length * sizeof(uint));
 
 			selection_data.set(
