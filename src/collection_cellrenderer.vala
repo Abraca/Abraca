@@ -19,14 +19,14 @@
 
 namespace Abraca {
 	public class CollCellRenderer : Gtk.CellRendererText {
-		public weak Gdk.Pixbuf pixbuf {
+		public unowned Gdk.Pixbuf pixbuf {
 			get; set;
 		}
 
 		public override void render (Gdk.Window window, Gtk.Widget widget,
 		                             Gdk.Rectangle bg, Gdk.Rectangle cell,
 		                             Gdk.Rectangle expose, Gtk.CellRendererState flags) {
-			weak Gdk.GC[] gc;
+			unowned Gdk.GC[] gc;
 
 			base.render(window, widget, bg, cell, expose, flags);
 
