@@ -30,6 +30,7 @@ namespace Abraca {
 		private bool _seek;
 
 		private Gtk.Image _coverart;
+		private Gdk.Pixbuf _coverart_big;
 		private Gtk.Label _track_label;
 		private Gtk.Label _time_label;
 		private Gtk.HScale _time_slider;
@@ -152,11 +153,22 @@ namespace Abraca {
 			return false;
 		}
 
+		private bool on_coverart_tooltip (Gtk.Image image, int x, int y, bool keyboard_mode, Gtk.Tooltip tooltip) {
+			if (_coverart_big != null) {
+				tooltip.set_icon (_coverart_big);
+				return true;
+			}
+			return false;
+		}
+
 
 		private void create_cover_image() {
 			_coverart = new Gtk.Image.from_stock(
 				Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR
 			);
+
+			_coverart.has_tooltip = true;
+			_coverart.query_tooltip += on_coverart_tooltip;
 
 			pack_start(_coverart, false, false, 4);
 		}
@@ -243,6 +255,7 @@ namespace Abraca {
 				_coverart.set_from_stock(
 					Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR
 				);
+				_coverart_big = null;
 			} else {
 				Client c = Client.instance();
 
@@ -301,7 +314,9 @@ namespace Abraca {
 
 				pixbuf = loader.get_pixbuf();
 				modified = pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR);
+
 				_coverart.set_from_pixbuf(modified);
+				_coverart_big = pixbuf;
 			}
 
 			return true;
