@@ -33,6 +33,13 @@ namespace Abraca {
 	}
 
 	public class FilterView : Gtk.TreeView, IConfigurable, SelectedRowsMixin {
+		/* field and order used for sorting, see sorting property */
+		public struct Sorting {
+			public string field;
+			public Gtk.SortType order;
+		}
+
+
 		/** context menu */
 		private Gtk.Menu filter_menu;
 
@@ -44,13 +51,16 @@ namespace Abraca {
 		private GLib.List<Gtk.MenuItem>
 			filter_menu_item_when_none_selected = null;
 
-		private Xmms.Value _sort_order;
-
 		/** allowed drag-n-drop variants */
 		private const Gtk.TargetEntry[] _target_entries = {
 			//DragDropTarget.TrackId
 			{"application/x-xmmsclient-track-id", 0, DragDropTargetType.MID}
 		};
+
+		/* properties */
+		public Sorting sorting { get; set; }
+		public Xmms.Collection collection { get; private set; }
+
 
 		construct {
 			fixed_height_mode = true;
@@ -70,10 +80,7 @@ namespace Abraca {
 			row_activated += on_row_activated;
 			key_press_event += on_key_press_event;
 
-			_sort_order = new Xmms.Value.from_list();
-			_sort_order.list_append(new Xmms.Value.from_string("artist"));
-			_sort_order.list_append(new Xmms.Value.from_string("album"));
-			_sort_order.list_append(new Xmms.Value.from_string("tracknr"));
+			notify["sorting"].connect(on_sorting_changed);
 
 			Configurable.register(this);
 		}
@@ -96,6 +103,14 @@ namespace Abraca {
 			create_columns ();
 		}
 
+		private void on_sorting_changed(GLib.Object source, GLib.ParamSpec pspec) {
+			if (collection != null) {
+				query_collection(collection);
+			} else {
+				update_sort_indicators();
+			}
+		}
+
 		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
 			int n = s.count_selected_rows();
 
@@ -115,12 +130,26 @@ namespace Abraca {
 
 		public void query_collection(Xmms.Collection coll, Xmms.NotifierFunc? callback=null) {
 			Client c = Client.instance();
-			Xmms.Result res = c.xmms.coll_query_ids(coll, _sort_order);
+			Xmms.Value order = new Xmms.Value.from_list();
+			Xmms.Result res;
 
+			if (sorting.field == null) {
+				order.list_append(new Xmms.Value.from_string("artist"));
+				order.list_append(new Xmms.Value.from_string("album"));
+				order.list_append(new Xmms.Value.from_string("tracknr"));
+			} else if (sorting.order == Gtk.SortType.DESCENDING) {
+				order.list_append(new Xmms.Value.from_string("-" + sorting.field));
+			} else {
+				order.list_append(new Xmms.Value.from_string(sorting.field));
+			}
+
+			res = c.xmms.coll_query_ids(coll, order);
 			res.notifier_set(on_coll_query_ids);
 			if (callback != null) {
 				res.notifier_set(callback);
 			}
+
+			collection = coll;
 		}
 
 
@@ -168,6 +197,9 @@ namespace Abraca {
 
 			/* reconnect the model again */
 			set_model(store);
+
+			/* set the sort indicator for the sorted column */
+			update_sort_indicators();
 
 			return true;
 		}
@@ -293,41 +325,61 @@ namespace Abraca {
 
 		private bool on_header_clicked (Gtk.Widget w, Gdk.EventButton e)
 		{
-			Gtk.MenuItem item;
-			Gtk.Menu menu;
+			switch (e.button) {
+				case 1:
+					foreach (var column in get_columns()) {
+						if (column.widget.get_ancestor(typeof(Gtk.Button)) == w) {
+							Gtk.SortType order;
+							if (sorting.field == column.title && sorting.order == Gtk.SortType.ASCENDING) {
+								order = Gtk.SortType.DESCENDING;
+							} else {
+								order = Gtk.SortType.ASCENDING;
+							}
+							sorting = {column.title, order};
+							break;
+						}
+					}
+					return true;
+				case 3:
+					Gtk.MenuItem item;
+					var menu = new Gtk.Menu();
 
-			if (e.button != 3) {
-				return false;
+					/* Ok.. this is retarded, but there's no other way of
+					 * propagating the title of the column to the menuitem
+					 * handlers from what I can tell...
+					 */
+					Gtk.Container container = (Gtk.Container) ((Gtk.Button) w).child;
+					foreach (var widget in container.get_children()) {
+						if (widget is Gtk.Alignment) {
+							Gtk.Label lbl = (Gtk.Label) ((Gtk.Alignment) widget).child;
+							menu.set_title(lbl.get_label());
+							break;
+						}
+					}
+
+					item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_EDIT, null);
+					item.activate += on_header_edit;
+					menu.append(item);
+
+					item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_REMOVE, null);
+					item.activate += on_header_remove;
+					menu.append(item);
+
+					if (sorting.field != null) {
+						menu.append(new Gtk.SeparatorMenuItem());
+
+						item = new Gtk.MenuItem.with_label(_("Reset sorting"));
+						item.activate += on_header_reset_sorting;
+						menu.append(item);
+					}
+
+					menu.popup(null, null, null, e.button, Gtk.get_current_event_time());
+
+					menu.show_all();
+					return true;
+				default:
+					return false;
 			}
-
-			menu = new Gtk.Menu();
-
-			/* Ok.. this is retarded, but there's no other way of
-			 * propagating the title of the column to the menuitem
-			 * handlers from what I can tell...
-			 */
-			Gtk.Container container = (Gtk.Container) ((Gtk.Button) w).child;
-			foreach (var widget in container.get_children()) {
-				if (widget is Gtk.Alignment) {
-					Gtk.Label lbl = (Gtk.Label) ((Gtk.Alignment) widget).child;
-					menu.set_title(lbl.get_label());
-					break;
-				}
-			}
-
-			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_EDIT, null);
-			item.activate += on_header_edit;
-			menu.append(item);
-
-			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_REMOVE, null);
-			item.activate += on_header_remove;
-			menu.append(item);
-
-			menu.popup(null, null, null, e.button, Gtk.get_current_event_time());
-
-			menu.show_all();
-
-			return true;
 		}
 
 		private void on_header_edit (Gtk.MenuItem item) {
@@ -379,6 +431,10 @@ namespace Abraca {
 			var title = menu.get_title();
 
 			remove_column_by_name(title);
+		}
+
+		private void on_header_reset_sorting (Gtk.MenuItem item) {
+			sorting = Sorting();
 		}
 
 		private void remove_column_by_name(string name) {
@@ -436,6 +492,16 @@ namespace Abraca {
 			drag_data_get += on_drag_data_get;
 		}
 
+		private void update_sort_indicators() {
+			foreach (var column in get_columns()) {
+				if (column.title == sorting.field) {
+					column.sort_order = sorting.order;
+					column.sort_indicator = true;
+				} else {
+					column.sort_indicator = false;
+				}
+			}
+		}
 
 		private void on_drag_data_get(FilterView w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
