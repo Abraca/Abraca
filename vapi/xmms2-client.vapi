@@ -187,6 +187,17 @@ namespace Xmms {
 		public Result playlist_add_args(string playlist, string url, int len, string[] args);
 		public Result playlist_add_url(string playlist, string url);
 		public Result playlist_add_id(string playlist, uint id);
+		public void   playlist_add_ids(string playlist, Gee.List<int> ids) {
+			foreach (var id in ids) {
+				playlist_add_id(playlist, id);
+			}
+		}
+		public void   playlist_replace_ids(string playlist, Gee.List<int> ids) {
+			playlist_clear(playlist);
+			foreach (var id in ids) {
+				playlist_add_id(playlist, id);
+			}
+		}
 		public Result playlist_add_encoded(string playlist, string url);
 		public Result playlist_add_idlist(string playlist, Collection coll);
 		[NoArrayLength]

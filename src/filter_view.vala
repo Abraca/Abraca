@@ -32,7 +32,7 @@ namespace Abraca {
 		Total
 	}
 
-	public class FilterView : Gtk.TreeView, IConfigurable {
+	public class FilterView : Gtk.TreeView, IConfigurable, SelectedRowsMixin {
 		/** context menu */
 		private Gtk.Menu filter_menu;
 
@@ -68,6 +68,7 @@ namespace Abraca {
 
 			button_press_event += on_button_press_event;
 			row_activated += on_row_activated;
+			key_press_event += on_key_press_event;
 
 			_sort_order = new Xmms.Value.from_list();
 			_sort_order.list_append(new Xmms.Value.from_string("artist"));
@@ -198,6 +199,19 @@ namespace Abraca {
 			return false;
 		}
 
+		private bool on_key_press_event (Gdk.EventKey e) {
+			Client c = Client.instance();
+			if (e.keyval == Gdk.Keysym.Return) {
+				var ids = get_selected_rows<int>(FilterColumn.ID);
+				if ((e.state & Gdk.ModifierType.CONTROL_MASK) > 0) {
+					c.xmms.playlist_replace_ids(Xmms.ACTIVE_PLAYLIST, ids);
+				} else {
+					c.xmms.playlist_add_ids(Xmms.ACTIVE_PLAYLIST, ids);
+				}
+				return true;
+			}
+			return false;
+		}
 
 		private void on_row_activated(FilterView tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
 			Client c = Client.instance();
@@ -231,38 +245,15 @@ namespace Abraca {
 
 		private void on_menu_add(Gtk.MenuItem item) {
 			Client c = Client.instance();
-			GLib.List<Gtk.TreePath> list;
-			unowned Gtk.TreeModel mod;
-			Gtk.TreeIter iter;
-			uint id;
-
-			list = get_selection().get_selected_rows(out mod);
-			foreach (var path in list) {
-				model.get_iter(out iter, path);
-				model.get(iter, FilterColumn.ID, out id);
-
-				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
-			}
+			var ids = get_selected_rows<int>(FilterColumn.ID);
+			c.xmms.playlist_add_ids(Xmms.ACTIVE_PLAYLIST, ids);
 		}
 
 
 		private void on_menu_replace(Gtk.MenuItem item) {
 			Client c = Client.instance();
-			GLib.List<Gtk.TreePath> list;
-			unowned Gtk.TreeModel mod;
-			Gtk.TreeIter iter;
-			uint id;
-
-			c.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
-
-			list = get_selection().get_selected_rows(out mod);
-			foreach (var path in list) {
-				model.get_iter(out iter, path);
-				model.get(iter, FilterColumn.ID, out id);
-
-				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
-			}
-
+			var ids = get_selected_rows<int>(FilterColumn.ID);
+			c.xmms.playlist_replace_ids(Xmms.ACTIVE_PLAYLIST, ids);
 		}
 
 

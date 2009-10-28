@@ -21,6 +21,7 @@ vala_sources = """
 	playlist_view.vala
 	rating_entry.vala
 	right_hpaned.vala
+	selected_rows_mixin.vala
 	toolbar.vala
 	transform.vala
 	treerow_map.vala
