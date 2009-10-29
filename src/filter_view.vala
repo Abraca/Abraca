@@ -67,6 +67,7 @@ namespace Abraca {
 			button_press_event += on_button_press_event;
 			row_activated += on_row_activated;
 			key_press_event += on_key_press_event;
+			columns_changed += on_columns_changed;
 
 			notify["sorting"].connect(on_sorting_changed);
 
@@ -87,8 +88,7 @@ namespace Abraca {
 				list = new string[] {"artist", "title", "album"};
 			}
 
-			model = new FilterModel((owned) list);
-			create_columns ();
+			set_dynamic_columns(list);
 		}
 
 		private void on_sorting_changed(GLib.Object source, GLib.ParamSpec pspec) {
@@ -235,6 +235,20 @@ namespace Abraca {
 			return false;
 		}
 
+		private void on_columns_changed() {
+			if (model != null) {
+				var columns = get_columns();
+				var modified = new string[columns.length()];
+				int i = 0;
+
+				foreach (var column in columns) {
+					modified[i++] = column.title;
+				}
+
+				set_dynamic_columns(modified);
+			}
+		}
+
 		private void on_row_activated(FilterView tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
 			Client c = Client.instance();
 			Gtk.TreeIter iter;
@@ -279,17 +293,19 @@ namespace Abraca {
 		}
 
 
-		private void create_columns() {
-			FilterModel store = (FilterModel) model;
-			Gtk.TreeViewColumn column;
-			Gtk.CellRendererText cell;
+		private void set_dynamic_columns(string[] props) {
+			model = null;
 
-			cell = new Gtk.CellRendererText();
+			foreach (var column in get_columns()) {
+				remove_column(column);
+			}
+
+			var cell = new Gtk.CellRendererText();
 			cell.ellipsize = Pango.EllipsizeMode.END;
 
 			int pos = 2;
-			foreach (unowned string key in store.dynamic_columns) {
-				column = new Gtk.TreeViewColumn.with_attributes(
+			foreach (var key in props) {
+				var column = new Gtk.TreeViewColumn.with_attributes(
 					key, cell, "text", pos++, null
 				);
 				column.resizable = true;
@@ -307,6 +323,14 @@ namespace Abraca {
 				GLib.assert(ancestor != null);
 
 				ancestor.button_press_event += on_header_clicked;
+			}
+
+			model = new FilterModel(props);
+
+			if (collection != null) {
+				query_collection(collection);
+			} else {
+				update_sort_indicators();
 			}
 		}
 
@@ -392,12 +416,7 @@ namespace Abraca {
 					modified[i] = prop;
 				}
 
-				model = new FilterModel((owned) modified);
-
-				foreach (Gtk.TreeViewColumn column in get_columns()) {
-					remove_column(column);
-				}
-				create_columns ();
+				set_dynamic_columns(modified);
 			};
 
 			edit.set_active(store.dynamic_columns);
