@@ -34,6 +34,7 @@ namespace Abraca {
 		private Gtk.Label _track_label;
 		private Gtk.Label _time_label;
 		private Gtk.HScale _time_slider;
+		private VolumeButton _volume_button;
 
 
 		construct {
@@ -63,8 +64,9 @@ namespace Abraca {
 			create_cover_image();
 			create_track_label();
 
-			btn = new VolumeButton();
-			pack_end(btn, false, false, 0);
+			_volume_button = new VolumeButton();
+			_volume_button.no_show_all = true;
+			pack_end(_volume_button, false, false, 0);
 
 			c.playback_status += on_playback_status_change;
 			c.playback_current_id += on_playback_current_id;
@@ -79,6 +81,14 @@ namespace Abraca {
 			};
 
 			c.connected += (c) => {
+				c.xmms.playback_volume_get().notifier_set((val) => {
+					if (val.is_error()) {
+						_volume_button.hide();
+					} else {
+						_volume_button.show();
+					}
+				});
+
 				set_sensitive(true);
 			};
 
