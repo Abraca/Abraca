@@ -20,18 +20,6 @@
 using GLib;
 
 namespace Abraca {
-	/* TODO: Remove and introduce dynamic colums */
-	enum FilterColumn {
-		Status,
-		ID,
-		Artist,
-		Title,
-		Album,
-		Duration,
-		Genre,
-		Total
-	}
-
 	public class FilterView : Gtk.TreeView, IConfigurable, SelectedRowsMixin {
 		/* field and order used for sorting, see sorting property */
 		public struct Sorting {
@@ -165,7 +153,7 @@ namespace Abraca {
 			c.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
 
 			do {
-				model.get(iter, FilterColumn.ID, out id);
+				model.get(iter, FilterModel.Column.ID, out id);
 				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 			} while (model.iter_next(ref iter));
 		}
@@ -181,7 +169,7 @@ namespace Abraca {
 			}
 
 			do {
-				model.get(iter, FilterColumn.ID, out id);
+				model.get(iter, FilterModel.Column.ID, out id);
 				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 			} while (model.iter_next(ref iter));
 		}
@@ -236,7 +224,7 @@ namespace Abraca {
 		private bool on_key_press_event (Gdk.EventKey e) {
 			Client c = Client.instance();
 			if (e.keyval == Gdk.Keysym.Return) {
-				var ids = get_selected_rows<int>(FilterColumn.ID);
+				var ids = get_selected_rows<int>(FilterModel.Column.ID);
 				if ((e.state & Gdk.ModifierType.CONTROL_MASK) > 0) {
 					c.xmms.playlist_replace_ids(Xmms.ACTIVE_PLAYLIST, ids);
 				} else {
@@ -253,7 +241,7 @@ namespace Abraca {
 			uint id;
 
 			model.get_iter(out iter, path);
-			model.get(iter, FilterColumn.ID, out id);
+			model.get(iter, FilterModel.Column.ID, out id);
 			c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 		}
 
@@ -270,7 +258,7 @@ namespace Abraca {
 			list = get_selection().get_selected_rows(out mod);
 			foreach (var path in list) {
 				model.get_iter(out iter, path);
-				model.get(iter, FilterColumn.ID, out id);
+				model.get(iter, FilterModel.Column.ID, out id);
 
 				Abraca.instance().medialib.info_dialog_add_id(id);
 			}
@@ -279,14 +267,14 @@ namespace Abraca {
 
 		private void on_menu_add(Gtk.MenuItem item) {
 			Client c = Client.instance();
-			var ids = get_selected_rows<int>(FilterColumn.ID);
+			var ids = get_selected_rows<int>(FilterModel.Column.ID);
 			c.xmms.playlist_add_ids(Xmms.ACTIVE_PLAYLIST, ids);
 		}
 
 
 		private void on_menu_replace(Gtk.MenuItem item) {
 			Client c = Client.instance();
-			var ids = get_selected_rows<int>(FilterColumn.ID);
+			var ids = get_selected_rows<int>(FilterModel.Column.ID);
 			c.xmms.playlist_replace_ids(Xmms.ACTIVE_PLAYLIST, ids);
 		}
 
