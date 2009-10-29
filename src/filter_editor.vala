@@ -162,22 +162,30 @@ namespace Abraca {
 		}
 
 		private void on_entry_toggled (Gtk.CellRendererToggle renderer, string updated) {
-			Gtk.ListStore store;
+			Gtk.ListStore store = (Gtk.ListStore) _view.model;
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 			unowned string property;
 			bool state;
+			int n_active = 0;
 
-			store = (Gtk.ListStore) _view.model;
+			store.get_iter_first(out iter);
+			do {
+				store.get(iter, Column.ACTIVE, out state);
+				if (state) {
+					n_active++;
+				}
+			} while (store.iter_next(ref iter));
 
 			path = new Gtk.TreePath.from_string(updated);
 			store.get_iter(out iter, path);
-
 			store.get(iter, Column.ACTIVE, out state, Column.NAME, out property);
-			state = !state;
-			store.set(iter, Column.ACTIVE, state);
 
-			column_changed(property, state);
+			state = !state;
+			if (n_active > 1 || state) {
+				store.set(iter, Column.ACTIVE, state);
+				column_changed(property, state);
+			}
 		}
 	}
 }

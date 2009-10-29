@@ -355,8 +355,9 @@ namespace Abraca {
 				case 3:
 					Gtk.MenuItem item;
 					var menu = new Gtk.Menu();
+					var columns = get_columns();
 
-					foreach (var column in get_columns()) {
+					foreach (var column in columns) {
 						if (column.widget.get_ancestor(typeof(Gtk.Button)) == w) {
 							menu.set_title(column.title);
 							break;
@@ -367,9 +368,11 @@ namespace Abraca {
 					item.activate += on_header_edit;
 					menu.append(item);
 
-					item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_REMOVE, null);
-					item.activate += on_header_remove;
-					menu.append(item);
+					if (columns.length() > 1) {
+						item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_REMOVE, null);
+						item.activate += on_header_remove;
+						menu.append(item);
+					}
 
 					if (sorting.field != null) {
 						menu.append(new Gtk.SeparatorMenuItem());
