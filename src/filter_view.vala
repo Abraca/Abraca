@@ -344,15 +344,9 @@ namespace Abraca {
 					Gtk.MenuItem item;
 					var menu = new Gtk.Menu();
 
-					/* Ok.. this is retarded, but there's no other way of
-					 * propagating the title of the column to the menuitem
-					 * handlers from what I can tell...
-					 */
-					Gtk.Container container = (Gtk.Container) ((Gtk.Button) w).child;
-					foreach (var widget in container.get_children()) {
-						if (widget is Gtk.Alignment) {
-							Gtk.Label lbl = (Gtk.Label) ((Gtk.Alignment) widget).child;
-							menu.set_title(lbl.get_label());
+					foreach (var column in get_columns()) {
+						if (column.widget.get_ancestor(typeof(Gtk.Button)) == w) {
+							menu.set_title(column.title);
 							break;
 						}
 					}
@@ -422,30 +416,20 @@ namespace Abraca {
 			edit.run();
 		}
 
-		/**
-		 * Here we actually keep the data, and simply delete the
-		 * TreeViewColumn.. keep it simple..
-		 */
 		private void on_header_remove (Gtk.MenuItem item) {
-			Gtk.Menu menu = (Gtk.Menu) item.parent;
-			var title = menu.get_title();
-
-			remove_column_by_name(title);
+			var title = ((Gtk.Menu) item.parent).get_title();
+			foreach (var column in get_columns()) {
+				if (column.title == title) {
+					remove_column(column);
+					break;
+				}
+			}
 		}
 
 		private void on_header_reset_sorting (Gtk.MenuItem item) {
 			sorting = Sorting();
 		}
 
-		private void remove_column_by_name(string name) {
-			foreach (var column in get_columns()) {
-				Gtk.Label lbl = (Gtk.Label) column.widget;
-				if (lbl.get_label() == name) {
-					remove_column(column);
-					break;
-				}
-			}
-		}
 
 		private void create_context_menu() {
 			Gtk.MenuItem item;
