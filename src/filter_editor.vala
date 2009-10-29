@@ -34,6 +34,7 @@ namespace Abraca {
 			"artist",
 			"bitrate",
 			"comment",
+			"date",
 			"duration",
 			"genre",
 			"laststarted",
