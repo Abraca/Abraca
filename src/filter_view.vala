@@ -99,7 +99,7 @@ namespace Abraca {
 				list = new string[] {"artist", "title", "album"};
 			}
 
-			model = FilterModel.create((owned) list);
+			model = new FilterModel((owned) list);
 			create_columns ();
 		}
 
@@ -410,7 +410,7 @@ namespace Abraca {
 					modified[i] = prop;
 				}
 
-				model = FilterModel.create((owned) modified);
+				model = new FilterModel((owned) modified);
 
 				foreach (Gtk.TreeViewColumn column in get_columns()) {
 					remove_column(column);

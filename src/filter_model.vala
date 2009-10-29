@@ -40,27 +40,18 @@ namespace Abraca {
 		/* Map medialib id to row */
 		private Gee.Map<int,Gtk.TreeRowReference> pos_map;
 
-		/**
-		 * TODO: Get rid of this one...
-		 * This method exists due to a bug in Vala that prevents constructors
-		 * to accept string[] parameters for initialization. Get rid of this
-		 * hack as soon as possible!
-		 */
-		public static FilterModel create(owned string[] props) {
-			FilterModel model = new FilterModel();
 
-			model._set_dynamic_columns((owned) props);
+		construct {
+			pos_map = new Gee.HashMap<int,Gtk.TreeRowReference>();
 
-			return model;
+			Client.instance().medialib_entry_changed += (client, res) => {
+				on_medialib_info(res);
+			};
 		}
 
-		/**
-		 * TODO: Get rid of this one too...
-		 * Helper method for the factory hack above.
-		 */
-		public void _set_dynamic_columns (owned string[] props) {
-			int n_columns = props.length;
 
+		public FilterModel (owned string[] props) {
+			int n_columns = props.length;
 			GLib.Type[] types = new GLib.Type[2 + n_columns];
 
 			types[0] = typeof(int);
@@ -73,15 +64,6 @@ namespace Abraca {
 			set_column_types(types);
 
 			dynamic_columns = (owned) props;
-		}
-
-		construct {
-			pos_map = new Gee.HashMap<int,Gtk.TreeRowReference>();
-
-			Client c = Client.instance();
-			c.medialib_entry_changed += (client, res) => {
-				on_medialib_info(res);
-			};
 		}
 
 
