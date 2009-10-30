@@ -394,10 +394,6 @@ namespace Abraca {
 
 			var list = get_selected_rows<string>(column);
 
-			Xmms.Collection union = new Xmms.Collection(Xmms.CollectionType.UNION);
-			Xmms.Collection universe = Xmms.Collection.universe();
-			Xmms.Collection coll;
-
 			foreach (var val in list) {
 				if (val == "Unknown") {
 					continue;
@@ -406,14 +402,6 @@ namespace Abraca {
 				if (empty) {
 					empty = false;
 				}
-
-				coll = new Xmms.Collection(Xmms.CollectionType.EQUALS);
-
-				coll.attribute_set("field", key);
-				coll.attribute_set("value", val);
-				coll.add_operand(universe);
-
-				union.add_operand(coll);
 
 				if (query != "") {
 					query += " OR ";
@@ -424,8 +412,6 @@ namespace Abraca {
 			if (!empty) {
 				Abraca.instance().main_window.main_hpaned.
 					right_hpaned.filter_entry_set_text(query);
-				Abraca.instance().main_window.main_hpaned.
-					right_hpaned.filter_tree.query_collection(union);
 			}
 		}
 

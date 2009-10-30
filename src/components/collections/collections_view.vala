@@ -375,9 +375,6 @@ namespace Abraca {
 
 			type = CollectionsModel.CollectionType.Collection;
 			if (store.path_is_child_of_type(path, type)) {
-				c.xmms.coll_get(name, "Collections").notifier_set(
-					on_coll_get
-				);
 				if (Client.collection_needs_quoting(name)) {
 					Abraca.instance().main_window.main_hpaned.
 					right_hpaned.filter_entry_set_text("in:\"" + name + "\"");
@@ -403,7 +400,6 @@ namespace Abraca {
 
 				if (path.get_depth() == 2) {
 					CollectionsModel.CollectionType type;
-					Client c = Client.instance();
 					unowned string ns;
 					string name;
 
@@ -415,9 +411,6 @@ namespace Abraca {
 					} else {
 						ns = Xmms.COLLECTION_NS_PLAYLISTS;
 					}
-
-					/* TODO: Pass to the top class of filtertree */
-					c.xmms.coll_get(name, ns).notifier_set(on_coll_get);
 
 					if (Client.collection_needs_quoting(name)) {
 						Abraca.instance().main_window.main_hpaned.
@@ -490,19 +483,6 @@ namespace Abraca {
 					c.xmms.coll_remove(name, ns);
 				}
 			}
-		}
-
-
-		private bool on_coll_get (Xmms.Value val)
-		{
-			Xmms.Collection coll;
-
-			if (val.get_coll(out coll)) {
-				Abraca.instance().main_window.main_hpaned.
-					right_hpaned.filter_tree.query_collection(coll);
-			}
-
-			return true;
 		}
 
 
