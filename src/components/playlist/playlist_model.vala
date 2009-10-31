@@ -87,17 +87,17 @@ namespace Abraca {
 		 * has been resolved or not, otherwise resolve it.
 		 */
 		public void get_value(Gtk.TreeIter iter, int column, ref GLib.Value val) {
-			GLib.Value tmp1;
+			GLib.Value status;
 
-			base.get_value(iter, Column.STATUS, out tmp1);
-			if (((Status)tmp1.get_int()) == Status.UNRESOLVED) {
-				GLib.Value tmp2;
+			base.get_value(iter, Column.STATUS, out status);
+			if (status.get_int() == Status.UNRESOLVED) {
+				GLib.Value mid;
 
-				base.get_value(iter, Column.ID, out tmp2);
+				base.get_value(iter, Column.ID, out mid);
 
 				set(iter, Column.STATUS, Status.RESOLVING);
 
-				client.xmms.medialib_get_info(tmp2.get_uint()).notifier_set(
+				client.xmms.medialib_get_info(mid.get_uint()).notifier_set(
 					on_medialib_info
 				);
 			}
