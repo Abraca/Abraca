@@ -10,7 +10,6 @@ vala_sources = """
     main_hpaned.vala
     main_window.vala
     medialib.vala
-    rating_entry.vala
     right_hpaned.vala
     toolbar.vala
     transform.vala
@@ -26,6 +25,7 @@ types_sources = """
 widgets_sources = """
     widgets/checkmenuitem.vala
     widgets/collection_cellrenderer.vala
+    widgets/rating_entry.vala
 """.split()
 
 components_sources = """
