@@ -38,6 +38,7 @@ components_sources = """
 
     components/playlist/playlist_model.vala
     components/playlist/playlist_view.vala
+    components/playlist/playlist_widget.vala
 """.split()
 
 sources = env.Vala(vala_sources + types_sources + widgets_sources + components_sources)

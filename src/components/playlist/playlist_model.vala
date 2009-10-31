@@ -46,6 +46,8 @@ namespace Abraca {
 		/** keep track of playlist position <-> medialib id */
 		private TreeRowMap playlist_map;
 
+		private Client client;
+
 		private GLib.Type[] _types = new GLib.Type[] {
 			typeof(int),
 			typeof(uint),
@@ -58,28 +60,27 @@ namespace Abraca {
 			typeof(string)
 		};
 
-		construct {
-			Client c = Client.instance();
-
+		public PlaylistModel (Client _client) {
 			set_column_types(_types);
 
 			playlist_map = new TreeRowMap(this);
 
-			c.playlist_loaded += on_playlist_loaded;
+			client = _client;
 
-			c.playlist_add += on_playlist_add;
-			c.playlist_move += on_playlist_move;
-			c.playlist_insert += on_playlist_insert;
-			c.playlist_remove += on_playlist_remove;
-			c.playlist_position += on_playlist_position;
+			client.playlist_loaded += on_playlist_loaded;
 
-			c.playback_status += on_playback_status;
+			client.playlist_add += on_playlist_add;
+			client.playlist_move += on_playlist_move;
+			client.playlist_insert += on_playlist_insert;
+			client.playlist_remove += on_playlist_remove;
+			client.playlist_position += on_playlist_position;
 
-			c.medialib_entry_changed += (client,res) => {
+			client.playback_status += on_playback_status;
+
+			client.medialib_entry_changed += (c, res) => {
 				on_medialib_info(res);
 			};
 		}
-
 
 		/**
 		 * When GTK asks for the value of a column, check if the row
@@ -90,14 +91,13 @@ namespace Abraca {
 
 			base.get_value(iter, Column.STATUS, out tmp1);
 			if (((Status)tmp1.get_int()) == Status.UNRESOLVED) {
-				Client c = Client.instance();
 				GLib.Value tmp2;
 
 				base.get_value(iter, Column.ID, out tmp2);
 
 				set(iter, Column.STATUS, Status.RESOLVING);
 
-				c.xmms.medialib_get_info(tmp2.get_uint()).notifier_set(
+				client.xmms.medialib_get_info(tmp2.get_uint()).notifier_set(
 					on_medialib_info
 				);
 			}
@@ -113,7 +113,7 @@ namespace Abraca {
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 
-			if (playlist != c.current_playlist) {
+			if (playlist != client.current_playlist) {
 				return;
 			}
 
@@ -169,7 +169,7 @@ namespace Abraca {
 
 				/* Notify the Client of the current medialib id */
 				get(iter, Column.ID, out mid);
-				c.set_playlist_id(mid);
+				client.set_playlist_id(mid);
 
 				set(
 					iter,
@@ -191,7 +191,7 @@ namespace Abraca {
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 
-			if (playlist != c.current_playlist) {
+			if (playlist != client.current_playlist) {
 				return;
 			}
 
@@ -220,7 +220,7 @@ namespace Abraca {
 				get_iter(out iter, _position.get_path());
 				get(iter, Column.ID, out mid);
 
-				c.set_playlist_id(mid);
+				client.set_playlist_id(mid);
 			}
 		}
 
@@ -230,7 +230,7 @@ namespace Abraca {
 		 * the mids of that playlist.
 		 */
 		private void on_playlist_loaded(Client c, string name) {
-			c.xmms.playlist_list_entries(name).notifier_set(
+			client.xmms.playlist_list_entries(name).notifier_set(
 				on_playlist_list_entries
 			);
 		}
@@ -239,7 +239,7 @@ namespace Abraca {
 		private void on_playlist_add(Client c, string playlist, uint mid) {
 			Gtk.TreeIter iter;
 
-			if (playlist != c.current_playlist) {
+			if (playlist != client.current_playlist) {
 				return;
 			}
 

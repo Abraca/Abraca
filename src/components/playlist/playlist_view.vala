@@ -57,8 +57,12 @@ namespace Abraca {
 		/** current playlist sort order */
 		private Xmms.Value _sort;
 
-		construct {
-			Client c = Client.instance();
+		private Client client;
+		private Config config;
+
+		public PlaylistView (PlaylistModel _model, Client _client, Config _config) {
+			model = _model;
+			client = _client;
 
 			enable_search = false;
 			search_column = 1;
@@ -71,13 +75,11 @@ namespace Abraca {
 
 			create_columns ();
 
-			model = new PlaylistModel();
-
 			row_activated += on_row_activated;
 			key_press_event += on_key_press_event;
 			button_press_event += on_button_press_event;
 
-			create_context_menu();
+			create_context_menu(config);
 			get_selection().changed += on_selection_changed_update_menu;
 			on_selection_changed_update_menu(get_selection());
 
@@ -143,10 +145,8 @@ namespace Abraca {
 				lst.prepend(path.get_indices()[0]);
 			}
 
-			Client c = Client.instance();
-
 			foreach (uint id in lst) {
-				c.xmms.playlist_remove_entry(Xmms.ACTIVE_PLAYLIST, id);
+				client.xmms.playlist_remove_entry(Xmms.ACTIVE_PLAYLIST, id);
 			}
 		}
 
@@ -233,7 +233,7 @@ namespace Abraca {
 		}
 
 
-		private void create_context_menu() {
+		private void create_context_menu(Config config) {
 			Gtk.ImageMenuItem img_item;
 			Gtk.MenuItem item;
 			Gtk.Menu submenu;
@@ -303,37 +303,37 @@ namespace Abraca {
 			submenu = new Gtk.Menu();
 			item = new Gtk.MenuItem.with_label(_("Artist"));
 			item.activate += i => {
-				on_menu_playlist_sort(Config.instance().sorting_artist);
+				on_menu_playlist_sort(config.sorting_artist);
 			};
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("Album"));
 			item.activate += i => {
-				on_menu_playlist_sort(Config.instance().sorting_album);
+				on_menu_playlist_sort(config.sorting_album);
 			};
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("Title"));
 			item.activate += i => {
-				on_menu_playlist_sort(Config.instance().sorting_title);
+				on_menu_playlist_sort(config.sorting_title);
 			};
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("Year"));
 			item.activate += i => {
-				on_menu_playlist_sort(Config.instance().sorting_year);
+				on_menu_playlist_sort(config.sorting_year);
 			};
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("Path"));
 			item.activate += i => {
-				on_menu_playlist_sort(Config.instance().sorting_path);
+				on_menu_playlist_sort(config.sorting_path);
 			};
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("Custom"));
 			item.activate += i => {
-				on_menu_playlist_sort(Config.instance().sorting_custom);
+				on_menu_playlist_sort(config.sorting_custom);
 			};
 			submenu.append(item);
 
@@ -349,8 +349,7 @@ namespace Abraca {
 			/* Shuffle */
 			item = new Gtk.MenuItem.with_label(_("Shuffle"));
 			item.activate += i => {
-				Client c = Client.instance();
-				c.xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
+				client.xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
 			};
 			_playlist_menu.append(item);
 
@@ -359,8 +358,7 @@ namespace Abraca {
 				Gtk.STOCK_CLEAR, null
 			);
 			img_item.activate += i => {
-				Client c = Client.instance();
-				c.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
+				client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
 			};
 			_playlist_menu.append(img_item);
 
@@ -369,15 +367,13 @@ namespace Abraca {
 
 
 		private void on_menu_playlist_sort(string type) {
-			Client c = Client.instance();
-
 			_sort = new Xmms.Value.from_list();
 
 			foreach (string s in type.split(",")) {
 				_sort.list_append(new Xmms.Value.from_string(s));
 			}
 
-			c.xmms.playlist_sort(Xmms.ACTIVE_PLAYLIST, _sort);
+			client.xmms.playlist_sort(Xmms.ACTIVE_PLAYLIST, _sort);
 		}
 
 
@@ -547,8 +543,6 @@ namespace Abraca {
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
 
-			Client c = Client.instance();
-
 			/* TODO: Updated when #515408 vala bug has been fixed */
 			unowned uint[] source = (uint[]) sel.data;
 			source.length = (int)(sel.length / sizeof(uint));
@@ -566,10 +560,10 @@ namespace Abraca {
 
 				for (int i = source.length - 1; i >= 0; i--) {
 					if (source[i] < dest) {
-						c.xmms.playlist_move_entry(Xmms.ACTIVE_PLAYLIST, source[i]-downward, (uint) dest-1);
+						client.xmms.playlist_move_entry(Xmms.ACTIVE_PLAYLIST, source[i]-downward, (uint) dest-1);
 						downward++;
 					} else {
-						c.xmms.playlist_move_entry(Xmms.ACTIVE_PLAYLIST, source[i], (uint) dest+upward);
+						client.xmms.playlist_move_entry(Xmms.ACTIVE_PLAYLIST, source[i], (uint) dest+upward);
 						upward++;
 					}
 				}
@@ -586,8 +580,6 @@ namespace Abraca {
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
 
-			Client c = Client.instance();
-
 			/* TODO: Updated when #515408 vala bug has been fixed */
 			unowned uint[] ids = (uint[]) sel.data;
 			ids.length = (int)(sel.length / sizeof(uint));
@@ -595,11 +587,11 @@ namespace Abraca {
 			if (get_dest_row_at_pos(x, y, out path, out align)) {
 				int pos = path.get_indices()[0];
 				foreach (uint id in ids) {
-					c.xmms.playlist_insert_id(Xmms.ACTIVE_PLAYLIST, pos, id);
+					client.xmms.playlist_insert_id(Xmms.ACTIVE_PLAYLIST, pos, id);
 				}
 			} else {
 				foreach (uint id in ids) {
-					c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+					client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 				}
 			}
 
@@ -615,8 +607,6 @@ namespace Abraca {
 		private bool on_drop_files(Gtk.SelectionData sel, int x, int y,
 		                           bool internet = false) {
 			string[] uri_list;
-
-			Client c = Client.instance();
 
 			uri_list = ((string) sel.data).split("\r\n");
 
@@ -640,12 +630,12 @@ namespace Abraca {
 					}
 
 					if (is_dir) {
-						c.xmms.playlist_radd (Xmms.ACTIVE_PLAYLIST, uri);
+						client.xmms.playlist_radd (Xmms.ACTIVE_PLAYLIST, uri);
 					} else if (get_dest_row_at_pos(x, y, out path, out align)) {
 						int pos = path.get_indices()[0];
-						c.xmms.playlist_insert_url(Xmms.ACTIVE_PLAYLIST, pos, uri);
+						client.xmms.playlist_insert_url(Xmms.ACTIVE_PLAYLIST, pos, uri);
 					} else {
-						c.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, uri);
+						client.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, uri);
 					}
 				}
 			}
@@ -655,7 +645,6 @@ namespace Abraca {
 
 
 		private bool on_drop_collection(Gtk.SelectionData sel, int x, int y) {
-			Client c = Client.instance();
 			Xmms.Collection coll;
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
@@ -678,9 +667,9 @@ namespace Abraca {
 				    align ==  Gtk.TreeViewDropPosition.INTO_OR_AFTER) {
 					pos++;
 				}
-				c.xmms.playlist_insert_collection(Xmms.ACTIVE_PLAYLIST, pos, coll, _sort);
+				client.xmms.playlist_insert_collection(Xmms.ACTIVE_PLAYLIST, pos, coll, _sort);
 			} else {
-				c.xmms.playlist_add_collection(Xmms.ACTIVE_PLAYLIST, coll, _sort);
+				client.xmms.playlist_add_collection(Xmms.ACTIVE_PLAYLIST, coll, _sort);
 			}
 
 			return true;
@@ -692,21 +681,13 @@ namespace Abraca {
 		 * playing.
 		 */
 		private void jump_to_pos(int pos) {
-			Client c = Client.instance();
-
-			c.xmms.playlist_set_next(pos).notifier_set((res) => {
-				// TODO: Should use outer client when vala supports this.
-				Client c2 = Client.instance();
-				c2.xmms.playback_tickle().notifier_set((res) => {
-					// TODO: Should use outer client when vala supports this.
-					Client c3 = Client.instance();
-					c3.xmms.playback_status().notifier_set((res) => {
-						// TODO: Should use outer client when vala supports this.
-						Client c4 = Client.instance();
+			client.xmms.playlist_set_next(pos).notifier_set((res) => {
+				client.xmms.playback_tickle().notifier_set((res) => {
+					client.xmms.playback_status().notifier_set((res) => {
 						int status;
 						res.get_int(out status);
 						if (status != Xmms.PlaybackStatus.PLAY) {
-							c4.xmms.playback_start();
+							client.xmms.playback_start();
 						}
 						return true;
 					});

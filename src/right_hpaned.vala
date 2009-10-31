@@ -189,17 +189,9 @@ namespace Abraca {
 		private Gtk.Box create_right_box() {
 			Gtk.VBox box = new Gtk.VBox(false, 0);
 
-			Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(
-				null, null
-			);
+			var playlist = new PlaylistWidget(Client.instance(), Config.instance());
 
-			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
-			                    Gtk.PolicyType.AUTOMATIC);
-			scrolled.set_shadow_type(Gtk.ShadowType.IN);
-
-			scrolled.add(new PlaylistView());
-
-			box.pack_start(scrolled, true, true, 0);
+			box.pack_start(playlist, true, true, 0);
 
 			return box;
 		}
