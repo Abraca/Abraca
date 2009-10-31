@@ -63,6 +63,7 @@ namespace Abraca {
 		public PlaylistView (PlaylistModel _model, Client _client, Config _config) {
 			model = _model;
 			client = _client;
+			config = _config;
 
 			enable_search = false;
 			search_column = 1;
