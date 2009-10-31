@@ -71,20 +71,19 @@ namespace Abraca {
 			rules_hint = true;
 			fixed_height_mode = true;
 
-			var sel = get_selection();
-			sel.set_mode(Gtk.SelectionMode.MULTIPLE);
-
 			create_columns ();
+			create_context_menu(config);
+			create_dragndrop();
 
 			row_activated += on_row_activated;
 			key_press_event += on_key_press_event;
 			button_press_event += on_button_press_event;
 
-			create_context_menu(config);
-			get_selection().changed += on_selection_changed_update_menu;
-			on_selection_changed_update_menu(get_selection());
+			var selection = get_selection();
+			selection.set_mode(Gtk.SelectionMode.MULTIPLE);
+			selection.changed += on_selection_changed_update_menu;
 
-			create_dragndrop();
+			on_selection_changed_update_menu(selection);
 
 			show_all();
 		}
