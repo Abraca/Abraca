@@ -20,7 +20,7 @@
 using GLib;
 
 namespace Abraca {
-	public class PlaylistView : Gtk.TreeView {
+	public class PlaylistView : Gtk.TreeView, SelectedRowsMixin {
 		/** context menu */
 		private Gtk.Menu _playlist_menu;
 
@@ -378,13 +378,9 @@ namespace Abraca {
 
 
 		private void on_menu_playlist_filter(string key) {
-			GLib.List<Gtk.TreePath> list;
-			Gtk.TreeSelection sel;
-			Gtk.TreeIter iter;
-			string val;
-			int column;
 			bool empty = true;
 			string query = "";
+			int column;
 
 			if (key == "artist") {
 				column = PlaylistModel.Column.ARTIST;
@@ -396,17 +392,13 @@ namespace Abraca {
 				return;
 			}
 
-			sel = get_selection();
-			list = sel.get_selected_rows(null);
+			var list = get_selected_rows<string>(column);
 
 			Xmms.Collection union = new Xmms.Collection(Xmms.CollectionType.UNION);
 			Xmms.Collection universe = Xmms.Collection.universe();
 			Xmms.Collection coll;
 
-			foreach(unowned Gtk.TreePath path in list) {
-				model.get_iter(out iter, path);
-				model.get(iter, column, out val);
-
+			foreach (var val in list) {
 				if (val == "Unknown") {
 					continue;
 				}
@@ -439,16 +431,9 @@ namespace Abraca {
 
 
 		private void on_menu_playlist_info(Gtk.MenuItem item) {
-			GLib.List<Gtk.TreePath> list;
-			unowned Gtk.TreeModel mod;
-			Gtk.TreeIter iter;
-			uint id;
-
-			list = get_selection().get_selected_rows(out mod);
-			foreach (unowned Gtk.TreePath path in list) {
-				model.get_iter(out iter, path);
-				model.get(iter, PlaylistModel.Column.ID, out id);
-				Abraca.instance().medialib.info_dialog_add_id(id);
+			var list = get_selected_rows<uint>(PlaylistModel.Column.ID);
+			foreach (var mid in list) {
+				Abraca.instance().medialib.info_dialog_add_id(mid);
 			}
 		}
 
