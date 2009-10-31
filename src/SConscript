@@ -3,33 +3,44 @@ Import('images')
 Import('ui')
 
 vala_sources = """
-	abraca.vala
-	client.vala
-	collection_cellrenderer.vala
-	collections_model.vala
-	collections_view.vala
-	config.vala
-	configurable.vala
-	dragdroptarget.vala
-	filter_editor.vala
-	filter_model.vala
-	filter_view.vala
-	main_hpaned.vala
-	main_window.vala
-	medialib.vala
-	playlist_model.vala
-	playlist_view.vala
-	rating_entry.vala
-	right_hpaned.vala
-	selected_rows_mixin.vala
-	toolbar.vala
-	transform.vala
-	treerow_map.vala
-	volume_button.vala
-	widgets.vala
+    abraca.vala
+    client.vala
+    config.vala
+    dragdroptarget.vala
+    main_hpaned.vala
+    main_window.vala
+    medialib.vala
+    rating_entry.vala
+    right_hpaned.vala
+    toolbar.vala
+    transform.vala
+    treerow_map.vala
+    volume_button.vala
 """.split()
 
-sources = env.Vala(vala_sources)
+types_sources = """
+    types/configurable.vala
+    types/selected_rows_mixin.vala
+""".split()
+
+widgets_sources = """
+    widgets/checkmenuitem.vala
+    widgets/collection_cellrenderer.vala
+""".split()
+
+components_sources = """
+    components/collections/collections_model.vala
+    components/collections/collections_view.vala
+
+    components/filter/filter_editor.vala
+    components/filter/filter_model.vala
+    components/filter/filter_view.vala
+
+    components/playlist/playlist_model.vala
+    components/playlist/playlist_view.vala
+""".split()
+
+sources = env.Vala(vala_sources + types_sources + widgets_sources + components_sources)
 
 prog = env.Program('abraca', sources + [images, ui], install=True)
 
