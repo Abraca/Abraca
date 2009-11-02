@@ -125,7 +125,7 @@ namespace Abraca {
 				order.list_append(new Xmms.Value.from_string("artist"));
 				order.list_append(new Xmms.Value.from_string("album"));
 				order.list_append(new Xmms.Value.from_string("tracknr"));
-			} else if (sorting.order == Gtk.SortType.DESCENDING) {
+			} else if (sorting.order == Gtk.SortType.ASCENDING) {
 				order.list_append(new Xmms.Value.from_string("-" + sorting.field));
 			} else {
 				order.list_append(new Xmms.Value.from_string(sorting.field));
@@ -342,10 +342,10 @@ namespace Abraca {
 					foreach (var column in get_columns()) {
 						if (column.widget.get_ancestor(typeof(Gtk.Button)) == w) {
 							Gtk.SortType order;
-							if (sorting.field == column.title && sorting.order == Gtk.SortType.ASCENDING) {
-								order = Gtk.SortType.DESCENDING;
-							} else {
+							if (sorting.field == column.title && sorting.order == Gtk.SortType.DESCENDING) {
 								order = Gtk.SortType.ASCENDING;
+							} else {
+								order = Gtk.SortType.DESCENDING;
 							}
 							sorting = {column.title, order};
 							break;
