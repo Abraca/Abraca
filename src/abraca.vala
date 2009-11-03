@@ -62,6 +62,7 @@ namespace Abraca {
 
 			GLib.Intl.textdomain(Build.Config.APPNAME);
 			GLib.Intl.bindtextdomain(Build.Config.APPNAME, Build.Config.LOCALEDIR);
+			GLib.Intl.bind_textdomain_codeset(Build.Config.APPNAME, "UTF-8");
 
 			Abraca a = Abraca.instance();
 
