@@ -3,6 +3,7 @@ Import('*')
 sources = Split("""
 	sv.po
 	en.po
+	de.po
 """)
 
 for po in sources:
