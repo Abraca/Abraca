@@ -184,7 +184,7 @@ msgid ""
 msgstr ""
 
 #: ../data/ui/about.xml.h:19
-msgid "Copyright &#xA9; 2007-2009 Abraca Developers"
+msgid "Copyright © 2007-2009 Abraca Developers"
 msgstr ""
 
 #: ../data/ui/main_menu.xml.h:1

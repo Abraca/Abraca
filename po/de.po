@@ -202,8 +202,8 @@ msgstr ""
 "USA."
 
 #: ../data/ui/about.xml.h:19
-msgid "Copyright &#xA9; 2007-2009 Abraca Developers"
-msgstr "Copyright &#xA9; 2007-2009 Abraca Entwickler"
+msgid "Copyright © 2007-2009 Abraca Developers"
+msgstr "Copyright © 2007-2009 Abraca Entwickler"
 
 #: ../data/ui/main_menu.xml.h:1
 msgid "Clear"
