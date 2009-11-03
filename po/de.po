@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 09:03+0100\n"
+"POT-Creation-Date: 2009-11-03 12:10+0100\n"
 "PO-Revision-Date: 2009-11-03 09:03+0100\n"
 "Last-Translator: Sebastian Noack <sebastian.noack@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,31 +56,17 @@ msgstr "E_rsetzen"
 #: ../src/components/playlist/playlist_model.vala:312
 #: ../src/components/playlist/playlist_model.vala:315
 #: ../src/components/playlist/playlist_model.vala:322
-#: ../src/components/playlist/playlist_model.vala:342 ../src/toolbar.vala:280
+#: ../src/components/playlist/playlist_model.vala:340 ../src/toolbar.vala:280
 #: ../src/toolbar.vala:284 ../src/transform.vala:29 ../src/transform.vala:69
 #, c-format
 msgid "Unknown"
 msgstr "Unbekannt"
 
 #: ../src/components/playlist/playlist_model.vala:327
+#: ../src/components/playlist/playlist_model.vala:332
 #, c-format
-msgid "<b>%s</b> - <small>%s</small>\n"
-msgstr ""
-
-#: ../src/components/playlist/playlist_model.vala:333 ../src/toolbar.vala:288
-#, c-format
-msgid "<b>%s</b>\n"
-msgstr ""
-
-#: ../src/components/playlist/playlist_model.vala:347
-#, c-format
-msgid "<b>%s</b> - <small>%s</small>"
-msgstr ""
-
-#: ../src/components/playlist/playlist_model.vala:351 ../src/toolbar.vala:293
-#, c-format
-msgid "<b>%s</b>"
-msgstr ""
+msgid "<small>by</small> %s <small>from</small> %s"
+msgstr "<small>von</small> %s <small>aus</small> %s"
 
 #. Jump
 #: ../src/components/playlist/playlist_view.vala:245
@@ -157,6 +143,11 @@ msgstr "Kein Track"
 #, c-format
 msgid "%3d:%02d  of %3d:%02d"
 msgstr "%3d:%02d  von %3d:%02d"
+
+#: ../src/toolbar.vala:288
+#, c-format
+msgid "<span size=\"small\" foreground=\"#666666\">by</span> %s <span size=\"small\" foreground=\"#666666\">from</span> %s"
+msgstr "<span size=\"small\" foreground=\"#666666\">von</span> %s <span size=\"small\" foreground=\"#666666\">aus</span> %s"
 
 #: ../src/transform.vala:128
 msgid "Today"

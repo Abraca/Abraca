@@ -285,12 +285,11 @@ namespace Abraca {
 				}
 
 				info = GLib.Markup.printf_escaped(
-					_("<b>%s</b>\n" +
-					"<span size=\"small\" foreground=\"#666666\">by</span> %s <span size=\"small\" foreground=\"#666666\">from</span> %s"),
+					"<b>%s</b>\n" + _("<span size=\"small\" foreground=\"#666666\">by</span> %s <span size=\"small\" foreground=\"#666666\">from</span> %s"),
 					title, artist, album
 				);
 			} else if (val.dict_entry_get_string("url", out url)) {
-				info = GLib.Markup.printf_escaped(_("<b>%s</b>"), url);
+				info = GLib.Markup.printf_escaped("<b>%s</b>", url);
 			} else {
 				info = "%s".printf("Unknown");
 			}

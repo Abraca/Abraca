@@ -324,14 +324,12 @@ namespace Abraca {
 
 				if (Transform.normalize_dict(val, "duration", out duration)) {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b> - <small>%s</small>\n" +
-						"<small>by</small> %s <small>from</small> %s"),
+						"<b>%s</b> - <small>%s</small>\n" + _("<small>by</small> %s <small>from</small> %s"),
 						title, duration, artist, album
 					);
 				} else {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b>\n" +
-						"<small>by</small> %s <small>from</small> %s"),
+						"<b>%s</b>\n" + _("<small>by</small> %s <small>from</small> %s"),
 						title, artist, album
 					);
 				}
@@ -344,11 +342,11 @@ namespace Abraca {
 
 				if (Transform.duration(val, out duration)) {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b> - <small>%s</small>"), url, duration
+						"<b>%s</b> - <small>%s</small>", url, duration
 					);
 				} else {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b>"), url
+						"<b>%s</b>", url
 					);
 				}
 			}
