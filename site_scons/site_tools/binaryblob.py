@@ -20,7 +20,7 @@ import os
 _assembly_template = """
   .section ".rodata"
   .globl %(full_name)s
-  .type %(full_name)s, @object
+  .type %(full_name)s, %%object
 %(full_name)s:
   .incbin "%(file)s" /* MD5: %(md5)s */
   .byte 0
