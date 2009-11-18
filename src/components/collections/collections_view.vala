@@ -446,7 +446,7 @@ namespace Abraca {
 					cols = get_columns();
 					col = cols.data;
 
-					renderers = (col as Gtk.CellLayout).get_cells();
+					renderers = col.get_cells();
 					renderer = (Gtk.CellRendererText) renderers.data;
 
 					renderer.editable = true;
