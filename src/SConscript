@@ -25,6 +25,7 @@ types_sources = """
 
 widgets_sources = """
     widgets/cellrenderercollection.vala
+    widgets/cellrenderertogglepixbuf.vala
     widgets/rating_entry.vala
 """.split()
 

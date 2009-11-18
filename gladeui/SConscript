@@ -7,8 +7,10 @@ Import('ui')
 env.InstallGladeUiModule(env.SharedLibrary('libgladeabraca', sources + [images, ui, gladeui]))
 env.InstallGladeUiCatalog('abraca.xml')
 env.InstallGladeUiPixmap('16x16', ['icons/16x16/widget-abraca-cellrenderercollection.png',
+								   'icons/16x16/widget-abraca-cellrenderertogglepixbuf.png',
 								   'icons/16x16/widget-abraca-mediainfodialog.png',
 								   'icons/16x16/widget-abraca-ratingentry.png'])
 env.InstallGladeUiPixmap('22x22', ['icons/22x22/widget-abraca-cellrenderercollection.png',
+								   'icons/22x22/widget-abraca-cellrenderertogglepixbuf.png',
 								   'icons/22x22/widget-abraca-mediainfodialog.png',
 								   'icons/22x22/widget-abraca-ratingentry.png'])

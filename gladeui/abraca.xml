@@ -26,6 +26,38 @@
 				</property>
 			</properties>
 		</glade-widget-class>
+
+		<glade-widget-class name="AbracaCellRendererTogglePixbuf" generic-name="cellrenderertogglepixbuf" title="Toggle Pixbuf Renderer">
+			<properties>
+				<property save="False" id="activatable" custom-layout="True"/>
+				<property save="False" id="attr-activatable" default="-1" custom-layout="True" name="Active column">
+					<parameter-spec>
+						<type>GParamInt</type>
+						<min>-1</min>
+					</parameter-spec>
+					<tooltip>The column in the model to load the value from</tooltip>
+				</property>
+				<property visible="False" save="False" id="use-attr-activatable" default="True">
+					<parameter-spec>
+						<type>GParamBoolean</type>
+					</parameter-spec>
+				</property>
+
+				<property save="False" id="active" custom-layout="True"/>
+				<property save="False" id="attr-active" default="-1" custom-layout="True" name="Active column">
+					<parameter-spec>
+						<type>GParamInt</type>
+						<min>-1</min>
+					</parameter-spec>
+					<tooltip>The column in the model to load the value from</tooltip>
+				</property>
+				<property visible="False" save="False" id="use-attr-active" default="True">
+					<parameter-spec>
+						<type>GParamBoolean</type>
+					</parameter-spec>
+				</property>
+			</properties>
+		</glade-widget-class>
 	</glade-widget-classes>
 	<glade-widget-group name="abraca" title="Abraca">
 		<glade-widget-class-ref name="AbracaMedialibInfoDialog"/>
