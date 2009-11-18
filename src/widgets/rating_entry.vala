@@ -20,16 +20,12 @@
 namespace Abraca {
 	public class RatingEntry : Gtk.EventBox, Gtk.Buildable {
 		private Gdk.Pixbuf _canvas;
-
-		public int min_rating {
-			get; set; default = 0;
-		}
-
-		public int max_rating {
-			get; set; default = 5;
-		}
-
+		private Gdk.Pixbuf _unrated_icon = null;
+		private Gdk.Pixbuf _rated_icon = null;
 		private int _rating = -1;
+
+		public int min_rating { get; set; default = 0; }
+		public int max_rating { get; set; default = 5; }
 
 		public int rating {
 			get {
@@ -45,39 +41,34 @@ namespace Abraca {
 			}
 		}
 
-		/* TODO: Load icon here */
 		public Gdk.Pixbuf unrated_icon {
-			get; set;
+			get {
+				if (_unrated_icon == null) {
+					_unrated_icon = render_icon(STOCK_UNRATED, Gtk.IconSize.MENU, null);
+				}
+				return _unrated_icon;
+			}
+			set {
+				_unrated_icon = value;
+			}
 		}
-		/* TODO: Load icon here */
+
 		public Gdk.Pixbuf rated_icon {
-			get; set;
+			get {
+				if (_rated_icon == null) {
+					_rated_icon = render_icon(STOCK_RATED, Gtk.IconSize.MENU, null);
+				}
+				return _rated_icon;
+			}
+			set {
+				_rated_icon = value;
+			}
 		}
 
 		public signal void changed();
 
 		construct {
-			string filename;
-
-			try {
-				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
-					-1, Resources.abraca_rating_unrated, false
-				);
-				unrated_icon = tmp;
-			} catch (GLib.Error e) {
-				GLib.stderr.printf("ERROR: %s\n", e.message);
-			}
-
-			try {
-				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
-					-1, Resources.abraca_rating_rated, false
-				);
-				rated_icon = tmp;
-			} catch (GLib.Error e) {
-				GLib.stderr.printf("ERROR: %s\n", e.message);
-			}
-
-			width_request =  rated_icon.width * (max_rating - min_rating + 1);
+			width_request  = rated_icon.width * (max_rating - min_rating + 1);
 			height_request = rated_icon.height;
 
 			_canvas = new Gdk.Pixbuf(Gdk.Colorspace.RGB, true, 8, width_request, height_request);

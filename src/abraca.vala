@@ -58,6 +58,12 @@ namespace Abraca {
 
 			Gtk.init(ref args);
 
+			try {
+				create_icon_factory().add_default();
+			} catch (GLib.Error e) {
+				GLib.error(e.message);
+			}
+
 			GLib.Environment.set_application_name("Abraca");
 
 			GLib.Intl.textdomain(Build.Config.APPNAME);

@@ -51,20 +51,25 @@ namespace Abraca {
 
 		construct {
 			Client c = Client.instance();
-			Gdk.Pixbuf coll, pls;
+			CollectionsModel store;
 
 			search_column = 0;
 			enable_search = true;
 			headers_visible = false;
 			fixed_height_mode = true;
 
-			create_columns (out coll, out pls);
+			model = store = new CollectionsModel(render_icon(STOCK_COLLECTION,
+															 Gtk.IconSize.LARGE_TOOLBAR,
+															 null),
+												 render_icon(STOCK_PLAYLIST,
+															 Gtk.IconSize.LARGE_TOOLBAR,
+															 null));
 
-			CollectionsModel store = new CollectionsModel(coll, pls);
 			store.collection_loaded += (type) => {
 				expand_all();
 			};
-			model = store;
+
+			create_columns();
 
 			row_activated += on_row_activated;
 
@@ -489,32 +494,13 @@ namespace Abraca {
 		/**
 		 * Create the treeview columns.
 		 */
-		private void create_columns (out Gdk.Pixbuf coll_pbuf,
-		                             out Gdk.Pixbuf pls_pbuf)
+		private void create_columns ()
 		{
 			Gtk.TreeViewColumn column;
 			CollCellRenderer renderer;
 
-			/* Load the playlist icon */
-			try {
-				pls_pbuf = new Gdk.Pixbuf.from_inline (
-					-1, Resources.abraca_playlist_22, false
-				);
-			} catch (GLib.Error e) {
-				GLib.stderr.printf("ERROR: %s\n", e.message);
-			}
-
-			/* ..and the collection icon */
-			try {
-				coll_pbuf = new Gdk.Pixbuf.from_inline (
-					-1, Resources.abraca_collection_22, false
-				);
-			} catch (GLib.Error e) {
-				GLib.stderr.printf("ERROR: %s\n", e.message);
-			}
-
 			renderer = new CollCellRenderer();
-			renderer.height = pls_pbuf.height;
+			renderer.height = ((CollectionsModel) model).collection_pixbuf.height;
 			renderer.edited += on_cell_edited;
 
 			column = new Gtk.TreeViewColumn.with_attributes (

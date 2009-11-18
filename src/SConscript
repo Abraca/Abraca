@@ -11,6 +11,7 @@ vala_sources = """
     main_window.vala
     medialib.vala
     right_hpaned.vala
+    stock.vala
     toolbar.vala
     transform.vala
     treerow_map.vala

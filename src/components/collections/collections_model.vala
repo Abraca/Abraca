@@ -46,23 +46,15 @@ namespace Abraca {
 		private Gtk.TreeIter _playlist_iter;
 		private Gtk.TreeIter _collection_iter;
 
-		/* TODO: Should be private? */
-		public Gdk.Pixbuf playlist_pixbuf {
-			get; private set;
-		}
-
-		/* TODO: Should be private? */
-		public Gdk.Pixbuf collection_pixbuf {
-			get; private set;
-		}
+		public Gdk.Pixbuf playlist_pixbuf { get; construct set; }
+		public Gdk.Pixbuf collection_pixbuf { get; construct set; }
 
 		/* Emited after 1..* collections has been added. */
 		public signal void collection_loaded (CollectionType type);
 
 		public CollectionsModel (Gdk.Pixbuf coll, Gdk.Pixbuf pls)
 		{
-			collection_pixbuf = coll;
-			playlist_pixbuf = pls;
+			Object(playlist_pixbuf: coll, collection_pixbuf: pls);
 		}
 
 		construct {
