@@ -18,7 +18,7 @@
  */
 
 namespace Abraca {
-	public class CollCellRenderer : Gtk.CellRendererText {
+	public class CellRendererCollection : Gtk.CellRendererText {
 		public unowned Gdk.Pixbuf pixbuf {
 			get; set;
 		}

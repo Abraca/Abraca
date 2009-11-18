@@ -200,7 +200,7 @@ namespace Abraca {
 		/**
 		 * Handle user input rename of collections.
 		 */
-		private void on_cell_edited (CollCellRenderer renderer,
+		private void on_cell_edited (CellRendererCollection renderer,
 		                             string path, string new_text)
 		{
 			Client c = Client.instance();
@@ -495,9 +495,9 @@ namespace Abraca {
 		private void create_columns ()
 		{
 			Gtk.TreeViewColumn column;
-			CollCellRenderer renderer;
+			CellRendererCollection renderer;
 
-			renderer = new CollCellRenderer();
+			renderer = new CellRendererCollection();
 			renderer.height = ((CollectionsModel) model).collection_pixbuf.height;
 			renderer.edited += on_cell_edited;
 
