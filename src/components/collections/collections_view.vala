@@ -144,8 +144,6 @@ namespace Abraca {
 			var data = new uchar[name.size () + 1];
 			GLib.Memory.copy (data, name, name.size ());
 
-			GLib.stdout.printf("%s\n", (string) data);
-
 			selection_data.set(
 				Gdk.Atom.intern(_target_entries[1].target, true),
 				8, data

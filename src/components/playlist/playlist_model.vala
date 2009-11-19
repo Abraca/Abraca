@@ -358,7 +358,6 @@ namespace Abraca {
 				path = row.get_path();
 
 				if (!row.valid() || !get_iter(out iter, path)) {
-					GLib.stdout.printf("row not valid\n");
 					continue;
 				}
 

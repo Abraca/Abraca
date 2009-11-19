@@ -173,9 +173,7 @@ namespace Abraca {
 
 
 		private void create_cover_image() {
-			_coverart = new Gtk.Image.from_stock(
-				Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR
-			);
+			set_default_coverart();
 
 			_coverart.has_tooltip = true;
 			_coverart.query_tooltip += on_coverart_tooltip;
@@ -238,6 +236,16 @@ namespace Abraca {
 		}
 
 
+		private void set_default_coverart() {
+			if (_coverart == null) {
+				_coverart = new Gtk.Image();
+			}
+
+			_coverart.set_from_stock(Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR);
+			_coverart_big = null;
+		}
+
+
 		private void on_playback_playtime(Client c, int pos) {
 			if (_seek == false) {
 				_pos = pos;
@@ -262,10 +270,7 @@ namespace Abraca {
 			}
 
 			if (!val.dict_entry_get_string("picture_front", out cover)) {
-				_coverart.set_from_stock(
-					Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR
-				);
-				_coverart_big = null;
+				set_default_coverart();
 			} else {
 				Client c = Client.instance();
 
@@ -309,22 +314,19 @@ namespace Abraca {
 			unowned uchar[] data;
 
 			if (val.get_bin(out data)) {
-				Gdk.PixbufLoader loader;
-				unowned Gdk.Pixbuf pixbuf;
-				Gdk.Pixbuf modified;
-
-				loader = new Gdk.PixbufLoader();
+				var loader = new Gdk.PixbufLoader();
 				try {
 					loader.write(data);
 					loader.close();
-				} catch (GLib.Error ex) {
-					GLib.stdout.printf("never happens, should default to CDROM icon\n");
+				} catch (GLib.Error e) {
+					set_default_coverart();
+					return true;
 				}
 
-				pixbuf = loader.get_pixbuf();
-				modified = pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR);
+				var pixbuf = loader.get_pixbuf();
+				var thumbnail = pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR);
 
-				_coverart.set_from_pixbuf(modified);
+				_coverart.set_from_pixbuf(thumbnail);
 				_coverart_big = pixbuf;
 			}
 

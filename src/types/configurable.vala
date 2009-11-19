@@ -100,17 +100,21 @@ namespace Abraca {
 		private static GLib.KeyFile read_config ()
 		{
 			GLib.KeyFile file = new GLib.KeyFile();
+			string filename;
 
 			try {
-				string filename = build_filename();
+				filename = build_filename();
 				file.load_from_file(filename, GLib.KeyFileFlags.NONE);
 			} catch (GLib.FileError e) {
 				/* GLib.FileError.NOENT == 4, which is true the first time */
 				if (e.code != 4) {
-					GLib.stderr.printf("ERROR: %s\n", e.message);
+					GLib.error(e.message);
 				}
 			} catch (GLib.KeyFileError e) {
-				GLib.stderr.printf("Something went wrong");
+				GLib.log(null,
+						 GLib.LogLevelFlags.LEVEL_CRITICAL | GLib.LogLevelFlags.FLAG_FATAL,
+						 "The fonfiguration file '%s' is corrupted.",
+						 filename);
 			}
 
 			return file;

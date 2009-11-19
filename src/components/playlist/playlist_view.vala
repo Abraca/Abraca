@@ -498,8 +498,6 @@ namespace Abraca {
 				success = on_drop_files(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.INTERNET) {
 				success = on_drop_files(sel, x, y, true);
-			} else {
-				GLib.stdout.printf("Nogle gange går der kuk i maskineriet\n");
 			}
 
 			/* success, but do not remove from source */
@@ -619,8 +617,6 @@ namespace Abraca {
 			Xmms.Collection coll;
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
-
-			GLib.stdout.printf("apan: %s\n", (string) sel.data);
 
 			string[] collection_data = ((string) sel.data).split("/");
 			string coll_ns = collection_data[0];

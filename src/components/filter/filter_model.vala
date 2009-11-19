@@ -90,7 +90,6 @@ namespace Abraca {
 				int id = 0;
 
 				if (!(list_iter.entry(out entry) && entry.get_int(out id))) {
-					GLib.stdout.printf("crapping out\n");
 					continue;
 				}
 
