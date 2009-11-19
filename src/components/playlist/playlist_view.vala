@@ -388,7 +388,7 @@ namespace Abraca {
 			} else if (key == "genre") {
 				column = PlaylistModel.Column.GENRE;
 			} else {
-				return;
+				GLib.return_if_reached();
 			}
 
 			var list = get_selected_rows<string>(column);
