@@ -25,17 +25,15 @@ namespace Abraca {
 			public string label_mnemonic { get; construct; }
 
 			public CheckMenuItem (string key) {
-				config_key = key;
+				Object(config_key: key);
 			}
 
 			public CheckMenuItem.with_label(string key, string text) {
-				config_key = key;
-				label_text = text;
+				Object(config_key: key, label_text: text);
 			}
 
 			public CheckMenuItem.with_mnemonic(string key, string text) {
-				config_key = key;
-				label_mnemonic = text;
+				Object(config_key: key, label_mnemonic: text);
 			}
 
 			construct {
