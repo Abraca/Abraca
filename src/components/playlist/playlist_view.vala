@@ -378,7 +378,6 @@ namespace Abraca {
 
 
 		private void on_menu_playlist_filter(string key) {
-			bool empty = true;
 			string query = "";
 			int column;
 
@@ -394,13 +393,24 @@ namespace Abraca {
 
 			var list = get_selected_rows<string>(column);
 
+			int i = 0;
 			foreach (var val in list) {
-				if (val == "Unknown") {
-					continue;
+				bool is_duplicate = false;
+				int j = 0;
+				foreach (var val2 in list) {
+					if (j++ >= i) {
+						break;
+					}
+					if (val.casefold() == val2.casefold()) {
+						is_duplicate = true;
+						break;
+					}
 				}
 
-				if (empty) {
-					empty = false;
+				i++;
+
+				if (is_duplicate || val == "Unknown") {
+					continue;
 				}
 
 				if (query != "") {
@@ -409,7 +419,7 @@ namespace Abraca {
 				query += key + ":\"" + val + "\"";
 			}
 
-			if (!empty) {
+			if (query != "") {
 				Abraca.instance().main_window.main_hpaned.
 					right_hpaned.filter_entry_set_text(query);
 			}
