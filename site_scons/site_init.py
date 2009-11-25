@@ -77,6 +77,7 @@ class AbracaEnvironment(SConsEnvironment):
 			           PathOption.PathAccept),
 			PathOption('MANDIR', 'man page dir', '$DATADIR/man',
 			           PathOption.PathAccept),
+			BoolOption('WITH_GLADEUI', 'create a plugin for glade-3, only for developers', 'no')
 		)
 		opts.Update(self)
 		opts.Save('.scons_options', self)
@@ -138,6 +139,32 @@ class AbracaEnvironment(SConsEnvironment):
 
 	def InstallLocale(self, target, source):
 		self.Alias('install', self.InstallAs(os.path.join('$LOCALEDIR', target), source))
+
+	def InstallGladeUiModule(self, source):
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=moduledir gladeui-1.0')
+		target = subprocess.Popen(cmd, shell=True,
+									   stdout=subprocess.PIPE).communicate()[0].strip()
+		if not target:
+			raise SCons.Errors.UserError('Glade module directory could not be determined')
+		self.Alias('install', self.Install(target, source))
+
+	def InstallGladeUiCatalog(self, source):
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=catalogdir gladeui-1.0')
+		target = subprocess.Popen(cmd, shell=True,
+									   stdout=subprocess.PIPE).communicate()[0].strip()
+		if not target:
+			raise SCons.Errors.UserError('Glade catalog directory could not be determined')
+		self.Alias('install', self.Install(target, source))
+
+	def InstallGladeUiPixmap(self, size, source):
+		if size not in ('16x16', '22x22'):
+			raise SCons.Errors.UserError('Unsupported size for glade pixmap: %r' % size)
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=pixmapdir gladeui-1.0')
+		target = subprocess.Popen(cmd, shell=True,
+									   stdout=subprocess.PIPE).communicate()[0].strip()
+		if not target:
+			raise SCons.Errors.UserError('Glade pixmap directory could not be determined')
+		self.Alias('install', self.Install(os.path.join(target, 'hicolor', size, 'actions'), source))
 
 	def _import_variable(self, name):
 		if ARGUMENTS.has_key(name):

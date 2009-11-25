@@ -16,6 +16,9 @@ for pkg in ['gtk+-2.0', 'gmodule-2.0', 'xmms2-client', 'xmms2-client-glib', 'gee
 		env.AppendPkg(pkg)
 		env.Append(VALAPKGS = [pkg])
 
+if env['WITH_GLADEUI']:
+	conf.CheckPkg('gladeui-1.0')
+
 conf.Define('APPNAME', env.subst('"$APPNAME"'))
 conf.Define('VERSION', env.subst('"$VERSION"'))
 conf.Define('DATADIR', '"' + env.subst(env['DATADIR']) + '"')
@@ -35,6 +38,9 @@ else:
 env.SConscript('build/data/SConscript', exports='env', duplicate=0)
 env.SConscript('build/data/ui/SConscript', exports='env', duplicate=0)
 env.SConscript('build/src/SConscript', exports='env', duplicate=0)
+
+if env['WITH_GLADEUI']:
+	env.SConscript('build/gladeui/SConscript', exports='env', duplicate=0)
 
 if env['HAVE_MSGFMT']:
 	env.SConscript('build/po/SConscript', exports='env', duplicate=0)

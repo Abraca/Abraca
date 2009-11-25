@@ -42,8 +42,16 @@ components_sources = """
     components/playlist/playlist_widget.vala
 """.split()
 
-sources = env.Vala(vala_sources + types_sources + widgets_sources + components_sources)
+gladeui_sources = """
+    ../gladeui/glade-abraca.vala
+""".split()
+
+sources = env.Vala(vala_sources + types_sources + widgets_sources + components_sources + gladeui_sources)
+gladeui = sources.pop()
 
 prog = env.Program('abraca', sources + [images, ui], install=True)
+
+Export('sources')
+Export('gladeui')
 
 env.Append(CPPPATH = ['utils'])
