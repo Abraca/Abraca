@@ -215,7 +215,7 @@ namespace Abraca {
 			);
 			_recallable_references.add(recallable);
 
-			recallable = _xmms.broadcast_configval_changed();
+			recallable = _xmms.broadcast_config_value_changed();
 			recallable.notifier_set(
 					on_configval_changed
 			);

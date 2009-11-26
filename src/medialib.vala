@@ -563,7 +563,7 @@ namespace Abraca {
 						}
 					} else {
 						if (button.get_active()) {
-							c.xmms.medialib_path_import(url);
+							c.xmms.medialib_import_path(url);
 						} else {
 							c.xmms.playlist_radd(Xmms.ACTIVE_PLAYLIST, url);
 						}

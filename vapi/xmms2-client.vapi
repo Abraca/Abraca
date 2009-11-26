@@ -111,6 +111,12 @@ namespace Xmms {
 		END,
 	}
 
+	[CCode(cprefix="XMMS_PLAYBACK_SEEK_", cname="xmms_playback_seek_mode_t")]
+	public enum PlaybackSeekMode {
+		CUR,
+		SET
+	}
+
 	[CCode(cname="xmmsc_disconnect_func_t")]
 	public delegate void DisconnectFunc ();
 
@@ -165,10 +171,8 @@ namespace Xmms {
 		public Result playback_start();
 		public Result playback_pause();
 		public Result playback_current_id();
-		public Result playback_seek_ms(uint milliseconds);
-		public Result playback_seek_ms_rel(int milliseconds);
-		public Result playback_seek_samples(uint samples);
-		public Result playback_seek_samples_rel(int samples);
+		public Result playback_seek_ms(uint milliseconds, PlaybackSeekMode whence);
+		public Result playback_seek_samples(uint samples, PlaybackSeekMode whence);
 		public Result playback_playtime();
 		public Result playback_status();
 		public Result playback_volume_set(string channel, uint volume);
@@ -184,7 +188,7 @@ namespace Xmms {
 		public Result playlist_list();
 		public Result playlist_create(string playlist);
 		public Result playlist_shuffle(string playlist);
-		public Result playlist_add_args(string playlist, string url, int len, string[] args);
+		public Result playlist_add_full(string playlist, string url, Xmms.Value args);
 		public Result playlist_add_url(string playlist, string url);
 		public Result playlist_add_id(string playlist, uint id);
 		public void   playlist_add_ids(string playlist, Gee.List<int> ids) {
@@ -213,7 +217,7 @@ namespace Xmms {
 		public Result playlist_move_entry(string playlist, uint from, uint to);
 		public Result playlist_current_pos(string playlist);
 		public Result playlist_current_active();
-		public Result playlist_insert_args(string playlist, int pos, string url, int numargs, string[] args);
+		public Result playlist_insert_full(string playlist, int pos, string url, Xmms.Value args);
 		public Result playlist_insert_url(string playlist, int pos, string url);
 		public Result playlist_insert_id(string playlist, int pos, uint id);
 		public Result playlist_insert_encoded(string playlist, int pos, string url);
@@ -230,11 +234,11 @@ namespace Xmms {
 		 * Medialib functions
 		 */
 		public Result medialib_add_entry(string url);
-		public Result medialib_add_entry_args(string url, int numargs, string[] args);
+		public Result medialib_add_entry_full(string url, Xmms.Value args);
 		public Result medialib_add_entry_encoded(string url);
 		public Result medialib_get_info(uint id);
-		public Result medialib_path_import(string path);
-		public Result medialib_path_import_encoded(string path);
+		public Result medialib_import_path(string path);
+		public Result medialib_import_path_encoded(string path);
 		public Result medialib_rehash(uint id);
 		public Result medialib_get_id(string url);
 		public Result medialib_remove_entry(uint entry);
@@ -253,11 +257,11 @@ namespace Xmms {
 		/*
 		 * Config functions
 		 */
-		public Result configval_set(string key, string val);
-		public Result configval_list();
-		public Result configval_get(string key);
-		public Result configval_register(string valuename, string defaultvalue);
-		public Result broadcast_configval_changed();
+		public Result config_set_value(string key, string val);
+		public Result config_list_values();
+		public Result config_get_value(string key);
+		public Result config_register_value(string valuename, string defaultvalue);
+		public Result broadcast_config_value_changed();
 
 		/*
 		 * Browse functions
@@ -292,14 +296,13 @@ namespace Xmms {
 		/*
 		 * Other functions
 		 */
-		public static int entry_format (string target, int len, string fmt, Xmms.Value val);
 		public static unowned string userconfdir_get (char[] buffer);
 		public string get_last_error ();
 		public Result quit();
 		public Result broadcast_quit ();
 		public void disconnect_callback_set (DisconnectFunc func);
 		public void disconnect_callback_set_full (DisconnectFunc func, UserDataFreeFunc ufunc);
-		public Result plugin_list (Xmms.PluginType type = Xmms.PluginType.ALL);
+		public Result main_list_plugins (Xmms.PluginType type = Xmms.PluginType.ALL);
 		public Result main_stats ();
 		public Result signal_visualisation_data ();
 	}

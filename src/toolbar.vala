@@ -144,7 +144,7 @@ namespace Abraca {
 			double percent = scale.get_value();
 			uint pos = (uint)(_duration * percent);
 
-			c.xmms.playback_seek_ms(pos);
+			c.xmms.playback_seek_ms(pos, Xmms.PlaybackSeekMode.SET);
 
 			_time_slider.motion_notify_event -= on_time_slider_motion_notify;
 
