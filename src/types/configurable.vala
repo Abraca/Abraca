@@ -73,13 +73,8 @@ namespace Abraca {
 		 */
 		private static string build_filename () throws GLib.FileError
 		{
-			char[] buf = new char[255];
-
-			Xmms.Client.userconfdir_get(buf);
-
-			string path = GLib.Path.build_filename(
-				(string) buf, "clients", null
-			);
+			var path = GLib.Path.build_filename(Xmms.Client.userconfdir_get(),
+												"clients");
 
 			if (GLib.FileUtils.test(path, GLib.FileTest.EXISTS)) {
 				if (!GLib.FileUtils.test(path, GLib.FileTest.IS_DIR)) {
@@ -91,7 +86,7 @@ namespace Abraca {
 				}
 			}
 
-			return GLib.Path.build_filename(path, "abraca.conf", null);
+			return GLib.Path.build_filename(path, "abraca.conf");
 		}
 
 		/**

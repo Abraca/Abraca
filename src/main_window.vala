@@ -181,6 +181,10 @@ namespace Abraca {
 				Gtk.main_quit();
 			});
 
+			uiman.get_action("/Menu/Music/Connect").activate.connect ((action) => {
+				Abraca.instance().server_browser ();
+			});
+
 			uiman.get_action("/Menu/Music/Add/Files").activate.connect((action) => {
 				Abraca.instance().medialib.create_add_file_dialog(Gtk.FileChooserAction.OPEN);
 			});

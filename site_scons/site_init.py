@@ -79,7 +79,8 @@ class AbracaEnvironment(SConsEnvironment):
 			           PathOption.PathAccept),
 			PathOption('MANDIR', 'man page dir', '$DATADIR/man',
 			           PathOption.PathAccept),
-			BoolOption('WITH_GLADEUI', 'create a plugin for glade-3, only for developers', 'no')
+			BoolOption('WITH_GLADEUI', 'create a plugin for glade-3, only for developers', 'no'),
+			BoolOption('WITH_AVAHI', 'build with avahi support', None)
 		)
 		opts.Update(self)
 		opts.Save('.scons_options', self)

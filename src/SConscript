@@ -40,6 +40,9 @@ components_sources = """
     components/playlist/playlist_model.vala
     components/playlist/playlist_view.vala
     components/playlist/playlist_widget.vala
+
+    components/server/server_browser.vala
+    components/server/server_model.vala
 """.split()
 
 gladeui_sources = """

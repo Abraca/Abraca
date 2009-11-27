@@ -9,6 +9,7 @@ lst = Split("""
 	abraca-collection-24.png
 	abraca-rating-rated.png
 	abraca-rating-unrated.png
+	abraca-favorite.png
 """)
 
 images, header, vapi = env.GdkPixBufCSource('abraca_images', lst)

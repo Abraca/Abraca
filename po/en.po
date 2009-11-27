@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 12:12+0100\n"
+"POT-Creation-Date: 2009-11-16 08:34+0100\n"
 "PO-Revision-Date: 2009-11-03 09:03+0100\n"
 "Last-Translator: Sebastian Noack <sebastian.noack@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -216,33 +216,41 @@ msgid "_Add"
 msgstr ""
 
 #: ../data/ui/main_menu.xml.h:9
-msgid "_Directory"
+msgid "_Connect"
 msgstr ""
 
 #: ../data/ui/main_menu.xml.h:10
-msgid "_Files"
+msgid "_Directory"
 msgstr ""
 
 #: ../data/ui/main_menu.xml.h:11
-msgid "_Help"
+msgid "_Files"
 msgstr ""
 
 #: ../data/ui/main_menu.xml.h:12
-msgid "_Music"
+msgid "_Help"
 msgstr ""
 
 #: ../data/ui/main_menu.xml.h:13
-msgid "_New"
+msgid "_Music"
 msgstr ""
 
 #: ../data/ui/main_menu.xml.h:14
-msgid "_Playlist"
+msgid "_New"
 msgstr ""
 
 #: ../data/ui/main_menu.xml.h:15
-msgid "_Quit"
+msgid "_Playlist"
 msgstr ""
 
 #: ../data/ui/main_menu.xml.h:16
+msgid "_Quit"
+msgstr ""
+
+#: ../data/ui/main_menu.xml.h:17
 msgid "_URL"
+msgstr ""
+
+#: ../data/ui/server_browser.xml.h:1
+msgid "<span size=\"large\">Connect to server:</span>"
 msgstr ""

@@ -15,6 +15,7 @@ conf.CheckGitVersion()
 dependencies = (
 	('gtk+-2.0', '2.16.0'),
 	('gmodule-2.0', '2.16.0'),
+	('gio-2.0', '2.16.0'),
 	('xmms2-client', '0.6'),
 	('xmms2-client-glib', '0.6'),
 	('gee-1.0', '0.5')
@@ -24,6 +25,21 @@ for pkg, version in dependencies:
 	if conf.CheckPkg(pkg, version):
 		env.AppendPkg(pkg, version)
 		env.Append(VALAPKGS = [pkg])
+
+# Optional dependencies; are used when available. You can force scons to abort
+# if the package is not available by setting WITH_PACKAGE=yes or force scons to
+# skip support for that package by setting WITH_PACKAGE=no.
+for varname, packages in [('WITH_AVAHI', [('avahi-gobject', '0.6.0')])]:
+	if env.get(varname) is not False:
+		if not filter(lambda (pkg, version): not conf.CheckPkg(pkg, version, fail=env.get(varname)), packages):
+			env[varname] = True
+			env['VALAFLAGS'] += ['--define=' + varname]
+
+			for pkg, version in packages:
+				env.AppendPkg(pkg, version)
+				env.Append(VALAPKGS = [pkg])
+		else:
+			env[varname] = False
 
 if env['WITH_GLADEUI']:
 	conf.CheckPkg('gladeui-1.0')

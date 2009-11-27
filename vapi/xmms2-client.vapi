@@ -1,4 +1,4 @@
-[CCode(cheader_filename = "xmmsclient/xmmsclient.h")]
+[CCode(cheader_filename = "xmmsclient/xmmsclient.h", cprefix="xmms")]
 namespace Xmms {
 	[CCode(cprefix="XMMS_COLLECTION_CHANGED_")]
 	public enum CollectionChanged {
@@ -145,6 +145,14 @@ namespace Xmms {
 	public const string COLLECTION_NS_ALL;
 	public const string COLLECTION_NS_COLLECTIONS;
 	public const string COLLECTION_NS_PLAYLISTS;
+
+	public const size_t PATH_MAX;
+	public const uint16 DEFAULT_TCP_PORT;
+
+	public static unowned string? userconfdir_get (char[] buffer=new char[PATH_MAX]);
+	public static unowned string? usercachedir_get (char[] buffer=new char[PATH_MAX]);
+	public static unowned string? default_ipcpath_get (char[] buffer=new char[PATH_MAX]);
+	public static unowned string? fallback_ipcpath_get (char[] buffer=new char[PATH_MAX]);
 
 	[Compact]
 	[CCode (cname="xmmsc_coll_token_t")]
@@ -296,7 +304,7 @@ namespace Xmms {
 		/*
 		 * Other functions
 		 */
-		public static unowned string userconfdir_get (char[] buffer);
+		public static unowned string? userconfdir_get (char[] buffer=new char[PATH_MAX]);
 		public string get_last_error ();
 		public Result quit();
 		public Result broadcast_quit ();

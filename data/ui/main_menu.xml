@@ -33,6 +33,12 @@
           </object>
         </child>
         <child>
+          <object class="GtkAction" id="MusicMenuConnectAction">
+            <property name="label" translatable="yes">_Connect</property>
+            <property name="stock-id">gtk-connect</property>
+          </object>
+        </child>
+        <child>
           <object class="GtkAction" id="MusicMenuQuitAction">
             <property name="label" translatable="yes">_Quit</property>
             <property name="stock-id">gtk-quit</property>
@@ -103,7 +109,8 @@
     <ui>
       <menubar name="Menu">
         <menu name="Music" action="MusicMenuAction">
-           <menu name="Add" action="MusicMenuAddAction">
+          <menuitem name="Connect" action="MusicMenuConnectAction"/>
+          <menu name="Add" action="MusicMenuAddAction">
             <menuitem name="Files" action="MusicMenuAddFilesAction"/>
             <menuitem name="Directory" action="MusicMenuAddDirectoryAction"/>
             <menuitem name="URL" action="MusicMenuAddURLAction"/>

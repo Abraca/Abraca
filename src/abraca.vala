@@ -52,6 +52,24 @@ namespace Abraca {
 			return _instance;
 		}
 
+		public void quit() {
+			Configurable.save();
+
+			Gtk.main_quit();
+		}
+
+		public void server_browser ()
+		{
+			var c = Client.instance();
+			var sb = ServerBrowser.build (main_window);
+
+			while (sb.run() == ServerBrowser.Action.Connect) {
+				if (c.try_connect (sb.selected_host)) {
+					break;
+				}
+			}
+		}
+
 		public static int main(string[] args) {
 			Client c = Client.instance();
 
@@ -75,14 +93,17 @@ namespace Abraca {
 
 			a.main_window.show_all();
 
-			/**
-			 * TODO: Server Browser is a bit stupid, fix it.
-			 * ServerBrowser sb = new ServerBrowser(a.main_window);
-			 */
+			c.disconnected += () => {
+				var sb = ServerBrowser.build(a.main_window);
+				while (sb.run() == 1) {
+					GLib.debug("host: %s", sb.selected_host);
+					if (c.try_connect (sb.selected_host)) {
+						break;
+					}
+				}
+			};
 
-			if (!c.try_connect())
-				GLib.Timeout.add(500, c.reconnect);
-
+			c.try_connect ("apa");
 
 			Gtk.main();
 

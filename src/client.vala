@@ -71,17 +71,6 @@ namespace Abraca {
 			"*"
 		};
 
-		construct {
-			_xmms = new Xmms.Client("Abraca");
-		}
-
-		private void on_disconnect() {
-			disconnected();
-
-			GLib.Timeout.add(500, reconnect);
-
-			Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
-		}
 
 
 		public static Client instance() {
@@ -113,9 +102,15 @@ namespace Abraca {
 
 			detach_callbacks();
 
+			_xmms = new Xmms.Client("Abraca");
+
 			if (_xmms.connect(path)) {
 				_gmain = Xmms.MainLoop.GMain.init(_xmms);
-				_xmms.disconnect_callback_set(on_disconnect);
+				_xmms.disconnect_callback_set(() => {
+					Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
+					disconnected();
+				});
+
 				attach_callbacks();
 
 				connected();
