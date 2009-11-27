@@ -212,6 +212,7 @@ class AbracaEnvironment(SConsEnvironment):
 				'CheckVala' : AbracaEnvironment.CheckVala,
 				'CheckCCompiler' : AbracaEnvironment.CheckCCompiler,
 				'CheckApp' : AbracaEnvironment.CheckApp,
+				'CheckOS': AbracaEnvironment.CheckOS,
 			}
 		)
 		return conf
@@ -284,6 +285,25 @@ class AbracaEnvironment(SConsEnvironment):
 				raise SCons.Errors.UserError('The vala compiler needs to be of version %s or newer' % min_version)
 		return False
 	CheckVala = staticmethod(CheckVala)
+
+	def CheckOS(ctx):
+		ctx.Message('Checking for operating system... ')
+		for macro in ('G_OS_UNIX', 'G_OS_WIN32', 'G_OS_BEOS'):
+			code = '''
+#include <glib.h>
+
+int main() {
+#ifndef %s
+	#error Wrong operating system
+#endif
+	return 0;
+}''' % macro
+			if ctx.TryCompile(code, '.c'):
+				ctx.env['VALAFLAGS'] += ['--define=' + macro]
+				ctx.Result(macro.split('_')[-1].lower())
+				return
+		ctx.Result('unknown')
+	CheckOS = staticmethod(CheckOS)
 
 	def CheckApp(ctx, app, fail=False):
 		ctx.Message('Checking for %s... ' % app)

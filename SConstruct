@@ -28,6 +28,12 @@ for pkg, version in dependencies:
 if env['WITH_GLADEUI']:
 	conf.CheckPkg('gladeui-1.0')
 
+# Detect the operating system as indicated by the G_OS_* makros and pass them
+# with --define to the vala compiler. Because of those macros are defined in the
+# glib header files, this check must be done after adding the packages to the
+# environment.
+conf.CheckOS()
+
 conf.Define('APPNAME', env.subst('"$APPNAME"'))
 conf.Define('VERSION', env.subst('"$VERSION"'))
 conf.Define('DATADIR', '"' + env.subst(env['DATADIR']) + '"')
