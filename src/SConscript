@@ -3,26 +3,26 @@ Import('images')
 Import('ui')
 
 vala_sources = """
-	abraca.vala
 	client.vala
-	collection_cellrenderer.vala
-	collections_model.vala
+	transform.vala
 	collections_view.vala
+	collections_model.vala
 	config.vala
-	configurable.vala
-	dragdroptarget.vala
 	filter_editor.vala
-	filter_model.vala
 	filter_view.vala
+	filter_model.vala
+	medialib.vala
 	main_hpaned.vala
 	main_window.vala
-	medialib.vala
-	playlist_model.vala
 	playlist_view.vala
+	playlist_model.vala
 	rating_entry.vala
 	right_hpaned.vala
 	toolbar.vala
-	transform.vala
+	abraca.vala
+	dragdroptarget.vala
+	collection_cellrenderer.vala
+	configurable.vala
 	volume_button.vala
 	widgets.vala
 """.split()
