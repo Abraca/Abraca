@@ -6,7 +6,6 @@ Build-Depends: debhelper (>= 7.0.50~),
                libgtk2.0-dev,
                libxmmsclient-glib-dev (>= 0.6DrMattDestruction),
                pkg-config,
-               quilt (>= 0.46-7~),
                scons,
                valac (>= 0.7.5)
 Standards-Version: 3.8.3
