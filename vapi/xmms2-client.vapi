@@ -380,7 +380,7 @@ namespace Xmms {
 		public bool get_error (out unowned string error);
 		public bool get_int (out int val);
 		public bool get_string (out unowned string val);
-		public bool get_coll (out Xmms.Collection coll);
+		public bool get_coll (out unowned Xmms.Collection coll);
 		public bool get_bin ([CCode(array_length_type="uint")] out unowned uchar[] val);
 
 		public bool get_list_iter (out unowned Xmms.ListIter iter);

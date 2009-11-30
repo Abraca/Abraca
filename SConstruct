@@ -1,11 +1,11 @@
-env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.4.1-WiP')
+env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.4.2')
 
 env.VariantDir('build', '.')
 
 env.Append(VALAPKGPATH = ['vapi'])
 
 conf = env.Configure('build/build-config.h')
-conf.CheckVala('0.7.5')
+conf.CheckVala('0.7.8')
 conf.CheckCCompiler()
 conf.CheckPkgConfig()
 conf.CheckApp('msgfmt')
