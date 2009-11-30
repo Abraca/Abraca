@@ -1,3 +1,14 @@
+abraca (0.4.2-1) unstable; urgency=low
+
+  * New upstream release.
+    - Compatible to vala 0.7.8 (Closes: #556812).
+  * Drop all patches and the patch system.
+  * Switch to source format 3.0 (quilt).
+  * Bump Build-Depends version of valac to >= 0.7.8.
+  * Update debian/watch file.
+
+ -- Benjamin Drung <bdrung@ubuntu.com>  Tue, 01 Dec 2009 00:06:03 +0100
+
 abraca (0.4.1-2) unstable; urgency=low
 
   * Add debian/patches/fix-packaging-mistake.patch to raise the package
