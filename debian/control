@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 7.0.50~),
                libxmmsclient-glib-dev (>= 0.6DrMattDestruction),
                pkg-config,
                scons,
-               valac (>= 0.7.5)
+               valac (>= 0.7.8)
 Standards-Version: 3.8.3
 DM-Upload-Allowed: yes
 Homepage: http://abraca.xmms.se/
