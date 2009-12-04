@@ -378,7 +378,6 @@ namespace Abraca {
 
 
 		private void on_menu_playlist_filter(string key) {
-			string query = "";
 			int column;
 
 			if (key == "artist") {
@@ -391,37 +390,30 @@ namespace Abraca {
 				GLib.return_if_reached();
 			}
 
-			var list = get_selected_rows<string>(column);
+			var values = new Gee.HashSet<string>(GLib.str_hash, GLib.str_equal);
 
-			int i = 0;
-			foreach (var val in list) {
-				bool is_duplicate = false;
-				int j = 0;
-				foreach (var val2 in list) {
-					if (j++ >= i) {
-						break;
-					}
-					if (val.casefold() == val2.casefold()) {
-						is_duplicate = true;
-						break;
-					}
-				}
-
-				i++;
-
-				if (is_duplicate || val == "Unknown") {
+			foreach (var val in get_selected_rows<string>(column)) {
+				if (val == "Unknown") {
 					continue;
 				}
-
-				if (query != "") {
-					query += " OR ";
-				}
-				query += key + ":\"" + val + "\"";
+				values.add(val.down());
 			}
 
-			if (query != "") {
+			var query = new GLib.StringBuilder();
+
+			foreach (var val in values) {
+				if (query.len > 0) {
+					query.append(" OR ");
+				}
+				query.append(key);
+				query.append(":\"");
+				query.append(val);
+				query.append("\"");
+			}
+
+			if (query.len > 0) {
 				Abraca.instance().main_window.main_hpaned.
-					right_hpaned.filter_entry_set_text(query);
+					right_hpaned.filter_entry_set_text(query.str);
 			}
 		}
 
