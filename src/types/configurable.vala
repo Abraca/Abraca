@@ -113,7 +113,7 @@ namespace Abraca {
 			} catch (GLib.KeyFileError e) {
 				GLib.log(null,
 						 GLib.LogLevelFlags.LEVEL_CRITICAL | GLib.LogLevelFlags.FLAG_FATAL,
-						 "The fonfiguration file '%s' is corrupted.",
+						 "The configuration file '%s' is corrupted.",
 						 filename);
 			}
 
