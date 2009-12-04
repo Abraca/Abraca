@@ -396,7 +396,7 @@ namespace Abraca {
 				if (val == "Unknown") {
 					continue;
 				}
-				values.add(val.down());
+				values.add(val.casefold());
 			}
 
 			var query = new GLib.StringBuilder();
