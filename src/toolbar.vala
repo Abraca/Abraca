@@ -296,7 +296,7 @@ namespace Abraca {
 
 				loader = new Gdk.PixbufLoader();
 				try {
-					loader.write(data);
+					loader.write(data, data.length);
 					loader.close();
 				} catch (GLib.Error ex) {
 					GLib.stdout.printf("never happens, should default to CDROM icon\n");
