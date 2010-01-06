@@ -316,7 +316,7 @@ namespace Abraca {
 			if (val.get_bin(out data)) {
 				var loader = new Gdk.PixbufLoader();
 				try {
-					loader.write(data);
+					loader.write(data, data.length);
 					loader.close();
 				} catch (GLib.Error e) {
 					set_default_coverart();
