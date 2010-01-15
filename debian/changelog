@@ -1,3 +1,10 @@
+abraca (0.4.3-1) unstable; urgency=low
+
+  * New upstream release.
+    - Compatible to vala 0.7.9 (Closes: #564354).
+
+ -- Benjamin Drung <bdrung@ubuntu.com>  Fri, 15 Jan 2010 10:07:35 +0100
+
 abraca (0.4.2-1) unstable; urgency=low
 
   * New upstream release.
