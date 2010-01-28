@@ -11,9 +11,17 @@ conf.CheckPkgConfig()
 conf.CheckApp('msgfmt')
 conf.CheckApp('gdk-pixbuf-csource')
 
-for pkg in ['gtk+-2.0', 'gmodule-2.0', 'xmms2-client', 'xmms2-client-glib', 'gee-1.0']:
-	if conf.CheckPkg(pkg):
-		env.AppendPkg(pkg)
+dependencies = (
+	('gtk+-2.0', '2.16.0'),
+	('gmodule-2.0', '2.16.0'),
+	('xmms2-client', '0.6'),
+	('xmms2-client-glib', '0.6'),
+	('gee-1.0', '0.5')
+)
+
+for pkg, version in dependencies:
+	if conf.CheckPkg(pkg, version):
+		env.AppendPkg(pkg, version)
 		env.Append(VALAPKGS = [pkg])
 
 if env['WITH_GLADEUI']:

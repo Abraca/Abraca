@@ -193,9 +193,9 @@ class AbracaEnvironment(SConsEnvironment):
 	def DebugVariant(self):
 		return self['debug']
 
-	def AppendPkg(self, pkg):
-		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --libs --cflags %s')
-		self.ParseConfig(cmd % pkg)
+	def AppendPkg(self, pkg, version):
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --libs --cflags "%s >= %s"')
+		self.ParseConfig(cmd % (pkg, version))
 
 	def CheckPkgConfig(ctx, fail=True):
 		ctx.Message('Checking for pkg-config... ')
@@ -207,10 +207,10 @@ class AbracaEnvironment(SConsEnvironment):
 		return exit_code
 	CheckPkgConfig = staticmethod(CheckPkgConfig)
 
-	def CheckPkg(ctx, pkg, fail=True):
-		ctx.Message('Checking for %s... ' % pkg)
-		cmd = ctx.env.subst('pkg-config $PKG_CONFIG_FLAGS --exists \'%s\'')
-		exit_code, output = ctx.TryAction(cmd % pkg)
+	def CheckPkg(ctx, pkg, version='0.0', fail=True):
+		ctx.Message('Checking for %s >= %s... ' % (pkg, version))
+		cmd = ctx.env.subst('pkg-config $PKG_CONFIG_FLAGS --exists "%s >= %s"')
+		exit_code, output = ctx.TryAction(cmd % (pkg, version))
 		ctx.Result(exit_code)
 		if not exit_code and fail:
 			raise SCons.Errors.UserError('The %s package and its dependencies are required to build' % pkg)
