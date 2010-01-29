@@ -106,6 +106,22 @@ class AbracaEnvironment(SConsEnvironment):
 		self['BUILDERS']['SConsProgram'] = self['BUILDERS']['Program']
 		self['BUILDERS']['Program'] = self._program
 
+		self._update_worker_count()
+
+	def _update_worker_count(self):
+		try:
+			fd = file("/proc/cpuinfo", "r")
+			data = fd.read()
+			fd.close()
+
+			cpus = len(re.findall("processor\t: \d+", data))
+			if cpus > 1:
+				cpus += 1
+
+			self.SetOption('num_jobs', cpus)
+		except Exception, e:
+			pass
+
 	def _program(self, target, source, *args, **kwargs):
 		prog = self['BUILDERS']['SConsProgram'](target, source, *args, **kwargs)
 
