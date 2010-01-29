@@ -89,6 +89,7 @@ class AbracaEnvironment(SConsEnvironment):
 			self['VALADEFINESCOMSTR'] = '    Defines: $TARGET'
 			self['VALACOMSTR']        = ' Generating: $TARGETS'
 			self['CCCOMSTR']          = '   Building: $TARGET'
+			self['SHCCCOMSTR']        = '   Building: $TARGET'
 			self['LINKCOMSTR']        = '    Linking: $TARGET'
 			self['MSGFMTCOMSTR']      = '   Localize: $TARGET'
 			self['STRIPCOMSTR']       = '  Stripping: $TARGET'
