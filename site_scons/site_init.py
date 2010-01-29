@@ -143,7 +143,7 @@ class AbracaEnvironment(SConsEnvironment):
 	def InstallGladeUiModule(self, source):
 		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=moduledir gladeui-1.0')
 		target = subprocess.Popen(cmd, shell=True,
-									   stdout=subprocess.PIPE).communicate()[0].strip()
+		                          stdout=subprocess.PIPE).communicate()[0].strip()
 		if not target:
 			raise SCons.Errors.UserError('Glade module directory could not be determined')
 		self.Alias('install', self.Install(target, source))
@@ -151,7 +151,7 @@ class AbracaEnvironment(SConsEnvironment):
 	def InstallGladeUiCatalog(self, source):
 		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=catalogdir gladeui-1.0')
 		target = subprocess.Popen(cmd, shell=True,
-									   stdout=subprocess.PIPE).communicate()[0].strip()
+		                          stdout=subprocess.PIPE).communicate()[0].strip()
 		if not target:
 			raise SCons.Errors.UserError('Glade catalog directory could not be determined')
 		self.Alias('install', self.Install(target, source))
@@ -161,7 +161,7 @@ class AbracaEnvironment(SConsEnvironment):
 			raise SCons.Errors.UserError('Unsupported size for glade pixmap: %r' % size)
 		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=pixmapdir gladeui-1.0')
 		target = subprocess.Popen(cmd, shell=True,
-									   stdout=subprocess.PIPE).communicate()[0].strip()
+		                          stdout=subprocess.PIPE).communicate()[0].strip()
 		if not target:
 			raise SCons.Errors.UserError('Glade pixmap directory could not be determined')
 		self.Alias('install', self.Install(os.path.join(target, 'hicolor', size, 'actions'), source))
