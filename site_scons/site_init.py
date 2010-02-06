@@ -245,6 +245,8 @@ class AbracaEnvironment(SConsEnvironment):
 	CheckCCompiler = staticmethod(CheckCCompiler)
 
 	def CheckVala(ctx, min_version, fail=True):
+		min_version_breakdown = map(int, re.findall('[0-9]+', min_version))
+
 		if not SCons.Util.is_String(min_version):
 			raise SCons.Errors.UserError('valac min version needs to be a string')
 		ctx.Message('Checking for valac >= %s... ' % min_version)
@@ -252,12 +254,12 @@ class AbracaEnvironment(SConsEnvironment):
 		try:
 			proc = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE)
 			proc.wait()
-			res = re.findall('([0-9](\.[0-9])*)$', proc.stdout.read())
+			res = map(int, re.findall('[0-9]+', proc.stdout.read()))
 		except OSError:
 			ctx.Result(0)
 			raise SCons.Errors.UserError('No vala compiler found')
 
-		if res and res[0] and res[0][0] >= min_version:
+		if res >= min_version_breakdown:
 			ctx.Result(1)
 		else:
 			ctx.Result(0)
