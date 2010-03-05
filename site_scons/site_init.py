@@ -29,7 +29,7 @@ class AbracaEnvironment(SConsEnvironment):
 	def __init__(self, *args, **kwargs):
 		variables = [
 			'VALAC', 'CC', 'AS', 'LINKFLAGS', 'PKG_CONFIG_FLAGS',
-			'PROGSUFFIX', 'CPPPATH', 'MSGFMT',
+			'PKG_CONFIG', 'PROGSUFFIX', 'CPPPATH', 'MSGFMT',
 		]
 		for key in variables:
 			val = self._import_variable(key)
@@ -39,6 +39,8 @@ class AbracaEnvironment(SConsEnvironment):
 		kwargs['tools'] = ['gcc', 'gnulink', 'gas']
 
 		SConsEnvironment.__init__(self, *args, **kwargs)
+
+		self._merge_path_from_environment()
 
 		# Import pkg-config path into shell environment.
 		for name in ['PKG_CONFIG_LIBDIR', 'PKG_CONFIG_PATH']:
@@ -108,6 +110,14 @@ class AbracaEnvironment(SConsEnvironment):
 		self['BUILDERS']['Program'] = self._program
 
 		self._update_worker_count()
+
+	def _merge_path_from_environment(self):
+		scons_env = set(self["ENV"]["PATH"].split(os.path.pathsep))
+		host_env = set(os.environ["PATH"].split(os.path.pathsep))
+
+		scons_env.update(host_env)
+
+		self["ENV"]["PATH"] = os.path.pathsep.join(scons_env)
 
 	def _update_worker_count(self):
 		try:
