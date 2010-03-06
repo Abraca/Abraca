@@ -188,23 +188,23 @@ namespace Abraca {
 		 * Insert a row when a new entry has been inserted in the playlist.
 		 */
 		private void on_playlist_insert(Client c, string playlist, uint mid, int pos) {
-			Gtk.TreePath path;
-			Gtk.TreeIter iter;
+			Gtk.TreeIter iter, sibling;
 
 			if (playlist != client.current_playlist) {
 				return;
 			}
 
-			path = new Gtk.TreePath.from_indices(pos, -1);
-			if (get_iter(out iter, path)) {
-				Gtk.TreeIter added;
-
-				insert_before (out added, iter);
-
-				set(added, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
-
-				playlist_map.add_iter((int) mid, added);
+			var path = new Gtk.TreePath.from_indices(pos, -1);
+			if (get_iter(out sibling, path)) {
+				insert_before (out iter, sibling);
+			} else {
+				// Insert occurred after the last entry, lets append.
+				append(out iter);
 			}
+
+			set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
+
+			playlist_map.add_iter((int) mid, iter);
 		}
 
 
