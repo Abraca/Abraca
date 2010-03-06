@@ -263,21 +263,21 @@ namespace Abraca {
 			submenu = new Gtk.Menu();
 
 			item = new Gtk.MenuItem.with_label(_("By Artist"));
-			item.activate += i => {
+			item.activate.connect(i => {
 				on_menu_playlist_filter("artist");
-			};
+			});
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("By Album"));
-			item.activate += i => {
+			item.activate.connect(i => {
 				on_menu_playlist_filter("album");
-			};
+			});
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("By Genre"));
-			item.activate += i => {
+			item.activate.connect(i => {
 				on_menu_playlist_filter("genre");
-			};
+			});
 			submenu.append(item);
 
 			img_item = new Gtk.ImageMenuItem.from_stock(
@@ -302,39 +302,39 @@ namespace Abraca {
 			/* Sorting submenu */
 			submenu = new Gtk.Menu();
 			item = new Gtk.MenuItem.with_label(_("Artist"));
-			item.activate += i => {
+			item.activate.connect(i => {
 				on_menu_playlist_sort(config.sorting_artist);
-			};
+			});
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("Album"));
-			item.activate += i => {
-				on_menu_playlist_sort(config.sorting_album);
-			};
+			item.activate.connect(i => {
+				this.on_menu_playlist_sort(config.sorting_album);
+			});
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("Title"));
-			item.activate += i => {
+			item.activate.connect(i => {
 				on_menu_playlist_sort(config.sorting_title);
-			};
+			});
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("Year"));
-			item.activate += i => {
+			item.activate.connect(i => {
 				on_menu_playlist_sort(config.sorting_year);
-			};
+			});
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("Path"));
-			item.activate += i => {
+			item.activate.connect(i => {
 				on_menu_playlist_sort(config.sorting_path);
-			};
+			});
 			submenu.append(item);
 
 			item = new Gtk.MenuItem.with_label(_("Custom"));
-			item.activate += i => {
+			item.activate.connect(i => {
 				on_menu_playlist_sort(config.sorting_custom);
-			};
+			});
 			submenu.append(item);
 
 			img = new Gtk.Image.from_stock(
@@ -348,18 +348,18 @@ namespace Abraca {
 
 			/* Shuffle */
 			item = new Gtk.MenuItem.with_label(_("Shuffle"));
-			item.activate += i => {
+			item.activate.connect(i => {
 				client.xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
-			};
+			});
 			_playlist_menu.append(item);
 
 			/* Clear */
 			img_item = new Gtk.ImageMenuItem.from_stock(
 				Gtk.STOCK_CLEAR, null
 			);
-			img_item.activate += i => {
+			img_item.activate.connect(i => {
 				client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
-			};
+			});
 			_playlist_menu.append(img_item);
 
 			_playlist_menu.show_all();
