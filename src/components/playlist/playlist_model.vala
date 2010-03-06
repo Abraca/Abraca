@@ -203,7 +203,7 @@ namespace Abraca {
 
 				set(added, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
 
-				playlist_map.add_iter((int) mid, iter);
+				playlist_map.add_iter((int) mid, added);
 			}
 		}
 
