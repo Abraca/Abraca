@@ -65,13 +65,13 @@ namespace Abraca {
 															 Gtk.IconSize.LARGE_TOOLBAR,
 															 null));
 
-			store.collection_loaded += (type) => {
+			store.collection_loaded.connect((type) => {
 				expand_all();
-			};
+			});
 
 			create_columns();
 
-			row_activated += on_row_activated;
+			row_activated.connect(on_row_activated);
 
 			enable_model_drag_dest(_target_entries,
 			                       Gdk.DragAction.COPY);
@@ -81,16 +81,16 @@ namespace Abraca {
 			                         Gdk.DragAction.MOVE);
 
 			create_context_menu();
-			get_selection().changed += on_selection_changed_update_menu;
+			get_selection().changed.connect(on_selection_changed_update_menu);
 			on_selection_changed_update_menu(get_selection());
 
-			drag_leave += on_drag_leave;
-			drag_motion += on_drag_motion;
-			drag_data_get += on_drag_data_get;
-			drag_data_received += on_drag_data_received;
+			drag_leave.connect(on_drag_leave);
+			drag_motion.connect(on_drag_motion);
+			drag_data_get.connect(on_drag_data_get);
+			drag_data_received.connect(on_drag_data_received);
 
-			key_press_event += on_key_press_event;
-			button_press_event += on_button_press_event;
+			key_press_event.connect(on_key_press_event);
+			button_press_event.connect(on_button_press_event);
 		}
 
 
@@ -115,7 +115,7 @@ namespace Abraca {
 		}
 
 
-		private void on_drag_data_get (CollectionsView w, Gdk.DragContext ctx,
+		private void on_drag_data_get (Gtk.Widget w, Gdk.DragContext ctx,
 		                               Gtk.SelectionData selection_data,
 		                               uint info, uint time)
 		{
@@ -151,7 +151,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_button_press_event (CollectionsView w, Gdk.EventButton button)
+		private bool on_button_press_event (Gtk.Widget w, Gdk.EventButton button)
 		{
 			Gtk.TreePath path;
 			int x, y;
@@ -182,7 +182,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_key_press_event (CollectionsView w, Gdk.EventKey e)
+		private bool on_key_press_event (Gtk.Widget w, Gdk.EventKey e)
 		{
 			switch (e.keyval) {
 				case Gdk.Keysym.F2:
@@ -200,7 +200,7 @@ namespace Abraca {
 		/**
 		 * Handle user input rename of collections.
 		 */
-		private void on_cell_edited (CellRendererCollection renderer,
+		private void on_cell_edited (Gtk.CellRenderer renderer,
 		                             string path, string new_text)
 		{
 			Client c = Client.instance();
@@ -231,7 +231,7 @@ namespace Abraca {
 		 * When dragging something over the collection tree widget, show a
 		 * temporary new playlist, and update the drop paths.
 		 */
-		private bool on_drag_motion (CollectionsView w, Gdk.DragContext ctx,
+		private bool on_drag_motion (Gtk.Widget w, Gdk.DragContext ctx,
 		                             int x, int y, uint time)
 		{
 			CollectionsModel store = (CollectionsModel) model;
@@ -274,7 +274,7 @@ namespace Abraca {
 		 * Save the drop path and remove the temporary playlist if it wasn't
 		 * the target of the drop operation.
 		 */
-		private void on_drag_leave (CollectionsView widget,
+		private void on_drag_leave (Gtk.Widget widget,
 		                            Gdk.DragContext ctx,
 		                            uint time)
 		{
@@ -293,7 +293,7 @@ namespace Abraca {
 		/**
 		 * 
 		 */
-		private void on_drag_data_received (CollectionsView w,
+		private void on_drag_data_received (Gtk.Widget w,
 		                                    Gdk.DragContext ctx,
 		                                    int x_pos, int y_pos,
 		                                    Gtk.SelectionData data,
@@ -362,7 +362,7 @@ namespace Abraca {
 
 
 
-		private void on_row_activated (CollectionsView tree,
+		private void on_row_activated (Gtk.Widget tree,
 		                               Gtk.TreePath path,
 		                               Gtk.TreeViewColumn column)
 		{
@@ -392,7 +392,7 @@ namespace Abraca {
 
 
 
-		private void on_menu_collection_get(Gtk.ImageMenuItem item) {
+		private void on_menu_collection_get(Gtk.MenuItem item) {
 			Gtk.TreeIter iter;
 
 			var selection = get_selection();
@@ -499,7 +499,7 @@ namespace Abraca {
 
 			renderer = new CellRendererCollection();
 			renderer.height = ((CollectionsModel) model).collection_pixbuf.height;
-			renderer.edited += on_cell_edited;
+			renderer.edited.connect(on_cell_edited);
 
 			column = new Gtk.TreeViewColumn.with_attributes (
 				null, renderer,
@@ -527,7 +527,7 @@ namespace Abraca {
 			item.image = new Gtk.Image.from_stock(
 				Gtk.STOCK_FIND, Gtk.IconSize.MENU
 			);
-			item.activate += on_menu_collection_get;
+			item.activate.connect(on_menu_collection_get);
 			_collection_menu_item_when_coll_selected.prepend(item);
 			_collection_menu.append(item);
 
@@ -535,9 +535,9 @@ namespace Abraca {
 			item.image = new Gtk.Image.from_stock(
 				Gtk.STOCK_EDIT, Gtk.IconSize.MENU
 			);
-			item.activate += (menu) => {
+			item.activate.connect((menu) => {
 				selected_collection_rename();
-			};
+			});
 			_collection_menu_item_when_coll_selected.prepend(item);
 			_collection_menu.append(item);
 
@@ -545,9 +545,9 @@ namespace Abraca {
 			item.image = new Gtk.Image.from_stock(
 				Gtk.STOCK_DELETE, Gtk.IconSize.MENU
 			);
-			item.activate += (menu) => {
+			item.activate.connect((menu) => {
 				selected_collection_delete();
-			};
+			});
 			_collection_menu_item_when_coll_selected.prepend(item);
 			_collection_menu.append(item);
 

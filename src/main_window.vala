@@ -44,20 +44,20 @@ namespace Abraca {
 			height_request = 600;
 			allow_shrink = true;
 
-			delete_event += (ev) => {
+			delete_event.connect((ev) => {
 				Abraca.instance().quit();
 				return false;
-			};
+			});
 
 			main_hpaned.set_sensitive(false);
 
-			c.disconnected += c => {
+			c.disconnected.connect(c => {
 				main_hpaned.set_sensitive(false);
-			};
+			});
 
-			c.connected += c => {
+			c.connected.connect(c => {
 				main_hpaned.set_sensitive(true);
-			};
+			});
 
 			Configurable.register(this);
 		}
@@ -149,35 +149,35 @@ namespace Abraca {
 
 			var menubar = uiman.get_widget("/Menu");
 
-			uiman.get_action("/Menu/Music/Quit").activate += (action) => {
+			uiman.get_action("/Menu/Music/Quit").activate.connect((action) => {
 				Abraca.instance().quit();
-			};
+			});
 
-			uiman.get_action("/Menu/Music/Add/Files").activate += (action) => {
+			uiman.get_action("/Menu/Music/Add/Files").activate.connect((action) => {
 				Abraca.instance().medialib.create_add_file_dialog(Gtk.FileChooserAction.OPEN);
-			};
+			});
 
-			uiman.get_action("/Menu/Music/Add/Directory").activate += (action) => {
+			uiman.get_action("/Menu/Music/Add/Directory").activate.connect((action) => {
 				Abraca.instance().medialib.create_add_file_dialog(Gtk.FileChooserAction.SELECT_FOLDER);
-			};
+			});
 
-			uiman.get_action("/Menu/Music/Add/URL").activate += (action) => {
+			uiman.get_action("/Menu/Music/Add/URL").activate.connect((action) => {
 				Abraca.instance().medialib.create_add_url_dialog();
-			};
+			});
 
-			uiman.get_action("/Menu/Playlist/ConfigureSorting").activate += (action) => {
+			uiman.get_action("/Menu/Playlist/ConfigureSorting").activate.connect((action) => {
 				Config.instance().show_sorting_dialog();
-			};
+			});
 
-			uiman.get_action("/Menu/Playlist/Clear").activate += (action) => {
+			uiman.get_action("/Menu/Playlist/Clear").activate.connect((action) => {
 				Client.instance().xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
-			};
+			});
 
-			uiman.get_action("/Menu/Playlist/Shuffle").activate += (action) => {
+			uiman.get_action("/Menu/Playlist/Shuffle").activate.connect((action) => {
 				Client.instance().xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
-			};
+			});
 
-			uiman.get_action("/Menu/Help/About").activate += (action) => {
+			uiman.get_action("/Menu/Help/About").activate.connect((action) => {
 				var about_builder = new Gtk.Builder ();
 
 				try {
@@ -204,7 +204,7 @@ namespace Abraca {
 
 				about.run();
 				about.hide();
-			};
+			});
 
 			return menubar;
 		}

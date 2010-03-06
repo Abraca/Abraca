@@ -75,13 +75,13 @@ namespace Abraca {
 			create_context_menu(config);
 			create_dragndrop();
 
-			row_activated += on_row_activated;
-			key_press_event += on_key_press_event;
-			button_press_event += on_button_press_event;
+			row_activated.connect(on_row_activated);
+			key_press_event.connect(on_key_press_event);
+			button_press_event.connect(on_button_press_event);
 
 			var selection = get_selection();
 			selection.set_mode(Gtk.SelectionMode.MULTIPLE);
-			selection.changed += on_selection_changed_update_menu;
+			selection.changed.connect(on_selection_changed_update_menu);
 
 			on_selection_changed_update_menu(selection);
 
@@ -106,7 +106,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_button_press_event(PlaylistView w, Gdk.EventButton button) {
+		private bool on_button_press_event(Gtk.Widget w, Gdk.EventButton button) {
 			Gtk.TreePath path;
 			int x, y;
 
@@ -151,7 +151,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_key_press_event(PlaylistView w, Gdk.EventKey e) {
+		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e) {
 			int KEY_DELETE = 65535;
 
 			if (e.keyval == KEY_DELETE) {
@@ -243,7 +243,7 @@ namespace Abraca {
 
 			/* Jump */
 			item = new Gtk.MenuItem.with_label(_("Jump"));
-			item.activate += jump_to_selected;
+			item.activate.connect(jump_to_selected);
 			_playlist_menu_item_when_one_selected.prepend(item);
 			_playlist_menu.append(item);
 
@@ -255,7 +255,7 @@ namespace Abraca {
 			item = new Gtk.ImageMenuItem.from_stock(
 				Gtk.STOCK_INFO, null
 			);
-			item.activate += on_menu_playlist_info;
+			item.activate.connect(on_menu_playlist_info);
 			_playlist_menu_item_when_some_selected.prepend(item);
 			_playlist_menu.append(item);
 
@@ -291,7 +291,7 @@ namespace Abraca {
 			item = new Gtk.ImageMenuItem.from_stock(
 				Gtk.STOCK_DELETE, null
 			);
-			item.activate += delete_selected;
+			item.activate.connect(delete_selected);
 			_playlist_menu_item_when_some_selected.prepend(item);
 			_playlist_menu.append(item);
 
@@ -437,12 +437,12 @@ namespace Abraca {
 			                         _source_entries,
 			                         Gdk.DragAction.MOVE);
 
-			drag_data_received += on_drag_data_receive;
-			drag_data_get += on_drag_data_get;
+			drag_data_received.connect(on_drag_data_receive);
+			drag_data_get.connect(on_drag_data_get);
 		}
 
 
-		private void on_drag_data_get(PlaylistView w, Gdk.DragContext ctx,
+		private void on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			GLib.List<uint> pos_list = new GLib.List<uint>();
@@ -486,8 +486,8 @@ namespace Abraca {
 		/**
 		 * Take care of the various types of drops.
 		 */
-		private void on_drag_data_receive(PlaylistView w, Gdk.DragContext ctx, int x, int y,
-										  Gtk.SelectionData sel, uint info, uint time) {
+		private void on_drag_data_receive(Gtk.Widget w, Gdk.DragContext ctx, int x, int y,
+		                                  Gtk.SelectionData sel, uint info, uint time) {
 			bool success = false;
 
 			if (info == (uint) DragDropTargetType.ROW) {
@@ -677,7 +677,7 @@ namespace Abraca {
 		 * When clicking a row, perform a jump to that song and start
 		 * playback if not already playing.
 		 */
-		private void on_row_activated(PlaylistView tree, Gtk.TreePath path,
+		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path,
 		                              Gtk.TreeViewColumn column) {
 			jump_to_pos(path.get_indices()[0]);
 		}

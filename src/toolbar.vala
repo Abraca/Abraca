@@ -47,18 +47,18 @@ namespace Abraca {
 			_seek = false;
 
 			btn = create_playback_button(Gtk.STOCK_MEDIA_PLAY);
-			btn.clicked += on_media_play;
+			btn.clicked.connect(on_media_play);
 
 			play_pause = btn;
 
 			btn = create_playback_button(Gtk.STOCK_MEDIA_STOP);
-			btn.clicked += on_media_stop;
+			btn.clicked.connect(on_media_stop);
 
 			btn = create_playback_button(Gtk.STOCK_MEDIA_PREVIOUS);
-			btn.clicked += on_media_prev;
+			btn.clicked.connect(on_media_prev);
 
 			btn = create_playback_button(Gtk.STOCK_MEDIA_NEXT);
-			btn.clicked += on_media_next;
+			btn.clicked.connect(on_media_next);
 
 			create_seekbar();
 			create_cover_image();
@@ -68,19 +68,19 @@ namespace Abraca {
 			_volume_button.no_show_all = true;
 			pack_end(_volume_button, false, false, 0);
 
-			c.playback_status += on_playback_status_change;
-			c.playback_current_id += on_playback_current_id;
-			c.playback_playtime += on_playback_playtime;
+			c.playback_status.connect(on_playback_status_change);
+			c.playback_current_id.connect(on_playback_current_id);
+			c.playback_playtime.connect(on_playback_playtime);
 
-			c.medialib_entry_changed += (client, res) => {
+			c.medialib_entry_changed.connect((client, res) => {
 				on_media_info(res);
-			};
+			});
 
-			c.disconnected += (c) => {
+			c.disconnected.connect((c) => {
 				set_sensitive(false);
-			};
+			});
 
-			c.connected += (c) => {
+			c.connected.connect((c) => {
 				c.xmms.playback_volume_get().notifier_set((val) => {
 					if (val.is_error()) {
 						_volume_button.hide();
@@ -90,7 +90,7 @@ namespace Abraca {
 				});
 
 				set_sensitive(true);
-			};
+			});
 
 			set_sensitive(false);
 		}
@@ -118,8 +118,8 @@ namespace Abraca {
 			_time_slider.width_request = 130;
 			_time_slider.sensitive = false;
 
-			_time_slider.button_press_event += on_time_slider_press;
-			_time_slider.button_release_event += on_time_slider_release;
+			_time_slider.button_press_event.connect(on_time_slider_press);
+			_time_slider.button_release_event.connect(on_time_slider_release);
 
 			vbox.pack_start(_time_slider, true, true, 0);
 
@@ -130,18 +130,18 @@ namespace Abraca {
 		}
 
 
-		private bool on_time_slider_press(Gtk.HScale widget, Gdk.EventButton button) {
+		private bool on_time_slider_press(Gtk.Widget w, Gdk.EventButton button) {
 			_seek = true;
-			_time_slider.motion_notify_event += on_time_slider_motion_notify;
+			_time_slider.motion_notify_event.connect(on_time_slider_motion_notify);
 
 			return false;
 		}
 
 
-		private bool on_time_slider_release(Gtk.HScale scale, Gdk.EventButton button) {
+		private bool on_time_slider_release(Gtk.Widget w, Gdk.EventButton button) {
 			Client c = Client.instance();
 
-			double percent = scale.get_value();
+			double percent = (w as Gtk.Range).get_value();
 			uint pos = (uint)(_duration * percent);
 
 			c.xmms.playback_seek_ms(pos, Xmms.PlaybackSeekMode.SET);
@@ -154,8 +154,8 @@ namespace Abraca {
 		}
 
 
-		private bool on_time_slider_motion_notify(Gtk.HScale scale, Gdk.EventMotion motion) {
-			double percent = scale.get_value();
+		private bool on_time_slider_motion_notify(Gtk.Widget w, Gdk.EventMotion motion) {
+			double percent = (w as Gtk.Range).get_value();
 			_pos = (uint)(_duration * percent);
 
 			update_time_label();
@@ -163,7 +163,7 @@ namespace Abraca {
 			return false;
 		}
 
-		private bool on_coverart_tooltip (Gtk.Image image, int x, int y, bool keyboard_mode, Gtk.Tooltip tooltip) {
+		private bool on_coverart_tooltip (Gtk.Widget w, int x, int y, bool keyboard_mode, Gtk.Tooltip tooltip) {
 			if (_coverart_big != null) {
 				tooltip.set_icon (_coverart_big);
 				return true;
@@ -176,7 +176,7 @@ namespace Abraca {
 			set_default_coverart();
 
 			_coverart.has_tooltip = true;
-			_coverart.query_tooltip += on_coverart_tooltip;
+			_coverart.query_tooltip.connect(on_coverart_tooltip);
 
 			pack_start(_coverart, false, false, 4);
 		}

@@ -44,9 +44,11 @@ namespace Abraca {
 		construct {
 			pos_map = new Gee.HashMap<int,Gtk.TreeRowReference>();
 
-			Client.instance().medialib_entry_changed += (client, res) => {
+			var client = Client.instance();
+
+			client.medialib_entry_changed.connect((client, res) => {
 				on_medialib_info(res);
-			};
+			});
 		}
 
 

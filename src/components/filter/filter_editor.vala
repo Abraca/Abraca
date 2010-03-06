@@ -73,9 +73,9 @@ namespace Abraca {
 
 
 			Gtk.Button button = new Gtk.Button.from_stock(Gtk.STOCK_OK);
-			button.clicked += (widget) => {
+			button.clicked.connect((widget) => {
 				destroy();
-			};
+			});
 
 			action_area.add(button);
 			action_area.border_width = 0;
@@ -85,9 +85,9 @@ namespace Abraca {
 			vbox.pack_start(notebook, true, true, 0);
 			vbox.set_child_packing(action_area, false, false, 0, Gtk.PackType.END);
 
-			response += (widget,response) => {
+			response.connect((widget,response) => {
 				destroy();
-			};
+			});
 
 			show_all();
 		}
@@ -133,7 +133,7 @@ namespace Abraca {
 			_view.model = model;
 
 			renderer = new Gtk.CellRendererToggle();
-			renderer.toggled += on_entry_toggled;
+			renderer.toggled.connect(on_entry_toggled);
 
 			column = new Gtk.TreeViewColumn.with_attributes(
 				"column", renderer, "active", 0

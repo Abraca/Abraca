@@ -101,9 +101,11 @@ namespace Abraca {
 			store.insert_with_values(out iter, 0, 0, pattern);
 		}
 
-		private void on_filter_entry_changed(Gtk.Entry entry) {
+		private void on_filter_entry_changed(Gtk.Editable widget) {
 			Gdk.Color? color = null;
 			Xmms.Collection coll;
+
+			var entry = widget as Gtk.Entry;
 			var text = entry.get_text();
 
 			if (text.size() > 0) {
@@ -128,8 +130,8 @@ namespace Abraca {
 			entry.modify_base(Gtk.StateType.NORMAL, color);
 		}
 
-		private bool on_filter_entry_focus_out_event(Gtk.Entry entry, Gdk.EventFocus e) {
-			if (_unsaved_query != null && _unsaved_query == entry.text) {
+		private bool on_filter_entry_focus_out_event(Gtk.Widget w, Gdk.EventFocus e) {
+			if (_unsaved_query != null && _unsaved_query == (w as Gtk.Entry).text) {
 				_filter_save(_unsaved_query);
 			}
 
@@ -157,8 +159,8 @@ namespace Abraca {
 
 			Gtk.Entry entry = (Gtk.Entry) _filter_cbox.child;
 
-			entry.changed += on_filter_entry_changed;
-			entry.focus_out_event += on_filter_entry_focus_out_event;
+			entry.changed.connect(on_filter_entry_changed);
+			entry.focus_out_event.connect(on_filter_entry_focus_out_event);
 
 			Gtk.EntryCompletion comp = new Gtk.EntryCompletion();
 			comp.model = _filter_cbox.model;

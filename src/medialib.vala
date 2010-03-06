@@ -401,8 +401,8 @@ namespace Abraca {
 			entry.activates_default = true;
 			vbox.pack_start(combo, true, true, 0);
 
-			close += on_close;
-			response += on_response;
+			close.connect(on_close);
+			response.connect(on_response);
 
 			Configurable.register(this);
 			show_all();
@@ -424,11 +424,11 @@ namespace Abraca {
 			urls.insert_with_values(out iter, 0, 0, url);
 		}
 
-		private void on_close(MedialibAddUrlDialog dialog) {
+		private void on_close(Gtk.Dialog dialog) {
 			Configurable.unregister(this);
 		}
 
-		private void on_response(MedialibAddUrlDialog dialog, int response) {
+		private void on_response(Gtk.Dialog w, int response) {
 			if(response == Gtk.ResponseType.OK && entry.get_text() != "") {
 				save_url(entry.get_text());
 			}
@@ -481,18 +481,18 @@ namespace Abraca {
 			add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
 			add_button(Gtk.STOCK_OPEN, Gtk.ResponseType.OK);
 
-			close += on_close;
-			response += on_response;
+			close.connect(on_close);
+			response.connect(on_response);
 
 			Configurable.register(this);
 			show_all();
 		}
 
-		private void on_close(MedialibFileChooserDialog dialog) {
+		private void on_close(Gtk.Dialog dialog) {
 			Configurable.unregister(this);
 		}
 
-		private void on_response(MedialibFileChooserDialog dialog, int response) {
+		private void on_response(Gtk.Dialog dialog, int response) {
 			if(response == Gtk.ResponseType.OK) {
 				current_folder = get_current_folder();
 			}
@@ -520,10 +520,10 @@ namespace Abraca {
 		public void info_dialog_add_id(uint mid) {
 			if (info_dialog == null) {
 				info_dialog = MedialibInfoDialog.build();
-				info_dialog.delete_event += (ev) => {
+				info_dialog.delete_event.connect((ev) => {
 					info_dialog = null;
 					return false;
-				};
+				});
 				info_dialog.show_all();
 			}
 			info_dialog.add_mid(mid);

@@ -67,19 +67,19 @@ namespace Abraca {
 
 			client = _client;
 
-			client.playlist_loaded += on_playlist_loaded;
+			client.playlist_loaded.connect(on_playlist_loaded);
 
-			client.playlist_add += on_playlist_add;
-			client.playlist_move += on_playlist_move;
-			client.playlist_insert += on_playlist_insert;
-			client.playlist_remove += on_playlist_remove;
-			client.playlist_position += on_playlist_position;
+			client.playlist_add.connect(on_playlist_add);
+			client.playlist_move.connect(on_playlist_move);
+			client.playlist_insert.connect(on_playlist_insert);
+			client.playlist_remove.connect(on_playlist_remove);
+			client.playlist_position.connect(on_playlist_position);
 
-			client.playback_status += on_playback_status;
+			client.playback_status.connect(on_playback_status);
 
-			client.medialib_entry_changed += (c, res) => {
+			client.medialib_entry_changed.connect((c, res) => {
 				on_medialib_info(res);
-			};
+			});
 		}
 
 		/**

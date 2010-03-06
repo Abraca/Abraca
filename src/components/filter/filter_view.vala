@@ -59,15 +59,15 @@ namespace Abraca {
 
 
 			create_context_menu();
-			get_selection().changed += on_selection_changed_update_menu;
+			get_selection().changed.connect(on_selection_changed_update_menu);
 			on_selection_changed_update_menu(get_selection());
 
 			create_drag_n_drop();
 
-			button_press_event += on_button_press_event;
-			row_activated += on_row_activated;
-			key_press_event += on_key_press_event;
-			columns_changed += on_columns_changed;
+			button_press_event.connect(on_button_press_event);
+			row_activated.connect(on_row_activated);
+			key_press_event.connect(on_key_press_event);
+			columns_changed.connect(on_columns_changed);
 
 			notify["sorting"].connect(on_sorting_changed);
 
@@ -193,7 +193,7 @@ namespace Abraca {
 		}
 
 
-		private bool on_button_press_event(FilterView w, Gdk.EventButton button) {
+		private bool on_button_press_event(Gtk.Widget w, Gdk.EventButton button) {
 			Gtk.TreePath path;
 			int x, y;
 
@@ -249,7 +249,7 @@ namespace Abraca {
 			}
 		}
 
-		private void on_row_activated(FilterView tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
+		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
 			Client c = Client.instance();
 			Gtk.TreeIter iter;
 			uint id;
@@ -322,7 +322,7 @@ namespace Abraca {
 
 				GLib.assert(ancestor != null);
 
-				ancestor.button_press_event += on_header_clicked;
+				ancestor.button_press_event.connect(on_header_clicked);
 			}
 
 			model = new FilterModel(props);
@@ -365,12 +365,12 @@ namespace Abraca {
 					}
 
 					item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_EDIT, null);
-					item.activate += on_header_edit;
+					item.activate.connect(on_header_edit);
 					menu.append(item);
 
 					if (columns.length() > 1) {
 						item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_REMOVE, null);
-						item.activate += on_header_remove;
+						item.activate.connect(on_header_remove);
 						menu.append(item);
 					}
 
@@ -378,7 +378,7 @@ namespace Abraca {
 						menu.append(new Gtk.SeparatorMenuItem());
 
 						item = new Gtk.MenuItem.with_label(_("Reset sorting"));
-						item.activate += on_header_reset_sorting;
+						item.activate.connect(on_header_reset_sorting);
 						menu.append(item);
 					}
 
@@ -395,7 +395,7 @@ namespace Abraca {
 			FilterModel store = (FilterModel) model;
 			FilterEditor edit = new FilterEditor();
 
-			edit.column_changed += (editor, prop, enabled) => {
+			edit.column_changed.connect((editor, prop, enabled) => {
 				// TODO: Should use outer store when vala supports this.
 				FilterModel tmp_store = (FilterModel) model;
 
@@ -420,7 +420,7 @@ namespace Abraca {
 				}
 
 				set_dynamic_columns(modified);
-			};
+			});
 
 			edit.set_active(store.dynamic_columns);
 			edit.run();
@@ -447,7 +447,7 @@ namespace Abraca {
 			filter_menu = new Gtk.Menu();
 
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_SELECT_ALL, null);
-			item.activate += on_menu_select_all;
+			item.activate.connect(on_menu_select_all);
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
@@ -456,7 +456,7 @@ namespace Abraca {
 			filter_menu.append(item);
 
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_INFO, null);
-			item.activate += on_menu_info;
+			item.activate.connect(on_menu_info);
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
@@ -465,12 +465,12 @@ namespace Abraca {
 			filter_menu.append(item);
 
 			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
-			item.activate += on_menu_add;
+			item.activate.connect(on_menu_add);
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
 			item = new Gtk.MenuItem.with_mnemonic(_("_Replace"));
-			item.activate += on_menu_replace;
+			item.activate.connect(on_menu_replace);
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
@@ -483,7 +483,7 @@ namespace Abraca {
 			                         _target_entries,
 			                         Gdk.DragAction.MOVE);
 
-			drag_data_get += on_drag_data_get;
+			drag_data_get.connect(on_drag_data_get);
 		}
 
 		private void update_sort_indicators() {
@@ -497,7 +497,7 @@ namespace Abraca {
 			}
 		}
 
-		private void on_drag_data_get(FilterView w, Gdk.DragContext ctx,
+		private void on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
 			GLib.List<uint> mid_list = new GLib.List<uint>();

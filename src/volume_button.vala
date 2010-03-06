@@ -41,24 +41,24 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 
 		set_icons(_icons);
 
-		pressed += (w) => {
+		pressed.connect((w) => {
 			_accept_updates = false;
-		};
+		});
 
-		released += (w) => {
+		released.connect((w) => {
 			_accept_updates = true ;
-		};
+		});
 
-		scroll_event += on_scroll_event;
+		scroll_event.connect(on_scroll_event);
 
 		Client c = Client.instance();
-		c.playback_volume += on_volume_changed;
+		c.playback_volume.connect(on_volume_changed);
 
-		value_changed += (w, volume) => {
+		value_changed.connect((w, volume) => {
 			// TODO: Remove this once vala supports proper closures.
 			_tmp_apply_volume_value = (int) value;
 			_apply_volume((int) volume);
-		};
+		});
 	}
 
 	private void _apply_volume (int volume) {
@@ -74,7 +74,7 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 		tooltip_text = "%d%%".printf((int) value);
 	}
 
-	public bool on_scroll_event (VolumeButton w, Gdk.EventScroll e) {
+	public bool on_scroll_event (Gtk.Widget w, Gdk.EventScroll e) {
 		uint tmp;
 
 		if (e.direction == Gdk.ScrollDirection.UP) {

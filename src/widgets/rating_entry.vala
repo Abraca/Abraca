@@ -73,18 +73,18 @@ namespace Abraca {
 
 			_canvas = new Gdk.Pixbuf(Gdk.Colorspace.RGB, true, 8, width_request, height_request);
 
-			expose_event += on_expose_event;
+			expose_event.connect(on_expose_event);
 
-			motion_notify_event += (w, motion) => {
+			motion_notify_event.connect((w, motion) => {
 				rating_from_position(motion.x);
 				return true;
-			};
-			button_press_event += (w, motion) => {
+			});
+			button_press_event.connect((w, motion) => {
 				rating_from_position(motion.x);
 				return true;
-			};
+			});
 
-			changed += update_rating;
+			changed.connect(update_rating);
 
 			rating = min_rating;
 		}
@@ -133,7 +133,7 @@ namespace Abraca {
 		/**
 		 * Paint our canvas on the window.
 		 */
-		public bool on_expose_event(RatingEntry w, Gdk.EventExpose expose) {
+		public bool on_expose_event(Gtk.Widget w, Gdk.EventExpose expose) {
 			expose.window.draw_pixbuf(
 				style.bg_gc[0], _canvas,
 				0, 0, 0, 0, width_request, height_request,

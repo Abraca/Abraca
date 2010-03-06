@@ -86,11 +86,11 @@ namespace Abraca {
 				Column.Name, _("Playlists")
 			);
 
-			c.playlist_loaded += on_playlist_loaded;
-			c.collection_add += on_collection_add;
-			c.collection_rename += on_collection_rename;
-			c.collection_remove += on_collection_remove;
-			c.connected += query_collections;
+			c.playlist_loaded.connect(on_playlist_loaded);
+			c.collection_add.connect(on_collection_add);
+			c.collection_rename.connect(on_collection_rename);
+			c.collection_remove.connect(on_collection_remove);
+			c.connected.connect(query_collections);
 		}
 
 
