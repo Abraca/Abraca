@@ -5,7 +5,7 @@
 
     <property name="program_name">Abraca</property>
 
-    <property name="copyright" translatable="yes">Copyright © 2007-2009 Abraca Developers</property>
+    <property name="copyright" translatable="yes">Copyright © 2007-2010 Abraca Developers</property>
 
     <property name="website">http://abraca.xmms.se</property>
 
@@ -35,7 +35,7 @@ Jakub Steiner &lt;jimmac@ximian.com&gt;
 
     <property name="license" translatable="yes">
 Abraca, an XMMS2 client.
-Copyright (C) 2007-2009  Abraca Team
+Copyright (C) 2007-2010  Abraca Team
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
