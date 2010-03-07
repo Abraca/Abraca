@@ -126,8 +126,34 @@ namespace Abraca {
 			return false;
 		}
 
+		/**
+		 * Try to connect to xmms2d.
+		 * On failure xmms2d will be launched unless an explicit
+		 * XMMS_PATH has been defined.
+		 *
+		 * @return true if a new reconnect should be attempted
+		 */
 		public bool reconnect() {
-			return !try_connect();
+			var path = GLib.Environment.get_variable("XMMS_PATH");
+
+			if (try_connect(path)) {
+				return false;
+			}
+
+			if (path != null) {
+				// Leaving early as XMMS_PATH was explicitly set
+				return true;
+			}
+
+			string stdout, stderr;
+
+			try {
+				GLib.Process.spawn_command_line_sync("xmms2-launcher", out stdout, out stderr, null);
+			} catch (SpawnError e) {
+				GLib.warning("Unable to spawn 'xmms2-launcher' (%s)", e.message);
+			}
+
+			return true;
 		}
 
 		private void detach_callbacks() {
