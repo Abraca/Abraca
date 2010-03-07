@@ -24,6 +24,7 @@ namespace Abraca {
 		private GLib.List<uint> ids;
 		private unowned GLib.List<uint> current;
 
+		private int mid;
 		private string artist;
 		private string album;
 		private string song;
@@ -286,53 +287,80 @@ namespace Abraca {
 			Xmms.Value val = propdict.propdict_to_dict();
 			string tmp;
 			int itmp;
+			int new_mid;
+
+			val.dict_entry_get_int("id", out new_mid);
+			var updated = (mid == new_mid);
+
+			mid = new_mid;
+
 			if (!val.dict_entry_get_string("artist", out tmp)) {
 				tmp = "";
 			}
-			artist = tmp;
-			artist_entry.text = tmp;
-			artist_entry.modify_base(Gtk.StateType.NORMAL, null);
+			if (!updated || artist_entry.get_text() == tmp) {
+				artist = tmp;
+				artist_entry.text = tmp;
+				artist_entry.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_string("album", out tmp)) {
 				tmp = "";
 			}
-			album = tmp;
-			album_entry.text = tmp;
-			album_entry.modify_base(Gtk.StateType.NORMAL, null);
+			if (!updated || album_entry.get_text() == tmp) {
+				album = tmp;
+				album_entry.text = tmp;
+				album_entry.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_string("title", out tmp)) {
 				tmp = "";
 			}
-			song = tmp;
-			song_entry.text = tmp;
-			song_entry.modify_base(Gtk.StateType.NORMAL, null);
+			if (!updated || song_entry.get_text() == tmp) {
+				song = tmp;
+				song_entry.text = tmp;
+				song_entry.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_int("tracknr", out itmp)) {
 				itmp = 0;
 			}
-			tracknr = itmp.to_string("%i");
-			tracknr_button.set_value(itmp);
-			tracknr_button.modify_base(Gtk.StateType.NORMAL, null);
+
+			tmp = itmp.to_string("%i");
+
+			if (!updated || tracknr_button.get_text() == tmp) {
+				tracknr = tmp;
+				tracknr_button.set_value(itmp);
+				tracknr_button.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_string("date", out tmp)) {
 				tmp = "";
 			}
-			date = tmp;
-			date_entry.text = tmp;
-			date_entry.modify_base(Gtk.StateType.NORMAL, null);
+			if (!updated || date_entry.get_text() == tmp) {
+				date = tmp;
+				date_entry.text = tmp;
+				date_entry.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_string("genre", out tmp)) {
 				tmp = "";
 			}
-			genre = tmp;
-			((Gtk.Entry) (genre_combo_box_entry.get_child())).text = tmp;
-			((Gtk.Entry) (genre_combo_box_entry.get_child())).modify_base(Gtk.StateType.NORMAL, null);
+
+			var entry = (Gtk.Entry) genre_combo_box_entry.get_child();
+			if (!updated || entry.text == tmp) {
+				genre = tmp;
+				entry.text = tmp;
+				entry.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_int("rating", out itmp)) {
 				itmp = 0;
 			}
-			rating = itmp.to_string("%i");
-			rating_entry.rating = itmp;
+
+			if (!updated || rating_entry.rating == itmp) {
+				rating = itmp.to_string("%i");
+				rating_entry.rating = itmp;
+			}
 		}
 
 		/* TODO: refactor me */
