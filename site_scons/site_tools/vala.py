@@ -33,7 +33,7 @@ def vala_emitter(target, source, env):
 
 			vapi_file = path.File(str(pkg) + '.vapi')
 			if vapi_file.exists() or vapi_file.has_builder():
-				env.Depends(source, vapi_file)
+				env.Depends(target, vapi_file)
 				break
 
 	return target, source
