@@ -20,6 +20,8 @@
 namespace Abraca {
 	public class MainWindow : Gtk.Window, IConfigurable {
 		private MainHPaned _main_hpaned;
+		private Gtk.CheckMenuItem _repeat_all;
+		private Gtk.CheckMenuItem _repeat_one;
 
 		public MainHPaned main_hpaned {
 			get {
@@ -134,8 +136,28 @@ namespace Abraca {
 		}
 
 
+		private void on_config_changed (Client client, string key, string value) {
+			Gtk.CheckMenuItem item;
+
+			if (key == "playlist.repeat_all") {
+				item = _repeat_all;
+			} else if (key == "playlist.repeat_one") {
+				item = _repeat_one;
+			} else {
+				return;
+			}
+
+			if (value == "1") {
+				item.active = true;
+			} else {
+				item.active = false;
+			}
+			item.sensitive = true;
+		}
+
 		private Gtk.Widget create_menubar() {
 			var builder = new Gtk.Builder ();
+			var client = Client.instance();
 
 			try {
 				builder.add_from_string(
@@ -148,6 +170,9 @@ namespace Abraca {
 			var uiman = builder.get_object("uimanager") as Gtk.UIManager;
 
 			var menubar = uiman.get_widget("/Menu");
+
+			_repeat_all = uiman.get_widget("/Menu/Playlist/RepeatAll") as Gtk.CheckMenuItem;
+			_repeat_one = uiman.get_widget("/Menu/Playlist/RepeatOne") as Gtk.CheckMenuItem;
 
 			uiman.get_action("/Menu/Music/Quit").activate.connect((action) => {
 				Abraca.instance().quit();
@@ -176,6 +201,18 @@ namespace Abraca {
 			uiman.get_action("/Menu/Playlist/Shuffle").activate.connect((action) => {
 				Client.instance().xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
 			});
+
+			_repeat_all.toggled.connect((action) => {
+				client.xmms.config_set_value("playlist.repeat_all",
+				                             "%d".printf((int) action.active));
+			});
+
+			_repeat_one.toggled.connect((action) => {
+				client.xmms.config_set_value("playlist.repeat_one",
+				                             "%d".printf((int) action.active));
+			});
+
+			client.configval_changed.connect(on_config_changed);
 
 			uiman.get_action("/Menu/Help/About").activate.connect((action) => {
 				var about_builder = new Gtk.Builder ();
