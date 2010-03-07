@@ -204,13 +204,13 @@ namespace Xmms {
 		}
 		public Result playlist_add_encoded(string playlist, string url);
 		public Result playlist_add_idlist(string playlist, Collection coll);
-		[NoArrayLength]
+		[CCode (array_length = false)]
 		public Result playlist_add_collection(string playlist, Collection coll, Xmms.Value? order);
 		public Result playlist_remove_entry(string playlist, uint id);
 		public Result playlist_clear(string playlist);
 		public Result playlist_remove(string playlist);
 		public Result playlist_list_entries(string playlist = "Default");
-		[NoArrayLength]
+		[CCode (array_length = false)]
 		public Result playlist_sort(string playlist, Xmms.Value order);
 		public Result playlist_set_next(uint pos);
 		public Result playlist_set_next_rel(int pos);
@@ -221,7 +221,7 @@ namespace Xmms {
 		public Result playlist_insert_url(string playlist, int pos, string url);
 		public Result playlist_insert_id(string playlist, int pos, uint id);
 		public Result playlist_insert_encoded(string playlist, int pos, string url);
-		[NoArrayLength]
+		[CCode (array_length = false)]
 		public Result playlist_insert_collection(string playlist, int pos, Xmms.Collection coll, Xmms.Value? order);
 		public Result playlist_load(string playlist);
 		public Result playlist_radd(string playlist, string url);
@@ -287,9 +287,9 @@ namespace Xmms {
 		public Result coll_rename(string from_name, string to_name, string ns);
 		public Result coll_idlist_from_playlist_file(string path);
 		public Result coll_sync();
-		[NoArrayLength]
+		[CCode (array_length = false)]
 		public Result coll_query_ids(Collection coll, Xmms.Value order, uint limit_start = 0, uint limit_len = 0);
-		[NoArrayLength]
+		[CCode (array_length = false)]
 		public Result coll_query_infos(Collection coll, Xmms.Value order, uint limit_start = 0, uint limit_len = 0, Xmms.Value? fetch = null, Xmms.Value? group = null);
 		public Result broadcast_collection_changed();
 
@@ -312,7 +312,7 @@ namespace Xmms {
 	public class Collection {
 		[CCode (cname = "xmmsc_coll_new")]
 		public Collection(CollectionType type);
-		[NoArrayLength]
+		[CCode (array_length = false)]
 		public void set_idlist(uint[] ids);
 		public void add_operand(Collection op);
 		public void remove_operand(Collection op);
