@@ -95,6 +95,9 @@ namespace Abraca {
 			//       due to a bug in GTK, remove this when bug has
 			//       been resolved and released.
 			genre_combo_box_entry.text_column = 0;
+			var widget = genre_combo_box_entry.get_child() as Gtk.Entry;
+			widget.activate.connect(on_genre_box_button_activated);
+
 
 			store = builder.get_object("details_model") as Gtk.TreeStore;
 
