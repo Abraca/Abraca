@@ -241,13 +241,16 @@ namespace Abraca {
 			);
 			_recallable_references.add(recallable);
 
+			_xmms.config_list_values().notifier_set(
+				on_configval_changed
+			);
+
 			recallable = _xmms.broadcast_config_value_changed();
 			recallable.notifier_set(
 					on_configval_changed
 			);
 			_recallable_references.add(recallable);
 		}
-
 
 		private bool on_playback_status(Xmms.Value val) {
 			int status;
