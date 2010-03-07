@@ -169,6 +169,9 @@ namespace Abraca {
 
 			var uiman = builder.get_object("uimanager") as Gtk.UIManager;
 
+			var group = uiman.get_accel_group();
+			add_accel_group(group);
+
 			var menubar = uiman.get_widget("/Menu");
 
 			_repeat_all = uiman.get_widget("/Menu/Playlist/RepeatAll") as Gtk.CheckMenuItem;
