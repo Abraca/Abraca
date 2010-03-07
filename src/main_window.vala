@@ -30,7 +30,7 @@ namespace Abraca {
 		}
 
 		construct {
-			Client c = Client.instance();
+			var client = Client.instance();
 
 			create_widgets();
 
@@ -53,11 +53,11 @@ namespace Abraca {
 
 			main_hpaned.set_sensitive(false);
 
-			c.disconnected.connect(c => {
+			client.disconnected.connect(c => {
 				main_hpaned.set_sensitive(false);
 			});
 
-			c.connected.connect(c => {
+			client.connected.connect(c => {
 				main_hpaned.set_sensitive(true);
 			});
 
@@ -195,11 +195,11 @@ namespace Abraca {
 			});
 
 			uiman.get_action("/Menu/Playlist/Clear").activate.connect((action) => {
-				Client.instance().xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
+				client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
 			});
 
 			uiman.get_action("/Menu/Playlist/Shuffle").activate.connect((action) => {
-				Client.instance().xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
+				client.xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
 			});
 
 			_repeat_all.toggled.connect((action) => {
