@@ -32,11 +32,11 @@ namespace Abraca {
 			}
 		}
 
-		construct {
+		public RightHPaned(Gtk.AccelGroup group) {
 			position = 430;
 			position_set = true;
 
-			pack1(create_left_box(), true, true);
+			pack1(create_left_box(group), true, true);
 			pack2(create_right_box(), false, true);
 
 			_pending_queries = new Gee.LinkedList<string>();
@@ -145,7 +145,7 @@ namespace Abraca {
 			entry.text = text;
 		}
 
-		private Gtk.Box create_left_box() {
+		private Gtk.Box create_left_box(Gtk.AccelGroup group) {
 			Gtk.VBox box = new Gtk.VBox(false, 0);
 
 			Gtk.HBox hbox = new Gtk.HBox(false, 6);
@@ -158,6 +158,9 @@ namespace Abraca {
 			);
 
 			Gtk.Entry entry = (Gtk.Entry) _filter_cbox.child;
+
+			_filter_cbox.add_accelerator("grab-focus", group, Gdk.Keysym.l,
+			                             Gdk.ModifierType.CONTROL_MASK, 0);
 
 			entry.changed.connect(on_filter_entry_changed);
 			entry.focus_out_event.connect(on_filter_entry_focus_out_event);

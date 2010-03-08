@@ -27,11 +27,11 @@ namespace Abraca {
 			}
 		}
 
-		construct {
+		public MainHPaned (Gtk.AccelGroup group) {
 			position = 135;
 			position_set = true;
 
-			create_widgets();
+			create_widgets(group);
 
 			Configurable.register(this);
 		}
@@ -56,7 +56,7 @@ namespace Abraca {
 		}
 
 
-		private void create_widgets() {
+		private void create_widgets(Gtk.AccelGroup group) {
 			Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(
 				null, null
 			);
@@ -69,7 +69,7 @@ namespace Abraca {
 
 			pack1(scrolled, false, true);
 
-			_right_hpaned = new RightHPaned();
+			_right_hpaned = new RightHPaned(group);
 			pack2(_right_hpaned, true, true);
 		}
 	}

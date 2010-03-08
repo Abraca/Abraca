@@ -121,6 +121,8 @@ namespace Abraca {
 
 
 		private void create_widgets() {
+			var accel_group = new Gtk.AccelGroup();
+
 			var vbox = new Gtk.VBox(false, 0);
 
 			var menubar = create_menubar();
@@ -129,10 +131,12 @@ namespace Abraca {
 			var toolbar = new ToolBar();
 			vbox.pack_start(toolbar, false, false, 6);
 
-			_main_hpaned = new MainHPaned();
+			_main_hpaned = new MainHPaned(accel_group);
 			vbox.pack_start(_main_hpaned, true, true, 0);
 
 			add(vbox);
+
+			add_accel_group(accel_group);
 		}
 
 
