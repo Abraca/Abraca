@@ -158,6 +158,10 @@ namespace Abraca {
 			);
 
 			Gtk.Entry entry = (Gtk.Entry) _filter_cbox.child;
+			entry.focus.connect((w, e) => {
+				entry.select_region(0, -1);
+				return true;
+			});
 
 			_filter_cbox.add_accelerator("grab-focus", group, Gdk.Keysym.l,
 			                             Gdk.ModifierType.CONTROL_MASK, 0);
