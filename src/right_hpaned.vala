@@ -25,6 +25,8 @@ namespace Abraca {
 		private FilterView _filter_tree;
 		private Gee.Queue<string> _pending_queries;
 		private string _unsaved_query;
+		private string _current_query;
+		private uint _timer;
 
 		public FilterView filter_tree {
 			get {
@@ -33,6 +35,8 @@ namespace Abraca {
 		}
 
 		public RightHPaned(Gtk.AccelGroup group) {
+			_timer = 0;
+
 			position = 430;
 			position_set = true;
 
@@ -108,26 +112,52 @@ namespace Abraca {
 			var entry = widget as Gtk.Entry;
 			var text = entry.get_text();
 
-			if (text.size() > 0) {
-				if (Xmms.Collection.parse(text, out coll)) {
-					_pending_queries.offer(text);
-					_filter_tree.query_collection(coll, (val) => {
-						var s = _pending_queries.poll();
-						if (s != null && val.list_get_size() > 0) {
-							if (_filter_cbox.child.has_focus) {
-								_unsaved_query = s;
-							} else if (_pending_queries.is_empty) {
-								_filter_save(s);
-							}
-						}
-						return true;
-					});
-				} else if (!Gdk.Color.parse("#ff6666", out color)) {
-					color = null;
+			if (text.size() > 0 && Xmms.Collection.parse(text, out coll)) {
+				_current_query = text;
+
+				// Throttle collection querying
+				if (_timer == 0) {
+					_timer = GLib.Timeout.add(450, on_collection_query_timeout);
 				}
+			} else {
+				Gdk.Color.parse("#ff6666", out color);
 			}
 
 			entry.modify_base(Gtk.StateType.NORMAL, color);
+		}
+
+		private bool on_collection_query_timeout()
+		{
+			Xmms.Collection coll;
+
+			if (_current_query == null) {
+				_timer = 0;
+				return false;
+			}
+
+			if (!Xmms.Collection.parse(_current_query, out coll)) {
+				_current_query = null;
+				_timer = 0;
+				return false;
+			}
+
+			_pending_queries.offer(_current_query);
+
+			_filter_tree.query_collection(coll, (val) => {
+				var s = _pending_queries.poll();
+				if (s != null && val.list_get_size() > 0) {
+					if (_filter_cbox.child.has_focus) {
+						_unsaved_query = s;
+					} else if (_pending_queries.is_empty) {
+						_filter_save(s);
+					}
+				}
+				return true;
+			});
+
+			_current_query = null;
+
+			return true;
 		}
 
 		private bool on_filter_entry_focus_out_event(Gtk.Widget w, Gdk.EventFocus e) {
