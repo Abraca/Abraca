@@ -46,11 +46,6 @@ namespace Abraca {
 			height_request = 600;
 			allow_shrink = true;
 
-			delete_event.connect((ev) => {
-				Abraca.instance().quit();
-				return false;
-			});
-
 			main_hpaned.set_sensitive(false);
 
 			client.disconnected.connect(c => {
@@ -182,7 +177,8 @@ namespace Abraca {
 			_repeat_one = uiman.get_widget("/Menu/Playlist/RepeatOne") as Gtk.CheckMenuItem;
 
 			uiman.get_action("/Menu/Music/Quit").activate.connect((action) => {
-				Abraca.instance().quit();
+				Configurable.save();
+				Gtk.main_quit();
 			});
 
 			uiman.get_action("/Menu/Music/Add/Files").activate.connect((action) => {

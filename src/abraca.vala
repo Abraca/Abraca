@@ -25,6 +25,11 @@ namespace Abraca {
 
 		construct {
 			_main_window = new MainWindow();
+			_main_window.delete_event.connect ((ev) => {
+				Configurable.save();
+				Gtk.main_quit();
+				return true;
+			});
 			_medialib = new Medialib();
 		}
 
@@ -45,12 +50,6 @@ namespace Abraca {
 				_instance = new Abraca();
 
 			return _instance;
-		}
-
-		public void quit() {
-			Configurable.save();
-
-			Gtk.main_quit();
 		}
 
 		public static int main(string[] args) {
