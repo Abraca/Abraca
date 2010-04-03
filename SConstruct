@@ -10,6 +10,7 @@ conf.CheckCCompiler()
 conf.CheckPkgConfig()
 conf.CheckApp('msgfmt')
 conf.CheckApp('gdk-pixbuf-csource')
+conf.CheckGitVersion()
 
 dependencies = (
 	('gtk+-2.0', '2.16.0'),

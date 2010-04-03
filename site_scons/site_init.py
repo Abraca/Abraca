@@ -110,7 +110,6 @@ class AbracaEnvironment(SConsEnvironment):
 		self['BUILDERS']['Program'] = self._program
 
 		self._update_worker_count()
-		self._update_version()
 
 	def _merge_path_from_environment(self):
 		scons_env = set(self["ENV"]["PATH"].split(os.path.pathsep))
@@ -134,10 +133,6 @@ class AbracaEnvironment(SConsEnvironment):
 		except Exception, e:
 			pass
 
-	def _update_version(self):
-		version = self.Run("git describe")
-		if version and (version != self['VERSION']):
-			self.Replace(VERSION = version)
 
 	def _program(self, target, source, *args, **kwargs):
 		prog = self['BUILDERS']['SConsProgram'](target, source, *args, **kwargs)
@@ -211,6 +206,7 @@ class AbracaEnvironment(SConsEnvironment):
 			clean = False, help = False,
 			config_h = config_h,
 			custom_tests = {
+				'CheckGitVersion' : AbracaEnvironment.CheckGitVersion,
 				'CheckPkgConfig' : AbracaEnvironment.CheckPkgConfig,
 				'CheckPkg' : AbracaEnvironment.CheckPkg,
 				'CheckVala' : AbracaEnvironment.CheckVala,
@@ -226,6 +222,15 @@ class AbracaEnvironment(SConsEnvironment):
 	def AppendPkg(self, pkg, version):
 		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --libs --cflags "%s >= %s"')
 		self.ParseConfig(cmd % (pkg, version))
+
+	def CheckGitVersion(ctx, fail=True):
+		ctx.Message('Checking for git version... ')
+		output = AbracaEnvironment.Run("git describe")
+		ctx.Result(output)
+		if output and (output != ctx.env['VERSION']):
+			ctx.env.Replace(VERSION = output)
+		return output
+	CheckGitVersion = staticmethod(CheckGitVersion)
 
 	def CheckPkgConfig(ctx, fail=True):
 		ctx.Message('Checking for pkg-config... ')
