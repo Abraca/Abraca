@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008  Abraca Team
+ * Copyright (C) 2008-2010  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,23 +46,15 @@ namespace Abraca {
 		private Gtk.TreeIter _playlist_iter;
 		private Gtk.TreeIter _collection_iter;
 
-		/* TODO: Should be private? */
-		public Gdk.Pixbuf playlist_pixbuf {
-			get; private set;
-		}
-
-		/* TODO: Should be private? */
-		public Gdk.Pixbuf collection_pixbuf {
-			get; private set;
-		}
+		public Gdk.Pixbuf playlist_pixbuf { get; construct set; }
+		public Gdk.Pixbuf collection_pixbuf { get; construct set; }
 
 		/* Emited after 1..* collections has been added. */
 		public signal void collection_loaded (CollectionType type);
 
 		public CollectionsModel (Gdk.Pixbuf coll, Gdk.Pixbuf pls)
 		{
-			collection_pixbuf = coll;
-			playlist_pixbuf = pls;
+			Object(playlist_pixbuf: coll, collection_pixbuf: pls);
 		}
 
 		construct {
@@ -94,11 +86,11 @@ namespace Abraca {
 				Column.Name, _("Playlists")
 			);
 
-			c.playlist_loaded += on_playlist_loaded;
-			c.collection_add += on_collection_add;
-			c.collection_rename += on_collection_rename;
-			c.collection_remove += on_collection_remove;
-			c.connected += query_collections;
+			c.playlist_loaded.connect(on_playlist_loaded);
+			c.collection_add.connect(on_collection_add);
+			c.collection_rename.connect(on_collection_rename);
+			c.collection_remove.connect(on_collection_remove);
+			c.connected.connect(query_collections);
 		}
 
 
@@ -253,7 +245,7 @@ namespace Abraca {
 		private bool on_list_collections (Xmms.Value val, CollectionType type)
 		{
 			Gtk.TreeIter child, parent;
-			weak Gdk.Pixbuf pixbuf;
+			unowned Gdk.Pixbuf pixbuf;
 
 			if (type == CollectionType.Collection) {
 				parent = _collection_iter;
@@ -269,7 +261,7 @@ namespace Abraca {
 
 			int pos = iter_n_children(parent);
 
-			weak Xmms.ListIter list_iter;
+			unowned Xmms.ListIter list_iter;
 			val.get_list_iter(out list_iter);
 
 			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
@@ -349,7 +341,7 @@ namespace Abraca {
 		private void on_collection_add (Client c, string name, string ns)
 		{
 			Gtk.TreeIter iter, parent;
-			weak Gdk.Pixbuf pixbuf;
+			unowned Gdk.Pixbuf pixbuf;
 			CollectionType type;
 
 			if (name[0] == '_') {

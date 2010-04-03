@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008  Abraca Team
+ * Copyright (C) 2008-2010  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,11 @@ namespace Abraca {
 
 		construct {
 			_main_window = new MainWindow();
+			_main_window.delete_event.connect ((ev) => {
+				Configurable.save();
+				Gtk.main_quit();
+				return true;
+			});
 			_medialib = new Medialib();
 		}
 
@@ -47,18 +52,22 @@ namespace Abraca {
 			return _instance;
 		}
 
-		public void quit() {
-			Configurable.save();
-
-			Gtk.main_quit();
-		}
-
 		public static int main(string[] args) {
 			Client c = Client.instance();
 
 			Gtk.init(ref args);
 
+			try {
+				create_icon_factory().add_default();
+			} catch (GLib.Error e) {
+				GLib.error(e.message);
+			}
+
 			GLib.Environment.set_application_name("Abraca");
+
+			GLib.Intl.textdomain(Build.Config.APPNAME);
+			GLib.Intl.bindtextdomain(Build.Config.APPNAME, Build.Config.LOCALEDIR);
+			GLib.Intl.bind_textdomain_codeset(Build.Config.APPNAME, "UTF-8");
 
 			Abraca a = Abraca.instance();
 

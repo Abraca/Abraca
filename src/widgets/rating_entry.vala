@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008  Abraca Team
+ * Copyright (C) 2008-2010  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,16 +20,12 @@
 namespace Abraca {
 	public class RatingEntry : Gtk.EventBox, Gtk.Buildable {
 		private Gdk.Pixbuf _canvas;
-
-		public int min_rating {
-			get; set; default = 0;
-		}
-
-		public int max_rating {
-			get; set; default = 5;
-		}
-
+		private Gdk.Pixbuf _unrated_icon = null;
+		private Gdk.Pixbuf _rated_icon = null;
 		private int _rating = -1;
+
+		public int min_rating { get; set; default = 0; }
+		public int max_rating { get; set; default = 5; }
 
 		public int rating {
 			get {
@@ -45,55 +41,50 @@ namespace Abraca {
 			}
 		}
 
-		/* TODO: Load icon here */
 		public Gdk.Pixbuf unrated_icon {
-			get; set;
+			get {
+				if (_unrated_icon == null) {
+					_unrated_icon = render_icon(STOCK_UNRATED, Gtk.IconSize.MENU, null);
+				}
+				return _unrated_icon;
+			}
+			set {
+				_unrated_icon = value;
+			}
 		}
-		/* TODO: Load icon here */
+
 		public Gdk.Pixbuf rated_icon {
-			get; set;
+			get {
+				if (_rated_icon == null) {
+					_rated_icon = render_icon(STOCK_RATED, Gtk.IconSize.MENU, null);
+				}
+				return _rated_icon;
+			}
+			set {
+				_rated_icon = value;
+			}
 		}
 
 		public signal void changed();
 
 		construct {
-			string filename;
-
-			try {
-				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
-					-1, Resources.abraca_rating_unrated, false
-				);
-				unrated_icon = tmp;
-			} catch (GLib.Error e) {
-				GLib.stderr.printf("ERROR: %s\n", e.message);
-			}
-
-			try {
-				Gdk.Pixbuf tmp = new Gdk.Pixbuf.from_inline (
-					-1, Resources.abraca_rating_rated, false
-				);
-				rated_icon = tmp;
-			} catch (GLib.Error e) {
-				GLib.stderr.printf("ERROR: %s\n", e.message);
-			}
-
-			width_request =  rated_icon.width * (max_rating - min_rating + 1);
+			width_request  = rated_icon.width * (max_rating - min_rating + 1);
 			height_request = rated_icon.height;
 
 			_canvas = new Gdk.Pixbuf(Gdk.Colorspace.RGB, true, 8, width_request, height_request);
 
-			expose_event += on_expose_event;
+			expose_event.connect(on_expose_event);
 
-			motion_notify_event += (w, motion) => {
+			motion_notify_event.connect((w, motion) => {
 				rating_from_position(motion.x);
 				return true;
-			};
-			button_press_event += (w, motion) => {
+			});
+			button_press_event.connect((w, motion) => {
 				rating_from_position(motion.x);
 				return true;
-			};
+			});
 
-			changed += update_rating;
+			changed.connect(update_rating);
 
 			rating = min_rating;
 		}
@@ -142,7 +133,7 @@ namespace Abraca {
 		/**
 		 * Paint our canvas on the window.
 		 */
-		public bool on_expose_event(RatingEntry w, Gdk.EventExpose expose) {
+		public bool on_expose_event(Gtk.Widget w, Gdk.EventExpose expose) {
 			expose.window.draw_pixbuf(
 				style.bg_gc[0], _canvas,
 				0, 0, 0, 0, width_request, height_request,

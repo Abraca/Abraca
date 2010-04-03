@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008  Abraca Team
+ * Copyright (C) 2008-2010  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -100,17 +100,21 @@ namespace Abraca {
 		private static GLib.KeyFile read_config ()
 		{
 			GLib.KeyFile file = new GLib.KeyFile();
+			string filename;
 
 			try {
-				string filename = build_filename();
+				filename = build_filename();
 				file.load_from_file(filename, GLib.KeyFileFlags.NONE);
 			} catch (GLib.FileError e) {
 				/* GLib.FileError.NOENT == 4, which is true the first time */
 				if (e.code != 4) {
-					GLib.stderr.printf("ERROR: %s\n", e.message);
+					GLib.error(e.message);
 				}
 			} catch (GLib.KeyFileError e) {
-				GLib.stderr.printf("Something went wrong");
+				GLib.log(null,
+						 GLib.LogLevelFlags.LEVEL_CRITICAL | GLib.LogLevelFlags.FLAG_FATAL,
+						 "The configuration file '%s' is corrupted.",
+						 filename);
 			}
 
 			return file;
@@ -140,7 +144,7 @@ namespace Abraca {
 		{
 			GLib.KeyFile file = read_config();
 
-			foreach (weak IConfigurable obj in configurables) {
+			foreach (unowned IConfigurable obj in configurables) {
 				try {
 					obj.set_configuration(file);
 				} catch (GLib.KeyFileError e) {
@@ -158,7 +162,7 @@ namespace Abraca {
 		{
 			GLib.KeyFile file = read_config();
 
-			foreach (weak IConfigurable obj in configurables) {
+			foreach (unowned IConfigurable obj in configurables) {
 					obj.get_configuration(file);
 			}
 

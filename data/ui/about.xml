@@ -1,17 +1,18 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <interface>
   <object class="GtkAboutDialog" id="abraca_about">
     <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
 
     <property name="program_name">Abraca</property>
 
-    <property name="copyright" translatable="yes">Copyright &#xA9; 2007-2009 Abraca Developers</property>
+    <property name="copyright" translatable="yes">Copyright © 2007-2010 Abraca Developers</property>
 
     <property name="website">http://abraca.xmms.se</property>
 
     <property name="authors">
 Carl-Emil Kjellstrand &lt;carl-emil.kjellstrand@purplescout.se&gt;
 Erik Massop &lt;e.massop@hccnet.nl&gt;
+Sebastian Noack &lt;sebastian.noack@gmail.com&gt;
 Christopher Rosell &lt;chrippa@tanuki.se&gt;
 Martin Salzer &lt;stoky@gmx.net&gt;
 Sebastian Sareyko &lt;smoon@nooms.de&gt;
@@ -20,6 +21,13 @@ Daniel Svensson &lt;daniel.svensson@purplescout.se&gt;
 Finn Thain &lt;fthain@telegraphics.com.au&gt;
     </property>
 
+    <property name="translator-credits">
+Daniel Svensson &lt;daniel.svensson@purplescout.se&gt;
+Foppe Benedictus &lt;foppe.benedictus@gmail.com&gt;
+Sebastian Noack &lt;sebastian.noack@gmail.com&gt;
+    </property>
+
+
     <property name="artists">
 Johan Slikkie van der Slikke &lt;johan@slikkie.nl&gt;
 Jakub Steiner &lt;jimmac@ximian.com&gt;
@@ -27,9 +35,8 @@ Jakub Steiner &lt;jimmac@ximian.com&gt;
 
     <property name="license" translatable="yes">
 Abraca, an XMMS2 client.
-Copyright (C) 2007-2009  Abraca Team
+Copyright (C) 2007-2010  Abraca Team
 
-General Public License, and the "GNU GPL" refers to version 3 of the GNU
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
 Free Software Foundation; either version 2 of the License, or (at your

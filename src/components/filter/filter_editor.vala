@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008  Abraca Team
+ * Copyright (C) 2008-2010  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +34,7 @@ namespace Abraca {
 			"artist",
 			"bitrate",
 			"comment",
+			"date",
 			"duration",
 			"genre",
 			"laststarted",
@@ -72,9 +73,9 @@ namespace Abraca {
 
 
 			Gtk.Button button = new Gtk.Button.from_stock(Gtk.STOCK_OK);
-			button.clicked += (widget) => {
+			button.clicked.connect((widget) => {
 				destroy();
-			};
+			});
 
 			action_area.add(button);
 			action_area.border_width = 0;
@@ -84,9 +85,9 @@ namespace Abraca {
 			vbox.pack_start(notebook, true, true, 0);
 			vbox.set_child_packing(action_area, false, false, 0, Gtk.PackType.END);
 
-			response += (widget,response) => {
+			response.connect((widget,response) => {
 				destroy();
-			};
+			});
 
 			show_all();
 		}
@@ -99,11 +100,11 @@ namespace Abraca {
 
 			model.get_iter_first(out iter);
 			do {
-				weak string prop;
+				unowned string prop;
 
 				model.get(iter, Column.NAME, out prop);
 
-				foreach (weak string active_prop in active) {
+				foreach (unowned string active_prop in active) {
 					if (prop == active_prop) {
 						model.set(iter, Column.ACTIVE, true);
 						break;
@@ -120,7 +121,7 @@ namespace Abraca {
 
 			model = new Gtk.ListStore(2, typeof(bool), typeof(string));
 
-			foreach (weak string prop in _properties) {
+			foreach (unowned string prop in _properties) {
 				Gtk.TreeIter iter;
 
 				model.append(out iter);
@@ -132,7 +133,7 @@ namespace Abraca {
 			_view.model = model;
 
 			renderer = new Gtk.CellRendererToggle();
-			renderer.toggled += on_entry_toggled;
+			renderer.toggled.connect(on_entry_toggled);
 
 			column = new Gtk.TreeViewColumn.with_attributes(
 				"column", renderer, "active", 0
@@ -161,22 +162,30 @@ namespace Abraca {
 		}
 
 		private void on_entry_toggled (Gtk.CellRendererToggle renderer, string updated) {
-			Gtk.ListStore store;
+			Gtk.ListStore store = (Gtk.ListStore) _view.model;
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
-			weak string property;
+			unowned string property;
 			bool state;
+			int n_active = 0;
 
-			store = (Gtk.ListStore) _view.model;
+			store.get_iter_first(out iter);
+			do {
+				store.get(iter, Column.ACTIVE, out state);
+				if (state) {
+					n_active++;
+				}
+			} while (store.iter_next(ref iter));
 
 			path = new Gtk.TreePath.from_string(updated);
 			store.get_iter(out iter, path);
-
 			store.get(iter, Column.ACTIVE, out state, Column.NAME, out property);
-			state = !state;
-			store.set(iter, Column.ACTIVE, state);
 
-			column_changed(property, state);
+			state = !state;
+			if (n_active > 1 || state) {
+				store.set(iter, Column.ACTIVE, state);
+				column_changed(property, state);
+			}
 		}
 	}
 }

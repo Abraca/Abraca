@@ -1,7 +1,6 @@
-
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008  Abraca Team
+ * Copyright (C) 2008-2010  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +43,9 @@ namespace Abraca {
 		private Gtk.TreeRowReference _position = null;
 
 		/** keep track of playlist position <-> medialib id */
-		private PlaylistMap playlist_map;
+		private TreeRowMap playlist_map;
+
+		private Client client;
 
 		private GLib.Type[] _types = new GLib.Type[] {
 			typeof(int),
@@ -58,46 +59,44 @@ namespace Abraca {
 			typeof(string)
 		};
 
-		construct {
-			Client c = Client.instance();
-
+		public PlaylistModel (Client _client) {
 			set_column_types(_types);
 
-			playlist_map = new PlaylistMap();
+			playlist_map = new TreeRowMap(this);
 
-			c.playlist_loaded += on_playlist_loaded;
+			client = _client;
 
-			c.playlist_add += on_playlist_add;
-			c.playlist_move += on_playlist_move;
-			c.playlist_insert += on_playlist_insert;
-			c.playlist_remove += on_playlist_remove;
-			c.playlist_position += on_playlist_position;
+			client.playlist_loaded.connect(on_playlist_loaded);
 
-			c.playback_status += on_playback_status;
+			client.playlist_add.connect(on_playlist_add);
+			client.playlist_move.connect(on_playlist_move);
+			client.playlist_insert.connect(on_playlist_insert);
+			client.playlist_remove.connect(on_playlist_remove);
+			client.playlist_position.connect(on_playlist_position);
 
-			c.medialib_entry_changed += (client,res) => {
+			client.playback_status.connect(on_playback_status);
+
+			client.medialib_entry_changed.connect((c, res) => {
 				on_medialib_info(res);
-			};
+			});
 		}
-
 
 		/**
 		 * When GTK asks for the value of a column, check if the row
 		 * has been resolved or not, otherwise resolve it.
 		 */
 		public void get_value(Gtk.TreeIter iter, int column, ref GLib.Value val) {
-			GLib.Value tmp1;
+			GLib.Value status;
 
-			base.get_value(iter, Column.STATUS, out tmp1);
-			if (((Status)tmp1.get_int()) == Status.UNRESOLVED) {
-				Client c = Client.instance();
-				GLib.Value tmp2;
+			base.get_value(iter, Column.STATUS, out status);
+			if (status.get_int() == Status.UNRESOLVED) {
+				GLib.Value mid;
 
-				base.get_value(iter, Column.ID, out tmp2);
+				base.get_value(iter, Column.ID, out mid);
 
 				set(iter, Column.STATUS, Status.RESOLVING);
 
-				c.xmms.medialib_get_info(tmp2.get_uint()).notifier_set(
+				client.xmms.medialib_get_info(mid.get_uint()).notifier_set(
 					on_medialib_info
 				);
 			}
@@ -113,7 +112,7 @@ namespace Abraca {
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 
-			if (playlist != c.current_playlist) {
+			if (playlist != client.current_playlist) {
 				return;
 			}
 
@@ -123,7 +122,7 @@ namespace Abraca {
 
 				get(iter, Column.ID, out mid);
 
-				playlist_map.remove(mid, path);
+				playlist_map.remove_path((int) mid, path);
 				remove(iter);
 			}
 		}
@@ -169,7 +168,7 @@ namespace Abraca {
 
 				/* Notify the Client of the current medialib id */
 				get(iter, Column.ID, out mid);
-				c.set_playlist_id(mid);
+				client.set_playlist_id(mid);
 
 				set(
 					iter,
@@ -188,25 +187,23 @@ namespace Abraca {
 		 * Insert a row when a new entry has been inserted in the playlist.
 		 */
 		private void on_playlist_insert(Client c, string playlist, uint mid, int pos) {
-			Gtk.TreePath path;
-			Gtk.TreeIter iter;
+			Gtk.TreeIter iter, sibling;
 
-			if (playlist != c.current_playlist) {
+			if (playlist != client.current_playlist) {
 				return;
 			}
 
-			path = new Gtk.TreePath.from_indices(pos, -1);
-			if (get_iter(out iter, path)) {
-				Gtk.TreeIter added;
-
-				insert_before (out added, iter);
-
-				set(added, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
-
-				path = get_path(added);
-				Gtk.TreeRowReference row = new Gtk.TreeRowReference(this, path);
-				playlist_map.insert(mid, row);
+			var path = new Gtk.TreePath.from_indices(pos, -1);
+			if (get_iter(out sibling, path)) {
+				insert_before (out iter, sibling);
+			} else {
+				// Insert occurred after the last entry, lets append.
+				append(out iter);
 			}
+
+			set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
+
+			playlist_map.add_iter((int) mid, iter);
 		}
 
 
@@ -222,7 +219,7 @@ namespace Abraca {
 				get_iter(out iter, _position.get_path());
 				get(iter, Column.ID, out mid);
 
-				c.set_playlist_id(mid);
+				client.set_playlist_id(mid);
 			}
 		}
 
@@ -232,28 +229,23 @@ namespace Abraca {
 		 * the mids of that playlist.
 		 */
 		private void on_playlist_loaded(Client c, string name) {
-			c.xmms.playlist_list_entries(name).notifier_set(
+			client.xmms.playlist_list_entries(name).notifier_set(
 				on_playlist_list_entries
 			);
 		}
 
 
 		private void on_playlist_add(Client c, string playlist, uint mid) {
-			Gtk.TreeRowReference row;
-			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 
-			if (playlist != c.current_playlist) {
+			if (playlist != client.current_playlist) {
 				return;
 			}
 
 			append(out iter);
 			set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
 
-			path = get_path(iter);
-			row = new Gtk.TreeRowReference(this, path);
-
-			playlist_map.insert(mid, row);
+			playlist_map.add_iter((int) mid, iter);
 		}
 
 
@@ -272,12 +264,10 @@ namespace Abraca {
 			set_model(null);
 			*/
 
-			weak Xmms.ListIter list_iter;
+			unowned Xmms.ListIter list_iter;
 			val.get_list_iter(out list_iter);
 
 			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
-				Gtk.TreeRowReference row;
-				Gtk.TreePath path;
 				Xmms.Value entry;
 				int mid = 0;
 
@@ -295,10 +285,7 @@ namespace Abraca {
 
 				sibling = iter;
 
-				path = get_path(iter);
-				row = new Gtk.TreeRowReference(this, path);
-
-				playlist_map.insert(mid, row);
+				playlist_map.add_iter(mid, iter);
 			}
 
 			/* reconnect the model again */
@@ -311,7 +298,6 @@ namespace Abraca {
 
 
 		private bool on_medialib_info(Xmms.Value propdict) {
-			weak GLib.SList<Gtk.TreeRowReference> lst;
 			string album, title, genre, artist = null;
 			string info;
 			int status, mid;
@@ -319,14 +305,6 @@ namespace Abraca {
 			Xmms.Value val = propdict.propdict_to_dict();
 
 			val.dict_entry_get_int("id", out mid);
-
-			lst = playlist_map.lookup(mid);
-			if (lst == null) {
-				// the given mid doesn't match any of our rows 
-				GLib.stdout.printf("omg %d\n", mid);
-				return false;
-			}
-
 			val.dict_entry_get_int("status", out status);
 
 			if (!val.dict_entry_get_string("album", out album)) {
@@ -345,14 +323,12 @@ namespace Abraca {
 
 				if (Transform.normalize_dict(val, "duration", out duration)) {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b> - <small>%s</small>\n" +
-						"<small>by</small> %s <small>from</small> %s"),
+						"<b>%s</b> - <small>%s</small>\n" + _("<small>by</small> %s <small>from</small> %s"),
 						title, duration, artist, album
 					);
 				} else {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b>\n" +
-						"<small>by</small> %s <small>from</small> %s"),
+						"<b>%s</b>\n" + _("<small>by</small> %s <small>from</small> %s"),
 						title, artist, album
 					);
 				}
@@ -365,24 +341,22 @@ namespace Abraca {
 
 				if (Transform.duration(val, out duration)) {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b> - <small>%s</small>"), url, duration
+						"<b>%s</b> - <small>%s</small>", url, duration
 					);
 				} else {
 					info = GLib.Markup.printf_escaped(
-						_("<b>%s</b>"), url
+						"<b>%s</b>", url
 					);
 				}
 			}
 
-
-			foreach (weak Gtk.TreeRowReference row in lst) {
+			foreach (var row in playlist_map.get_paths(mid)) {
 				Gtk.TreePath path;
 				Gtk.TreeIter? iter = null;
 
 				path = row.get_path();
 
 				if (!row.valid() || !get_iter(out iter, path)) {
-					GLib.stdout.printf("row not valid\n");
 					continue;
 				}
 

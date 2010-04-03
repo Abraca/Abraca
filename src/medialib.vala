@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008  Abraca Team
+ * Copyright (C) 2008-2010  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,8 +22,9 @@ using GLib;
 namespace Abraca {
 	public class MedialibInfoDialog : Gtk.Dialog, Gtk.Buildable {
 		private GLib.List<uint> ids;
-		private weak GLib.List<uint> current;
+		private unowned GLib.List<uint> current;
 
+		private int mid;
 		private string artist;
 		private string album;
 		private string song;
@@ -94,6 +95,9 @@ namespace Abraca {
 			//       due to a bug in GTK, remove this when bug has
 			//       been resolved and released.
 			genre_combo_box_entry.text_column = 0;
+			var widget = genre_combo_box_entry.get_child() as Gtk.Entry;
+			widget.activate.connect(on_genre_box_button_activated);
+
 
 			store = builder.get_object("details_model") as Gtk.TreeStore;
 
@@ -156,7 +160,7 @@ namespace Abraca {
 
 		private void set_str(Gtk.Editable editable, string key) {
 			Client c = Client.instance();
-			weak string val = editable.get_chars(0, -1);
+			unowned string val = editable.get_chars(0, -1);
 
 			c.xmms.medialib_entry_property_set_str(
 				current.data, key, val
@@ -286,53 +290,80 @@ namespace Abraca {
 			Xmms.Value val = propdict.propdict_to_dict();
 			string tmp;
 			int itmp;
+			int new_mid;
+
+			val.dict_entry_get_int("id", out new_mid);
+			var updated = (mid == new_mid);
+
+			mid = new_mid;
+
 			if (!val.dict_entry_get_string("artist", out tmp)) {
 				tmp = "";
 			}
-			artist = tmp;
-			artist_entry.text = tmp;
-			artist_entry.modify_base(Gtk.StateType.NORMAL, null);
+			if (!updated || artist_entry.get_text() == tmp) {
+				artist = tmp;
+				artist_entry.text = tmp;
+				artist_entry.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_string("album", out tmp)) {
 				tmp = "";
 			}
-			album = tmp;
-			album_entry.text = tmp;
-			album_entry.modify_base(Gtk.StateType.NORMAL, null);
+			if (!updated || album_entry.get_text() == tmp) {
+				album = tmp;
+				album_entry.text = tmp;
+				album_entry.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_string("title", out tmp)) {
 				tmp = "";
 			}
-			song = tmp;
-			song_entry.text = tmp;
-			song_entry.modify_base(Gtk.StateType.NORMAL, null);
+			if (!updated || song_entry.get_text() == tmp) {
+				song = tmp;
+				song_entry.text = tmp;
+				song_entry.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_int("tracknr", out itmp)) {
 				itmp = 0;
 			}
-			tracknr = itmp.to_string("%i");
-			tracknr_button.set_value(itmp);
-			tracknr_button.modify_base(Gtk.StateType.NORMAL, null);
+
+			tmp = itmp.to_string("%i");
+
+			if (!updated || tracknr_button.get_text() == tmp) {
+				tracknr = tmp;
+				tracknr_button.set_value(itmp);
+				tracknr_button.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_string("date", out tmp)) {
 				tmp = "";
 			}
-			date = tmp;
-			date_entry.text = tmp;
-			date_entry.modify_base(Gtk.StateType.NORMAL, null);
+			if (!updated || date_entry.get_text() == tmp) {
+				date = tmp;
+				date_entry.text = tmp;
+				date_entry.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_string("genre", out tmp)) {
 				tmp = "";
 			}
-			genre = tmp;
-			((Gtk.Entry) (genre_combo_box_entry.get_child())).text = tmp;
-			((Gtk.Entry) (genre_combo_box_entry.get_child())).modify_base(Gtk.StateType.NORMAL, null);
+
+			var entry = (Gtk.Entry) genre_combo_box_entry.get_child();
+			if (!updated || entry.text == tmp) {
+				genre = tmp;
+				entry.text = tmp;
+				entry.modify_base(Gtk.StateType.NORMAL, null);
+			}
 
 			if (!val.dict_entry_get_int("rating", out itmp)) {
 				itmp = 0;
 			}
-			rating = itmp.to_string("%i");
-			rating_entry.rating = itmp;
+
+			if (!updated || rating_entry.rating == itmp) {
+				rating = itmp.to_string("%i");
+				rating_entry.rating = itmp;
+			}
 		}
 
 		/* TODO: refactor me */
@@ -340,12 +371,12 @@ namespace Abraca {
 			string? val_str, parent_source = null;
 			Gtk.TreeIter parent, iter;
 
-			weak Xmms.DictIter dict_iter;
+			unowned Xmms.DictIter dict_iter;
 			val.get_dict_iter(out dict_iter);
 
 			for (dict_iter.first(); dict_iter.valid(); dict_iter.next()) {
 				Xmms.Value entry;
-				weak string source;
+				unowned string source;
 
 				if (!dict_iter.pair(out source, out entry)) {
 					continue;
@@ -401,8 +432,8 @@ namespace Abraca {
 			entry.activates_default = true;
 			vbox.pack_start(combo, true, true, 0);
 
-			close += on_close;
-			response += on_response;
+			close.connect(on_close);
+			response.connect(on_response);
 
 			Configurable.register(this);
 			show_all();
@@ -424,11 +455,11 @@ namespace Abraca {
 			urls.insert_with_values(out iter, 0, 0, url);
 		}
 
-		private void on_close(MedialibAddUrlDialog dialog) {
+		private void on_close(Gtk.Dialog dialog) {
 			Configurable.unregister(this);
 		}
 
-		private void on_response(MedialibAddUrlDialog dialog, int response) {
+		private void on_response(Gtk.Dialog w, int response) {
 			if(response == Gtk.ResponseType.OK && entry.get_text() != "") {
 				save_url(entry.get_text());
 			}
@@ -481,18 +512,18 @@ namespace Abraca {
 			add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
 			add_button(Gtk.STOCK_OPEN, Gtk.ResponseType.OK);
 
-			close += on_close;
-			response += on_response;
+			close.connect(on_close);
+			response.connect(on_response);
 
 			Configurable.register(this);
 			show_all();
 		}
 
-		private void on_close(MedialibFileChooserDialog dialog) {
+		private void on_close(Gtk.Dialog dialog) {
 			Configurable.unregister(this);
 		}
 
-		private void on_response(MedialibFileChooserDialog dialog, int response) {
+		private void on_response(Gtk.Dialog dialog, int response) {
 			if(response == Gtk.ResponseType.OK) {
 				current_folder = get_current_folder();
 			}
@@ -520,9 +551,10 @@ namespace Abraca {
 		public void info_dialog_add_id(uint mid) {
 			if (info_dialog == null) {
 				info_dialog = MedialibInfoDialog.build();
-				info_dialog.delete_event += (ev) => {
+				info_dialog.delete_event.connect((ev) => {
 					info_dialog = null;
-				};
+					return false;
+				});
 				info_dialog.show_all();
 			}
 			info_dialog.add_mid(mid);
@@ -562,7 +594,7 @@ namespace Abraca {
 						}
 					} else {
 						if (button.get_active()) {
-							c.xmms.medialib_path_import(url);
+							c.xmms.medialib_import_path(url);
 						} else {
 							c.xmms.playlist_radd(Xmms.ACTIVE_PLAYLIST, url);
 						}

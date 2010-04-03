@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008  Abraca Team
+ * Copyright (C) 2008-2010  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@ namespace Abraca {
 	public abstract class Transform {
 		public static bool normalize_dict (Xmms.Value dict, string key, out string repr)
 		{
-			weak Xmms.Value value;
+			unowned Xmms.Value value;
 
 			if (!dict.dict_get (key, out value)) {
 				repr = "%s".printf(_("Unknown"));

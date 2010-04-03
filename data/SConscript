@@ -3,8 +3,10 @@ Import('env')
 lst = Split("""
 	abraca-32.png
 	abraca-192.png
-	abraca-playlist-22.png
-	abraca-collection-22.png
+	abraca-playlist-16.png
+	abraca-playlist-24.png
+	abraca-collection-16.png
+	abraca-collection-24.png
 	abraca-rating-rated.png
 	abraca-rating-unrated.png
 """)
