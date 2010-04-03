@@ -1,0 +1,267 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <foppe.benedictus@gmail.com>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Foppe Benedictus <foppe.benedictus@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../src/components/collections/collections_model.vala:85
+msgid "Collections"
+msgstr "Collecties"
+
+#: ../src/components/collections/collections_model.vala:94
+msgid "Playlists"
+msgstr "Playlists"
+
+#: ../src/components/collections/collections_model.vala:211
+#: ../src/components/collections/collections_model.vala:229
+#: ../src/components/collections/collections_model.vala:231
+msgid "New Playlist"
+msgstr "Nieuwe Playlist"
+
+#: ../src/components/collections/collections_view.vala:542
+msgid "_Show"
+msgstr "_Toon"
+
+#: ../src/components/collections/collections_view.vala:550
+msgid "_Rename"
+msgstr "_Hernoemen"
+
+#: ../src/components/collections/collections_view.vala:560
+msgid "Delete"
+msgstr "Verwijderen"
+
+#: ../src/components/filter/filter_editor.vala:59
+msgid "Select Columns"
+msgstr "Kolommen selecteren"
+
+#: ../src/components/filter/filter_view.vala:380
+msgid "Reset sorting"
+msgstr "Sortering terugzetten"
+
+#: ../src/components/filter/filter_view.vala:472
+msgid "_Replace"
+msgstr "Ve_rvangen"
+
+#: ../src/components/playlist/playlist_model.vala:312
+#: ../src/components/playlist/playlist_model.vala:315
+#: ../src/components/playlist/playlist_model.vala:322
+#: ../src/components/playlist/playlist_model.vala:340
+#: ../src/toolbar.vala:280
+#: ../src/toolbar.vala:284
+#: ../src/transform.vala:29
+#: ../src/transform.vala:69
+#, c-format
+msgid "Unknown"
+msgstr "Onbekend"
+
+#: ../src/components/playlist/playlist_model.vala:327
+#: ../src/components/playlist/playlist_model.vala:332
+#, c-format
+msgid "<small>by</small> %s <small>from</small> %s"
+msgstr "<small>van</small> %s <small>uit</small> %s"
+
+#. Jump
+#: ../src/components/playlist/playlist_view.vala:245
+msgid "Jump"
+msgstr "Spring naar"
+
+#: ../src/components/playlist/playlist_view.vala:265
+msgid "By Artist"
+msgstr "Per Artiest"
+
+#: ../src/components/playlist/playlist_view.vala:271
+msgid "By Album"
+msgstr "Per Album"
+
+#: ../src/components/playlist/playlist_view.vala:277
+msgid "By Genre"
+msgstr "Per Genre"
+
+#: ../src/components/playlist/playlist_view.vala:304
+msgid "Artist"
+msgstr "Artiest"
+
+#: ../src/components/playlist/playlist_view.vala:310
+msgid "Album"
+msgstr "Album"
+
+#: ../src/components/playlist/playlist_view.vala:316
+msgid "Title"
+msgstr "Titel"
+
+#: ../src/components/playlist/playlist_view.vala:322
+msgid "Year"
+msgstr "Jaar"
+
+#: ../src/components/playlist/playlist_view.vala:328
+msgid "Path"
+msgstr "Pad"
+
+#: ../src/components/playlist/playlist_view.vala:334
+msgid "Custom"
+msgstr "Aangepast"
+
+#: ../src/components/playlist/playlist_view.vala:344
+msgid "Sort"
+msgstr "Sorteren"
+
+#. Shuffle
+#: ../src/components/playlist/playlist_view.vala:350
+#: ../data/ui/main_menu.xml.h:6
+msgid "Shuffle"
+msgstr "Shuffle"
+
+#: ../src/medialib.vala:387
+msgid "Add URL"
+msgstr "URL toevoegen"
+
+#: ../src/medialib.vala:473
+msgid "don't add to active playlist"
+msgstr "niet toevoegen aan actieve playlist"
+
+#: ../src/medialib.vala:478
+msgid "Add File"
+msgstr "Bestand toevoegen"
+
+#: ../src/right_hpaned.vala:151
+msgid "Filter:"
+msgstr "Filter:"
+
+#: ../src/toolbar.vala:189
+msgid "No Track"
+msgstr "Geen nummer"
+
+#: ../src/toolbar.vala:233
+#, c-format
+msgid "%3d:%02d  of %3d:%02d"
+msgstr "%3d:%02d  van %3d:%02d"
+
+#: ../src/toolbar.vala:288
+#, c-format
+msgid "<span size=\"small\" foreground=\"#666666\">by</span> %s <span size=\"small\" foreground=\"#666666\">from</span> %s"
+msgstr "<span size=\"small\" foreground=\"#666666\">van</span> %s <span size=\"small\" foreground=\"#666666\">ut</span> %s"
+
+#: ../src/transform.vala:128
+msgid "Today"
+msgstr "Vandaag"
+
+#: ../src/transform.vala:130
+msgid "Yesterday"
+msgstr "Gisteren"
+
+#: ../src/transform.vala:135
+msgid "Never"
+msgstr "Nooit"
+
+#: ../data/ui/about.xml.h:1
+msgid ""
+"\n"
+"Abraca, an XMMS2 client.\n"
+"Copyright (C) 2007-2010  Abraca Team\n"
+"\n"
+"This program is free software; you can redistribute it and/or modify it\n"
+"under the terms of the GNU General Public License as published by the\n"
+"Free Software Foundation; either version 2 of the License, or (at your\n"
+"option) any later version.\n"
+"\n"
+"This program is distributed in the hope that it will be useful, but\n"
+"WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY\n"
+"or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License\n"
+"for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License along\n"
+"with this program; if not, write to the Free Software Foundation, Inc.,\n"
+"51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
+"    "
+msgstr ""
+"\n"
+"Abraca, een XMMS2 client.\n"
+"Copyright (C) 2007-2010  Abraca Team\n"
+"\n"
+"This program is free software; you can redistribute it and/or modify it\n"
+"under the terms of the GNU General Public License as published by the\n"
+"Free Software Foundation; either version 2 of the License, or (at your\n"
+"option) any later version.\n"
+"\n"
+"This program is distributed in the hope that it will be useful, but\n"
+"WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY\n"
+"or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License\n"
+"for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License along\n"
+"with this program; if not, write to the Free Software Foundation, Inc.,\n"
+"51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
+"    "
+#: ../data/ui/about.xml.h:19
+msgid "Copyright © 2007-2010 Abraca Developers"
+msgstr "Copyright © 2007-2010 Abraca ontwikkelaars"
+
+#: ../data/ui/main_menu.xml.h:1
+msgid "Clear"
+msgstr "Leeg"
+
+#: ../data/ui/main_menu.xml.h:2
+msgid "Configure Sorting"
+msgstr "Sortering instellen"
+
+#: ../data/ui/main_menu.xml.h:3
+msgid "New from filter"
+msgstr "Nieuw uit filter"
+
+#: ../data/ui/main_menu.xml.h:4
+msgid "Repeat All"
+msgstr "Alles herhalen"
+
+#: ../data/ui/main_menu.xml.h:5
+msgid "Repeat One"
+msgstr "Nummer herhalen"
+
+#: ../data/ui/main_menu.xml.h:7
+msgid "_About"
+msgstr "_Over"
+
+#: ../data/ui/main_menu.xml.h:8
+msgid "_Add"
+msgstr "_Toevoegen"
+
+#: ../data/ui/main_menu.xml.h:9
+msgid "_Directory"
+msgstr "_Map"
+
+#: ../data/ui/main_menu.xml.h:10
+msgid "_Files"
+msgstr "_Bestanden"
+
+#: ../data/ui/main_menu.xml.h:11
+msgid "_Help"
+msgstr "_Help"
+
+#: ../data/ui/main_menu.xml.h:12
+msgid "_Music"
+msgstr "_Muziek"
+
+#: ../data/ui/main_menu.xml.h:13
+msgid "_New"
+msgstr "_Nieuw"
+
+#: ../data/ui/main_menu.xml.h:14
+msgid "_Playlist"
+msgstr "_Playlist"
+
+#: ../data/ui/main_menu.xml.h:15
+msgid "_Quit"
+msgstr "_Sluiten"
+
+#: ../data/ui/main_menu.xml.h:16
+msgid "_URL"
+msgstr "_URL"
+

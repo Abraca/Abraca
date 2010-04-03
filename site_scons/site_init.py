@@ -1,4 +1,4 @@
-# Copyright (c) 2008, Abraca Team
+# Copyright (c) 2008-2010, Abraca Team
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -29,7 +29,7 @@ class AbracaEnvironment(SConsEnvironment):
 	def __init__(self, *args, **kwargs):
 		variables = [
 			'VALAC', 'CC', 'AS', 'LINKFLAGS', 'PKG_CONFIG_FLAGS',
-			'PROGSUFFIX', 'CPPPATH', 'MSGFMT',
+			'PKG_CONFIG', 'PROGSUFFIX', 'CPPPATH', 'MSGFMT',
 		]
 		for key in variables:
 			val = self._import_variable(key)
@@ -39,6 +39,8 @@ class AbracaEnvironment(SConsEnvironment):
 		kwargs['tools'] = ['gcc', 'gnulink', 'gas']
 
 		SConsEnvironment.__init__(self, *args, **kwargs)
+
+		self._merge_path_from_environment()
 
 		# Import pkg-config path into shell environment.
 		for name in ['PKG_CONFIG_LIBDIR', 'PKG_CONFIG_PATH']:
@@ -77,6 +79,7 @@ class AbracaEnvironment(SConsEnvironment):
 			           PathOption.PathAccept),
 			PathOption('MANDIR', 'man page dir', '$DATADIR/man',
 			           PathOption.PathAccept),
+			BoolOption('WITH_GLADEUI', 'create a plugin for glade-3, only for developers', 'no')
 		)
 		opts.Update(self)
 		opts.Save('.scons_options', self)
@@ -88,6 +91,7 @@ class AbracaEnvironment(SConsEnvironment):
 			self['VALADEFINESCOMSTR'] = '    Defines: $TARGET'
 			self['VALACOMSTR']        = ' Generating: $TARGETS'
 			self['CCCOMSTR']          = '   Building: $TARGET'
+			self['SHCCCOMSTR']        = '   Building: $TARGET'
 			self['LINKCOMSTR']        = '    Linking: $TARGET'
 			self['MSGFMTCOMSTR']      = '   Localize: $TARGET'
 			self['STRIPCOMSTR']       = '  Stripping: $TARGET'
@@ -104,6 +108,31 @@ class AbracaEnvironment(SConsEnvironment):
 
 		self['BUILDERS']['SConsProgram'] = self['BUILDERS']['Program']
 		self['BUILDERS']['Program'] = self._program
+
+		self._update_worker_count()
+
+	def _merge_path_from_environment(self):
+		scons_env = set(self["ENV"]["PATH"].split(os.path.pathsep))
+		host_env = set(os.environ["PATH"].split(os.path.pathsep))
+
+		scons_env.update(host_env)
+
+		self["ENV"]["PATH"] = os.path.pathsep.join(scons_env)
+
+	def _update_worker_count(self):
+		try:
+			fd = file("/proc/cpuinfo", "r")
+			data = fd.read()
+			fd.close()
+
+			cpus = len(re.findall("processor\t: \d+", data))
+			if cpus > 1:
+				cpus += 1
+
+			self.SetOption('num_jobs', cpus)
+		except Exception, e:
+			pass
+
 
 	def _program(self, target, source, *args, **kwargs):
 		prog = self['BUILDERS']['SConsProgram'](target, source, *args, **kwargs)
@@ -139,6 +168,29 @@ class AbracaEnvironment(SConsEnvironment):
 	def InstallLocale(self, target, source):
 		self.Alias('install', self.InstallAs(os.path.join('$LOCALEDIR', target), source))
 
+	def InstallGladeUiModule(self, source):
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=moduledir gladeui-1.0')
+		target = AbracaEnvironment.Run(cmd)
+		if not target:
+			raise SCons.Errors.UserError('Glade module directory could not be determined')
+		self.Alias('install', self.Install(target, source))
+
+	def InstallGladeUiCatalog(self, source):
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=catalogdir gladeui-1.0')
+		target = AbracaEnvironment.Run(cmd)
+		if not target:
+			raise SCons.Errors.UserError('Glade catalog directory could not be determined')
+		self.Alias('install', self.Install(target, source))
+
+	def InstallGladeUiPixmap(self, size, source):
+		if size not in ('16x16', '22x22'):
+			raise SCons.Errors.UserError('Unsupported size for glade pixmap: %r' % size)
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=pixmapdir gladeui-1.0')
+		target = AbracaEnvironment.Run(cmd)
+		if not target:
+			raise SCons.Errors.UserError('Glade pixmap directory could not be determined')
+		self.Alias('install', self.Install(os.path.join(target, 'hicolor', size, 'actions'), source))
+
 	def _import_variable(self, name):
 		if ARGUMENTS.has_key(name):
 			value = ARGUMENTS.get(name)
@@ -154,6 +206,7 @@ class AbracaEnvironment(SConsEnvironment):
 			clean = False, help = False,
 			config_h = config_h,
 			custom_tests = {
+				'CheckGitVersion' : AbracaEnvironment.CheckGitVersion,
 				'CheckPkgConfig' : AbracaEnvironment.CheckPkgConfig,
 				'CheckPkg' : AbracaEnvironment.CheckPkg,
 				'CheckVala' : AbracaEnvironment.CheckVala,
@@ -166,9 +219,18 @@ class AbracaEnvironment(SConsEnvironment):
 	def DebugVariant(self):
 		return self['debug']
 
-	def AppendPkg(self, pkg):
-		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --libs --cflags %s')
-		self.ParseConfig(cmd % pkg)
+	def AppendPkg(self, pkg, version):
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --libs --cflags "%s >= %s"')
+		self.ParseConfig(cmd % (pkg, version))
+
+	def CheckGitVersion(ctx, fail=True):
+		ctx.Message('Checking for git version... ')
+		output = AbracaEnvironment.Run("git describe")
+		ctx.Result(output)
+		if output and (output != ctx.env['VERSION']):
+			ctx.env.Replace(VERSION = output)
+		return output
+	CheckGitVersion = staticmethod(CheckGitVersion)
 
 	def CheckPkgConfig(ctx, fail=True):
 		ctx.Message('Checking for pkg-config... ')
@@ -180,10 +242,10 @@ class AbracaEnvironment(SConsEnvironment):
 		return exit_code
 	CheckPkgConfig = staticmethod(CheckPkgConfig)
 
-	def CheckPkg(ctx, pkg, fail=True):
-		ctx.Message('Checking for %s... ' % pkg)
-		cmd = ctx.env.subst('pkg-config $PKG_CONFIG_FLAGS --exists \'%s\'')
-		exit_code, output = ctx.TryAction(cmd % pkg)
+	def CheckPkg(ctx, pkg, version='0.0', fail=True):
+		ctx.Message('Checking for %s >= %s... ' % (pkg, version))
+		cmd = ctx.env.subst('pkg-config $PKG_CONFIG_FLAGS --exists "%s >= %s"')
+		exit_code, output = ctx.TryAction(cmd % (pkg, version))
 		ctx.Result(exit_code)
 		if not exit_code and fail:
 			raise SCons.Errors.UserError('The %s package and its dependencies are required to build' % pkg)
@@ -201,19 +263,20 @@ class AbracaEnvironment(SConsEnvironment):
 	CheckCCompiler = staticmethod(CheckCCompiler)
 
 	def CheckVala(ctx, min_version, fail=True):
+		min_version_breakdown = map(int, re.findall('[0-9]+', min_version))
+
 		if not SCons.Util.is_String(min_version):
 			raise SCons.Errors.UserError('valac min version needs to be a string')
 		ctx.Message('Checking for valac >= %s... ' % min_version)
-		cmd = ctx.env.subst('$VALAC')
+		cmd = ctx.env.subst('$VALAC --version')
 		try:
-			proc = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE)
-			proc.wait()
-			res = re.findall('([0-9](\.[0-9])*)$', proc.stdout.read())
+			output = AbracaEnvironment.Run(cmd)
+			res = map(int, re.findall('[0-9]+', output))
 		except OSError:
 			ctx.Result(0)
 			raise SCons.Errors.UserError('No vala compiler found')
 
-		if res and res[0] and res[0][0] >= min_version:
+		if res >= min_version_breakdown:
 			ctx.Result(1)
 		else:
 			ctx.Result(0)
@@ -234,9 +297,13 @@ class AbracaEnvironment(SConsEnvironment):
 	CheckApp = staticmethod(CheckApp)
 
 	def Strip(source, target, env):
-		proc = subprocess.Popen(['strip', target[0].path])
-		proc.wait()
+		AbracaEnvironment.Run(['strip', target[0].path])
 	Strip = SCons.Action.Action(Strip, '$STRIPCOMSTR')
+
+	def Run(cmd, shell=False):
+		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+		return proc.communicate()[0].strip()
+	Run = staticmethod(Run)
 
 SCons.Script._SConscript.BuildDefaultGlobals()
 SCons.Script._SConscript.GlobalDict["AbracaEnvironment"] = AbracaEnvironment

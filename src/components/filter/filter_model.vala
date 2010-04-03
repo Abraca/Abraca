@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008  Abraca Team
+ * Copyright (C) 2008-2010  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,30 +38,22 @@ namespace Abraca {
 		public string[] dynamic_columns;
 
 		/* Map medialib id to row */
-		/* TODO: Should probably be iters instead */
-		private GLib.HashTable<int,Gtk.TreeRowReference> pos_map;
+		private Gee.Map<int,Gtk.TreeRowReference> pos_map;
 
-		/**
-		 * TODO: Get rid of this one...
-		 * This method exists due to a bug in Vala that prevents constructors
-		 * to accept string[] parameters for initialization. Get rid of this
-		 * hack as soon as possible!
-		 */
-		public static FilterModel create(owned string[] props) {
-			FilterModel model = new FilterModel();
 
-			model._set_dynamic_columns((owned) props);
+		construct {
+			pos_map = new Gee.HashMap<int,Gtk.TreeRowReference>();
 
-			return model;
+			var client = Client.instance();
+
+			client.medialib_entry_changed.connect((client, res) => {
+				on_medialib_info(res);
+			});
 		}
 
-		/**
-		 * TODO: Get rid of this one too...
-		 * Helper method for the factory hack above.
-		 */
-		public void _set_dynamic_columns (owned string[] props) {
-			int n_columns = props.length;
 
+		public FilterModel (owned string[] props) {
+			int n_columns = props.length;
 			GLib.Type[] types = new GLib.Type[2 + n_columns];
 
 			types[0] = typeof(int);
@@ -76,16 +68,6 @@ namespace Abraca {
 			dynamic_columns = (owned) props;
 		}
 
-		construct {
-			// TODO: Add proper unreffing here
-			pos_map = new GLib.HashTable<int,Gtk.TreeRowReference>(GLib.direct_hash, GLib.direct_equal);
-
-			Client c = Client.instance();
-			c.medialib_entry_changed += (client, res) => {
-				on_medialib_info(res);
-			};
-		}
-
 
 		/**
 		 * Replaces the content of the filter list model with the
@@ -97,10 +79,10 @@ namespace Abraca {
 
 			clear();
 
-			pos_map.remove_all();
+			pos_map.clear();
 
 			
-			weak Xmms.ListIter list_iter;
+			unowned Xmms.ListIter list_iter;
 			val.get_list_iter(out list_iter);
 
 			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
@@ -110,7 +92,6 @@ namespace Abraca {
 				int id = 0;
 
 				if (!(list_iter.entry(out entry) && entry.get_int(out id))) {
-					GLib.stdout.printf("crapping out\n");
 					continue;
 				}
 
@@ -128,7 +109,7 @@ namespace Abraca {
 				path = get_path(iter);
 				row = new Gtk.TreeRowReference(this, path);
 
-				pos_map.insert((int) id, (owned) row);
+				pos_map.set((int) id, row);
 			}
 
 			return true;
@@ -160,7 +141,7 @@ namespace Abraca {
 		}
 
 		private bool on_medialib_info(Xmms.Value propdict) {
-			weak Gtk.TreeRowReference row;
+			Gtk.TreeRowReference row;
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 			int mid;
@@ -169,7 +150,7 @@ namespace Abraca {
 
 			val.dict_entry_get_int("id", out mid);
 
-			row = (Gtk.TreeRowReference) pos_map.lookup(mid);
+			row = pos_map.get(mid);
 			if (row == null || !row.valid()) {
 				return false;
 			}
@@ -180,7 +161,7 @@ namespace Abraca {
 				set(iter, Column.STATUS, Status.RESOLVED);
 
 				int pos = 2;
-				foreach (weak string key in dynamic_columns) {
+				foreach (unowned string key in dynamic_columns) {
 					string formatted = "";
 					Transform.normalize_dict (val, key, out formatted);
 					set(iter, pos++, formatted);

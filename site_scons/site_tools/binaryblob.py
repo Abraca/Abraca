@@ -1,4 +1,4 @@
-# Copyright (c) 2008, Abraca Team
+# Copyright (c) 2008-2010, Abraca Team
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -17,14 +17,10 @@ import re
 import os
 
 
-_assembly_template = """
-  .section ".rodata"
-  .globl %(full_name)s
-  .type %(full_name)s, %%object
-%(full_name)s:
-  .incbin "%(file)s" /* MD5: %(md5)s */
-  .byte 0
-  .size %(full_name)s, .-%(full_name)s
+_code_template = """
+const char %(full_name)s[] = {
+%(bytes)s
+};
 """
 
 
@@ -37,24 +33,27 @@ def variable_name_fixup(name):
             name = name[:pos] + '_' + name[pos + 1:]
     return name
 
+def get_bytes(src):
+    return ",\n".join("\t0x%x" % ord(x) for x in src.get_contents())
+
 def binary_blob_asmsource_action(target, source, env):
     items = []
 
     for src in source:
         filename = os.path.basename(src.path)
         name, _ = os.path.splitext(filename)
+
         metadata = {
             "name": name,
             "full_name": "resource_%s" % name,
-            "file": src.path,
-            "md5": src.get_content_hash(),
+            "bytes": get_bytes(src),
         }
         items.append(metadata)
 
     # Write the ASM file
     fd = file(target[0].path, 'w')
     for item in items:
-        fd.write(_assembly_template % item)
+        fd.write(_code_template % item)
     fd.close()
 
     # Write the header file
@@ -78,8 +77,8 @@ def binary_blob_asmsource_action(target, source, env):
     fd.write('namespace Resources.XML {\n')
 
     for item in items:
-        fd.write('\t[CCode(cname="%s")]\n' % item["full_name"])
-        fd.write('\tpublic const string ' + item["name"] + ';\n')
+        fd.write('\t[CCode(cname="%(full_name)s")]\n' % item)
+        fd.write('\tpublic const string %(name)s;\n' % item)
 
     fd.write('}')
     fd.close()
@@ -100,7 +99,7 @@ def generate(env):
             binary_blob_asmsource
         ],
         emitter = binary_blob_asmsource_emitter,
-        suffix = '.s'
+        suffix = '.c'
     )
 
     env['BUILDERS']['BinaryBlob'] = binary_blob_asmsource_builder

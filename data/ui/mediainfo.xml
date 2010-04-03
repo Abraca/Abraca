@@ -205,6 +205,7 @@
                 <child>
                   <object class="GtkComboBoxEntry" id="ent_genre">
                     <property name="model">genre_model</property>
+                    <signal name="changed" handler="abraca_medialib_info_dialog_on_genre_combo_box_entry_changed"/>
                     <!--
                     TODO: Bug in GTK causing ComboBoxEntry to be right aligned.
                     <child>

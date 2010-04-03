@@ -3,36 +3,55 @@ Import('images')
 Import('ui')
 
 vala_sources = """
-	client.vala
-	transform.vala
-	collections_view.vala
-	collections_model.vala
-	config.vala
-	filter_editor.vala
-	filter_view.vala
-	filter_model.vala
-	medialib.vala
-	main_hpaned.vala
-	main_window.vala
-	playlist_view.vala
-	playlist_model.vala
-	rating_entry.vala
-	right_hpaned.vala
-	toolbar.vala
-	abraca.vala
-	dragdroptarget.vala
-	collection_cellrenderer.vala
-	configurable.vala
-	volume_button.vala
-	widgets.vala
+    abraca.vala
+    client.vala
+    config.vala
+    dragdroptarget.vala
+    main_hpaned.vala
+    main_window.vala
+    medialib.vala
+    right_hpaned.vala
+    stock.vala
+    toolbar.vala
+    transform.vala
+    treerow_map.vala
+    volume_button.vala
 """.split()
 
-sources = env.Vala(vala_sources)
+types_sources = """
+    types/configurable.vala
+    types/selected_rows_mixin.vala
+""".split()
 
-extra = [
-	'utils/playlist_map.c',
-]
+widgets_sources = """
+    widgets/cellrenderercollection.vala
+    widgets/cellrenderertogglepixbuf.vala
+    widgets/rating_entry.vala
+""".split()
 
-prog = env.Program('abraca', sources + extra + [images, ui], install=True)
+components_sources = """
+    components/collections/collections_model.vala
+    components/collections/collections_view.vala
+
+    components/filter/filter_editor.vala
+    components/filter/filter_model.vala
+    components/filter/filter_view.vala
+
+    components/playlist/playlist_model.vala
+    components/playlist/playlist_view.vala
+    components/playlist/playlist_widget.vala
+""".split()
+
+gladeui_sources = """
+    ../gladeui/glade-abraca.vala
+""".split()
+
+sources = env.Vala(vala_sources + types_sources + widgets_sources + components_sources + gladeui_sources)
+gladeui = sources.pop()
+
+prog = env.Program('abraca', sources + [images, ui], install=True)
+
+Export('sources')
+Export('gladeui')
 
 env.Append(CPPPATH = ['utils'])

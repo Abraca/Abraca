@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008  Abraca Team
+ * Copyright (C) 2008-2010  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,10 @@ namespace Abraca {
 	public class RightHPaned : Gtk.HPaned, IConfigurable {
 		private Gtk.ComboBoxEntry _filter_cbox;
 		private FilterView _filter_tree;
+		private Gee.Queue<string> _pending_queries;
+		private string _unsaved_query;
+		private string _current_query;
+		private uint _timer;
 
 		public FilterView filter_tree {
 			get {
@@ -30,12 +34,16 @@ namespace Abraca {
 			}
 		}
 
-		construct {
+		public RightHPaned(Gtk.AccelGroup group) {
+			_timer = 0;
+
 			position = 430;
 			position_set = true;
 
-			pack1(create_left_box(), true, true);
+			pack1(create_left_box(group), true, true);
 			pack2(create_right_box(), false, true);
+
+			_pending_queries = new Gee.LinkedList<string>();
 
 			Configurable.register(this);
 		}
@@ -79,21 +87,6 @@ namespace Abraca {
 			file.set_string_list("filter", "patterns", list);
 		}
 
-		private void on_filter_entry_changed(Gtk.Entry entry) {
-			Gdk.Color? color = null;
-			Xmms.Collection coll;
-
-			weak string text = entry.get_text();
-
-			if (text.size() > 0 && !Xmms.Collection.parse(text, out coll)) {
-				if (!Gdk.Color.parse("#ff6666", out color)) {
-					color = null;
-				}
-			}
-
-			entry.modify_base(Gtk.StateType.NORMAL, color);
-		}
-
 		private void _filter_save (string pattern) {
 			Gtk.ListStore store = (Gtk.ListStore) _filter_cbox.model;
 			Gtk.TreeIter iter;
@@ -112,16 +105,69 @@ namespace Abraca {
 			store.insert_with_values(out iter, 0, 0, pattern);
 		}
 
-		private void on_filter_entry_activate(Gtk.Entry entry) {
+		private void on_filter_entry_changed(Gtk.Editable widget) {
+			Gdk.Color? color = null;
 			Xmms.Collection coll;
-			weak string pattern;
 
-			pattern = entry.get_text();
+			var entry = widget as Gtk.Entry;
+			var text = entry.get_text();
 
-			if (Xmms.Collection.parse(pattern, out coll)) {
-				_filter_tree.query_collection(coll);
-				_filter_save(pattern);
+			if (text.size() > 0 && Xmms.Collection.parse(text, out coll)) {
+				_current_query = text;
+
+				// Throttle collection querying
+				if (_timer == 0) {
+					_timer = GLib.Timeout.add(450, on_collection_query_timeout);
+				}
+			} else {
+				Gdk.Color.parse("#ff6666", out color);
 			}
+
+			entry.modify_base(Gtk.StateType.NORMAL, color);
+		}
+
+		private bool on_collection_query_timeout()
+		{
+			Xmms.Collection coll;
+
+			if (_current_query == null) {
+				_timer = 0;
+				return false;
+			}
+
+			if (!Xmms.Collection.parse(_current_query, out coll)) {
+				_current_query = null;
+				_timer = 0;
+				return false;
+			}
+
+			_pending_queries.offer(_current_query);
+
+			_filter_tree.query_collection(coll, (val) => {
+				var s = _pending_queries.poll();
+				if (s != null && val.list_get_size() > 0) {
+					if (_filter_cbox.child.has_focus) {
+						_unsaved_query = s;
+					} else if (_pending_queries.is_empty) {
+						_filter_save(s);
+					}
+				}
+				return true;
+			});
+
+			_current_query = null;
+
+			return true;
+		}
+
+		private bool on_filter_entry_focus_out_event(Gtk.Widget w, Gdk.EventFocus e) {
+			if (_unsaved_query != null && _unsaved_query == (w as Gtk.Entry).text) {
+				_filter_save(_unsaved_query);
+			}
+
+			_unsaved_query = null;
+
+			return false;
 		}
 
 		public void filter_entry_set_text(string text) {
@@ -129,7 +175,7 @@ namespace Abraca {
 			entry.text = text;
 		}
 
-		private Gtk.Box create_left_box() {
+		private Gtk.Box create_left_box(Gtk.AccelGroup group) {
 			Gtk.VBox box = new Gtk.VBox(false, 0);
 
 			Gtk.HBox hbox = new Gtk.HBox(false, 6);
@@ -142,9 +188,16 @@ namespace Abraca {
 			);
 
 			Gtk.Entry entry = (Gtk.Entry) _filter_cbox.child;
+			entry.focus.connect((w, e) => {
+				entry.select_region(0, -1);
+				return true;
+			});
 
-			entry.changed += on_filter_entry_changed;
-			entry.activate += on_filter_entry_activate;
+			_filter_cbox.add_accelerator("grab-focus", group, Gdk.Keysym.l,
+			                             Gdk.ModifierType.CONTROL_MASK, 0);
+
+			entry.changed.connect(on_filter_entry_changed);
+			entry.focus_out_event.connect(on_filter_entry_focus_out_event);
 
 			Gtk.EntryCompletion comp = new Gtk.EntryCompletion();
 			comp.model = _filter_cbox.model;
@@ -175,17 +228,9 @@ namespace Abraca {
 		private Gtk.Box create_right_box() {
 			Gtk.VBox box = new Gtk.VBox(false, 0);
 
-			Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(
-				null, null
-			);
+			var playlist = new PlaylistWidget(Client.instance(), Config.instance());
 
-			scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
-			                    Gtk.PolicyType.AUTOMATIC);
-			scrolled.set_shadow_type(Gtk.ShadowType.IN);
-
-			scrolled.add(new PlaylistView());
-
-			box.pack_start(scrolled, true, true, 0);
+			box.pack_start(playlist, true, true, 0);
 
 			return box;
 		}

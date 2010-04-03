@@ -1,4 +1,4 @@
-# Copyright (c) 2008, Abraca Team
+# Copyright (c) 2008-2010, Abraca Team
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -32,7 +32,7 @@ def vala_emitter(target, source, env):
 				continue
 
 			vapi_file = path.File(str(pkg) + '.vapi')
-			if vapi_file.exists():
+			if vapi_file.exists() or vapi_file.has_builder():
 				env.Depends(target, vapi_file)
 				break
 
