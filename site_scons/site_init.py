@@ -169,16 +169,14 @@ class AbracaEnvironment(SConsEnvironment):
 
 	def InstallGladeUiModule(self, source):
 		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=moduledir gladeui-1.0')
-		target = subprocess.Popen(cmd, shell=True,
-		                          stdout=subprocess.PIPE).communicate()[0].strip()
+		target = AbracaEnvironment.Run(cmd)
 		if not target:
 			raise SCons.Errors.UserError('Glade module directory could not be determined')
 		self.Alias('install', self.Install(target, source))
 
 	def InstallGladeUiCatalog(self, source):
 		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=catalogdir gladeui-1.0')
-		target = subprocess.Popen(cmd, shell=True,
-		                          stdout=subprocess.PIPE).communicate()[0].strip()
+		target = AbracaEnvironment.Run(cmd)
 		if not target:
 			raise SCons.Errors.UserError('Glade catalog directory could not be determined')
 		self.Alias('install', self.Install(target, source))
@@ -187,8 +185,7 @@ class AbracaEnvironment(SConsEnvironment):
 		if size not in ('16x16', '22x22'):
 			raise SCons.Errors.UserError('Unsupported size for glade pixmap: %r' % size)
 		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=pixmapdir gladeui-1.0')
-		target = subprocess.Popen(cmd, shell=True,
-		                          stdout=subprocess.PIPE).communicate()[0].strip()
+		target = AbracaEnvironment.Run(cmd)
 		if not target:
 			raise SCons.Errors.UserError('Glade pixmap directory could not be determined')
 		self.Alias('install', self.Install(os.path.join(target, 'hicolor', size, 'actions'), source))
@@ -260,11 +257,10 @@ class AbracaEnvironment(SConsEnvironment):
 		if not SCons.Util.is_String(min_version):
 			raise SCons.Errors.UserError('valac min version needs to be a string')
 		ctx.Message('Checking for valac >= %s... ' % min_version)
-		cmd = ctx.env.subst('$VALAC')
+		cmd = ctx.env.subst('$VALAC --version')
 		try:
-			proc = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE)
-			proc.wait()
-			res = map(int, re.findall('[0-9]+', proc.stdout.read()))
+			output = AbracaEnvironment.Run(cmd)
+			res = map(int, re.findall('[0-9]+', output))
 		except OSError:
 			ctx.Result(0)
 			raise SCons.Errors.UserError('No vala compiler found')
@@ -290,9 +286,13 @@ class AbracaEnvironment(SConsEnvironment):
 	CheckApp = staticmethod(CheckApp)
 
 	def Strip(source, target, env):
-		proc = subprocess.Popen(['strip', target[0].path])
-		proc.wait()
+		AbracaEnvironment.Run(['strip', target[0].path])
 	Strip = SCons.Action.Action(Strip, '$STRIPCOMSTR')
+
+	def Run(cmd, shell=False):
+		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+		return proc.communicate()[0].strip()
+	Run = staticmethod(Run)
 
 SCons.Script._SConscript.BuildDefaultGlobals()
 SCons.Script._SConscript.GlobalDict["AbracaEnvironment"] = AbracaEnvironment
