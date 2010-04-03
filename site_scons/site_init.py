@@ -110,6 +110,7 @@ class AbracaEnvironment(SConsEnvironment):
 		self['BUILDERS']['Program'] = self._program
 
 		self._update_worker_count()
+		self._update_version()
 
 	def _merge_path_from_environment(self):
 		scons_env = set(self["ENV"]["PATH"].split(os.path.pathsep))
@@ -132,6 +133,11 @@ class AbracaEnvironment(SConsEnvironment):
 			self.SetOption('num_jobs', cpus)
 		except Exception, e:
 			pass
+
+	def _update_version(self):
+		version = self.Run("git describe")
+		if version and (version != self['VERSION']):
+			self.Replace(VERSION = version)
 
 	def _program(self, target, source, *args, **kwargs):
 		prog = self['BUILDERS']['SConsProgram'](target, source, *args, **kwargs)
