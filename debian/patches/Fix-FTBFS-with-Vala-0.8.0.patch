@@ -1,0 +1,37 @@
+From: Daniel Svensson <daniel.svensson@purplescout.se>
+Date: Tue, 13 Apr 2010 23:01:03 +0200
+Subject: [PATCH] OTHER: Fix FTBFS with Vala 0.8.0
+Origin: upstream, http://git.xmms.se/?p=abraca.git;a=commit;h=98829f14b708581b0e1ad8b5f54197bc95e74e0d
+
+---
+ src/components/collections/collections_view.vala |   13 ++++---------
+ 1 files changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/src/components/collections/collections_view.vala b/src/components/collections/collections_view.vala
+index 12f2de4..0e8d2ea 100644
+--- a/src/components/collections/collections_view.vala
++++ b/src/components/collections/collections_view.vala
+@@ -441,16 +441,11 @@ namespace Abraca {
+ 				Gtk.TreePath path = model.get_path(iter);
+ 
+ 				if (path.get_depth() == 2) {
+-					unowned GLib.List<Gtk.CellRenderer> renderers;
+-					Gtk.CellRendererText renderer;
+-					GLib.List<unowned Gtk.TreeViewColumn> cols;
+-					Gtk.TreeViewColumn col;
++					var cols = get_columns();
++					var col = cols.data;
+ 
+-					cols = get_columns();
+-					col = cols.data;
+-
+-					renderers = col.get_cells();
+-					renderer = (Gtk.CellRendererText) renderers.data;
++					var renderers = col.get_cells();
++					var renderer = (Gtk.CellRendererText) renderers.data;
+ 
+ 					renderer.editable = true;
+ 					set_cursor_on_cell(path, col, renderer, true);
+-- 
+1.7.0.4
+
