@@ -1,3 +1,9 @@
+abraca (0.5.0-2) unstable; urgency=low
+
+  * Fix FTBFS with vala 0.8.0.
+
+ -- Benjamin Drung <bdrung@ubuntu.com>  Tue, 13 Apr 2010 23:46:29 +0200
+
 abraca (0.5.0-1) unstable; urgency=low
 
   * New upstream release.
