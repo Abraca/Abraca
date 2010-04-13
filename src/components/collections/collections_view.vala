@@ -441,16 +441,11 @@ namespace Abraca {
 				Gtk.TreePath path = model.get_path(iter);
 
 				if (path.get_depth() == 2) {
-					unowned GLib.List<Gtk.CellRenderer> renderers;
-					Gtk.CellRendererText renderer;
-					GLib.List<unowned Gtk.TreeViewColumn> cols;
-					Gtk.TreeViewColumn col;
+					var cols = get_columns();
+					var col = cols.data;
 
-					cols = get_columns();
-					col = cols.data;
-
-					renderers = col.get_cells();
-					renderer = (Gtk.CellRendererText) renderers.data;
+					var renderers = col.get_cells();
+					var renderer = (Gtk.CellRendererText) renderers.data;
 
 					renderer.editable = true;
 					set_cursor_on_cell(path, col, renderer, true);
