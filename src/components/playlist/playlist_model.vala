@@ -136,9 +136,9 @@ namespace Abraca {
 			if (iter_nth_child (out iter, null, pos) &&
 			    iter_nth_child(out niter, null, npos)) {
 				if (pos < npos) {
-					move_after (iter, niter);
+					move_after (ref iter, niter);
 				} else {
-					move_before (iter, niter);
+					move_before (ref iter, niter);
 				}
 			}
 		}
