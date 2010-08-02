@@ -362,7 +362,7 @@ namespace Abraca {
 
 
 
-		private void on_row_activated (Gtk.Widget tree,
+		private void on_row_activated (Gtk.TreeView tree,
 		                               Gtk.TreePath path,
 		                               Gtk.TreeViewColumn column)
 		{
