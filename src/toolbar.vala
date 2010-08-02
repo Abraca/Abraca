@@ -87,6 +87,7 @@ namespace Abraca {
 					} else {
 						_volume_button.show();
 					}
+					return true;
 				});
 
 				set_sensitive(true);
