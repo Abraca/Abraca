@@ -23,7 +23,7 @@ namespace Abraca {
 	public class FilterView : Gtk.TreeView, IConfigurable, SelectedRowsMixin {
 		/* field and order used for sorting, see sorting property */
 		public struct Sorting {
-			public string field;
+			public unowned string field;
 			public Gtk.SortType order;
 		}
 
