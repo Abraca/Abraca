@@ -85,6 +85,10 @@ namespace Abraca {
 
 			on_selection_changed_update_menu(selection);
 
+			_sort = new Xmms.Value.from_list();
+			_sort.list_append (new Xmms.Value.from_string("album"));
+			_sort.list_append (new Xmms.Value.from_string("tracknr"));
+
 			show_all();
 		}
 
@@ -550,15 +554,14 @@ namespace Abraca {
 			unowned uint[] ids = (uint[]) sel.data;
 			ids.length = (int)(sel.length / sizeof(uint));
 
+			var coll = new Xmms.Collection (Xmms.CollectionType.IDLIST);
+			coll.set_idlist (ids);
+
 			if (get_dest_row_at_pos(x, y, out path, out align)) {
 				int pos = path.get_indices()[0];
-				foreach (uint id in ids) {
-					client.xmms.playlist_insert_id(Xmms.ACTIVE_PLAYLIST, pos, id);
-				}
+				client.xmms.playlist_insert_collection(Xmms.ACTIVE_PLAYLIST, pos, coll, _sort);
 			} else {
-				foreach (uint id in ids) {
-					client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
-				}
+				client.xmms.playlist_add_collection(Xmms.ACTIVE_PLAYLIST, coll, _sort);
 			}
 
 			return true;

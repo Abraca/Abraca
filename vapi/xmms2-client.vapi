@@ -312,8 +312,7 @@ namespace Xmms {
 	public class Collection {
 		[CCode (cname = "xmmsc_coll_new")]
 		public Collection(CollectionType type);
-		[CCode (array_length = false)]
-		public void set_idlist(uint[] ids);
+		public void set_idlist([CCode (array_length = false)] uint[] ids);
 		public void add_operand(Collection op);
 		public void remove_operand(Collection op);
 

@@ -291,7 +291,7 @@ namespace Abraca {
 
 
 		/**
-		 * 
+		 *
 		 */
 		private void on_drag_data_received (Gtk.Widget w,
 		                                    Gdk.DragContext ctx,
@@ -340,9 +340,15 @@ namespace Abraca {
 				unowned uint[] ids = (uint[]) sel.data;
 				ids.length = (int)(sel.length / sizeof(uint));
 
-				for(int i = ids.length -1; i >= 0; i--) {
-					c.xmms.playlist_add_id(name, ids[i]);
-				}
+				var sort = new Xmms.Value.from_list();
+				sort.list_append (new Xmms.Value.from_string("album"));
+				sort.list_append (new Xmms.Value.from_string("tracknr"));
+
+
+				var coll = new Xmms.Collection (Xmms.CollectionType.IDLIST);
+				coll.set_idlist (ids);
+
+				c.xmms.playlist_add_collection(name, coll, sort);
 			} else if (info == (uint) DragDropTargetType.COLL) {
 				string[] collection_data;
 				string coll_ns, coll_name;
