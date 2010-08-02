@@ -200,7 +200,7 @@ namespace Abraca {
 		/**
 		 * Handle user input rename of collections.
 		 */
-		private void on_cell_edited (Gtk.CellRenderer renderer,
+		private void on_cell_edited (Gtk.CellRendererText renderer,
 		                             string path, string new_text)
 		{
 			Client c = Client.instance();
