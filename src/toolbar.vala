@@ -146,7 +146,7 @@ namespace Abraca {
 
 			c.xmms.playback_seek_ms(pos, Xmms.PlaybackSeekMode.SET);
 
-			_time_slider.motion_notify_event -= on_time_slider_motion_notify;
+			_time_slider.motion_notify_event.connect (on_time_slider_motion_notify);
 
 			_seek = false;
 
