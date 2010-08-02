@@ -392,12 +392,10 @@ namespace Abraca {
 
 			var values = new Gee.HashSet<string>(GLib.str_hash, GLib.str_equal);
 
-			foreach (var val in get_selected_rows<string>(column)) {
-				if (val == "Unknown") {
-					continue;
-				}
-				values.add(val.casefold());
-			}
+			foreach_selected_row<string>(column, (pos, text) => {
+				if (text != "Unknown")
+					values.add(text.casefold());
+			});
 
 			var query = new GLib.StringBuilder();
 
@@ -419,10 +417,9 @@ namespace Abraca {
 
 
 		private void on_menu_playlist_info(Gtk.MenuItem item) {
-			var list = get_selected_rows<uint>(PlaylistModel.Column.ID);
-			foreach (var mid in list) {
+			foreach_selected_row<uint>(PlaylistModel.Column.ID, (pos, mid) => {
 				Abraca.instance().medialib.info_dialog_add_id(mid);
-			}
+			});
 		}
 
 

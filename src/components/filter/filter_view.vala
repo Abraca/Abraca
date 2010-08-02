@@ -223,16 +223,19 @@ namespace Abraca {
 
 		private bool on_key_press_event (Gdk.EventKey e) {
 			Client c = Client.instance();
-			if (e.keyval == Gdk.Keysym.Return) {
-				var ids = get_selected_rows<int>(FilterModel.Column.ID);
-				if ((e.state & Gdk.ModifierType.CONTROL_MASK) > 0) {
-					c.xmms.playlist_replace_ids(Xmms.ACTIVE_PLAYLIST, ids);
-				} else {
-					c.xmms.playlist_add_ids(Xmms.ACTIVE_PLAYLIST, ids);
-				}
-				return true;
+			if (e.keyval != Gdk.Keysym.Return) {
+				return false;
 			}
-			return false;
+
+			if ((e.state & Gdk.ModifierType.CONTROL_MASK) > 0) {
+				c.xmms.playlist_clear (Xmms.ACTIVE_PLAYLIST);
+			}
+
+			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
+				c.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
+			});
+
+			return true;
 		}
 
 		private void on_columns_changed() {
@@ -281,15 +284,17 @@ namespace Abraca {
 
 		private void on_menu_add(Gtk.MenuItem item) {
 			Client c = Client.instance();
-			var ids = get_selected_rows<int>(FilterModel.Column.ID);
-			c.xmms.playlist_add_ids(Xmms.ACTIVE_PLAYLIST, ids);
+			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
+				c.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
+			});
 		}
 
 
 		private void on_menu_replace(Gtk.MenuItem item) {
 			Client c = Client.instance();
-			var ids = get_selected_rows<int>(FilterModel.Column.ID);
-			c.xmms.playlist_replace_ids(Xmms.ACTIVE_PLAYLIST, ids);
+			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
+				c.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
+			});
 		}
 
 
