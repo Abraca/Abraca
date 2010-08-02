@@ -502,35 +502,20 @@ namespace Abraca {
 			}
 		}
 
-		private void on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
+		private void on_drag_data_get(Gtk.Widget widget, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time) {
-			GLib.List<uint> mid_list = new GLib.List<uint>();
-
-			var sel = get_selection();
-			var lst = sel.get_selected_rows(null);
-
-			foreach (unowned Gtk.TreePath p in lst) {
-				Gtk.TreeIter iter;
-				uint mid;
-
-				model.get_iter(out iter, p);
-				model.get(iter, FilterModel.Column.ID, out mid, -1);
-
-				mid_list.prepend(mid);
-			}
-
-			uint len = mid_list.length();
-			uint[] mid_array = new uint[len];
-
+			var entries = get_selected_rows<int>(FilterModel.Column.ID);
+			var mid_array = new uint[entries.size + 1];
 			int pos = 0;
-			foreach (uint mid in mid_list) {
+
+			foreach (uint mid in entries) {
 				mid_array[pos++] = mid;
 			}
 
 			/* This should be removed as #515408 gets fixed. */
 			unowned uchar[] data = (uchar[]) mid_array;
-			data.length = (int)(mid_array.length * sizeof(uint));
+			data.length = (int)((mid_array.length + 1) * sizeof(uint));
 
 			selection_data.set(
 				Gdk.Atom.intern(_target_entries[0].target, true),
