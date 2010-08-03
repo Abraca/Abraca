@@ -154,14 +154,10 @@ namespace Abraca {
 
 
 		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e) {
-			if (e.keyval == Gdk.Keysym.Delete) {
-
-				delete_selected();
-
-				return true;
-			}
-
-			return false;
+			if (e.keyval != Gdk.Keysym.Delete)
+				return false;
+			delete_selected();
+			return true;
 		}
 
 
