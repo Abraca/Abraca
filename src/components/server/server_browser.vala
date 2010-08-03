@@ -25,25 +25,25 @@ namespace Abraca {
 			Connect
 		}
 
-		private Gtk.TreeView   _view;
-		private Gtk.Button     _button_add;
-		private Gtk.Button     _button_launch;
-		private Gtk.Entry      _entry_host;
+		private Gtk.TreeView _view;
+		private Gtk.Button _button_add;
+		private Gtk.Button _button_launch;
+		private Gtk.Entry _entry_host;
 		private Gtk.SpinButton _spin_button_port;
-		private Gtk.Dialog     _launcher_error_dialog;
-		private Gtk.Expander   _launcher_error_details_expander;
-		private Gtk.TextView   _launcher_error_text_view;
-		private string         _launcher_prog;
-		private string         _launcher_logfile;
+		private Gtk.Dialog _launcher_error_dialog;
+		private Gtk.Expander _launcher_error_details_expander;
+		private Gtk.TextView  _launcher_error_text_view;
+		private string _launcher_prog;
+		private string _launcher_logfile;
 
 		public string? selected_host { get; private set; }
 
-		public static ServerBrowser build(Gtk.Window parent)
+		public static ServerBrowser build (Gtk.Window parent)
 		{
 			var builder = new Gtk.Builder();
 			try {
 				builder.add_from_string(Resources.XML.server_browser,
-										Resources.XML.server_browser.length);
+				                        Resources.XML.server_browser.length);
 			} catch (GLib.Error e) {
 				GLib.error(e.message);
 			}
@@ -53,18 +53,18 @@ namespace Abraca {
 			return browser;
 		}
 
-		public void parser_finished(Gtk.Builder builder)
+		public void parser_finished (Gtk.Builder builder)
 		{
 			unowned Gtk.TreeSelection selection;
 
-			_view                            = (Gtk.TreeView)   builder.get_object("treeview1");
-			_button_add                      = (Gtk.Button)     builder.get_object("button_add");
-			_button_launch                   = (Gtk.Button)     builder.get_object("button_launch");
-			_entry_host                      = (Gtk.Entry)      builder.get_object("entry_host");
-			_spin_button_port                = (Gtk.SpinButton) builder.get_object("spinbutton_port");
-			_launcher_error_dialog           = (Gtk.Dialog)     builder.get_object("messagedialog1");
-			_launcher_error_details_expander = (Gtk.Expander)   builder.get_object("expander1");
-			_launcher_error_text_view        = (Gtk.TextView)   builder.get_object("textview1");
+			_view = (Gtk.TreeView) builder.get_object("treeview1");
+			_button_add = (Gtk.Button) builder.get_object("button_add");
+			_button_launch = (Gtk.Button) builder.get_object("button_launch");
+			_entry_host = (Gtk.Entry) builder.get_object("entry_host");
+			_spin_button_port = (Gtk.SpinButton) builder.get_object("spinbutton_port");
+			_launcher_error_dialog = (Gtk.Dialog) builder.get_object("messagedialog1");
+			_launcher_error_details_expander = (Gtk.Expander) builder.get_object("expander1");
+			_launcher_error_text_view = (Gtk.TextView) builder.get_object("textview1");
 
 			selection = _view.get_selection();
 			selection.set_mode(Gtk.SelectionMode.BROWSE);
@@ -91,29 +91,28 @@ namespace Abraca {
 		}
 
 		[CCode(instance_pos=-1)]
-		public void on_add_clicked(Gtk.Button button)
+		public void on_add_clicked (Gtk.Button button)
 		{
 			ServerModel model = (ServerModel) _view.model;
 
-			model.add_server_from_address(null,
-										  _entry_host.text,
-										  (uint16) _spin_button_port.value);
+			model.add_server_from_address(null, _entry_host.text,
+			                              (uint16) _spin_button_port.value);
 		}
 
 		[CCode(instance_pos=-1)]
-		public void on_connect_clicked(Gtk.Button button)
+		public void on_connect_clicked (Gtk.Button button)
 		{
 			destroy();
 		}
 
 		[CCode(instance_pos=-1)]
-		public void on_cancel_clicked(Gtk.Button button)
+		public void on_cancel_clicked (Gtk.Button button)
 		{
 			destroy();
 		}
 
 		[CCode(instance_pos=-1)]
-		public void on_launch_clicked(Gtk.Button button)
+		public void on_launch_clicked (Gtk.Button button)
 		{
 #if G_OS_UNIX || G_OS_WIN32
 			int standard_output;
@@ -128,14 +127,14 @@ namespace Abraca {
 
 			try {
 				GLib.Process.spawn_async_with_pipes(null,
-													{_launcher_prog},
-													null,
-													GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-													null,
-													out pid,
-													null,
-													out standard_output,
-													out standard_error);
+				                                    {_launcher_prog},
+				                                    null,
+				                                    GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+				                                    null,
+				                                    out pid,
+				                                    null,
+				                                    out standard_output,
+				                                    out standard_error);
 			} catch (GLib.SpawnError e) {
 				unowned Gtk.TextBuffer buffer;
 
@@ -250,7 +249,7 @@ namespace Abraca {
 
 
 		[CCode(instance_pos=-1)]
-		public void on_treeview_selection_changed(Gtk.TreeSelection selection)
+		public void on_treeview_selection_changed (Gtk.TreeSelection selection)
 		{
 			var view = selection.get_tree_view();
 			var model = view.model as ServerModel;
@@ -264,8 +263,8 @@ namespace Abraca {
 		}
 
 		[CCode(instance_pos=-1)]
-		public void on_treeview_row_activated(Gtk.TreeView view, Gtk.TreePath path,
-											  Gtk.TreeViewColumn colunm)
+		public void on_treeview_row_activated (Gtk.TreeView view, Gtk.TreePath path,
+		                                       Gtk.TreeViewColumn colunm)
 		{
 			selected_host = ((ServerModel) view.model).get_host_at_path(path);
 			response(Action.Connect);
@@ -274,7 +273,8 @@ namespace Abraca {
 		}
 
 		[CCode(instance_pos=-1)]
-		public void on_favorite_toggled(CellRendererTogglePixbuf renderer, string updated) {
+		public void on_favorite_toggled (CellRendererTogglePixbuf renderer, string updated)
+		{
 			Gtk.ListStore store = (Gtk.ListStore) _view.model;
 			Gtk.TreeIter iter;
 			bool favorite;
@@ -285,7 +285,8 @@ namespace Abraca {
 		}
 
 		[CCode(instance_pos=-1)]
-		public void on_entry_host_changed(Gtk.Entry entry) {
+		public void on_entry_host_changed (Gtk.Entry entry)
+		{
 			_button_add.sensitive = entry.text.strip() != "";
 		}
 	}
