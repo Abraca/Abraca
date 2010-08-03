@@ -141,16 +141,14 @@ namespace Abraca {
 
 
 		private void delete_selected() {
-			var sel = get_selection();
-			var paths = sel.get_selected_rows(null);
-			var lst = new GLib.List<uint>();
+			Gee.List<uint> entries = new Gee.LinkedList<uint>();
 
-			foreach (unowned Gtk.TreePath path in paths) {
-				lst.prepend(path.get_indices()[0]);
-			}
+			foreach_selected_row<uint> (PlaylistModel.Column.ID, (idx, mid) => {
+				entries.insert (0, idx);
+			});
 
-			foreach (uint id in lst) {
-				client.xmms.playlist_remove_entry(Xmms.ACTIVE_PLAYLIST, id);
+			foreach (uint idx in entries) {
+				client.xmms.playlist_remove_entry(Xmms.ACTIVE_PLAYLIST, idx);
 			}
 		}
 
