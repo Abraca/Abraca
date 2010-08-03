@@ -27,7 +27,7 @@ namespace Abraca {
 			FAVORITE
 		}
 
-#if WITH_AVAHI
+#if HAVE_AVAHI_GOBJECT
 		private Avahi.Client _avahi_client;
 		private Avahi.ServiceBrowser _avahi_service_browser;
 		private Gee.LinkedList<Avahi.ServiceResolver> _avahi_service_resolvers;
@@ -35,7 +35,7 @@ namespace Abraca {
 
 		public void parser_finished(Gtk.Builder builder)
 		{
-#if WITH_AVAHI
+#if HAVE_AVAHI_GOBJECT
 			_avahi_client            = new Avahi.Client(Avahi.ClientFlags.NO_FAIL);
 			_avahi_service_browser   = new Avahi.ServiceBrowser("_xmms2._tcp");
 			_avahi_service_resolvers = new Gee.LinkedList<Avahi.ServiceResolver>();
@@ -62,7 +62,7 @@ namespace Abraca {
 //			}
 		}
 
-#if WITH_AVAHI
+#if HAVE_AVAHI_GOBJECT
 		private void on_new_service(Avahi.Interface i, Avahi.Protocol p, string n, string t, string d, Avahi.LookupResultFlags f) {
 			var resolver = new Avahi.ServiceResolver(i, p, n, t, d, Avahi.Protocol.UNSPEC);
 
@@ -158,7 +158,7 @@ namespace Abraca {
 					name = GLib.Environment.get_host_name();
 				}
 			}
-			
+
 			GLib.stdout.printf("%s\n", name);
 			add_server(name, "tcp://%s:%u".printf(host, port), favorite);
 		}

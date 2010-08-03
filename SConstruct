@@ -12,37 +12,28 @@ conf.CheckApp('msgfmt')
 conf.CheckApp('gdk-pixbuf-csource')
 conf.CheckGitVersion()
 
-dependencies = (
-	('gtk+-2.0', '2.16.0'),
-	('gmodule-2.0', '2.16.0'),
-	('gio-2.0', '2.16.0'),
-	('xmms2-client', '0.6'),
-	('xmms2-client-glib', '0.6'),
-	('gee-1.0', '0.5')
+vala_dependencies = (
+	('gtk+-2.0', '2.16.0', env.Dependency.Mandatory),
+	('gmodule-2.0', '2.16.0', env.Dependency.Mandatory),
+	('gio-2.0', '2.16.0', env.Dependency.Mandatory),
+	('xmms2-client', '0.6', env.Dependency.Mandatory),
+	('xmms2-client-glib', '0.6', env.Dependency.Mandatory),
+	('gee-1.0', '0.5', env.Dependency.Mandatory),
+	('avahi-gobject', '0.6.0', env.Dependency.Optional),
 )
 
-for pkg, version in dependencies:
-	if conf.CheckPkg(pkg, version):
+for pkg, version, option in vala_dependencies:
+	if conf.CheckPkg(pkg, version, option):
 		env.AppendPkg(pkg, version)
 		env.Append(VALAPKGS = [pkg])
 
-# Optional dependencies; are used when available. You can force scons to abort
-# if the package is not available by setting WITH_PACKAGE=yes or force scons to
-# skip support for that package by setting WITH_PACKAGE=no.
-for varname, packages in [('WITH_AVAHI', [('avahi-gobject', '0.6.0')])]:
-	if env.get(varname) is not False:
-		if not filter(lambda (pkg, version): not conf.CheckPkg(pkg, version, fail=env.get(varname)), packages):
-			env[varname] = True
-			env['VALAFLAGS'] += ['--define=' + varname]
+c_dependencies = (
+	('gladeui-1.0', '3.6.0', env.Dependency.Optional),
+)
 
-			for pkg, version in packages:
-				env.AppendPkg(pkg, version)
-				env.Append(VALAPKGS = [pkg])
-		else:
-			env[varname] = False
-
-if env['WITH_GLADEUI']:
-	conf.CheckPkg('gladeui-1.0')
+for pkg, version, option in c_dependencies:
+	if conf.CheckPkg(pkg, version, option):
+		env.AppendPkg(pkg, version)
 
 # Detect the operating system as indicated by the G_OS_* makros and pass them
 # with --define to the vala compiler. Because of those macros are defined in the
@@ -69,9 +60,5 @@ else:
 env.SConscript('build/data/SConscript', exports='env', duplicate=0)
 env.SConscript('build/data/ui/SConscript', exports='env', duplicate=0)
 env.SConscript('build/src/SConscript', exports='env', duplicate=0)
-
-if env['WITH_GLADEUI']:
-	env.SConscript('build/gladeui/SConscript', exports='env', duplicate=0)
-
-if env['HAVE_MSGFMT']:
-	env.SConscript('build/po/SConscript', exports='env', duplicate=0)
+env.SConscript('build/gladeui/SConscript', exports='env', duplicate=0)
+env.SConscript('build/po/SConscript', exports='env', duplicate=0)

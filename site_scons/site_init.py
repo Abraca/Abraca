@@ -26,6 +26,10 @@ import subprocess
 SCons.Defaults.DefaultEnvironment(tools = [])
 
 class AbracaEnvironment(SConsEnvironment):
+	class Dependency(object):
+		Mandatory = True
+		Optional = False
+
 	def __init__(self, *args, **kwargs):
 		variables = [
 			'VALAC', 'CC', 'AS', 'LINKFLAGS', 'PKG_CONFIG_FLAGS',
@@ -79,8 +83,6 @@ class AbracaEnvironment(SConsEnvironment):
 			           PathOption.PathAccept),
 			PathOption('MANDIR', 'man page dir', '$DATADIR/man',
 			           PathOption.PathAccept),
-			BoolOption('WITH_GLADEUI', 'create a plugin for glade-3, only for developers', 'no'),
-			BoolOption('WITH_AVAHI', 'build with avahi support', None)
 		)
 		opts.Update(self)
 		opts.Save('.scons_options', self)
@@ -134,6 +136,8 @@ class AbracaEnvironment(SConsEnvironment):
 		except Exception, e:
 			pass
 
+	def _to_define(self, name):
+		return 'HAVE_' + ''.join(x.isalnum() and x or '_' for x in name).upper()
 
 	def _program(self, target, source, *args, **kwargs):
 		prog = self['BUILDERS']['SConsProgram'](target, source, *args, **kwargs)
@@ -224,6 +228,9 @@ class AbracaEnvironment(SConsEnvironment):
 	def AppendPkg(self, pkg, version):
 		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --libs --cflags "%s >= %s"')
 		self.ParseConfig(cmd % (pkg, version))
+		define = self._to_define(pkg)
+		self.Append(VALAFLAGS = ['--define=' + define])
+		self.Append(CPPDEFINES = [define])
 
 	def CheckGitVersion(ctx, fail=True):
 		ctx.Message('Checking for git version... ')
@@ -245,12 +252,20 @@ class AbracaEnvironment(SConsEnvironment):
 	CheckPkgConfig = staticmethod(CheckPkgConfig)
 
 	def CheckPkg(ctx, pkg, version='0.0', fail=True):
-		ctx.Message('Checking for %s >= %s... ' % (pkg, version))
+		if not fail:
+			optional = ' (optional)'
+		else:
+			optional = ''
+		ctx.Message('Checking for %s >= %s%s... ' % (pkg, version, optional))
 		cmd = ctx.env.subst('pkg-config $PKG_CONFIG_FLAGS --exists "%s >= %s"')
+		if not fail:
+			cmd += ' --silence-errors'
 		exit_code, output = ctx.TryAction(cmd % (pkg, version))
 		ctx.Result(exit_code)
 		if not exit_code and fail:
 			raise SCons.Errors.UserError('The %s package and its dependencies are required to build' % pkg)
+		define = ctx.env._to_define(pkg)
+		ctx.env[define] = exit_code and True
 		return exit_code
 	CheckPkg = staticmethod(CheckPkg)
 
