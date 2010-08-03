@@ -93,7 +93,7 @@ namespace Abraca {
 		[CCode(instance_pos=-1)]
 		public void on_add_clicked (Gtk.Button button)
 		{
-			ServerModel model = (ServerModel) _view.model;
+			var model = (ServerModel) _view.model;
 
 			model.add_server_from_address(null, _entry_host.text,
 			                              (uint16) _spin_button_port.value);
@@ -118,7 +118,7 @@ namespace Abraca {
 			int standard_output;
 			int standard_error;
 			GLib.Pid pid;
-			GLib.IOChannel[] channels = new GLib.IOChannel[2];
+			var channels = new GLib.IOChannel[2];
 
 			_launcher_error_text_view.set_buffer(new Gtk.TextBuffer(null));
 			_launcher_error_details_expander.expanded = false;
@@ -136,9 +136,7 @@ namespace Abraca {
 				                                    out standard_output,
 				                                    out standard_error);
 			} catch (GLib.SpawnError e) {
-				unowned Gtk.TextBuffer buffer;
-
-				buffer = _launcher_error_text_view.get_buffer();
+				var buffer = _launcher_error_text_view.get_buffer();
 				buffer.insert_at_cursor(e.message, -1);
 
 				_launcher_error_dialog.show();
@@ -200,7 +198,6 @@ namespace Abraca {
 
 							if (((string) buf).ndup(len) == "--- Starting new xmms2d ---") {
 								string s;
-								unowned Gtk.TextBuffer buffer;
 
 								if (status == 0) {
 									var regex = new GLib.Regex(": IPC listening on '([^']+)'");
@@ -220,7 +217,7 @@ namespace Abraca {
 
 								channel.read_to_end(out s, null);
 
-								buffer = _launcher_error_text_view.get_buffer();
+								var buffer = _launcher_error_text_view.get_buffer();
 								buffer.insert_at_cursor(s.strip(), -1);
 
 								break;
@@ -252,8 +249,7 @@ namespace Abraca {
 		public void on_treeview_selection_changed (Gtk.TreeSelection selection)
 		{
 			var view = selection.get_tree_view();
-			var model = view.model as ServerModel;
-
+			var model = (ServerModel) view.model;
 			var rows = selection.get_selected_rows(null);
 			unowned GLib.List<Gtk.TreePath> row = rows.first();
 
@@ -266,7 +262,8 @@ namespace Abraca {
 		public void on_treeview_row_activated (Gtk.TreeView view, Gtk.TreePath path,
 		                                       Gtk.TreeViewColumn colunm)
 		{
-			selected_host = ((ServerModel) view.model).get_host_at_path(path);
+			var model = (ServerModel) view.model;
+			selected_host = model.get_host_at_path(path);
 			response(Action.Connect);
 
 			destroy();
@@ -275,7 +272,7 @@ namespace Abraca {
 		[CCode(instance_pos=-1)]
 		public void on_favorite_toggled (CellRendererTogglePixbuf renderer, string updated)
 		{
-			Gtk.ListStore store = (Gtk.ListStore) _view.model;
+			var store = (Gtk.ListStore) _view.model;
 			Gtk.TreeIter iter;
 			bool favorite;
 
