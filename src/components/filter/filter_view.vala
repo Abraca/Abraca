@@ -266,19 +266,11 @@ namespace Abraca {
 			get_selection().select_all();
 		}
 
+
 		private void on_menu_info(Gtk.MenuItem item) {
-			GLib.List<Gtk.TreePath> list;
-			unowned Gtk.TreeModel mod;
-			Gtk.TreeIter iter;
-			uint id;
-
-			list = get_selection().get_selected_rows(out mod);
-			foreach (var path in list) {
-				model.get_iter(out iter, path);
-				model.get(iter, FilterModel.Column.ID, out id);
-
-				Abraca.instance().medialib.info_dialog_add_id(id);
-			}
+			foreach_selected_row<uint>(FilterModel.Column.ID, (idx, mid) => {
+				Abraca.instance().medialib.info_dialog_add_id(mid);
+			});
 		}
 
 
