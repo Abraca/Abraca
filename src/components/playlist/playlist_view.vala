@@ -141,13 +141,13 @@ namespace Abraca {
 
 
 		private void delete_selected() {
-			Gee.List<uint> entries = new Gee.LinkedList<uint>();
+			var entries = new Gee.LinkedList<uint>();
 
 			foreach_selected_row<uint> (PlaylistModel.Column.ID, (idx, mid) => {
 				entries.insert (0, idx);
 			});
 
-			foreach (uint idx in entries) {
+			foreach (var idx in entries) {
 				client.xmms.playlist_remove_entry(Xmms.ACTIVE_PLAYLIST, idx);
 			}
 		}
