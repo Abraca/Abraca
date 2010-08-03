@@ -135,19 +135,16 @@ namespace Abraca {
 			Gtk.TreeIter? niter = null;
 			Gtk.TreeIter iter;
 
-			if (iter_nth_child (out iter, null, pos)) {
+			if (iter_nth_child (out iter, null, pos))
 				return;
-			}
 
-			if (!iter_nth_child (out niter, null, npos)) {
+			if (!iter_nth_child (out niter, null, npos))
 				return;
-			}
 
-			if (pos < npos) {
+			if (pos < npos)
 				move_after (ref iter, niter);
-			} else {
+			else
 				move_before (ref iter, niter);
-			}
 		}
 
 
