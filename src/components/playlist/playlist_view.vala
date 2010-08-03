@@ -60,7 +60,8 @@ namespace Abraca {
 		private Client client;
 		private Config config;
 
-		public PlaylistView (PlaylistModel _model, Client _client, Config _config) {
+		public PlaylistView (PlaylistModel _model, Client _client, Config _config)
+		{
 			model = _model;
 			client = _client;
 			config = _config;
@@ -93,7 +94,8 @@ namespace Abraca {
 		}
 
 
-		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
+		private void on_selection_changed_update_menu(Gtk.TreeSelection s)
+		{
 			int n = s.count_selected_rows();
 
 			foreach (var i in _playlist_menu_item_when_none_selected) {
@@ -110,7 +112,8 @@ namespace Abraca {
 		}
 
 
-		private bool on_button_press_event(Gtk.Widget w, Gdk.EventButton button) {
+		private bool on_button_press_event(Gtk.Widget w, Gdk.EventButton button)
+		{
 			Gtk.TreePath path;
 			int x, y;
 
@@ -140,7 +143,8 @@ namespace Abraca {
 		}
 
 
-		private void delete_selected() {
+		private void delete_selected()
+		{
 			var entries = new Gee.LinkedList<uint>();
 
 			foreach_selected_row<uint> (PlaylistModel.Column.ID, (idx, mid) => {
@@ -153,7 +157,8 @@ namespace Abraca {
 		}
 
 
-		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e) {
+		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e)
+		{
 			if (e.keyval != Gdk.Keysym.Delete)
 				return false;
 			delete_selected();
@@ -164,7 +169,8 @@ namespace Abraca {
 		/**
 		 * Create metadata and coverart columns.
 		 */
-		private void create_columns() {
+		private void create_columns()
+		{
 			Gtk.CellRendererText text_renderer;
 			Gtk.CellRendererPixbuf pbuf_renderer;
 			Gtk.TreeViewColumn column;
@@ -229,7 +235,8 @@ namespace Abraca {
 		}
 
 
-		private void create_context_menu(Config config) {
+		private void create_context_menu (Config config)
+		{
 			Gtk.ImageMenuItem img_item;
 			Gtk.MenuItem item;
 			Gtk.Menu submenu;
@@ -362,7 +369,8 @@ namespace Abraca {
 		}
 
 
-		private void on_menu_playlist_sort(string type) {
+		private void on_menu_playlist_sort(string type)
+		{
 			_sort = new Xmms.Value.from_list();
 
 			foreach (string s in type.split(",")) {
@@ -373,7 +381,8 @@ namespace Abraca {
 		}
 
 
-		private void on_menu_playlist_filter(string key) {
+		private void on_menu_playlist_filter(string key)
+		{
 			int column;
 
 			if (key == "artist") {
@@ -412,7 +421,8 @@ namespace Abraca {
 		}
 
 
-		private void on_menu_playlist_info(Gtk.MenuItem item) {
+		private void on_menu_playlist_info(Gtk.MenuItem item)
+		{
 			foreach_selected_row<uint>(PlaylistModel.Column.ID, (pos, mid) => {
 				Abraca.instance().medialib.info_dialog_add_id(mid);
 			});
@@ -422,7 +432,8 @@ namespace Abraca {
 		/**
 		 * Setup dragndrop for the playlist.
 		 */
-		private void create_dragndrop() {
+		private void create_dragndrop()
+		{
 			enable_model_drag_dest(_target_entries,
 			                       Gdk.DragAction.MOVE);
 
@@ -437,7 +448,8 @@ namespace Abraca {
 
 		private void on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
 		                              Gtk.SelectionData selection_data,
-		                              uint info, uint time) {
+		                              uint info, uint time)
+		{
 			GLib.List<uint> pos_list = new GLib.List<uint>();
 			Gdk.Atom dnd_atom;
 
@@ -480,7 +492,8 @@ namespace Abraca {
 		 * Take care of the various types of drops.
 		 */
 		private void on_drag_data_receive(Gtk.Widget w, Gdk.DragContext ctx, int x, int y,
-		                                  Gtk.SelectionData sel, uint info, uint time) {
+		                                  Gtk.SelectionData sel, uint info, uint time)
+		{
 			bool success = false;
 
 			if (info == (uint) DragDropTargetType.ROW) {
@@ -503,7 +516,8 @@ namespace Abraca {
 		/**
 		 * Handle dropping of playlist entries.
 		 */
-		private bool on_drop_playlist_entries(Gtk.SelectionData sel, int x, int y) {
+		private bool on_drop_playlist_entries(Gtk.SelectionData sel, int x, int y)
+		{
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
 
@@ -540,7 +554,8 @@ namespace Abraca {
 		/**
 		 * Handle dropping of medialib ids.
 		 */
-		private bool on_drop_medialib_id(Gtk.SelectionData sel, int x, int y) {
+		private bool on_drop_medialib_id(Gtk.SelectionData sel, int x, int y)
+		{
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
 
@@ -568,7 +583,8 @@ namespace Abraca {
 		 * TODO: Handle inserting of directories.
 		 */
 		private bool on_drop_files(Gtk.SelectionData sel, int x, int y,
-		                           bool internet = false) {
+		                           bool internet = false)
+		{
 			string[] uri_list;
 
 			uri_list = ((string) sel.data).split("\r\n");
@@ -607,7 +623,8 @@ namespace Abraca {
 		}
 
 
-		private bool on_drop_collection(Gtk.SelectionData sel, int x, int y) {
+		private bool on_drop_collection(Gtk.SelectionData sel, int x, int y)
+		{
 			Xmms.Collection coll;
 			Gtk.TreeViewDropPosition align;
 			Gtk.TreePath path;
@@ -641,7 +658,8 @@ namespace Abraca {
 		 * Perform a jump to that song and start playback if not already
 		 * playing.
 		 */
-		private void jump_to_pos(int pos) {
+		private void jump_to_pos(int pos)
+		{
 			client.xmms.playlist_set_next(pos).notifier_set((res) => {
 				client.xmms.playback_tickle().notifier_set((res) => {
 					client.xmms.playback_status().notifier_set((res) => {
@@ -659,7 +677,8 @@ namespace Abraca {
 		}
 
 
-		private void jump_to_selected(Gtk.MenuItem tree) {
+		private void jump_to_selected(Gtk.MenuItem tree)
+		{
 			jump_to_pos(get_selection().get_selected_rows(null).first().data
 			            .get_indices()[0]);
 		}
@@ -670,7 +689,8 @@ namespace Abraca {
 		 * playback if not already playing.
 		 */
 		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path,
-		                              Gtk.TreeViewColumn column) {
+		                              Gtk.TreeViewColumn column)
+		{
 			jump_to_pos(path.get_indices()[0]);
 		}
 	}
