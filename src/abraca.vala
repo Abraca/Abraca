@@ -93,7 +93,7 @@ namespace Abraca {
 
 			a.main_window.show_all();
 
-			c.disconnected += () => {
+			c.disconnected.connect (() => {
 				var sb = ServerBrowser.build(a.main_window);
 				while (sb.run() == 1) {
 					GLib.debug("host: %s", sb.selected_host);
@@ -101,7 +101,7 @@ namespace Abraca {
 						break;
 					}
 				}
-			};
+			});
 
 			c.try_connect ("apa");
 
