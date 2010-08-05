@@ -16,24 +16,26 @@
     </columns>
   </object>
   <object class="AbracaServerBrowser" id="dialog1">
-    <property name="border_width">5</property>
+    <property name="border_width">0</property>
     <property name="window_position">center-on-parent</property>
     <property name="default_width">430</property>
     <property name="default_height">250</property>
     <property name="type_hint">normal</property>
+	<property name="has-separator">False</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
+        <property name="spacing">0</property>
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
-          <object class="GtkAlignment" id="alignment1">
+          <object class="GtkEventBox" id="eventbox1">
             <property name="visible">True</property>
-            <property name="border_width">5</property>
             <child>
               <object class="GtkLabel" id="label1">
+				<property name="xpad">10</property>
+				<property name="ypad">10</property>
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">&lt;span size="large"&gt;Connect to server:&lt;/span&gt;</property>
+                <property name="label" translatable="yes">&lt;span size="xx-large" weight="bold" color="white"&gt;Connect to server:&lt;/span&gt;</property>
                 <property name="use_markup">True</property>
               </object>
             </child>
@@ -270,7 +272,6 @@
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox4">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
           <object class="GtkExpander" id="expander1">
