@@ -118,11 +118,7 @@ namespace Abraca {
 					cr.show_text("Connect to server:");
 
 					return true;
-
-				});
-
-			GLib.debug ("%d %d", ebox.allocation.width, ebox.allocation.height);
-
+			});
 
 			/* If xmms2-launcher is not installed, hide the launch button. Note
 			 * that on windows the .exe suffix is added by find_program_in_path().
