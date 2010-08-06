@@ -129,39 +129,32 @@ namespace Abraca {
 			}
 		}
 
-		public void add_server_from_address(string? name, string host, uint16 port, bool favorite=false) {
-			unowned GLib.Resolver resolver = GLib.Resolver.get_default();
-			GLib.InetAddress address = null;
+
+		public void add_server_from_address (string? name, string host, uint16 port, bool favorite=false)
+		{
+			var resolver = GLib.Resolver.get_default();
+			var address = new GLib.InetAddress.from_string(host);
 
 			if (name == null) {
-				if ((address = new GLib.InetAddress.from_string(host)) != null) {
-					if (address.is_loopback) {
-						name = GLib.Environment.get_host_name();
-					} else if (address.is_site_local) {
-						try {
-							name = resolver.lookup_by_address(address, null);
-						} catch (GLib.Error e) {
-							name = host;
-						}
-					} else {
-						name = host;
-					}
-				} else {
-					name = host;
-				}
-			}
-
-			if (address == null) {
-				address = ((GLib.List<GLib.InetAddress>) resolver.lookup_by_name(name, null)).nth_data(0);
-
 				if (address.is_loopback) {
 					name = GLib.Environment.get_host_name();
+				} else if (address.is_site_local) {
+					try {
+						name = resolver.lookup_by_address(address, null);
+					} catch (GLib.Error e) {
+						name = host;
+					}
 				}
 			}
 
-			GLib.stdout.printf("%s\n", name);
+			if (name == null)
+				name = host;
+
+			GLib.debug ("Found host: %s", name);
+
 			add_server(name, "tcp://%s:%u".printf(host, port), favorite);
 		}
+
 
 		private bool has_name(string name)
 		{
