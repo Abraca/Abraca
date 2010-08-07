@@ -3,11 +3,19 @@ namespace Abraca {
 	{
 		public string label { get; set; }
 
-		construct {
+		construct
+		{
 			set_size_request (100, 40);
 		}
 
-		public override bool expose_event (Gdk.EventExpose ev) {
+		public PrettyLabel (string str)
+		{
+			label = str;
+
+		}
+
+		public override bool expose_event (Gdk.EventExpose ev)
+		{
 			var cr = Gdk.cairo_create (this.window);
 
 			var width = ev.area.width;
