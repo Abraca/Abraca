@@ -93,6 +93,11 @@ namespace Abraca {
 
 			a.main_window.show_all();
 
+
+			if (!c.try_connect())
+				GLib.Timeout.add(500, c.reconnect);
+
+			/*
 			c.disconnected.connect (() => {
 				var sb = ServerBrowser.build(a.main_window);
 				while (sb.run() == 1) {
@@ -104,6 +109,8 @@ namespace Abraca {
 			});
 
 			c.try_connect ("apa");
+			*/
+
 
 			Gtk.main();
 
