@@ -57,8 +57,7 @@ namespace Abraca {
 			set_size_request(310, 310);
 
 			title = _("Select Columns");
-			
-			border_width = 5;
+
 			transient_for = Abraca.instance().main_window;
 			has_separator = false;
 			resizable = false;
@@ -71,7 +70,6 @@ namespace Abraca {
 			notebook.append_page(child, new Gtk.Label("Columns"));
 			notebook.border_width = 6;
 
-
 			Gtk.Button button = new Gtk.Button.from_stock(Gtk.STOCK_OK);
 			button.clicked.connect((widget) => {
 				destroy();
@@ -82,6 +80,7 @@ namespace Abraca {
 			action_area.spacing = 0;
 
 			vbox.border_width = 0;
+			vbox.pack_start(new PrettyLabel ("Select Columns"), false, true, 0);
 			vbox.pack_start(notebook, true, true, 0);
 			vbox.set_child_packing(action_area, false, false, 0, Gtk.PackType.END);
 
@@ -142,7 +141,7 @@ namespace Abraca {
 			column.fixed_width = 30;
 			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
 			_view.append_column(column);
-						
+
 			column = new Gtk.TreeViewColumn.with_attributes(
 				"column", new Gtk.CellRendererText(), "text", 1, null
 			);
