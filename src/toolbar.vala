@@ -342,21 +342,23 @@ namespace Abraca {
 		{
 			unowned uchar[] data;
 
-			if (val.get_bin(out data)) {
+			if (!val.get_bin(out data)) {
+				set_default_coverart();
+				return true;
+			}
+
+			try {
 				var loader = new Gdk.PixbufLoader();
-				try {
-					loader.write(data, data.length);
-					loader.close();
-				} catch (GLib.Error e) {
-					set_default_coverart();
-					return true;
-				}
+				loader.write(data, data.length);
+				loader.close();
 
 				var pixbuf = loader.get_pixbuf();
 				var thumbnail = pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR);
 
 				_coverart.set_from_pixbuf(thumbnail);
 				_coverart_big = pixbuf;
+			} catch (GLib.Error e) {
+				set_default_coverart();
 			}
 
 			return true;
