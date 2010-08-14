@@ -121,6 +121,7 @@ namespace Abraca {
 
 			_time_slider.button_press_event.connect(on_time_slider_press);
 			_time_slider.button_release_event.connect(on_time_slider_release);
+			_time_slider.scroll_event.connect (on_time_slider_scroll);
 
 			vbox.pack_start(_time_slider, true, true, 0);
 
@@ -154,6 +155,20 @@ namespace Abraca {
 			return false;
 		}
 
+
+		private bool on_time_slider_scroll (Gtk.Widget w, Gdk.EventScroll ev)
+		{
+			var client = Client.instance ();
+
+			if (ev.direction == Gdk.ScrollDirection.UP ||
+			    ev.direction == Gdk.ScrollDirection.LEFT) {
+				client.xmms.playback_seek_ms (10 * 1000, Xmms.PlaybackSeekMode.CUR);
+			} else {
+				client.xmms.playback_seek_ms (-10 * 1000, Xmms.PlaybackSeekMode.CUR);
+			}
+
+			return true;
+		}
 
 		private bool on_time_slider_motion_notify(Gtk.Widget w, Gdk.EventMotion motion) {
 			double percent = (w as Gtk.Range).get_value();
