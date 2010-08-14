@@ -35,11 +35,13 @@ namespace Abraca {
 		private Gtk.Label _time_label;
 		private Gtk.HScale _time_slider;
 		private VolumeButton _volume_button;
+		private Client client;
 
-
-		construct {
-			Client c = Client.instance();
+		public ToolBar (Client c)
+		{
 			Gtk.Button btn;
+
+			client = c;
 
 			homogeneous = false;
 			spacing = 0;
@@ -68,20 +70,20 @@ namespace Abraca {
 			_volume_button.no_show_all = true;
 			pack_end(_volume_button, false, false, 0);
 
-			c.playback_status.connect(on_playback_status_change);
-			c.playback_current_id.connect(on_playback_current_id);
-			c.playback_playtime.connect(on_playback_playtime);
+			client.playback_status.connect(on_playback_status_change);
+			client.playback_current_id.connect(on_playback_current_id);
+			client.playback_playtime.connect(on_playback_playtime);
 
-			c.medialib_entry_changed.connect((client, res) => {
+			client.medialib_entry_changed.connect((client, res) => {
 				on_media_info(res);
 			});
 
-			c.disconnected.connect((c) => {
+			client.disconnected.connect((c) => {
 				set_sensitive(false);
 			});
 
-			c.connected.connect((c) => {
-				c.xmms.playback_volume_get().notifier_set((val) => {
+			client.connected.connect((c) => {
+				client.xmms.playback_volume_get().notifier_set((val) => {
 					if (val.is_error()) {
 						_volume_button.hide();
 					} else {
@@ -141,12 +143,10 @@ namespace Abraca {
 
 
 		private bool on_time_slider_release(Gtk.Widget w, Gdk.EventButton button) {
-			Client c = Client.instance();
-
 			double percent = (w as Gtk.Range).get_value();
 			uint pos = (uint)(_duration * percent);
 
-			c.xmms.playback_seek_ms(pos, Xmms.PlaybackSeekMode.SET);
+			client.xmms.playback_seek_ms(pos, Xmms.PlaybackSeekMode.SET);
 
 			_time_slider.motion_notify_event.connect (on_time_slider_motion_notify);
 
@@ -158,8 +158,6 @@ namespace Abraca {
 
 		private bool on_time_slider_scroll (Gtk.Widget w, Gdk.EventScroll ev)
 		{
-			var client = Client.instance ();
-
 			if (ev.direction == Gdk.ScrollDirection.UP ||
 			    ev.direction == Gdk.ScrollDirection.LEFT) {
 				client.xmms.playback_seek_ms (10 * 1000, Xmms.PlaybackSeekMode.CUR);
@@ -288,9 +286,7 @@ namespace Abraca {
 			if (!val.dict_entry_get_string("picture_front", out cover)) {
 				set_default_coverart();
 			} else {
-				Client c = Client.instance();
-
-				c.xmms.bindata_retrieve(cover).notifier_set(
+				client.xmms.bindata_retrieve(cover).notifier_set(
 					on_bindata_retrieve
 				);
 			}
@@ -351,33 +347,28 @@ namespace Abraca {
 
 
 		private void on_media_play(Gtk.Button btn) {
-			Client c = Client.instance();
-
 			if (_status == Xmms.PlaybackStatus.PLAY) {
-				c.xmms.playback_pause();
+				client.xmms.playback_pause();
 			} else {
-				c.xmms.playback_start();
+				client.xmms.playback_start();
 			}
 		}
 
 
 		private void on_media_stop(Gtk.Button btn) {
-			Client c = Client.instance();
-			c.xmms.playback_stop();
+			client.xmms.playback_stop();
 		}
 
 
 		private void on_media_prev(Gtk.Button btn) {
-			Client c = Client.instance();
-			c.xmms.playlist_set_next_rel(-1);
-			c.xmms.playback_tickle();
+			client.xmms.playlist_set_next_rel(-1);
+			client.xmms.playback_tickle();
 		}
 
 
 		private void on_media_next(Gtk.Button btn) {
-			Client c = Client.instance();
-			c.xmms.playlist_set_next_rel(1);
-			c.xmms.playback_tickle();
+			client.xmms.playlist_set_next_rel(1);
+			client.xmms.playback_tickle();
 		}
 
 

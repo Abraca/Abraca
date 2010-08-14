@@ -123,7 +123,8 @@ namespace Abraca {
 			var menubar = create_menubar();
 			vbox.pack_start(menubar, false, true, 0);
 
-			var toolbar = new ToolBar();
+			var client = Client.instance ();
+			var toolbar = new ToolBar(client);
 			vbox.pack_start(toolbar, false, false, 6);
 
 			_main_hpaned = new MainHPaned(accel_group);
