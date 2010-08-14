@@ -395,23 +395,14 @@ namespace Abraca {
 
 		private void on_playback_status_change (Client c, int status)
 		{
-			Gtk.Image image;
-
 			_status = status;
 
-			if (_status != Xmms.PlaybackStatus.PLAY) {
-				image = new Gtk.Image.from_stock(
-					Gtk.STOCK_MEDIA_PLAY,
-					Gtk.IconSize.SMALL_TOOLBAR
-				);
-				play_pause.set_image(image);
-			} else {
-				image = new Gtk.Image.from_stock(
-					Gtk.STOCK_MEDIA_PAUSE,
-					Gtk.IconSize.SMALL_TOOLBAR
-				);
-				play_pause.set_image(image);
-			}
+			var icon = (_status != Xmms.PlaybackStatus.PLAY) ?
+				Gtk.STOCK_MEDIA_PLAY : Gtk.STOCK_MEDIA_PAUSE;
+
+			var image = new Gtk.Image.from_stock(icon, Gtk.IconSize.SMALL_TOOLBAR);
+
+			play_pause.set_image(image);
 
 			if (_status == Xmms.PlaybackStatus.STOP) {
 				update_time_label();
