@@ -73,6 +73,10 @@ namespace Abraca {
 		public static int main(string[] args) {
 			Client c = Client.instance();
 
+			var context = new OptionContext (_("- Abraca, an XMMS2 client."));
+			context.add_group (Gtk.get_option_group (false));
+			context.parse (ref args);
+
 			Gtk.init(ref args);
 
 			try {
