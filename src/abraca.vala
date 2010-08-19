@@ -75,7 +75,14 @@ namespace Abraca {
 
 			var context = new OptionContext (_("- Abraca, an XMMS2 client."));
 			context.add_group (Gtk.get_option_group (false));
-			context.parse (ref args);
+
+			try {
+				context.parse (ref args);
+			} catch (GLib.OptionError err) {
+				var help = context.get_help (true, null);
+				GLib.print ("%s\n%s", err.message, help);
+				Posix.exit (1);
+			}
 
 			Gtk.init(ref args);
 
