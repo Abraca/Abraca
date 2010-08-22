@@ -34,6 +34,8 @@ components_sources = """
     components/collections/collections_model.vala
     components/collections/collections_view.vala
 
+    components/filter/filter_widget.vala
+    components/filter/filter_searchbox.vala
     components/filter/filter_editor.vala
     components/filter/filter_model.vala
     components/filter/filter_view.vala

@@ -27,6 +27,7 @@ namespace Abraca {
 			public Gtk.SortType order;
 		}
 
+		private Client client;
 
 		/** context menu */
 		private Gtk.Menu filter_menu;
@@ -50,14 +51,13 @@ namespace Abraca {
 		public Xmms.Collection collection { get; private set; }
 
 
-		construct
+		public FilterView (Client c)
 		{
 			fixed_height_mode = true;
 			enable_search = false;
 			headers_clickable = true;
 
 			get_selection().set_mode(Gtk.SelectionMode.MULTIPLE);
-
 
 			create_context_menu();
 			get_selection().changed.connect(on_selection_changed_update_menu);
@@ -73,6 +73,8 @@ namespace Abraca {
 			notify["sorting"].connect(on_sorting_changed);
 
 			Configurable.register(this);
+
+			client = c;
 		}
 
 
@@ -128,7 +130,6 @@ namespace Abraca {
 
 		public void query_collection (Xmms.Collection coll, Xmms.NotifierFunc? callback=null)
 		{
-			Client c = Client.instance();
 			Xmms.Value order = new Xmms.Value.from_list();
 			Xmms.Result res;
 
@@ -142,7 +143,7 @@ namespace Abraca {
 				order.list_append(new Xmms.Value.from_string(sorting.field));
 			}
 
-			res = c.xmms.coll_query_ids(coll, order);
+			res = client.xmms.coll_query_ids(coll, order);
 			res.notifier_set(on_coll_query_ids);
 			if (callback != null) {
 				res.notifier_set(callback);
@@ -154,7 +155,6 @@ namespace Abraca {
 
 		public void playlist_replace_with_filter_results ()
 		{
-			Client c = Client.instance();
 			Gtk.TreeIter iter;
 			uint id;
 
@@ -162,18 +162,17 @@ namespace Abraca {
 				return;
 			}
 
-			c.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
+			client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
 
 			do {
 				model.get(iter, FilterModel.Column.ID, out id);
-				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+				client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 			} while (model.iter_next(ref iter));
 		}
 
 
 		public void playlist_add_filter_results ()
 		{
-			Client c = Client.instance();
 			Gtk.TreeIter iter;
 			uint id;
 
@@ -183,7 +182,7 @@ namespace Abraca {
 
 			do {
 				model.get(iter, FilterModel.Column.ID, out id);
-				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+				client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 			} while (model.iter_next(ref iter));
 		}
 
@@ -239,17 +238,16 @@ namespace Abraca {
 
 		private bool on_key_press_event (Gdk.EventKey e)
 		{
-			Client c = Client.instance();
 			if (e.keyval != Gdk.Keysym.Return) {
 				return false;
 			}
 
 			if ((e.state & Gdk.ModifierType.CONTROL_MASK) > 0) {
-				c.xmms.playlist_clear (Xmms.ACTIVE_PLAYLIST);
+				client.xmms.playlist_clear (Xmms.ACTIVE_PLAYLIST);
 			}
 
 			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
-				c.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
+				client.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
 			});
 
 			return true;
@@ -275,13 +273,12 @@ namespace Abraca {
 		private void on_row_activated (Gtk.TreeView tree, Gtk.TreePath path,
 		                               Gtk.TreeViewColumn column)
 		{
-			Client c = Client.instance();
 			Gtk.TreeIter iter;
 			uint id;
 
 			model.get_iter(out iter, path);
 			model.get(iter, FilterModel.Column.ID, out id);
-			c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+			client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 		}
 
 
@@ -301,18 +298,16 @@ namespace Abraca {
 
 		private void on_menu_add (Gtk.MenuItem item)
 		{
-			Client c = Client.instance();
 			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
-				c.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
+				client.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
 			});
 		}
 
 
 		private void on_menu_replace (Gtk.MenuItem item)
 		{
-			Client c = Client.instance();
 			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
-				c.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
+				client.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
 			});
 		}
 
@@ -350,7 +345,7 @@ namespace Abraca {
 				ancestor.button_press_event.connect(on_header_clicked);
 			}
 
-			model = new FilterModel(props);
+			model = new FilterModel(client, props);
 
 			if (collection != null) {
 				query_collection(collection);

@@ -59,12 +59,15 @@ namespace Abraca {
 
 		private Client client;
 		private Config config;
+		private Searchable search;
 
-		public PlaylistView (PlaylistModel _model, Client _client, Config _config)
+		public PlaylistView (PlaylistModel _model, Client _client,
+		                     Config _config, Searchable _search)
 		{
 			model = _model;
 			client = _client;
 			config = _config;
+			search = _search;
 
 			enable_search = false;
 			search_column = 1;
@@ -415,8 +418,7 @@ namespace Abraca {
 			}
 
 			if (query.len > 0) {
-				Abraca.instance().main_window.main_hpaned.
-					right_hpaned.filter_entry_set_text(query.str);
+				search.search(query.str);
 			}
 		}
 

@@ -27,6 +27,8 @@ for pkg, version, option in vala_dependencies:
 		env.AppendPkg(pkg, version)
 		env.Append(VALAPKGS = [pkg])
 
+env.Append(VALAPKGS = ['posix'])
+
 c_dependencies = (
 	('gladeui-1.0', '3.6.0', env.Dependency.Optional),
 )

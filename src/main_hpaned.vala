@@ -65,11 +65,15 @@ namespace Abraca {
 			                    Gtk.PolicyType.AUTOMATIC);
 			scrolled.set_shadow_type(Gtk.ShadowType.IN);
 
-			scrolled.add(new CollectionsView());
+			var client = Client.instance ();
+
+			_right_hpaned = new RightHPaned(group);
+			var search = _right_hpaned.get_searchable ();
+
+			scrolled.add(new CollectionsView(client, search));
 
 			pack1(scrolled, false, true);
 
-			_right_hpaned = new RightHPaned(group);
 			pack2(_right_hpaned, true, true);
 		}
 	}
