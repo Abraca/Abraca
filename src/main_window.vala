@@ -180,7 +180,13 @@ namespace Abraca {
 			});
 
 			uiman.get_action("/Menu/Music/Connect").activate.connect ((action) => {
-				Abraca.instance().server_browser ();
+				var sb = ServerBrowser.build(this);
+				while (sb.run() == 1) {
+					GLib.debug("host: %s", sb.selected_host);
+					if (client.try_connect (sb.selected_host)) {
+						break;
+					}
+				}
 			});
 
 			uiman.get_action("/Menu/Music/Add/Files").activate.connect((action) => {
