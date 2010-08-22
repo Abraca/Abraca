@@ -59,14 +59,16 @@ namespace Abraca {
 
 		private Client client;
 		private Config config;
+		private Medialib medialib;
 		private Searchable search;
 
 		public PlaylistView (PlaylistModel _model, Client _client,
-		                     Config _config, Searchable _search)
+		                     Medialib m, Config _config, Searchable _search)
 		{
 			model = _model;
 			client = _client;
 			config = _config;
+			medialib = m;
 			search = _search;
 
 			enable_search = false;
@@ -426,7 +428,7 @@ namespace Abraca {
 		private void on_menu_playlist_info(Gtk.MenuItem item)
 		{
 			foreach_selected_row<uint>(PlaylistModel.Column.ID, (pos, mid) => {
-				Abraca.instance().medialib.info_dialog_add_id(mid);
+				medialib.info_dialog_add_id(mid);
 			});
 		}
 

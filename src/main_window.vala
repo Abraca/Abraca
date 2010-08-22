@@ -125,7 +125,7 @@ namespace Abraca {
 			var toolbar = new ToolBar(client);
 			vbox.pack_start(toolbar, false, false, 6);
 
-			_main_hpaned = new MainHPaned(client, accel_group);
+			_main_hpaned = new MainHPaned(this, client, accel_group);
 			vbox.pack_start(_main_hpaned, true, true, 0);
 
 			add(vbox);
@@ -184,15 +184,18 @@ namespace Abraca {
 			});
 
 			uiman.get_action("/Menu/Music/Add/Files").activate.connect((action) => {
-				Abraca.instance().medialib.create_add_file_dialog(Gtk.FileChooserAction.OPEN);
+				var parent = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
+				Medialib.create_add_file_dialog(parent, client, Gtk.FileChooserAction.OPEN);
 			});
 
 			uiman.get_action("/Menu/Music/Add/Directory").activate.connect((action) => {
-				Abraca.instance().medialib.create_add_file_dialog(Gtk.FileChooserAction.SELECT_FOLDER);
+				var parent = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
+				Medialib.create_add_file_dialog(parent, client, Gtk.FileChooserAction.SELECT_FOLDER);
 			});
 
 			uiman.get_action("/Menu/Music/Add/URL").activate.connect((action) => {
-				Abraca.instance().medialib.create_add_url_dialog();
+				var parent = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
+				Medialib.create_add_url_dialog(parent, client);
 			});
 
 			uiman.get_action("/Menu/Playlist/ConfigureSorting").activate.connect((action) => {

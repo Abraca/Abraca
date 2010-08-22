@@ -37,11 +37,6 @@ namespace Abraca {
 			_main_window.show_all ();
 		}
 
-		public Medialib medialib {
-			get {
-				return _medialib;
-			}
-		}
 
 		public static Abraca instance() {
 			if (_instance == null) {

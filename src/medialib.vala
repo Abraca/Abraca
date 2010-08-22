@@ -657,7 +657,7 @@ namespace Abraca {
 		}
 
 
-		public void create_add_url_dialog ()
+		public static void create_add_url_dialog (Gtk.Window parent, Client client)
 		{
 			var dialog = new MedialibAddUrlDialog();
 			dialog.transient_for = parent;
@@ -669,7 +669,7 @@ namespace Abraca {
 		}
 
 
-		public void create_add_file_dialog (Gtk.FileChooserAction action)
+		public static void create_add_file_dialog (Gtk.Window parent, Client client, Gtk.FileChooserAction action)
 		{
 			var dialog = new MedialibFileChooserDialog();
 			dialog.set_action(action);

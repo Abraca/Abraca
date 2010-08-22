@@ -27,11 +27,11 @@ namespace Abraca {
 			}
 		}
 
-		public MainHPaned (Client client, Gtk.AccelGroup group) {
+		public MainHPaned (Gtk.Window parent, Client client, Gtk.AccelGroup group) {
 			position = 135;
 			position_set = true;
 
-			create_widgets(client, group);
+			create_widgets(parent, client, group);
 
 			Configurable.register(this);
 		}
@@ -56,7 +56,7 @@ namespace Abraca {
 		}
 
 
-		private void create_widgets(Client client, Gtk.AccelGroup group) {
+		private void create_widgets(Gtk.Window parent, Client client, Gtk.AccelGroup group) {
 			Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(
 				null, null
 			);
@@ -65,7 +65,7 @@ namespace Abraca {
 			                    Gtk.PolicyType.AUTOMATIC);
 			scrolled.set_shadow_type(Gtk.ShadowType.IN);
 
-			_right_hpaned = new RightHPaned(client, group);
+			_right_hpaned = new RightHPaned(parent, client, group);
 			var search = _right_hpaned.get_searchable ();
 
 			scrolled.add(new CollectionsView(client, search));

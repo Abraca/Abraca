@@ -27,6 +27,7 @@ namespace Abraca {
 			public Gtk.SortType order;
 		}
 
+		private Medialib medialib;
 		private Client client;
 
 		/** context menu */
@@ -51,8 +52,11 @@ namespace Abraca {
 		public Xmms.Collection collection { get; private set; }
 
 
-		public FilterView (Client c)
+		public FilterView (Client c, Medialib m)
 		{
+			medialib = m;
+			client = c;
+
 			fixed_height_mode = true;
 			enable_search = false;
 			headers_clickable = true;
@@ -73,8 +77,6 @@ namespace Abraca {
 			notify["sorting"].connect(on_sorting_changed);
 
 			Configurable.register(this);
-
-			client = c;
 		}
 
 
@@ -291,7 +293,7 @@ namespace Abraca {
 		private void on_menu_info (Gtk.MenuItem item)
 		{
 			foreach_selected_row<uint>(FilterModel.Column.ID, (idx, mid) => {
-				Abraca.instance().medialib.info_dialog_add_id(mid);
+				medialib.info_dialog_add_id(mid);
 			});
 		}
 

@@ -23,17 +23,19 @@ namespace Abraca {
 	public class RightHPaned : Gtk.HPaned, IConfigurable {
 		private Searchable search;
 
-		public RightHPaned(Client client, Gtk.AccelGroup group) {
+		public RightHPaned(Gtk.Window parent, Client client, Gtk.AccelGroup group) {
 
 			position = 430;
 			position_set = true;
 
-			var filter = new FilterWidget(client, Config.instance(), group);
+			var medialib = new Medialib (parent, client);
+
+			var filter = new FilterWidget(client, Config.instance(), medialib, group);
 			pack1(filter, true, true);
 
 			search = filter.get_searchable ();
 
-			var playlist = new PlaylistWidget(client, Config.instance(), search);
+			var playlist = new PlaylistWidget(client, Config.instance(), medialib, search);
 			pack2(playlist, false, true);
 
 			Configurable.register(this);
