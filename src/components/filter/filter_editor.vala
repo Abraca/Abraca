@@ -20,7 +20,7 @@ using GLib;
 
 namespace Abraca {
 	public class FilterEditor : Gtk.Dialog {
-		public signal void column_changed(string property, bool enabled);
+		public signal void column_changed (string property, bool enabled);
 
 		public enum Column {
 			ACTIVE,
@@ -50,10 +50,8 @@ namespace Abraca {
 
 		private Gtk.TreeView _view;
 
-		construct {
-			Gtk.Notebook notebook;
-			Gtk.Widget child;
-
+		public FilterEditor ()
+		{
 			set_size_request(310, 310);
 
 			title = _("Select Columns");
@@ -61,15 +59,15 @@ namespace Abraca {
 			has_separator = false;
 			resizable = false;
 
-			notebook = new Gtk.Notebook();
+			var notebook = new Gtk.Notebook();
 			notebook.show_tabs = false;
 
-			child = create_child();
+			var child = create_child();
 
 			notebook.append_page(child, new Gtk.Label("Columns"));
 			notebook.border_width = 6;
 
-			Gtk.Button button = new Gtk.Button.from_stock(Gtk.STOCK_OK);
+			var button = new Gtk.Button.from_stock(Gtk.STOCK_OK);
 			button.clicked.connect((widget) => {
 				destroy();
 			});
@@ -90,11 +88,12 @@ namespace Abraca {
 			show_all();
 		}
 
-		public void set_active(string[] active) {
-			Gtk.ListStore model;
+
+		public void set_active (string[] active)
+		{
 			Gtk.TreeIter iter;
 
-			model = (Gtk.ListStore) _view.model;
+			var model = _view.model as Gtk.ListStore;
 
 			model.get_iter_first(out iter);
 			do {
@@ -111,13 +110,12 @@ namespace Abraca {
 			} while (_view.model.iter_next(ref iter));
 		}
 
-		private Gtk.Widget create_child() {
-			Gtk.CellRendererToggle renderer;
-			Gtk.ScrolledWindow scrolled;
-			Gtk.TreeViewColumn column;
-			Gtk.ListStore model;
 
-			model = new Gtk.ListStore(2, typeof(bool), typeof(string));
+		private Gtk.Widget create_child ()
+		{
+			Gtk.TreeViewColumn column;
+
+			var model = new Gtk.ListStore(2, typeof(bool), typeof(string));
 
 			foreach (unowned string prop in _properties) {
 				Gtk.TreeIter iter;
@@ -130,11 +128,11 @@ namespace Abraca {
 			_view.headers_visible = false;
 			_view.model = model;
 
-			renderer = new Gtk.CellRendererToggle();
+			var renderer = new Gtk.CellRendererToggle();
 			renderer.toggled.connect(on_entry_toggled);
 
 			column = new Gtk.TreeViewColumn.with_attributes(
-				"column", renderer, "active", 0
+				"column", renderer, "active", Column.ACTIVE
 		  	);
 			column.resizable = false;
 			column.fixed_width = 30;
@@ -142,14 +140,14 @@ namespace Abraca {
 			_view.append_column(column);
 
 			column = new Gtk.TreeViewColumn.with_attributes(
-				"column", new Gtk.CellRendererText(), "text", 1, null
+				"column", new Gtk.CellRendererText(), "text", Column.NAME, null
 			);
 			column.resizable = false;
 			column.fixed_width = 120;
 			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
 			_view.append_column(column);
 
-			scrolled = new Gtk.ScrolledWindow(null, null);
+			var scrolled = new Gtk.ScrolledWindow(null, null);
 			scrolled.add_with_viewport(_view);
 			scrolled.set_border_width(10);
 			scrolled.set_policy(
@@ -159,13 +157,15 @@ namespace Abraca {
 			return scrolled;
 		}
 
-		private void on_entry_toggled (Gtk.CellRendererToggle renderer, string updated) {
-			Gtk.ListStore store = (Gtk.ListStore) _view.model;
-			Gtk.TreePath path;
+
+		private void on_entry_toggled (Gtk.CellRendererToggle renderer, string updated)
+		{
 			Gtk.TreeIter iter;
 			unowned string property;
 			bool state;
 			int n_active = 0;
+
+			var store = _view.model as Gtk.ListStore;
 
 			store.get_iter_first(out iter);
 			do {
@@ -175,7 +175,7 @@ namespace Abraca {
 				}
 			} while (store.iter_next(ref iter));
 
-			path = new Gtk.TreePath.from_string(updated);
+			var path = new Gtk.TreePath.from_string(updated);
 			store.get_iter(out iter, path);
 			store.get(iter, Column.ACTIVE, out state, Column.NAME, out property);
 
