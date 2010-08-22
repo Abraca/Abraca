@@ -22,7 +22,6 @@ using Gee;
 
 namespace Abraca {
 	public class Client : GLib.Object {
-		static Client _instance;
 		private Xmms.Client _xmms;
 		private void *_gmain;
 
@@ -70,15 +69,6 @@ namespace Abraca {
 			"plugin/*",
 			"*"
 		};
-
-
-
-		public static Client instance() {
-			if (_instance == null)
-				_instance = new Client();
-
-			return _instance;
-		}
 
 
 		public Xmms.Client xmms {

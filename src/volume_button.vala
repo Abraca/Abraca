@@ -32,7 +32,12 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 	// TODO: Remove this when vala supports proper closures.
 	private int _tmp_apply_volume_value = 0;
 
-	construct {
+	private Client client;
+
+	public VolumeButton (Client c)
+	{
+		client = c;
+
 		has_tooltip = true;
 		relief = Gtk.ReliefStyle.NONE;
 
@@ -51,8 +56,7 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 
 		scroll_event.connect(on_scroll_event);
 
-		Client c = Client.instance();
-		c.playback_volume.connect(on_volume_changed);
+		client.playback_volume.connect(on_volume_changed);
 
 		value_changed.connect((w, volume) => {
 			// TODO: Remove this once vala supports proper closures.
@@ -62,11 +66,9 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 	}
 
 	private void _apply_volume (int volume) {
-		Client c = Client.instance();
-		c.xmms.playback_volume_get().notifier_set((val) => {
+		client.xmms.playback_volume_get().notifier_set((val) => {
 			val.dict_foreach((key, val) => {
-				Client c2 = Client.instance();
-				c2.xmms.playback_volume_set (key, _tmp_apply_volume_value);
+				client.xmms.playback_volume_set (key, _tmp_apply_volume_value);
 			});
 			return true;
 		});

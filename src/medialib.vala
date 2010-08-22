@@ -21,6 +21,8 @@ using GLib;
 
 namespace Abraca {
 	public class MedialibInfoDialog : Gtk.Dialog, Gtk.Buildable {
+		private Client client;
+
 		private GLib.List<uint> ids;
 		private unowned GLib.List<uint> current;
 
@@ -80,9 +82,17 @@ namespace Abraca {
 			return instance;
 		}
 
+
 		construct {
 			ids = new GLib.List<uint>();
 		}
+
+
+		public void set_client (Client c)
+		{
+			client = c;
+		}
+
 
 		public void parser_finished (Gtk.Builder builder) {
 			genre_combo_box_entry = builder.get_object("ent_genre") as Gtk.ComboBoxEntry;
@@ -159,19 +169,17 @@ namespace Abraca {
 		}
 
 		private void set_str(Gtk.Editable editable, string key) {
-			Client c = Client.instance();
 			unowned string val = editable.get_chars(0, -1);
 
-			c.xmms.medialib_entry_property_set_str(
+			client.xmms.medialib_entry_property_set_str(
 				current.data, key, val
 			).notifier_set(on_value_wrote);
 		}
 
 		private void set_int(Gtk.SpinButton editable, string key) {
-			Client c = Client.instance();
 			int val = editable.get_value_as_int();
 
-			c.xmms.medialib_entry_property_set_int(
+			client.xmms.medialib_entry_property_set_int(
 				current.data, key, val
 			).notifier_set( on_value_wrote);
 		}
@@ -208,13 +216,12 @@ namespace Abraca {
 
 		[CCode (instance_pos = -1)]
 		public void on_rating_entry_changed (RatingEntry entry) {
-			Client c = Client.instance();
 			if (entry.rating <= 0) {
-				c.xmms.medialib_entry_property_remove_with_source(
+				client.xmms.medialib_entry_property_remove_with_source(
 					current.data, "client/generic", "rating"
 				).notifier_set(on_value_wrote);
 			} else {
-				c.xmms.medialib_entry_property_set_int_with_source(
+				client.xmms.medialib_entry_property_set_int_with_source(
 					current.data, "client/generic", "rating", entry.rating
 				).notifier_set(on_value_wrote);
 			}
@@ -265,9 +272,7 @@ namespace Abraca {
 		}
 
 		private void refresh_content() {
-			Client c = Client.instance();
-
-			c.xmms.medialib_get_info(
+			client.xmms.medialib_get_info(
 				current.data
 			).notifier_set(on_medialib_get_info);
 		}
@@ -547,10 +552,17 @@ namespace Abraca {
 
 	public class Medialib : GLib.Object {
 		public MedialibInfoDialog info_dialog;
+		public Client client { get; construct set; }
+
+		public Medialib (Client c) {
+			Object (client: c);
+		}
+
 
 		public void info_dialog_add_id(uint mid) {
 			if (info_dialog == null) {
 				info_dialog = MedialibInfoDialog.build();
+				info_dialog.set_client (client);
 				info_dialog.delete_event.connect((ev) => {
 					info_dialog = null;
 					return false;
@@ -564,9 +576,7 @@ namespace Abraca {
 			MedialibAddUrlDialog dialog = new MedialibAddUrlDialog();
 
 			if (dialog.run() == Gtk.ResponseType.OK) {
-				Client c = Client.instance();
-
-				c.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, dialog.entry.get_text());
+				client.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, dialog.entry.get_text());
 			}
 			dialog.close();
 		}
@@ -576,7 +586,6 @@ namespace Abraca {
 			dialog.set_action(action);
 
 			if (dialog.run() == Gtk.ResponseType.OK) {
-				Client c = Client.instance();
 				GLib.SList<string> filenames;
 				string url;
 				Gtk.CheckButton button = (Gtk.CheckButton) dialog.extra_widget;
@@ -588,15 +597,15 @@ namespace Abraca {
 
 					if (action == Gtk.FileChooserAction.OPEN) {
 						if (button.get_active()) {
-							c.xmms.medialib_add_entry(url);
+							client.xmms.medialib_add_entry(url);
 						} else {
-							c.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, url);
+							client.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, url);
 						}
 					} else {
 						if (button.get_active()) {
-							c.xmms.medialib_import_path(url);
+							client.xmms.medialib_import_path(url);
 						} else {
-							c.xmms.playlist_radd(Xmms.ACTIVE_PLAYLIST, url);
+							client.xmms.playlist_radd(Xmms.ACTIVE_PLAYLIST, url);
 						}
 					}
 				}

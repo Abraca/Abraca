@@ -69,7 +69,8 @@ namespace Abraca {
 			                                                 null),
 			                                     render_icon(STOCK_PLAYLIST,
 			                                                 Gtk.IconSize.LARGE_TOOLBAR,
-			                                                 null));
+			                                                 null),
+			                                     _client);
 
 			store.collection_loaded.connect((type) => {
 				expand_all();

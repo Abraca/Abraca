@@ -66,7 +66,7 @@ namespace Abraca {
 			create_cover_image();
 			create_track_label();
 
-			_volume_button = new VolumeButton();
+			_volume_button = new VolumeButton(client);
 			_volume_button.no_show_all = true;
 			pack_end(_volume_button, false, false, 0);
 

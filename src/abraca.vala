@@ -22,15 +22,18 @@ namespace Abraca {
 		static Abraca _instance;
 		private MainWindow _main_window;
 		private Medialib _medialib;
+		private Client _client;
 
-		construct {
-			_main_window = new MainWindow();
+		public Abraca (Client client)
+		{
+			_client = client;
+			_main_window = new MainWindow(client);
 			_main_window.delete_event.connect ((ev) => {
 				Configurable.save();
 				Gtk.main_quit();
 				return true;
 			});
-			_medialib = new Medialib();
+			_medialib = new Medialib(_client);
 		}
 
 		public MainWindow main_window {
@@ -46,8 +49,13 @@ namespace Abraca {
 		}
 
 		public static Abraca instance() {
-			if (_instance == null)
-				_instance = new Abraca();
+			if (_instance == null) {
+				var client = new Client ();
+				_instance = new Abraca(client);
+				if (!client.try_connect())
+					GLib.Timeout.add(500, client.reconnect);
+			}
+
 
 			return _instance;
 		}
@@ -60,19 +68,16 @@ namespace Abraca {
 
 		public void server_browser ()
 		{
-			var c = Client.instance();
 			var sb = ServerBrowser.build (main_window);
 
 			while (sb.run() == ServerBrowser.Action.Connect) {
-				if (c.try_connect (sb.selected_host)) {
+				if (_client.try_connect (sb.selected_host)) {
 					break;
 				}
 			}
 		}
 
 		public static int main(string[] args) {
-			Client c = Client.instance();
-
 			var context = new OptionContext (_("- Abraca, an XMMS2 client."));
 			context.add_group (Gtk.get_option_group (false));
 
@@ -104,9 +109,10 @@ namespace Abraca {
 
 			a.main_window.show_all();
 
-
+			/*
 			if (!c.try_connect())
 				GLib.Timeout.add(500, c.reconnect);
+			*/
 
 			/*
 			c.disconnected.connect (() => {

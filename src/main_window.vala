@@ -29,10 +29,9 @@ namespace Abraca {
 			}
 		}
 
-		construct {
-			var client = Client.instance();
-
-			create_widgets();
+		public MainWindow (Client client)
+		{
+			create_widgets(client);
 
 			try {
 				set_icon(new Gdk.Pixbuf.from_inline (
@@ -115,19 +114,18 @@ namespace Abraca {
 		}
 
 
-		private void create_widgets() {
+		private void create_widgets(Client client) {
 			var accel_group = new Gtk.AccelGroup();
 
 			var vbox = new Gtk.VBox(false, 0);
 
-			var menubar = create_menubar();
+			var menubar = create_menubar(client);
 			vbox.pack_start(menubar, false, true, 0);
 
-			var client = Client.instance ();
 			var toolbar = new ToolBar(client);
 			vbox.pack_start(toolbar, false, false, 6);
 
-			_main_hpaned = new MainHPaned(accel_group);
+			_main_hpaned = new MainHPaned(client, accel_group);
 			vbox.pack_start(_main_hpaned, true, true, 0);
 
 			add(vbox);
@@ -155,9 +153,8 @@ namespace Abraca {
 			item.sensitive = true;
 		}
 
-		private Gtk.Widget create_menubar() {
+		private Gtk.Widget create_menubar(Client client) {
 			var builder = new Gtk.Builder ();
-			var client = Client.instance();
 
 			try {
 				builder.add_from_string(
