@@ -417,6 +417,8 @@ namespace Abraca {
 			FilterModel store = (FilterModel) model;
 			FilterEditor edit = new FilterEditor();
 
+			edit.transient_for = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
+
 			edit.column_changed.connect((editor, prop, enabled) => {
 				// TODO: Should use outer store when vala supports this.
 				FilterModel tmp_store = (FilterModel) model;

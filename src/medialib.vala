@@ -77,7 +77,6 @@ namespace Abraca {
 			}
 
 			var instance = builder.get_object("mediainfo_dialog") as MedialibInfoDialog;
-			instance.transient_for = Abraca.instance().main_window;
 
 			return instance;
 		}
@@ -414,14 +413,14 @@ namespace Abraca {
 		public Gtk.Entry entry;
 		private Gtk.ListStore urls;
 
-		construct {
+		public MedialibAddUrlDialog ()
+		{
 			set_default_response(Gtk.ResponseType.OK);
 			set_default_size(300, 74);
 
 			destroy_with_parent = true;
 			modal = true;
 			title = _("Add URL");
-			transient_for = (Abraca.instance().main_window);
 			urls = new Gtk.ListStore(1, typeof(string));
 
 			add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
@@ -512,7 +511,6 @@ namespace Abraca {
 			modal = true;
 			select_multiple = true;
 			title = _("Add File");
-			transient_for = Abraca.instance().main_window;
 
 			add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
 			add_button(Gtk.STOCK_OPEN, Gtk.ResponseType.OK);
@@ -552,16 +550,23 @@ namespace Abraca {
 
 	public class Medialib : GLib.Object {
 		public MedialibInfoDialog info_dialog;
-		public Client client { get; construct set; }
 
-		public Medialib (Client c) {
-			Object (client: c);
+		private Client client;
+		private Gtk.Window parent;
+
+
+		public Medialib (Gtk.Window window, Client c)
+		{
+			client = c;
+			parent = window;
 		}
 
 
-		public void info_dialog_add_id(uint mid) {
+		public void info_dialog_add_id (uint mid)
+		{
 			if (info_dialog == null) {
 				info_dialog = MedialibInfoDialog.build();
+				info_dialog.transient_for = parent;
 				info_dialog.set_client (client);
 				info_dialog.delete_event.connect((ev) => {
 					info_dialog = null;
@@ -572,8 +577,11 @@ namespace Abraca {
 			info_dialog.add_mid(mid);
 		}
 
-		public void create_add_url_dialog() {
-			MedialibAddUrlDialog dialog = new MedialibAddUrlDialog();
+
+		public void create_add_url_dialog ()
+		{
+			var dialog = new MedialibAddUrlDialog();
+			dialog.transient_for = parent;
 
 			if (dialog.run() == Gtk.ResponseType.OK) {
 				client.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, dialog.entry.get_text());
@@ -581,9 +589,11 @@ namespace Abraca {
 			dialog.close();
 		}
 
-		public void create_add_file_dialog(Gtk.FileChooserAction action) {
-			MedialibFileChooserDialog dialog = new MedialibFileChooserDialog();
+		public void create_add_file_dialog (Gtk.FileChooserAction action)
+		{
+			var dialog = new MedialibFileChooserDialog();
 			dialog.set_action(action);
+			dialog.transient_for = parent;
 
 			if (dialog.run() == Gtk.ResponseType.OK) {
 				GLib.SList<string> filenames;

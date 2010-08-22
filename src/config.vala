@@ -92,7 +92,8 @@ namespace Abraca {
 			file.set_string("sorting", "custom", sorting_custom);
 		}
 
-		public void show_sorting_dialog() {
+		public void show_sorting_dialog (Gtk.Window parent)
+		{
 			Gtk.Entry[] entrys;
 			Gtk.Dialog dialog;
 			Gtk.Table table;
@@ -101,8 +102,7 @@ namespace Abraca {
 			int response_id, i;
 
 			dialog = new Gtk.Dialog.with_buttons(
-					"Configure Sorting",
-					(Gtk.Window) (Abraca.instance().main_window),
+					"Configure Sorting", parent,
 					Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.MODAL,
 					Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
 					Gtk.STOCK_OK, Gtk.ResponseType.OK

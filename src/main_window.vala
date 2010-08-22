@@ -196,7 +196,8 @@ namespace Abraca {
 			});
 
 			uiman.get_action("/Menu/Playlist/ConfigureSorting").activate.connect((action) => {
-				Config.instance().show_sorting_dialog();
+
+				Config.instance().show_sorting_dialog(this);
 			});
 
 			uiman.get_action("/Menu/Playlist/Clear").activate.connect((action) => {
@@ -242,7 +243,7 @@ namespace Abraca {
 
 				about.version = Build.Config.VERSION;
 
-				about.transient_for = Abraca.instance().main_window;
+				about.transient_for = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
 
 				about.run();
 				about.hide();

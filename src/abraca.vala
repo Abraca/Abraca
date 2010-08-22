@@ -33,13 +33,8 @@ namespace Abraca {
 				Gtk.main_quit();
 				return true;
 			});
-			_medialib = new Medialib(_client);
-		}
-
-		public MainWindow main_window {
-			get {
-				return _main_window;
-			}
+			_medialib = new Medialib(_main_window, _client);
+			_main_window.show_all ();
 		}
 
 		public Medialib medialib {
@@ -68,7 +63,7 @@ namespace Abraca {
 
 		public void server_browser ()
 		{
-			var sb = ServerBrowser.build (main_window);
+			var sb = ServerBrowser.build (_main_window);
 
 			while (sb.run() == ServerBrowser.Action.Connect) {
 				if (_client.try_connect (sb.selected_host)) {
@@ -103,11 +98,9 @@ namespace Abraca {
 			GLib.Intl.bindtextdomain(Build.Config.APPNAME, Build.Config.LOCALEDIR);
 			GLib.Intl.bind_textdomain_codeset(Build.Config.APPNAME, "UTF-8");
 
-			Abraca a = Abraca.instance();
+			Abraca.instance();
 
 			Configurable.load();
-
-			a.main_window.show_all();
 
 			/*
 			if (!c.try_connect())

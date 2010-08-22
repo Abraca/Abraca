@@ -58,7 +58,6 @@ namespace Abraca {
 
 			title = _("Select Columns");
 
-			transient_for = Abraca.instance().main_window;
 			has_separator = false;
 			resizable = false;
 
