@@ -49,14 +49,8 @@ namespace Abraca {
 			get; set; default = "artist,date,album,tracknr,title,url";
 		}
 
-		public static Config instance() {
-			if (_instance == null)
-				_instance = new Config();
-
-			return _instance;
-		}
-
-		construct {
+		public Config ()
+		{
 			Configurable.register(this);
 		}
 

@@ -19,6 +19,7 @@
 
 namespace Abraca {
 	public class MainWindow : Gtk.Window, IConfigurable {
+		private Config _config;
 		private Gtk.HPaned _main_hpaned;
 		private Gtk.HPaned _right_hpaned;
 		private Gtk.CheckMenuItem _repeat_all;
@@ -123,7 +124,7 @@ namespace Abraca {
 
 		private void create_widgets (Client client)
 		{
-			var config = Config.instance();
+			_config = new Config ();
 
 			var accel_group = new Gtk.AccelGroup();
 
@@ -145,10 +146,10 @@ namespace Abraca {
 
 			var medialib = new Medialib (this, client);
 
-			var filter = new FilterWidget (client, config, medialib, accel_group);
+			var filter = new FilterWidget (client, _config, medialib, accel_group);
 			var search = filter.get_searchable ();
 
-			var playlist = new PlaylistWidget (client, config, medialib, search);
+			var playlist = new PlaylistWidget (client, _config, medialib, search);
 
 			_right_hpaned.pack1(filter, true, true);
 			_right_hpaned.pack2(playlist, false, true);
@@ -253,7 +254,7 @@ namespace Abraca {
 
 			uiman.get_action("/Menu/Playlist/ConfigureSorting").activate.connect((action) => {
 
-				Config.instance().show_sorting_dialog(this);
+				_config.show_sorting_dialog(this);
 			});
 
 			uiman.get_action("/Menu/Playlist/Clear").activate.connect((action) => {
