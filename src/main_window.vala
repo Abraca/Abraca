@@ -19,15 +19,9 @@
 
 namespace Abraca {
 	public class MainWindow : Gtk.Window, IConfigurable {
-		private MainHPaned _main_hpaned;
+		private Gtk.HPaned _main_hpaned;
 		private Gtk.CheckMenuItem _repeat_all;
 		private Gtk.CheckMenuItem _repeat_one;
-
-		public MainHPaned main_hpaned {
-			get {
-				return _main_hpaned;
-			}
-		}
 
 		public MainWindow (Client client)
 		{
@@ -45,14 +39,14 @@ namespace Abraca {
 			height_request = 600;
 			allow_shrink = true;
 
-			main_hpaned.set_sensitive(false);
+			_main_hpaned.set_sensitive(false);
 
 			client.disconnected.connect(c => {
-				main_hpaned.set_sensitive(false);
+				_main_hpaned.set_sensitive(false);
 			});
 
 			client.connected.connect(c => {
-				main_hpaned.set_sensitive(true);
+				_main_hpaned.set_sensitive(true);
 			});
 
 			Configurable.register(this);
@@ -95,6 +89,13 @@ namespace Abraca {
 			if (width > 0 && height > 0) {
 				resize(width, height);
 			}
+
+			if (file.has_group("panes") && file.has_key("panes", "pos1")) {
+				int pos = file.get_integer("panes", "pos1");
+				if (pos >= 0) {
+					_main_hpaned.position = pos;
+				}
+			}
 		}
 
 		public void get_configuration(GLib.KeyFile file) {
@@ -111,6 +112,8 @@ namespace Abraca {
 
 			file.set_integer("main_win", "width", width);
 			file.set_integer("main_win", "height", height);
+
+			file.set_integer("panes", "pos1", _main_hpaned.position);
 		}
 
 
@@ -125,7 +128,21 @@ namespace Abraca {
 			var toolbar = new ToolBar(client);
 			vbox.pack_start(toolbar, false, false, 6);
 
-			_main_hpaned = new MainHPaned(this, client, accel_group);
+			var scrolled = new Gtk.ScrolledWindow (null, null);
+			scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
+			scrolled.set_shadow_type (Gtk.ShadowType.IN);
+
+			var hpaned = new RightHPaned (this, client, accel_group);
+			var search = hpaned.get_searchable ();
+
+			scrolled.add (new CollectionsView(client, search));
+
+			_main_hpaned = new Gtk.HPaned ();
+			_main_hpaned.position = 135;
+			_main_hpaned.position_set = true;
+			_main_hpaned.pack1 (scrolled, false, true);
+			_main_hpaned.pack2 (hpaned, true, true);
+
 			vbox.pack_start(_main_hpaned, true, true, 0);
 
 			add(vbox);

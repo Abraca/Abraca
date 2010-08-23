@@ -7,7 +7,6 @@ vala_sources = """
     client.vala
     config.vala
     dragdroptarget.vala
-    main_hpaned.vala
     main_window.vala
     medialib.vala
     right_hpaned.vala
