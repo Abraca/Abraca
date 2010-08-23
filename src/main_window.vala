@@ -53,7 +53,9 @@ namespace Abraca {
 			Configurable.register(this);
 		}
 
-		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+		public void set_configuration (GLib.KeyFile file)
+			throws GLib.KeyFileError
+		{
 			int xpos, ypos, width, height;
 
 			if (!file.has_group("main_win")) {
@@ -108,7 +110,8 @@ namespace Abraca {
 		}
 
 
-		public void get_configuration(GLib.KeyFile file) {
+		public void get_configuration (GLib.KeyFile file)
+		{
 			int xpos, ypos, width, height;
 
 			file.set_integer("main_win", "gravity", gravity);
@@ -128,7 +131,8 @@ namespace Abraca {
 		}
 
 
-		private void create_widgets(Client client) {
+		private void create_widgets (Client client)
+		{
 			var config = Config.instance();
 
 			var accel_group = new Gtk.AccelGroup();
@@ -176,7 +180,8 @@ namespace Abraca {
 		}
 
 
-		private void on_config_changed (Client client, string key, string value) {
+		private void on_config_changed (Client client, string key, string value)
+		{
 			Gtk.CheckMenuItem item;
 
 			if (key == "playlist.repeat_all") {
@@ -195,7 +200,8 @@ namespace Abraca {
 			item.sensitive = true;
 		}
 
-		private Gtk.Widget create_menubar(Client client) {
+		private Gtk.Widget create_menubar (Client client)
+		{
 			var builder = new Gtk.Builder ();
 
 			try {
