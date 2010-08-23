@@ -40,16 +40,6 @@ namespace Abraca {
 			height_request = 600;
 			allow_shrink = true;
 
-			_main_hpaned.set_sensitive(false);
-
-			client.disconnected.connect(c => {
-				_main_hpaned.set_sensitive(false);
-			});
-
-			client.connected.connect(c => {
-				_main_hpaned.set_sensitive(true);
-			});
-
 			Configurable.register(this);
 		}
 
@@ -169,8 +159,17 @@ namespace Abraca {
 			_main_hpaned = new Gtk.HPaned ();
 			_main_hpaned.position = 135;
 			_main_hpaned.position_set = true;
+			_main_hpaned.sensitive = false;
 			_main_hpaned.pack1 (scrolled, false, true);
 			_main_hpaned.pack2 (_right_hpaned, true, true);
+
+			client.disconnected.connect(c => {
+				_main_hpaned.sensitive = false;
+			});
+
+			client.connected.connect(c => {
+				_main_hpaned.sensitive = true;
+			});
 
 			vbox.pack_start(_main_hpaned, true, true, 0);
 
