@@ -91,20 +91,22 @@ namespace Abraca {
 				resize(width, height);
 			}
 
-			if (file.has_group("panes") && file.has_key("panes", "pos1")) {
-				int pos = file.get_integer("panes", "pos1");
-				if (pos >= 0) {
-					_main_hpaned.position = pos;
+			if (file.has_group("panes")) {
+				if (file.has_key("panes", "pos1")) {
+					var pos = file.get_integer("panes", "pos1");
+					if (pos >= 0) {
+						_main_hpaned.position = pos;
+					}
 				}
-			}
-
-			if (file.has_group("panes") && file.has_key("panes", "pos2")) {
-				var pos = file.get_integer ("panes", "pos2");
-				if (pos >= 0) {
-					_right_hpaned.position = pos;
+				if (file.has_key("panes", "pos2")) {
+					var pos = file.get_integer ("panes", "pos2");
+					if (pos >= 0) {
+						_right_hpaned.position = pos;
+					}
 				}
 			}
 		}
+
 
 		public void get_configuration(GLib.KeyFile file) {
 			int xpos, ypos, width, height;
