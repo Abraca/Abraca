@@ -20,6 +20,7 @@
 namespace Abraca {
 	public class MainWindow : Gtk.Window, IConfigurable {
 		private Gtk.HPaned _main_hpaned;
+		private Gtk.HPaned _right_hpaned;
 		private Gtk.CheckMenuItem _repeat_all;
 		private Gtk.CheckMenuItem _repeat_one;
 
@@ -96,6 +97,13 @@ namespace Abraca {
 					_main_hpaned.position = pos;
 				}
 			}
+
+			if (file.has_group("panes") && file.has_key("panes", "pos2")) {
+				var pos = file.get_integer ("panes", "pos2");
+				if (pos >= 0) {
+					_right_hpaned.position = pos;
+				}
+			}
 		}
 
 		public void get_configuration(GLib.KeyFile file) {
@@ -114,10 +122,13 @@ namespace Abraca {
 			file.set_integer("main_win", "height", height);
 
 			file.set_integer("panes", "pos1", _main_hpaned.position);
+			file.set_integer("panes", "pos2", _right_hpaned.position);
 		}
 
 
 		private void create_widgets(Client client) {
+			var config = Config.instance();
+
 			var accel_group = new Gtk.AccelGroup();
 
 			var vbox = new Gtk.VBox(false, 0);
@@ -132,16 +143,28 @@ namespace Abraca {
 			scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
 			scrolled.set_shadow_type (Gtk.ShadowType.IN);
 
-			var hpaned = new RightHPaned (this, client, accel_group);
-			var search = hpaned.get_searchable ();
+			_right_hpaned = new Gtk.HPaned ();
+			_right_hpaned.position = 430;
+			_right_hpaned.position_set = true;
 
-			scrolled.add (new CollectionsView(client, search));
+			var medialib = new Medialib (this, client);
+
+			var filter = new FilterWidget (client, config, medialib, accel_group);
+			var search = filter.get_searchable ();
+
+			var playlist = new PlaylistWidget (client, config, medialib, search);
+
+			_right_hpaned.pack1(filter, true, true);
+			_right_hpaned.pack2(playlist, false, true);
+
+			var collections = new CollectionsView (client, search);
+			scrolled.add (collections);
 
 			_main_hpaned = new Gtk.HPaned ();
 			_main_hpaned.position = 135;
 			_main_hpaned.position_set = true;
 			_main_hpaned.pack1 (scrolled, false, true);
-			_main_hpaned.pack2 (hpaned, true, true);
+			_main_hpaned.pack2 (_right_hpaned, true, true);
 
 			vbox.pack_start(_main_hpaned, true, true, 0);
 
