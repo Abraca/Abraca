@@ -90,7 +90,7 @@ namespace Abraca {
 			client.collection_add.connect(on_collection_add);
 			client.collection_rename.connect(on_collection_rename);
 			client.collection_remove.connect(on_collection_remove);
-			client.connected.connect(query_collections);
+			client.connection_state_changed.connect(query_collections);
 		}
 
 
@@ -224,8 +224,11 @@ namespace Abraca {
 		}
 
 
-		private void query_collections (Client c)
+		private void query_collections (Client c, Client.ConnectionState state)
 		{
+			if (state != Client.ConnectionState.Connected)
+				return;
+
 			c.xmms.coll_list(Xmms.COLLECTION_NS_COLLECTIONS).notifier_set(r => {
 				on_list_collections(r, CollectionType.Collection);
 				return true;

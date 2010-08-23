@@ -78,22 +78,7 @@ namespace Abraca {
 				on_media_info(res);
 			});
 
-			client.disconnected.connect((c) => {
-				set_sensitive(false);
-			});
-
-			client.connected.connect((c) => {
-				client.xmms.playback_volume_get().notifier_set((val) => {
-					if (val.is_error()) {
-						_volume_button.hide();
-					} else {
-						_volume_button.show();
-					}
-					return true;
-				});
-
-				set_sensitive(true);
-			});
+			client.connection_state_changed.connect(on_connection_state_changed);
 
 			set_sensitive(false);
 		}
@@ -133,6 +118,23 @@ namespace Abraca {
 			vbox.pack_start(_time_label, true, true, 0);
 
 			pack_start(vbox, false, false, 0);
+		}
+
+
+		private void on_connection_state_changed (Client client, Client.ConnectionState state)
+		{
+			if (state != Client.ConnectionState.Connected) {
+				return;
+			}
+
+			client.xmms.playback_volume_get().notifier_set((val) => {
+				if (val.is_error()) {
+					_volume_button.hide();
+				} else {
+					_volume_button.show();
+				}
+				return true;
+			});
 		}
 
 

@@ -25,8 +25,15 @@ namespace Abraca {
 		private Xmms.Client _xmms;
 		private void *_gmain;
 
-		public signal void connected();
-		public signal void disconnected();
+		public enum ConnectionState
+		{
+			Disconnected,
+			Connecting,
+			Connected
+		}
+
+
+		public signal void connection_state_changed (ConnectionState state);
 
 		public signal void playback_status(int status);
 		public signal void playback_current_id(int mid);
@@ -94,16 +101,18 @@ namespace Abraca {
 
 			_xmms = new Xmms.Client("Abraca");
 
+			connection_state_changed (ConnectionState.Connecting);
+
 			if (_xmms.connect(path)) {
 				_gmain = Xmms.MainLoop.GMain.init(_xmms);
 				_xmms.disconnect_callback_set(() => {
 					Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
-					disconnected();
+					connection_state_changed (ConnectionState.Disconnected);
 				});
 
 				attach_callbacks();
 
-				connected();
+				connection_state_changed (ConnectionState.Connected);
 
 				return true;
 			}

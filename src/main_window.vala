@@ -20,6 +20,7 @@
 namespace Abraca {
 	public class MainWindow : Gtk.Window, IConfigurable {
 		private Config _config;
+		private ToolBar _toolbar;
 		private Gtk.HPaned _main_hpaned;
 		private Gtk.HPaned _right_hpaned;
 		private Gtk.CheckMenuItem _repeat_all;
@@ -133,8 +134,8 @@ namespace Abraca {
 			var menubar = create_menubar(client);
 			vbox.pack_start(menubar, false, true, 0);
 
-			var toolbar = new ToolBar(client);
-			vbox.pack_start(toolbar, false, false, 6);
+			_toolbar = new ToolBar(client);
+			vbox.pack_start(_toolbar, false, false, 6);
 
 			var scrolled = new Gtk.ScrolledWindow (null, null);
 			scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
@@ -164,12 +165,9 @@ namespace Abraca {
 			_main_hpaned.pack1 (scrolled, false, true);
 			_main_hpaned.pack2 (_right_hpaned, true, true);
 
-			client.disconnected.connect(c => {
-				_main_hpaned.sensitive = false;
-			});
-
-			client.connected.connect(c => {
-				_main_hpaned.sensitive = true;
+			client.connection_state_changed.connect((c, state) => {
+				_main_hpaned.sensitive = (state == Client.ConnectionState.Connected);
+				_toolbar.sensitive = (state == Client.ConnectionState.Connected);
 			});
 
 			vbox.pack_start(_main_hpaned, true, true, 0);
