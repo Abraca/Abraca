@@ -49,17 +49,30 @@ namespace Abraca {
 
 			cr.set_font_size(font_size);
 
-			cr.set_source_rgba(0.0,0.0,0.0, 0.5);
+			cr.set_source_rgba(0.0, 0.0, 0.0, 0.45);
 
-			cr.move_to(10, height/2+font_size/2-2);
+			var ypos = height / 2.0 + font_size / 2.0 - 2;
+			var xpos = 9;
+
+			// Above left
+			cr.move_to(xpos - 1, ypos - 1);
 			cr.show_text(this.label);
 
-			cr.move_to(9, height/2+font_size/2-2-2);
+			// Above right
+			cr.move_to(xpos + 1, ypos - 1);
 			cr.show_text(this.label);
 
-			cr.set_source_rgb(1,1,1);
+			// Below left
+			cr.move_to(xpos - 1, ypos + 1);
+			cr.show_text(this.label);
 
-			cr.move_to(10-1, height/2+font_size/2-1-2);
+			// Below right
+			cr.move_to(xpos + 1, ypos + 1);
+			cr.show_text(this.label);
+
+			cr.set_source_rgb(1, 1, 1);
+
+			cr.move_to(xpos, ypos);
 			cr.show_text(this.label);
 
 			return false;
