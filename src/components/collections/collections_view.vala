@@ -341,13 +341,12 @@ namespace Abraca {
 		{
 			if (info == (uint) DragDropTargetType.MID) {
 				/* This should be removed as #515408 gets fixed. */
-				unowned uint[] ids = (uint[]) sel.data;
-				ids.length = (int)(sel.length / sizeof(uint));
+				unowned int[] ids = (int[]) sel.data;
+				ids.length = (int)(sel.length / sizeof(int));
 
 				var sort = new Xmms.Value.from_list();
 				sort.list_append (new Xmms.Value.from_string("album"));
 				sort.list_append (new Xmms.Value.from_string("tracknr"));
-
 
 				var coll = new Xmms.Collection (Xmms.CollectionType.IDLIST);
 				coll.set_idlist (ids);

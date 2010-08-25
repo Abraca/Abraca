@@ -537,16 +537,16 @@ namespace Abraca {
 		                               uint info, uint time)
 		{
 			var entries = get_selected_rows<int>(FilterModel.Column.ID);
-			var mid_array = new uint[entries.size + 1];
+			var mid_array = new int[entries.size + 1];
 			int pos = 0;
 
-			foreach (uint mid in entries) {
+			foreach (int mid in entries) {
 				mid_array[pos++] = mid;
 			}
 
 			/* This should be removed as #515408 gets fixed. */
 			unowned uchar[] data = (uchar[]) mid_array;
-			data.length = (int)((mid_array.length + 1) * sizeof(uint));
+			data.length = (int)((mid_array.length + 1) * sizeof(int));
 
 			selection_data.set(
 				Gdk.Atom.intern(_target_entries[0].target, true),

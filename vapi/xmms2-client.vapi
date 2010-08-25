@@ -320,17 +320,17 @@ namespace Xmms {
 	public class Collection {
 		[CCode (cname = "xmmsc_coll_new")]
 		public Collection(CollectionType type);
-		public void set_idlist([CCode (array_length = false)] uint[] ids);
+		public void set_idlist([CCode (array_length = false)] int[] ids);
 		public void add_operand(Collection op);
 		public void remove_operand(Collection op);
 
-		public bool idlist_append(uint id);
-		public bool idlist_insert(uint index, uint id);
-		public bool idlist_move(uint index, uint newindex);
-		public bool idlist_remove(uint index);
+		public bool idlist_append(int id);
+		public bool idlist_insert(int index, int id);
+		public bool idlist_move(int index, int newindex);
+		public bool idlist_remove(int index);
 		public bool idlist_clear();
-		public bool idlist_get_index(uint index, out int val);
-		public bool idlist_set_index(uint index, uint val);
+		public bool idlist_get_index(int index, out int val);
+		public bool idlist_set_index(int index, int val);
 		public uint idlist_get_size();
 
 		public CollectionType get_type();

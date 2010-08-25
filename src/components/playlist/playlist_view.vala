@@ -564,8 +564,8 @@ namespace Abraca {
 			Gtk.TreePath path;
 
 			/* TODO: Updated when #515408 vala bug has been fixed */
-			unowned uint[] ids = (uint[]) sel.data;
-			ids.length = (int)(sel.length / sizeof(uint));
+			unowned int[] ids = (int[]) sel.data;
+			ids.length = (int)(sel.length / sizeof(int));
 
 			var coll = new Xmms.Collection (Xmms.CollectionType.IDLIST);
 			coll.set_idlist (ids);
