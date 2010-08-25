@@ -280,7 +280,7 @@ namespace Xmms {
 		/*
 		 * Bindata functions
 		 */
-		public Result bindata_add (uchar[] data);
+		public Result bindata_add (uint8[] data);
 		public Result bindata_retrieve(string hash);
 		public Result bindata_remove(string hash);
 
@@ -387,7 +387,7 @@ namespace Xmms {
 		[CCode(cname="xmmsv_new_coll")]
 		public Value.from_coll(Xmms.Collection val);
 		[CCode(cname="xmmsv_new_bin")]
-		public Value.from_bin(uchar[] val);
+		public Value.from_bin(uint8[] val);
 		[CCode(cname="xmmsv_new_list")]
 		public Value.from_list();
 		[CCode(cname="xmmsv_new_dict")]
@@ -402,7 +402,7 @@ namespace Xmms {
 		public bool get_int (out int val);
 		public bool get_string (out unowned string val);
 		public bool get_coll (out unowned Xmms.Collection coll);
-		public bool get_bin ([CCode(type="const unsigned char **", array_length_type="uint")] out unowned uchar[] val);
+		public bool get_bin ([CCode(type="const unsigned char **", array_length_type="uint")] out unowned uint8[] val);
 
 		public bool get_list_iter (out unowned Xmms.ListIter iter);
 		public bool get_dict_iter (out unowned Xmms.DictIter iter);
