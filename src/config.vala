@@ -19,8 +19,6 @@
 
 namespace Abraca {
 	public class Config : GLib.Object, IConfigurable {
-		private static Config _instance;
-
 		const string[] _sort_keys = {
 			"Artist", "Album", "Title", "Year", "Path", "Custom"
 		};
