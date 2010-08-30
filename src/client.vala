@@ -421,7 +421,7 @@ namespace Abraca {
 			bool ret = false;
 			bool numeric = true;
 
-			for(int i = 0; i < str.len(); i++) {
+			for(int i = 0; i < str.length; i++) {
 				switch(str[i]) {
 					case ' ':
 					case '\\':

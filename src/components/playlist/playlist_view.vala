@@ -598,7 +598,7 @@ namespace Abraca {
 					continue;
 				}
 
-				if (((string) uri_list[i]).len() > 0) {
+				if (((string) uri_list[i]).length > 0) {
 					Gtk.TreeViewDropPosition align;
 					Gtk.TreePath path;
 					bool is_dir = false;

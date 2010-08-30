@@ -91,7 +91,7 @@ public class Abraca.FilterSearchBox : Gtk.ComboBoxEntry, Searchable {
 		var entry = widget as Gtk.Entry;
 		var text = entry.get_text();
 
-		if (text.size() > 0 && Xmms.Collection.parse(text, out coll)) {
+		if (text.length > 0 && Xmms.Collection.parse(text, out coll)) {
 			_current_query = text;
 
 			// Throttle collection querying

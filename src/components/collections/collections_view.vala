@@ -148,8 +148,8 @@ namespace Abraca {
 			}
 
 			/* This should be removed as #515408 gets fixed. */
-			var data = new uchar[name.size () + 1];
-			GLib.Memory.copy (data, name, name.size ());
+			var data = new uchar[name.length + 1];
+			GLib.Memory.copy (data, name, name.length);
 
 			selection_data.set(
 				Gdk.Atom.intern(_target_entries[1].target, true),
