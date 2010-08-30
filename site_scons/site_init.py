@@ -33,7 +33,7 @@ class AbracaEnvironment(SConsEnvironment):
 	def __init__(self, *args, **kwargs):
 		variables = [
 			'VALAC', 'CC', 'AS', 'LINKFLAGS', 'PKG_CONFIG_FLAGS',
-			'PKG_CONFIG', 'PROGSUFFIX', 'CPPPATH', 'MSGFMT',
+			'PKG_CONFIG', 'PROGSUFFIX', 'CPPPATH', 'MSGFMT', 'VALAFLAGS',
 		]
 		for key in variables:
 			val = self._import_variable(key)
