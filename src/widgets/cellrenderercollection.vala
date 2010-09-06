@@ -25,21 +25,20 @@ namespace Abraca {
 
 		public override void render (Gdk.Window window, Gtk.Widget widget,
 		                             Gdk.Rectangle bg, Gdk.Rectangle cell,
-		                             Gdk.Rectangle expose, Gtk.CellRendererState flags) {
-			unowned Gdk.GC[] gc;
-
+		                             Gdk.Rectangle expose, Gtk.CellRendererState flags)
+		{
 			base.render(window, widget, bg, cell, expose, flags);
 
-			if (pixbuf == null) {
+			if (pixbuf == null)
 				return;
-			}
 
-			gc = widget.style.text_gc;
+			var cr = Gdk.cairo_create (window);
 
-			window.draw_pixbuf(widget.style.text_gc[0], pixbuf, 0, 0,
-			                   cell.x - (pixbuf.width + 4), cell.y,
-			                   pixbuf.width, pixbuf.height,
-			                   Gdk.RgbDither.NONE, 0, 0);
+			var xpos = cell.x - (pixbuf.width + 4);
+			var ypos = cell.y;
+
+			Gdk.cairo_set_source_pixbuf (cr, pixbuf, xpos, ypos);
+			cr.paint ();
 		}
 	}
 }
