@@ -52,7 +52,9 @@ namespace Abraca {
 			Configurable.register(this);
 		}
 
-		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+		public void set_configuration (GLib.KeyFile file)
+			throws GLib.KeyFileError
+		{
 			if (file.has_group("sorting")) {
 				if (file.has_key("sorting", "artist")) {
 					sorting_artist = file.get_string("sorting", "artist");
@@ -75,7 +77,8 @@ namespace Abraca {
 			}
 		}
 
-		public void get_configuration(GLib.KeyFile file) {
+		public void get_configuration (GLib.KeyFile file)
+		{
 			file.set_string("sorting", "artist", sorting_artist);
 			file.set_string("sorting", "album", sorting_album);
 			file.set_string("sorting", "title", sorting_title);
@@ -86,61 +89,55 @@ namespace Abraca {
 
 		public void show_sorting_dialog (Gtk.Window parent)
 		{
-			Gtk.Entry[] entrys;
-			Gtk.Dialog dialog;
-			Gtk.Table table;
-			string[] values;
-			Gtk.Label label;
-			int response_id, i;
-
-			dialog = new Gtk.Dialog.with_buttons(
-					"Configure Sorting", parent,
-					Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.MODAL,
-					Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-					Gtk.STOCK_OK, Gtk.ResponseType.OK
+			var dialog = new Gtk.Dialog.with_buttons(
+				"Configure Sorting", parent,
+				Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.MODAL,
+				Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+				Gtk.STOCK_OK, Gtk.ResponseType.OK
 			);
 
 			dialog.resize (300, 200);
 			dialog.has_separator = false;
 
-			table = new Gtk.Table(6, 2, false);
+			var table = new Gtk.Table(6, 2, false);
 			table.set_row_spacings(7);
 			table.set_col_spacings(5);
 			table.border_width = 5;
-			entrys = new Gtk.Entry[6];
 
-			values = new string[] {
+			var entries = new Gtk.Entry[6];
+
+			var values = new string[] {
 				sorting_artist, sorting_album,
 				sorting_title, sorting_year,
 				sorting_path, sorting_custom
 			};
 
-			for(i = 0; i < 6; i++) {
-				label = new Gtk.Label("<b>" + _sort_keys[i] + "</b>");
+			for (var i = 0; i < 6; i++) {
+				var label = new Gtk.Label("<b>" + _sort_keys[i] + "</b>");
 				label.xalign = 0;
 				label.use_markup = true;
 				table.attach_defaults(label, 0, 1, i + 0, i + 1);
 
-				entrys[i] = new Gtk.Entry();
-				entrys[i].text = values[i];
-				table.attach_defaults(entrys[i], 1, 2, i + 0, i + 1);
+				entries[i] = new Gtk.Entry();
+				entries[i].text = values[i];
+				table.attach_defaults(entries[i], 1, 2, i + 0, i + 1);
 			}
 
 			dialog.vbox.pack_start(new PrettyLabel ("Configure Sorting"), false, true, 0);
 			dialog.vbox.pack_start(table, true, true, 0);
 			dialog.show_all();
 
-			response_id = dialog.run();
+			var response_id = dialog.run();
 
 			if (response_id == Gtk.ResponseType.OK) {
-				i = 0;
+				var i = 0;
 
-				sorting_artist = entrys[i++].text;
-				sorting_album = entrys[i++].text;
-				sorting_title = entrys[i++].text;
-				sorting_year = entrys[i++].text;
-				sorting_path = entrys[i++].text;
-				sorting_custom = entrys[i++].text;
+				sorting_artist = entries[i++].text;
+				sorting_album = entries[i++].text;
+				sorting_title = entries[i++].text;
+				sorting_year = entries[i++].text;
+				sorting_path = entries[i++].text;
+				sorting_custom = entries[i++].text;
 			}
 
 			dialog.close();
