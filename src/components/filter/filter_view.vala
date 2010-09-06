@@ -138,6 +138,7 @@ namespace Abraca {
 			if (sorting.field == null) {
 				order.list_append(new Xmms.Value.from_string("artist"));
 				order.list_append(new Xmms.Value.from_string("album"));
+				order.list_append(new Xmms.Value.from_string("partofset"));
 				order.list_append(new Xmms.Value.from_string("tracknr"));
 			} else if (sorting.order == Gtk.SortType.ASCENDING) {
 				order.list_append(new Xmms.Value.from_string("-" + sorting.field));
