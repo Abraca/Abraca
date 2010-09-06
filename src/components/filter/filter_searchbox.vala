@@ -14,7 +14,14 @@ public class Abraca.FilterSearchBox : Gtk.ComboBoxEntry, Searchable {
 		_pending_queries = new Gee.LinkedList<string>();
 		treeview = tv;
 
+
 		var entry = child as Gtk.Entry;
+
+		entry.primary_icon_stock = Gtk.STOCK_FIND;
+		entry.secondary_icon_stock = Gtk.STOCK_CLEAR;
+		entry.secondary_icon_activatable = true;
+
+		entry.icon_release.connect (on_filter_entry_clear);
 		entry.changed.connect(on_filter_entry_changed);
 		entry.focus_out_event.connect(on_filter_entry_focus_out_event);
 
@@ -23,7 +30,6 @@ public class Abraca.FilterSearchBox : Gtk.ComboBoxEntry, Searchable {
 		comp.set_text_column(0);
 
 		entry.set_completion(comp);
-
 	}
 
 
@@ -83,6 +89,15 @@ public class Abraca.FilterSearchBox : Gtk.ComboBoxEntry, Searchable {
 	}
 
 
+	private void on_filter_entry_clear (Gtk.Entry entry, Gtk.EntryIconPosition pos, Gdk.Event ev)
+	{
+		if (pos == Gtk.EntryIconPosition.PRIMARY)
+			return;
+
+		entry.text = "";
+	}
+
+
 	private void on_filter_entry_changed (Gtk.Editable widget)
 	{
 		Gdk.Color? color = null;
@@ -91,15 +106,17 @@ public class Abraca.FilterSearchBox : Gtk.ComboBoxEntry, Searchable {
 		var entry = widget as Gtk.Entry;
 		var text = entry.get_text();
 
-		if (text.length > 0 && Xmms.Collection.parse(text, out coll)) {
-			_current_query = text;
+		if (text.length > 0) {
+			if (Xmms.Collection.parse(text, out coll)) {
+				_current_query = text;
 
-			// Throttle collection querying
-			if (_timer == 0) {
-				_timer = GLib.Timeout.add(450, on_collection_query_timeout);
+				// Throttle collection querying
+				if (_timer == 0) {
+					_timer = GLib.Timeout.add(450, on_collection_query_timeout);
+				}
+			} else {
+				Gdk.Color.parse("#ff6666", out color);
 			}
-		} else {
-			Gdk.Color.parse("#ff6666", out color);
 		}
 
 		entry.modify_base(Gtk.StateType.NORMAL, color);
