@@ -134,11 +134,10 @@ namespace Abraca {
 		 * Paint our canvas on the window.
 		 */
 		public bool on_expose_event(Gtk.Widget w, Gdk.EventExpose expose) {
-			expose.window.draw_pixbuf(
-				style.bg_gc[0], _canvas,
-				0, 0, 0, 0, width_request, height_request,
-				Gdk.RgbDither.NONE, 0, 0
-			);
+			var cr = Gdk.cairo_create (expose.window);
+
+			Gdk.cairo_set_source_pixbuf (cr, _canvas, 0, 0);
+			cr.paint ();
 
 			return true;
 		}
