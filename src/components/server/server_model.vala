@@ -47,10 +47,7 @@ namespace Abraca {
 				_avahi_service_browser.removed_service.connect(on_removed_service);
 				_avahi_service_browser.attach(_avahi_client);
 			} catch (Avahi.Error e) {
-				// Usually avahi will try to reconnect on failure because of we
-				// have created the client with the NO_FAIL flag. So if an error
-				// is raised here something went realy wrong.
-				GLib.error(e.message);
+				GLib.warning ("Unable to connect to Avahi Daemon (%s).", e.message);
 			}
 #endif
 
