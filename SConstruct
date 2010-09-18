@@ -48,6 +48,10 @@ conf.Define('VERSION', env.subst('"$VERSION"'))
 conf.Define('DATADIR', '"' + env.subst(env['DATADIR']) + '"')
 conf.Define('LOCALEDIR', '"' + env.subst(env['LOCALEDIR']) + '"')
 
+api_version = conf.CheckDefine('XMMS_IPC_PROTOCOL_VERSION', ['xmmsclient/xmmsclient.h'])
+if api_version and api_version.isdigit() and int(api_version) > 18:
+	env.Append(VALAFLAGS=['--define=XMMS_API_COLLECTIONS_TWO_DOT_ZERO'])
+
 conf.Finish()
 
 env.Append(VALAPKGS = ['build-config', 'gdk-keysyms'])

@@ -66,7 +66,21 @@ namespace Xmms {
 		OPFIL_GREATEREQ,
 	}
 
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
 	[CCode(cprefix="XMMS_COLLECTION_TYPE_")]
+	public enum CollectionType {
+		REFERENCE,
+		UNIVERSE,
+		UNION,
+		INTERSECTION,
+		COMPLEMENT,
+		FILTER,
+		ORDER,
+		LIMIT,
+		MEDIASET,
+		IDLIST
+	}
+#else
 	public enum CollectionType {
 		REFERENCE,
 		UNION,
@@ -81,6 +95,7 @@ namespace Xmms {
 		QUEUE,
 		PARTYSHUFFLE,
 	}
+#endif
 
 	[CCode(cprefix="XMMS_MEDIALIB_ENTRY_STATUS_")]
 	public enum EntryStatus {
