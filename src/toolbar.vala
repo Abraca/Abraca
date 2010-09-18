@@ -36,8 +36,9 @@ namespace Abraca {
 		private Gtk.HScale _time_slider;
 		private VolumeButton _volume_button;
 		private Client client;
+		private CoverArtManager manager;
 
-		public ToolBar (Client c)
+		public ToolBar (Client c, Gtk.Window parent)
 		{
 			Gtk.Button btn;
 
@@ -79,6 +80,8 @@ namespace Abraca {
 			});
 
 			client.connection_state_changed.connect(on_connection_state_changed);
+
+			manager = new CoverArtManager (client, parent);
 
 			set_sensitive(false);
 		}
@@ -204,7 +207,11 @@ namespace Abraca {
 			_coverart.has_tooltip = true;
 			_coverart.query_tooltip.connect(on_coverart_tooltip);
 
-			pack_start(_coverart, false, false, 4);
+			var eventbox = new Gtk.EventBox ();
+			eventbox.button_release_event.connect (on_coverart_clicked);
+			eventbox.add(_coverart);
+
+			pack_start(eventbox, false, false, 4);
 		}
 
 
@@ -273,6 +280,12 @@ namespace Abraca {
 
 			_coverart.set_from_stock(Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR);
 			_coverart_big = null;
+		}
+
+		private bool on_coverart_clicked (Gtk.Widget w, Gdk.EventButton button)
+		{
+			manager.update_coverart ((int) _current_id);
+			return false;
 		}
 
 

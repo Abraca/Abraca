@@ -134,7 +134,7 @@ namespace Abraca {
 			var menubar = create_menubar(client);
 			vbox.pack_start(menubar, false, true, 0);
 
-			_toolbar = new ToolBar(client);
+			_toolbar = new ToolBar(client, this);
 			vbox.pack_start(_toolbar, false, false, 6);
 
 			var scrolled = new Gtk.ScrolledWindow (null, null);
