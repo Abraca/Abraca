@@ -218,6 +218,7 @@ class AbracaEnvironment(SConsEnvironment):
 				'CheckCCompiler' : AbracaEnvironment.CheckCCompiler,
 				'CheckApp' : AbracaEnvironment.CheckApp,
 				'CheckOS': AbracaEnvironment.CheckOS,
+				'CheckDefine': AbracaEnvironment.CheckDefine,
 			}
 		)
 		return conf
@@ -231,6 +232,25 @@ class AbracaEnvironment(SConsEnvironment):
 		define = self._to_define(pkg)
 		self.Append(VALAFLAGS = ['--define=' + define])
 		self.Append(CPPDEFINES = [define])
+
+	def CheckDefine(ctx, define, headers):
+		ctx.Message('Checking %s... ' % define)
+		source = "\n".join("#include <%s>" % h for h in headers)
+		source += "\n%s\n" % define
+
+		include_dirs = ""
+		for path in ctx.env.get("CPPPATH", []):
+			include_dirs += " -I" + path
+		result = AbracaEnvironment.Run("cpp " + include_dirs, stdin=source)
+		if not result:
+			ctx.Result(1)
+		result = result.split("\n")
+		if not result:
+			ctx.Result(1)
+		result = result[-1]
+		ctx.Result(result)
+		return result
+	CheckDefine = staticmethod(CheckDefine)
 
 	def CheckGitVersion(ctx, fail=True):
 		ctx.Message('Checking for git version... ')
@@ -336,8 +356,10 @@ int main() {
 		AbracaEnvironment.Run(['strip', target[0].path])
 	Strip = SCons.Action.Action(Strip, '$STRIPCOMSTR')
 
-	def Run(cmd, shell=False):
-		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+	def Run(cmd, shell=False, stdin=None):
+		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, shell=True)
+		if stdin:
+			proc.stdin.write(stdin)
 		return proc.communicate()[0].strip()
 	Run = staticmethod(Run)
 
