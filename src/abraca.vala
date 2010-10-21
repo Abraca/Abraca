@@ -53,9 +53,10 @@ namespace Abraca {
 			Gtk.main_quit();
 			return true;
 		});
-		window.show_all ();
 
 		Configurable.load();
+
+		window.show_all ();
 
 		if (!client.try_connect())
 			GLib.Timeout.add(500, client.reconnect);
