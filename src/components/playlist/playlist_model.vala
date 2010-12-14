@@ -135,6 +135,10 @@ namespace Abraca {
 			Gtk.TreeIter? niter = null;
 			Gtk.TreeIter iter;
 
+			if (playlist != client.current_playlist) {
+				return;
+			}
+
 			if (!iter_nth_child (out iter, null, pos))
 				return;
 
@@ -154,6 +158,10 @@ namespace Abraca {
 		 */
 		private void on_playlist_position(Client c, string playlist, uint pos) {
 			Gtk.TreeIter iter;
+
+			if (playlist != client.current_playlist) {
+				return;
+			}
 
 			/* Remove the old position indicator */
 			if (_position.valid()) {
