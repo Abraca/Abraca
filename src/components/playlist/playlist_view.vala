@@ -516,27 +516,38 @@ namespace Abraca {
 			Gtk.drag_finish(ctx, success, false, time);
 		}
 
+		private bool get_drop_destination(int x, int y, out int dest)
+		{
+			int dst;
+			Gtk.TreeViewDropPosition align;
+			Gtk.TreePath path;
+
+			if (get_dest_row_at_pos(x, y, out path, out align)) {
+				dst = path.get_indices()[0];
+
+				if (align == Gtk.TreeViewDropPosition.AFTER
+				    || align == Gtk.TreeViewDropPosition.INTO_OR_AFTER) {
+					dst++;
+				}
+
+				dest = dst;
+				return true;
+			}
+			return false;
+		}
 
 		/**
 		 * Handle dropping of playlist entries.
 		 */
 		private bool on_drop_playlist_entries(Gtk.SelectionData sel, int x, int y)
 		{
-			Gtk.TreeViewDropPosition align;
-			Gtk.TreePath path;
+			int dest;
 
 			/* TODO: Updated when #515408 vala bug has been fixed */
 			unowned uint[] source = (uint[]) sel.data;
 			source.length = (int)(sel.length / sizeof(uint));
 
-			if (get_dest_row_at_pos(x, y, out path, out align)) {
-				int dest = path.get_indices()[0];
-
-				if (align == Gtk.TreeViewDropPosition.AFTER
-						|| align ==  Gtk.TreeViewDropPosition.INTO_OR_AFTER) {
-					dest++;
-				}
-
+			if (get_drop_destination(x, y, out dest)) {
 				int downward = 0;
 				int upward = 0;
 
@@ -560,8 +571,7 @@ namespace Abraca {
 		 */
 		private bool on_drop_medialib_id(Gtk.SelectionData sel, int x, int y)
 		{
-			Gtk.TreeViewDropPosition align;
-			Gtk.TreePath path;
+			int pos;
 
 			/* TODO: Updated when #515408 vala bug has been fixed */
 			unowned int[] ids = (int[]) sel.data;
@@ -570,8 +580,7 @@ namespace Abraca {
 			var coll = new Xmms.Collection (Xmms.CollectionType.IDLIST);
 			coll.set_idlist (ids);
 
-			if (get_dest_row_at_pos(x, y, out path, out align)) {
-				int pos = path.get_indices()[0];
+			if (get_drop_destination(x, y, out pos)) {
 				client.xmms.playlist_insert_collection(Xmms.ACTIVE_PLAYLIST, pos, coll, _sort);
 			} else {
 				client.xmms.playlist_add_collection(Xmms.ACTIVE_PLAYLIST, coll, _sort);
@@ -590,6 +599,7 @@ namespace Abraca {
 		                           bool internet = false)
 		{
 			string[] uri_list;
+			int pos;
 
 			uri_list = ((string) sel.data).split("\r\n");
 
@@ -599,8 +609,6 @@ namespace Abraca {
 				}
 
 				if (((string) uri_list[i]).length > 0) {
-					Gtk.TreeViewDropPosition align;
-					Gtk.TreePath path;
 					bool is_dir = false;
 
 					string uri = GLib.Uri.unescape_string(uri_list[i]);
@@ -614,8 +622,7 @@ namespace Abraca {
 
 					if (is_dir) {
 						client.xmms.playlist_radd (Xmms.ACTIVE_PLAYLIST, uri);
-					} else if (get_dest_row_at_pos(x, y, out path, out align)) {
-						int pos = path.get_indices()[0];
+					} else if (get_drop_destination (x, y, out pos)) {
 						client.xmms.playlist_insert_url(Xmms.ACTIVE_PLAYLIST, pos, uri);
 					} else {
 						client.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, uri);
@@ -630,8 +637,7 @@ namespace Abraca {
 		private bool on_drop_collection(Gtk.SelectionData sel, int x, int y)
 		{
 			Xmms.Collection coll;
-			Gtk.TreeViewDropPosition align;
-			Gtk.TreePath path;
+			int pos;
 
 			string[] collection_data = ((string) sel.data).split("/");
 			string coll_ns = collection_data[0];
@@ -642,13 +648,7 @@ namespace Abraca {
 			coll.attribute_set("namespace", coll_ns);
 
 			/* TODO: Check if store is empty to get rid of assert */
-			if (get_dest_row_at_pos(x, y, out path, out align)) {
-				int pos = path.get_indices()[0];
-
-				if (align == Gtk.TreeViewDropPosition.AFTER ||
-				    align ==  Gtk.TreeViewDropPosition.INTO_OR_AFTER) {
-					pos++;
-				}
+			if (get_drop_destination(x, y, out pos)) {
 				client.xmms.playlist_insert_collection(Xmms.ACTIVE_PLAYLIST, pos, coll, _sort);
 			} else {
 				client.xmms.playlist_add_collection(Xmms.ACTIVE_PLAYLIST, coll, _sort);
