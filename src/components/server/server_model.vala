@@ -61,6 +61,11 @@ namespace Abraca {
 
 #if HAVE_AVAHI_GOBJECT
 		private void on_new_service(Avahi.Interface i, Avahi.Protocol p, string n, string t, string d, Avahi.LookupResultFlags f) {
+			if (p != Avahi.Protocol.INET) {
+				// Ignoring IPv6 address as latest stable xmms2-mdns-avahi incorrectly announces these even if not listening
+				return;
+			}
+
 			var resolver = new Avahi.ServiceResolver(i, p, n, t, d, Avahi.Protocol.UNSPEC);
 
 			resolver.found.connect((i, p, n, t, d, h, a, port, txt, f) => {
