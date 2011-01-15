@@ -22,8 +22,8 @@ using Gee;
 
 namespace Abraca {
 	public class Client : GLib.Object {
-		private Xmms.Client _xmms;
-		private void *_gmain;
+		private Xmms.Client _xmms = null;
+		private void *_gmain = null;
 
 		public enum ConnectionState
 		{
@@ -97,16 +97,20 @@ namespace Abraca {
 				path = GLib.Environment.get_variable("XMMS_PATH");
 			}
 
-			detach_callbacks();
-
-			_xmms = new Xmms.Client("Abraca");
+			var next_client = new Xmms.Client("Abraca");
 
 			connection_state_changed (ConnectionState.Connecting);
 
-			if (_xmms.connect(path)) {
+			if (next_client.connect(path)) {
+				detach_callbacks();
+
+				if (_gmain != null)
+					Xmms.MainLoop.GMain.shutdown(null, _gmain);
+
+				_xmms = next_client;
 				_gmain = Xmms.MainLoop.GMain.init(_xmms);
+
 				_xmms.disconnect_callback_set(() => {
-					Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
 					connection_state_changed (ConnectionState.Disconnected);
 				});
 
@@ -115,6 +119,11 @@ namespace Abraca {
 				connection_state_changed (ConnectionState.Connected);
 
 				return true;
+			}
+
+			/* Connection failed, using the already established one */
+			if (_xmms != null) {
+				connection_state_changed (ConnectionState.Connected);
 			}
 
 			return false;
@@ -151,10 +160,10 @@ namespace Abraca {
 		}
 
 		private void detach_callbacks() {
-			foreach (var result in _recallable_references) {
+			while (!_recallable_references.is_empty) {
+				var result = _recallable_references.remove_at(0);
 				result.disconnect();
 			}
-			_recallable_references.clear();
 		}
 
 		private void attach_callbacks() {
