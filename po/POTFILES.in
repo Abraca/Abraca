@@ -11,3 +11,4 @@ src/toolbar.vala
 src/transform.vala
 [type: gettext/glade] data/ui/about.xml
 [type: gettext/glade] data/ui/main_menu.xml
+[type: gettext/glade] data/ui/server_browser.xml

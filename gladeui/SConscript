@@ -4,20 +4,25 @@ Import('gladeui')
 Import('images')
 Import('ui')
 
-env.InstallGladeUiModule(env.SharedLibrary('libgladeabraca', sources + [images, ui, gladeui]))
+if env.get('HAVE_GLADEUI_1_0'):
+    env.InstallGladeUiModule(env.SharedLibrary('libgladeabraca', sources + [images, ui, gladeui]))
 
-env.InstallGladeUiCatalog('abraca.xml')
+    env.InstallGladeUiCatalog('abraca.xml')
 
-env.InstallGladeUiPixmap('16x16', [
+    env.InstallGladeUiPixmap('16x16', [
         'icons/16x16/widget-abraca-cellrenderercollection.png',
         'icons/16x16/widget-abraca-cellrenderertogglepixbuf.png',
         'icons/16x16/widget-abraca-mediainfodialog.png',
-        'icons/16x16/widget-abraca-ratingentry.png'
-])
+        'icons/16x16/widget-abraca-ratingentry.png',
+        'icons/16x16/widget-abraca-serverbrowser.png',
+        'icons/16x16/widget-abraca-servermodel.png'
+    ])
 
-env.InstallGladeUiPixmap('22x22', [
+    env.InstallGladeUiPixmap('22x22', [
         'icons/22x22/widget-abraca-cellrenderercollection.png',
         'icons/22x22/widget-abraca-cellrenderertogglepixbuf.png',
         'icons/22x22/widget-abraca-mediainfodialog.png',
-        'icons/22x22/widget-abraca-ratingentry.png'
-])
+        'icons/22x22/widget-abraca-ratingentry.png',
+        'icons/22x22/widget-abraca-serverbrowser.png',
+        'icons/22x22/widget-abraca-servermodel.png'
+    ])

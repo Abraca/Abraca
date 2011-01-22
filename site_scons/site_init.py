@@ -26,10 +26,14 @@ import subprocess
 SCons.Defaults.DefaultEnvironment(tools = [])
 
 class AbracaEnvironment(SConsEnvironment):
+	class Dependency(object):
+		Mandatory = True
+		Optional = False
+
 	def __init__(self, *args, **kwargs):
 		variables = [
 			'VALAC', 'CC', 'AS', 'LINKFLAGS', 'PKG_CONFIG_FLAGS',
-			'PKG_CONFIG', 'PROGSUFFIX', 'CPPPATH', 'MSGFMT',
+			'PKG_CONFIG', 'PROGSUFFIX', 'CPPPATH', 'MSGFMT', 'VALAFLAGS',
 		]
 		for key in variables:
 			val = self._import_variable(key)
@@ -79,7 +83,6 @@ class AbracaEnvironment(SConsEnvironment):
 			           PathOption.PathAccept),
 			PathOption('MANDIR', 'man page dir', '$DATADIR/man',
 			           PathOption.PathAccept),
-			BoolOption('WITH_GLADEUI', 'create a plugin for glade-3, only for developers', 'no')
 		)
 		opts.Update(self)
 		opts.Save('.scons_options', self)
@@ -133,6 +136,8 @@ class AbracaEnvironment(SConsEnvironment):
 		except Exception, e:
 			pass
 
+	def _to_define(self, name):
+		return 'HAVE_' + ''.join(x.isalnum() and x or '_' for x in name).upper()
 
 	def _program(self, target, source, *args, **kwargs):
 		prog = self['BUILDERS']['SConsProgram'](target, source, *args, **kwargs)
@@ -149,11 +154,15 @@ class AbracaEnvironment(SConsEnvironment):
 
 	def _install(self, dst, src):
 		if self.has_key('DESTDIR') and self['DESTDIR']:
+			if dst[0] == "/":
+				dst = dst[1:]
 			dst = os.path.join(self['DESTDIR'], dst)
 		return self.SConsInstall(dst, src)
 
 	def _install_as(self, dst, src):
 		if self.has_key('DESTDIR') and self['DESTDIR']:
+			if dst[0] == "/":
+				dst = dst[1:]
 			dst = os.path.join(self['DESTDIR'], dst)
 		return self.SConsInstallAs(dst, src)
 
@@ -212,6 +221,8 @@ class AbracaEnvironment(SConsEnvironment):
 				'CheckVala' : AbracaEnvironment.CheckVala,
 				'CheckCCompiler' : AbracaEnvironment.CheckCCompiler,
 				'CheckApp' : AbracaEnvironment.CheckApp,
+				'CheckOS': AbracaEnvironment.CheckOS,
+				'CheckDefine': AbracaEnvironment.CheckDefine,
 			}
 		)
 		return conf
@@ -222,6 +233,28 @@ class AbracaEnvironment(SConsEnvironment):
 	def AppendPkg(self, pkg, version):
 		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --libs --cflags "%s >= %s"')
 		self.ParseConfig(cmd % (pkg, version))
+		define = self._to_define(pkg)
+		self.Append(VALAFLAGS = ['--define=' + define])
+		self.Append(CPPDEFINES = [define])
+
+	def CheckDefine(ctx, define, headers):
+		ctx.Message('Checking %s... ' % define)
+		source = "\n".join("#include <%s>" % h for h in headers)
+		source += "\n%s\n" % define
+
+		include_dirs = ""
+		for path in ctx.env.get("CPPPATH", []):
+			include_dirs += " -I" + path
+		result = AbracaEnvironment.Run("cpp " + include_dirs, stdin=source)
+		if not result:
+			ctx.Result(1)
+		result = result.split("\n")
+		if not result:
+			ctx.Result(1)
+		result = result[-1]
+		ctx.Result(result)
+		return result
+	CheckDefine = staticmethod(CheckDefine)
 
 	def CheckGitVersion(ctx, fail=True):
 		ctx.Message('Checking for git version... ')
@@ -243,12 +276,20 @@ class AbracaEnvironment(SConsEnvironment):
 	CheckPkgConfig = staticmethod(CheckPkgConfig)
 
 	def CheckPkg(ctx, pkg, version='0.0', fail=True):
-		ctx.Message('Checking for %s >= %s... ' % (pkg, version))
+		if not fail:
+			optional = ' (optional)'
+		else:
+			optional = ''
+		ctx.Message('Checking for %s >= %s%s... ' % (pkg, version, optional))
 		cmd = ctx.env.subst('pkg-config $PKG_CONFIG_FLAGS --exists "%s >= %s"')
+		if not fail:
+			cmd += ' --silence-errors'
 		exit_code, output = ctx.TryAction(cmd % (pkg, version))
 		ctx.Result(exit_code)
 		if not exit_code and fail:
 			raise SCons.Errors.UserError('The %s package and its dependencies are required to build' % pkg)
+		define = ctx.env._to_define(pkg)
+		ctx.env[define] = exit_code and True
 		return exit_code
 	CheckPkg = staticmethod(CheckPkg)
 
@@ -285,6 +326,25 @@ class AbracaEnvironment(SConsEnvironment):
 		return False
 	CheckVala = staticmethod(CheckVala)
 
+	def CheckOS(ctx):
+		ctx.Message('Checking for operating system... ')
+		for macro in ('G_OS_UNIX', 'G_OS_WIN32', 'G_OS_BEOS'):
+			code = '''
+#include <glib.h>
+
+int main() {
+#ifndef %s
+	#error Wrong operating system
+#endif
+	return 0;
+}''' % macro
+			if ctx.TryCompile(code, '.c'):
+				ctx.env['VALAFLAGS'] += ['--define=' + macro]
+				ctx.Result(macro.split('_')[-1].lower())
+				return
+		ctx.Result('unknown')
+	CheckOS = staticmethod(CheckOS)
+
 	def CheckApp(ctx, app, fail=False):
 		ctx.Message('Checking for %s... ' % app)
 		key = 'HAVE_' + app.replace('-', '_').upper()
@@ -300,8 +360,10 @@ class AbracaEnvironment(SConsEnvironment):
 		AbracaEnvironment.Run(['strip', target[0].path])
 	Strip = SCons.Action.Action(Strip, '$STRIPCOMSTR')
 
-	def Run(cmd, shell=False):
-		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+	def Run(cmd, shell=False, stdin=None):
+		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, shell=True)
+		if stdin:
+			proc.stdin.write(stdin)
 		return proc.communicate()[0].strip()
 	Run = staticmethod(Run)
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 12:10+0100\n"
+"POT-Creation-Date: 2009-11-16 08:36+0100\n"
 "PO-Revision-Date: 2009-11-03 09:03+0100\n"
 "Last-Translator: Sebastian Noack <sebastian.noack@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -234,33 +234,41 @@ msgid "_Add"
 msgstr "_Hinzufügen"
 
 #: ../data/ui/main_menu.xml.h:9
+msgid "_Connect"
+msgstr "Verbindung aufbauen"
+
+#: ../data/ui/main_menu.xml.h:10
 msgid "_Directory"
 msgstr "_Verzeichnis"
 
-#: ../data/ui/main_menu.xml.h:10
+#: ../data/ui/main_menu.xml.h:11
 msgid "_Files"
 msgstr "_Dateien"
 
-#: ../data/ui/main_menu.xml.h:11
+#: ../data/ui/main_menu.xml.h:12
 msgid "_Help"
 msgstr "_Hilfe"
 
-#: ../data/ui/main_menu.xml.h:12
+#: ../data/ui/main_menu.xml.h:13
 msgid "_Music"
 msgstr "_Musik"
 
-#: ../data/ui/main_menu.xml.h:13
+#: ../data/ui/main_menu.xml.h:14
 msgid "_New"
 msgstr "_Neu"
 
-#: ../data/ui/main_menu.xml.h:14
+#: ../data/ui/main_menu.xml.h:15
 msgid "_Playlist"
 msgstr "_Playlist"
 
-#: ../data/ui/main_menu.xml.h:15
+#: ../data/ui/main_menu.xml.h:16
 msgid "_Quit"
 msgstr "_Beenden"
 
-#: ../data/ui/main_menu.xml.h:16
+#: ../data/ui/main_menu.xml.h:17
 msgid "_URL"
 msgstr "_URL"
+
+#: ../data/ui/server_browser.xml.h:1
+msgid "<span size=\"large\">Connect to server:</span>"
+msgstr "<span size=\"large\">Verbinde zu server:</span>"

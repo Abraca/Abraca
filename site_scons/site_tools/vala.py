@@ -44,9 +44,9 @@ def generate(env):
 
 	env['HAVE_VALAC'] = env.Detect(env['VALAC'])
 
-	env['VALAFLAGS'] = SCons.Util.CLVar('')
+	env['VALAFLAGS'] = env.get('VALAFLAGS', SCons.Util.CLVar(''))
 
-	env['VALAPKGS'] = SCons.Util.CLVar('')
+	env['VALAPKGS'] = env.get('VALAPKGS', SCons.Util.CLVar(''))
 	env['VALAPKGPREFIX'] = '--pkg='
 	env['_VALAPKGS'] = '${_defines(VALAPKGPREFIX, VALAPKGS, None, __env__)}'
 
