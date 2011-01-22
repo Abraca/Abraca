@@ -67,9 +67,11 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 
 	private void _apply_volume (int volume) {
 		client.xmms.playback_volume_get().notifier_set((val) => {
-			val.dict_foreach((key, val) => {
-				client.xmms.playback_volume_set (key, _tmp_apply_volume_value);
-			});
+			if (!val.is_error ()) {
+				val.dict_foreach((key, val) => {
+					client.xmms.playback_volume_set (key, _tmp_apply_volume_value);
+				});
+			}
 			return true;
 		});
 
