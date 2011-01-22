@@ -22,6 +22,7 @@ namespace Abraca {
 	public const string STOCK_PLAYLIST   = "abraca-playlist";
 	public const string STOCK_RATED      = "abraca-rated";
 	public const string STOCK_UNRATED    = "abraca-unrated";
+	public const string STOCK_FAVORITE   = "abraca-favorite";
 
 	public static Gtk.IconFactory create_icon_factory() throws GLib.Error {
 		Gtk.IconFactory factory = new Gtk.IconFactory();
@@ -62,8 +63,9 @@ namespace Abraca {
 
 		/* Other icons */
 
-		factory.add(STOCK_RATED,   new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_rating_rated,   false)));
-		factory.add(STOCK_UNRATED, new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_rating_unrated, false)));
+		factory.add(STOCK_RATED,    new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_rating_rated,   false)));
+		factory.add(STOCK_UNRATED,  new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_rating_unrated, false)));
+		factory.add(STOCK_FAVORITE, new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_favorite,       false)));
 
 		return factory;
 	}

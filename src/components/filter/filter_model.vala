@@ -38,34 +38,30 @@ namespace Abraca {
 		public string[] dynamic_columns;
 
 		/* Map medialib id to row */
-		private Gee.Map<int,Gtk.TreeRowReference> pos_map;
+		private Gee.Map<int,Gtk.TreeRowReference> pos_map = new Gee.HashMap<int,Gtk.TreeRowReference>();
 
+		private Client client;
 
-		construct {
-			pos_map = new Gee.HashMap<int,Gtk.TreeRowReference>();
+		public FilterModel (Client c, owned string[] props)
+		{
+			client = c;
 
-			var client = Client.instance();
-
-			client.medialib_entry_changed.connect((client, res) => {
-				on_medialib_info(res);
-			});
-		}
-
-
-		public FilterModel (owned string[] props) {
-			int n_columns = props.length;
-			GLib.Type[] types = new GLib.Type[2 + n_columns];
+			var types = new GLib.Type[2 + props.length];
 
 			types[0] = typeof(int);
 			types[1] = typeof(uint);
 
-			for (int i = 0; i < n_columns; i++) {
-				types[2 + i] = typeof(string);
+			for (int i = 2; i < types.length; i++) {
+				types[i] = typeof(string);
 			}
 
 			set_column_types(types);
 
 			dynamic_columns = (owned) props;
+
+			client.medialib_entry_changed.connect((client, res) => {
+					on_medialib_info(res);
+			});
 		}
 
 
@@ -73,7 +69,8 @@ namespace Abraca {
 		 * Replaces the content of the filter list model with the
 		 * result of a medialib query
 		 */
-		public bool replace_content (Xmms.Value val) {
+		public bool replace_content (Xmms.Value val)
+		{
 			Gtk.TreeIter? iter, sibling = null;
 			bool is_first = !get_iter_first(out iter);
 
@@ -81,7 +78,7 @@ namespace Abraca {
 
 			pos_map.clear();
 
-			
+
 			unowned Xmms.ListIter list_iter;
 			val.get_list_iter(out list_iter);
 
@@ -120,19 +117,19 @@ namespace Abraca {
 		 * When GTK asks for the value of a column, check if the row
 		 * has been resolved or not, otherwise resolve it.
 		 */
-		public void get_value(Gtk.TreeIter iter, int column, ref GLib.Value val) {
+		public void get_value (Gtk.TreeIter iter, int column, ref GLib.Value val)
+		{
 			GLib.Value tmp1;
 
 			base.get_value(iter, Column.STATUS, out tmp1);
 			if (((Status)tmp1.get_int()) == Status.UNRESOLVED) {
 				GLib.Value tmp2;
-				Client c = Client.instance();
 
 				base.get_value(iter, Column.ID, out tmp2);
 
 				set(iter, Column.STATUS, Status.RESOLVING);
 
-				c.xmms.medialib_get_info(tmp2.get_uint()).notifier_set(
+				client.xmms.medialib_get_info(tmp2.get_uint()).notifier_set(
 					on_medialib_info
 				);
 			}
@@ -140,7 +137,8 @@ namespace Abraca {
 			base.get_value(iter, column, out val);
 		}
 
-		private bool on_medialib_info(Xmms.Value propdict) {
+		private bool on_medialib_info (Xmms.Value propdict)
+		{
 			Gtk.TreeRowReference row;
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;

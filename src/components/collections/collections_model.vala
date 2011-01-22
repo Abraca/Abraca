@@ -52,13 +52,13 @@ namespace Abraca {
 		/* Emited after 1..* collections has been added. */
 		public signal void collection_loaded (CollectionType type);
 
-		public CollectionsModel (Gdk.Pixbuf coll, Gdk.Pixbuf pls)
+		private Client client;
+
+		public CollectionsModel (Gdk.Pixbuf coll, Gdk.Pixbuf pls, Client c)
 		{
 			Object(playlist_pixbuf: coll, collection_pixbuf: pls);
-		}
 
-		construct {
-			Client c = Client.instance();
+			client = c;
 
 			set_column_types(new GLib.Type[5] {
 				typeof(int),
@@ -86,11 +86,11 @@ namespace Abraca {
 				Column.Name, _("Playlists")
 			);
 
-			c.playlist_loaded.connect(on_playlist_loaded);
-			c.collection_add.connect(on_collection_add);
-			c.collection_rename.connect(on_collection_rename);
-			c.collection_remove.connect(on_collection_remove);
-			c.connected.connect(query_collections);
+			client.playlist_loaded.connect(on_playlist_loaded);
+			client.collection_add.connect(on_collection_add);
+			client.collection_rename.connect(on_collection_rename);
+			client.collection_remove.connect(on_collection_remove);
+			client.connection_state_changed.connect(query_collections);
 		}
 
 
@@ -168,10 +168,9 @@ namespace Abraca {
 		 */
 		public string realize_temporary_playlist ()
 		{
-			Client c = Client.instance();
 			string name = get_new_playlist_name();
 
-			c.xmms.playlist_create(name);
+			client.xmms.playlist_create(name);
 
 			has_temporary_playlist = false;
 
@@ -225,8 +224,11 @@ namespace Abraca {
 		}
 
 
-		private void query_collections (Client c)
+		private void query_collections (Client c, Client.ConnectionState state)
 		{
+			if (state != Client.ConnectionState.Connected)
+				return;
+
 			c.xmms.coll_list(Xmms.COLLECTION_NS_COLLECTIONS).notifier_set(r => {
 				on_list_collections(r, CollectionType.Collection);
 				return true;
@@ -279,8 +281,7 @@ namespace Abraca {
 					continue;
 
 				if (type == CollectionType.Playlist) {
-					Client c = Client.instance();
-					if (name == c.current_playlist) {
+					if (name == client.current_playlist) {
 						style = Pango.Style.ITALIC;
 						weight = Pango.Weight.BOLD;
 					}

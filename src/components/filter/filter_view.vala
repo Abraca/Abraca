@@ -23,10 +23,12 @@ namespace Abraca {
 	public class FilterView : Gtk.TreeView, IConfigurable, SelectedRowsMixin {
 		/* field and order used for sorting, see sorting property */
 		public struct Sorting {
-			public string field;
+			public unowned string field;
 			public Gtk.SortType order;
 		}
 
+		private Medialib medialib;
+		private Client client;
 
 		/** context menu */
 		private Gtk.Menu filter_menu;
@@ -50,13 +52,16 @@ namespace Abraca {
 		public Xmms.Collection collection { get; private set; }
 
 
-		construct {
+		public FilterView (Client c, Medialib m)
+		{
+			medialib = m;
+			client = c;
+
 			fixed_height_mode = true;
 			enable_search = false;
 			headers_clickable = true;
 
 			get_selection().set_mode(Gtk.SelectionMode.MULTIPLE);
-
 
 			create_context_menu();
 			get_selection().changed.connect(on_selection_changed_update_menu);
@@ -74,12 +79,17 @@ namespace Abraca {
 			Configurable.register(this);
 		}
 
-		public void get_configuration(GLib.KeyFile file) {
+
+		public void get_configuration (GLib.KeyFile file)
+		{
 			FilterModel store = (FilterModel) model;
 			file.set_string_list("filter", "columns", store.dynamic_columns);
 		}
 
-		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+
+		public void set_configuration (GLib.KeyFile file)
+			throws GLib.KeyFileError
+		{
 			string[] list;
 
 			if (file.has_group("filter") && file.has_key("filter", "columns")) {
@@ -91,7 +101,9 @@ namespace Abraca {
 			set_dynamic_columns(list);
 		}
 
-		private void on_sorting_changed(GLib.Object source, GLib.ParamSpec pspec) {
+
+		private void on_sorting_changed (GLib.Object source, GLib.ParamSpec pspec)
+		{
 			if (collection != null) {
 				query_collection(collection);
 			} else {
@@ -99,7 +111,9 @@ namespace Abraca {
 			}
 		}
 
-		private void on_selection_changed_update_menu(Gtk.TreeSelection s) {
+
+		private void on_selection_changed_update_menu (Gtk.TreeSelection s)
+		{
 			int n = s.count_selected_rows();
 
 			foreach (var i in filter_menu_item_when_none_selected) {
@@ -116,14 +130,15 @@ namespace Abraca {
 		}
 
 
-		public void query_collection(Xmms.Collection coll, Xmms.NotifierFunc? callback=null) {
-			Client c = Client.instance();
+		public void query_collection (Xmms.Collection coll, Xmms.NotifierFunc? callback=null)
+		{
 			Xmms.Value order = new Xmms.Value.from_list();
 			Xmms.Result res;
 
 			if (sorting.field == null) {
 				order.list_append(new Xmms.Value.from_string("artist"));
 				order.list_append(new Xmms.Value.from_string("album"));
+				order.list_append(new Xmms.Value.from_string("partofset"));
 				order.list_append(new Xmms.Value.from_string("tracknr"));
 			} else if (sorting.order == Gtk.SortType.ASCENDING) {
 				order.list_append(new Xmms.Value.from_string("-" + sorting.field));
@@ -131,7 +146,7 @@ namespace Abraca {
 				order.list_append(new Xmms.Value.from_string(sorting.field));
 			}
 
-			res = c.xmms.coll_query_ids(coll, order);
+			res = client.xmms.coll_query_ids(coll, order);
 			res.notifier_set(on_coll_query_ids);
 			if (callback != null) {
 				res.notifier_set(callback);
@@ -141,8 +156,8 @@ namespace Abraca {
 		}
 
 
-		public void playlist_replace_with_filter_results() {
-			Client c = Client.instance();
+		public void playlist_replace_with_filter_results ()
+		{
 			Gtk.TreeIter iter;
 			uint id;
 
@@ -150,17 +165,17 @@ namespace Abraca {
 				return;
 			}
 
-			c.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
+			client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
 
 			do {
 				model.get(iter, FilterModel.Column.ID, out id);
-				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+				client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 			} while (model.iter_next(ref iter));
 		}
 
 
-		public void playlist_add_filter_results() {
-			Client c = Client.instance();
+		public void playlist_add_filter_results ()
+		{
 			Gtk.TreeIter iter;
 			uint id;
 
@@ -170,12 +185,13 @@ namespace Abraca {
 
 			do {
 				model.get(iter, FilterModel.Column.ID, out id);
-				c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+				client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 			} while (model.iter_next(ref iter));
 		}
 
 
-		private bool on_coll_query_ids(Xmms.Value val) {
+		private bool on_coll_query_ids (Xmms.Value val)
+		{
 			FilterModel store = (FilterModel) model;
 
 			/* disconnect our model while the shit hits the fan */
@@ -193,7 +209,8 @@ namespace Abraca {
 		}
 
 
-		private bool on_button_press_event(Gtk.Widget w, Gdk.EventButton button) {
+		private bool on_button_press_event (Gtk.Widget w, Gdk.EventButton button)
+		{
 			Gtk.TreePath path;
 			int x, y;
 
@@ -221,21 +238,27 @@ namespace Abraca {
 			return false;
 		}
 
-		private bool on_key_press_event (Gdk.EventKey e) {
-			Client c = Client.instance();
-			if (e.keyval == Gdk.Keysym.Return) {
-				var ids = get_selected_rows<int>(FilterModel.Column.ID);
-				if ((e.state & Gdk.ModifierType.CONTROL_MASK) > 0) {
-					c.xmms.playlist_replace_ids(Xmms.ACTIVE_PLAYLIST, ids);
-				} else {
-					c.xmms.playlist_add_ids(Xmms.ACTIVE_PLAYLIST, ids);
-				}
-				return true;
+
+		private bool on_key_press_event (Gdk.EventKey e)
+		{
+			if (e.keyval != Gdk.Keysym.Return) {
+				return false;
 			}
-			return false;
+
+			if ((e.state & Gdk.ModifierType.CONTROL_MASK) > 0) {
+				client.xmms.playlist_clear (Xmms.ACTIVE_PLAYLIST);
+			}
+
+			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
+				client.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
+			});
+
+			return true;
 		}
 
-		private void on_columns_changed() {
+
+		private void on_columns_changed ()
+		{
 			if (model != null) {
 				var columns = get_columns();
 				var modified = new string[columns.length()];
@@ -249,51 +272,51 @@ namespace Abraca {
 			}
 		}
 
-		private void on_row_activated(Gtk.TreeView tree, Gtk.TreePath path, Gtk.TreeViewColumn column) {
-			Client c = Client.instance();
+
+		private void on_row_activated (Gtk.TreeView tree, Gtk.TreePath path,
+		                               Gtk.TreeViewColumn column)
+		{
 			Gtk.TreeIter iter;
 			uint id;
 
 			model.get_iter(out iter, path);
 			model.get(iter, FilterModel.Column.ID, out id);
-			c.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+			client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
 		}
 
-		private void on_menu_select_all(Gtk.MenuItem item) {
+
+		private void on_menu_select_all (Gtk.MenuItem item)
+		{
 			get_selection().select_all();
 		}
 
-		private void on_menu_info(Gtk.MenuItem item) {
-			GLib.List<Gtk.TreePath> list;
-			unowned Gtk.TreeModel mod;
-			Gtk.TreeIter iter;
-			uint id;
 
-			list = get_selection().get_selected_rows(out mod);
-			foreach (var path in list) {
-				model.get_iter(out iter, path);
-				model.get(iter, FilterModel.Column.ID, out id);
-
-				Abraca.instance().medialib.info_dialog_add_id(id);
-			}
+		private void on_menu_info (Gtk.MenuItem item)
+		{
+			foreach_selected_row<uint>(FilterModel.Column.ID, (idx, mid) => {
+				medialib.info_dialog_add_id(mid);
+			});
 		}
 
 
-		private void on_menu_add(Gtk.MenuItem item) {
-			Client c = Client.instance();
-			var ids = get_selected_rows<int>(FilterModel.Column.ID);
-			c.xmms.playlist_add_ids(Xmms.ACTIVE_PLAYLIST, ids);
+		private void on_menu_add (Gtk.MenuItem item)
+		{
+			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
+				client.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
+			});
 		}
 
 
-		private void on_menu_replace(Gtk.MenuItem item) {
-			Client c = Client.instance();
-			var ids = get_selected_rows<int>(FilterModel.Column.ID);
-			c.xmms.playlist_replace_ids(Xmms.ACTIVE_PLAYLIST, ids);
+		private void on_menu_replace (Gtk.MenuItem item)
+		{
+			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
+				client.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
+			});
 		}
 
 
-		private void set_dynamic_columns(string[] props) {
+		private void set_dynamic_columns (string[] props)
+		{
 			model = null;
 
 			foreach (var column in get_columns()) {
@@ -325,7 +348,7 @@ namespace Abraca {
 				ancestor.button_press_event.connect(on_header_clicked);
 			}
 
-			model = new FilterModel(props);
+			model = new FilterModel(client, props);
 
 			if (collection != null) {
 				query_collection(collection);
@@ -391,9 +414,13 @@ namespace Abraca {
 			}
 		}
 
-		private void on_header_edit (Gtk.MenuItem item) {
+
+		private void on_header_edit (Gtk.MenuItem item)
+		{
 			FilterModel store = (FilterModel) model;
 			FilterEditor edit = new FilterEditor();
+
+			edit.transient_for = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
 
 			edit.column_changed.connect((editor, prop, enabled) => {
 				// TODO: Should use outer store when vala supports this.
@@ -426,7 +453,9 @@ namespace Abraca {
 			edit.run();
 		}
 
-		private void on_header_remove (Gtk.MenuItem item) {
+
+		private void on_header_remove (Gtk.MenuItem item)
+		{
 			var title = ((Gtk.Menu) item.parent).get_title();
 			foreach (var column in get_columns()) {
 				if (column.title == title) {
@@ -436,12 +465,15 @@ namespace Abraca {
 			}
 		}
 
-		private void on_header_reset_sorting (Gtk.MenuItem item) {
+
+		private void on_header_reset_sorting (Gtk.MenuItem item)
+		{
 			sorting = Sorting();
 		}
 
 
-		private void create_context_menu() {
+		private void create_context_menu ()
+		{
 			Gtk.MenuItem item;
 
 			filter_menu = new Gtk.Menu();
@@ -478,7 +510,8 @@ namespace Abraca {
 		}
 
 
-		private void create_drag_n_drop() {
+		private void create_drag_n_drop ()
+		{
 			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
 			                         _target_entries,
 			                         Gdk.DragAction.MOVE);
@@ -486,7 +519,9 @@ namespace Abraca {
 			drag_data_get.connect(on_drag_data_get);
 		}
 
-		private void update_sort_indicators() {
+
+		private void update_sort_indicators ()
+		{
 			foreach (var column in get_columns()) {
 				if (column.title == sorting.field) {
 					column.sort_order = sorting.order;
@@ -497,35 +532,22 @@ namespace Abraca {
 			}
 		}
 
-		private void on_drag_data_get(Gtk.Widget w, Gdk.DragContext ctx,
-		                              Gtk.SelectionData selection_data,
-		                              uint info, uint time) {
-			GLib.List<uint> mid_list = new GLib.List<uint>();
 
-			var sel = get_selection();
-			var lst = sel.get_selected_rows(null);
-
-			foreach (unowned Gtk.TreePath p in lst) {
-				Gtk.TreeIter iter;
-				uint mid;
-
-				model.get_iter(out iter, p);
-				model.get(iter, FilterModel.Column.ID, out mid, -1);
-
-				mid_list.prepend(mid);
-			}
-
-			uint len = mid_list.length();
-			uint[] mid_array = new uint[len];
-
+		private void on_drag_data_get (Gtk.Widget widget, Gdk.DragContext ctx,
+		                               Gtk.SelectionData selection_data,
+		                               uint info, uint time)
+		{
+			var entries = get_selected_rows<int>(FilterModel.Column.ID);
+			var mid_array = new int[entries.size + 1];
 			int pos = 0;
-			foreach (uint mid in mid_list) {
+
+			foreach (int mid in entries) {
 				mid_array[pos++] = mid;
 			}
 
 			/* This should be removed as #515408 gets fixed. */
 			unowned uchar[] data = (uchar[]) mid_array;
-			data.length = (int)(mid_array.length * sizeof(uint));
+			data.length = (int)((mid_array.length + 1) * sizeof(int));
 
 			selection_data.set(
 				Gdk.Atom.intern(_target_entries[0].target, true),

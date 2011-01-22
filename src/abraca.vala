@@ -18,75 +18,51 @@
  */
 
 namespace Abraca {
-	public class Abraca : GLib.Object {
-		static Abraca _instance;
-		private MainWindow _main_window;
-		private Medialib _medialib;
+	public static int main (string[] args)
+	{
+		var context = new OptionContext (_("- Abraca, an XMMS2 client."));
+		context.add_group (Gtk.get_option_group (false));
 
-		construct {
-			_main_window = new MainWindow();
-			_main_window.delete_event.connect ((ev) => {
-				Configurable.save();
-				Gtk.main_quit();
-				return true;
-			});
-			_medialib = new Medialib();
+		try {
+			context.parse (ref args);
+		} catch (GLib.OptionError err) {
+			var help = context.get_help (true, null);
+			GLib.print ("%s\n%s", err.message, help);
+			Posix.exit (1);
 		}
 
-		public MainWindow main_window {
-			get {
-				return _main_window;
-			}
+		Gtk.init(ref args);
+
+		try {
+			create_icon_factory().add_default();
+		} catch (GLib.Error e) {
+			GLib.error(e.message);
 		}
 
-		public Medialib medialib {
-			get {
-				return _medialib;
-			}
-		}
+		GLib.Environment.set_application_name("Abraca");
 
-		public static Abraca instance() {
-			if (_instance == null)
-				_instance = new Abraca();
+		GLib.Intl.textdomain(Build.Config.APPNAME);
+		GLib.Intl.bindtextdomain(Build.Config.APPNAME, Build.Config.LOCALEDIR);
+		GLib.Intl.bind_textdomain_codeset(Build.Config.APPNAME, "UTF-8");
 
-			return _instance;
-		}
+		var client = new Client();
 
-		public static int main(string[] args) {
-			Client c = Client.instance();
+		var window = new MainWindow(client);
+		window.delete_event.connect((ev) => {
+			Configurable.save();
+			Gtk.main_quit();
+			return true;
+		});
 
-			Gtk.init(ref args);
+		Configurable.load();
 
-			try {
-				create_icon_factory().add_default();
-			} catch (GLib.Error e) {
-				GLib.error(e.message);
-			}
+		window.show_all ();
 
-			GLib.Environment.set_application_name("Abraca");
+		if (!client.try_connect())
+			GLib.Timeout.add(500, client.reconnect);
 
-			GLib.Intl.textdomain(Build.Config.APPNAME);
-			GLib.Intl.bindtextdomain(Build.Config.APPNAME, Build.Config.LOCALEDIR);
-			GLib.Intl.bind_textdomain_codeset(Build.Config.APPNAME, "UTF-8");
+		Gtk.main();
 
-			Abraca a = Abraca.instance();
-
-			Configurable.load();
-
-			a.main_window.show_all();
-
-			/**
-			 * TODO: Server Browser is a bit stupid, fix it.
-			 * ServerBrowser sb = new ServerBrowser(a.main_window);
-			 */
-
-			if (!c.try_connect())
-				GLib.Timeout.add(500, c.reconnect);
-
-
-			Gtk.main();
-
-			return 0;
-		}
+		return 0;
 	}
 }

@@ -21,6 +21,8 @@ using GLib;
 
 namespace Abraca {
 	public class MedialibInfoDialog : Gtk.Dialog, Gtk.Buildable {
+		private Client client;
+
 		private GLib.List<uint> ids;
 		private unowned GLib.List<uint> current;
 
@@ -63,7 +65,9 @@ namespace Abraca {
 			"Southern Rock", "Space", "Techno", "Techno-Industrial", "Top 40",
 			"Trailer", "Trance", "Tribal", "Trip-Hop", "Vocal"};
 
-		public static MedialibInfoDialog build() {
+
+		public static MedialibInfoDialog build ()
+		{
 			var builder = new Gtk.Builder ();
 
 			try {
@@ -75,16 +79,25 @@ namespace Abraca {
 			}
 
 			var instance = builder.get_object("mediainfo_dialog") as MedialibInfoDialog;
-			instance.transient_for = Abraca.instance().main_window;
 
 			return instance;
 		}
 
-		construct {
+
+		public MedialibInfoDialog ()
+		{
 			ids = new GLib.List<uint>();
 		}
 
-		public void parser_finished (Gtk.Builder builder) {
+
+		public void set_client (Client c)
+		{
+			client = c;
+		}
+
+
+		public void parser_finished (Gtk.Builder builder)
+		{
 			genre_combo_box_entry = builder.get_object("ent_genre") as Gtk.ComboBoxEntry;
 
 			foreach (var genre in genres) {
@@ -114,7 +127,9 @@ namespace Abraca {
 			builder.connect_signals(this);
 		}
 
-		void change_color(Gtk.Entry editable, string origin) {
+
+		private void change_color (Gtk.Entry editable, string origin)
+		{
 			Gdk.Color? color = null;
 
 			if (origin != editable.get_text()) {
@@ -127,133 +142,172 @@ namespace Abraca {
 			editable.set_tooltip_text(editable.get_text());
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_song_entry_changed (Gtk.Entry entry) {
+		public void on_song_entry_changed (Gtk.Entry entry)
+		{
 			change_color(entry, song);
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_artist_entry_changed (Gtk.Entry entry) {
+		public void on_artist_entry_changed (Gtk.Entry entry)
+		{
 			change_color(entry, artist);
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_album_entry_changed (Gtk.Entry entry) {
+		public void on_album_entry_changed (Gtk.Entry entry)
+		{
 			change_color(entry, album);
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_tracknr_button_changed (Gtk.SpinButton entry) {
+		public void on_tracknr_button_changed (Gtk.SpinButton entry)
+		{
 			change_color(entry, tracknr);
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_date_entry_changed (Gtk.Entry entry) {
+		public void on_date_entry_changed (Gtk.Entry entry)
+		{
 			change_color(entry, date);
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_genre_combo_box_entry_changed (Gtk.ComboBox editable) {
+		public void on_genre_combo_box_entry_changed (Gtk.ComboBox editable)
+		{
 			var widget = genre_combo_box_entry.get_child() as Gtk.Entry;
 			change_color(widget, genre);
 		}
 
-		private void set_str(Gtk.Editable editable, string key) {
-			Client c = Client.instance();
+
+		private void set_str(Gtk.Editable editable, string key)
+		{
 			unowned string val = editable.get_chars(0, -1);
 
-			c.xmms.medialib_entry_property_set_str(
+			client.xmms.medialib_entry_property_set_str(
 				current.data, key, val
 			).notifier_set(on_value_wrote);
 		}
 
-		private void set_int(Gtk.SpinButton editable, string key) {
-			Client c = Client.instance();
+
+		private void set_int(Gtk.SpinButton editable, string key)
+		{
 			int val = editable.get_value_as_int();
 
-			c.xmms.medialib_entry_property_set_int(
+			client.xmms.medialib_entry_property_set_int(
 				current.data, key, val
 			).notifier_set( on_value_wrote);
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_song_entry_activated (Gtk.Entry entry) {
+		public void on_song_entry_activated (Gtk.Entry entry)
+		{
 			set_str(entry, "title");
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_artist_entry_activated (Gtk.Entry entry) {
+		public void on_artist_entry_activated (Gtk.Entry entry)
+		{
 			set_str(entry, "artist");
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_album_entry_activated (Gtk.Entry entry) {
+		public void on_album_entry_activated (Gtk.Entry entry)
+		{
 			set_str(entry, "album");
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_tracknr_button_activated (Gtk.SpinButton entry) {
+		public void on_tracknr_button_activated (Gtk.SpinButton entry)
+		{
 			set_int(entry, "tracknr");
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_date_entry_activated(Gtk.Entry entry) {
+		public void on_date_entry_activated(Gtk.Entry entry)
+		{
 			set_str(entry, "date");
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_genre_box_button_activated (Gtk.Entry entry) {
+		public void on_genre_box_button_activated (Gtk.Entry entry)
+		{
 			set_str(entry, "genre");
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_rating_entry_changed (RatingEntry entry) {
-			Client c = Client.instance();
+		public void on_rating_entry_changed (RatingEntry entry)
+		{
 			if (entry.rating <= 0) {
-				c.xmms.medialib_entry_property_remove_with_source(
+				client.xmms.medialib_entry_property_remove_with_source(
 					current.data, "client/generic", "rating"
 				).notifier_set(on_value_wrote);
 			} else {
-				c.xmms.medialib_entry_property_set_int_with_source(
+				client.xmms.medialib_entry_property_set_int_with_source(
 					current.data, "client/generic", "rating", entry.rating
 				).notifier_set(on_value_wrote);
 			}
 		}
 
-		private bool on_value_wrote(Xmms.Value val) {
+
+		private bool on_value_wrote (Xmms.Value val)
+		{
 			refresh_content();
 			return true;
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_prev_button_clicked (Gtk.Button btn) {
+		public void on_prev_button_clicked (Gtk.Button btn)
+		{
 			if (current.prev != null) {
 				current = current.prev;
 				refresh();
 			}
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public  void on_next_button_clicked (Gtk.Button btn) {
+		public  void on_next_button_clicked (Gtk.Button btn)
+		{
 			if (current.next != null) {
 				current = current.next;
 				refresh();
 			}
 		}
 
+
 		[CCode (instance_pos = -1)]
-		public void on_close_all_button_clicked (Gtk.Button btn) {
+		public void on_close_all_button_clicked (Gtk.Button btn)
+		{
 			close();
 		}
 
-		private bool on_medialib_get_info(Xmms.Value val) {
+
+		private bool on_medialib_get_info (Xmms.Value val)
+		{
 			show_overview(val);
 			store.clear();
 			val.dict_foreach(dict_foreach);
 			return true;
 		}
 
-		private void refresh_border() {
+
+		private void refresh_border ()
+		{
 			string info = "Metadata for song %d of %d".printf(
 				ids.position(current) + 1, (int) ids.length()
 			);
@@ -264,20 +318,24 @@ namespace Abraca {
 			prev_button.sensitive = (current.prev != null);
 		}
 
-		private void refresh_content() {
-			Client c = Client.instance();
 
-			c.xmms.medialib_get_info(
+		private void refresh_content ()
+		{
+			client.xmms.medialib_get_info(
 				current.data
 			).notifier_set(on_medialib_get_info);
 		}
 
-		private void refresh() {
+
+		private void refresh ()
+		{
 			refresh_content();
 			refresh_border();
 		}
 
-		public void add_mid(uint id) {
+
+		public void add_mid (uint id)
+		{
 			ids.append(id);
 			if (current == null) {
 				current = ids;
@@ -286,7 +344,9 @@ namespace Abraca {
 			refresh_border();
 		}
 
-		private void show_overview(Xmms.Value propdict) {
+
+		private void show_overview (Xmms.Value propdict)
+		{
 			Xmms.Value val = propdict.propdict_to_dict();
 			string tmp;
 			int itmp;
@@ -366,8 +426,10 @@ namespace Abraca {
 			}
 		}
 
+
 		/* TODO: refactor me */
-		private void dict_foreach(string key, Xmms.Value val) {
+		private void dict_foreach (string key, Xmms.Value val)
+		{
 			string? val_str, parent_source = null;
 			Gtk.TreeIter parent, iter;
 
@@ -409,14 +471,14 @@ namespace Abraca {
 		public Gtk.Entry entry;
 		private Gtk.ListStore urls;
 
-		construct {
+		public MedialibAddUrlDialog ()
+		{
 			set_default_response(Gtk.ResponseType.OK);
 			set_default_size(300, 74);
 
 			destroy_with_parent = true;
 			modal = true;
 			title = _("Add URL");
-			transient_for = (Abraca.instance().main_window);
 			urls = new Gtk.ListStore(1, typeof(string));
 
 			add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
@@ -439,7 +501,9 @@ namespace Abraca {
 			show_all();
 		}
 
-		private void save_url(string url) {
+
+		private void save_url (string url)
+		{
 			Gtk.TreeIter iter;
 			string current;
 
@@ -455,17 +519,23 @@ namespace Abraca {
 			urls.insert_with_values(out iter, 0, 0, url);
 		}
 
-		private void on_close(Gtk.Dialog dialog) {
+
+		private void on_close (Gtk.Dialog dialog)
+		{
 			Configurable.unregister(this);
 		}
 
-		private void on_response(Gtk.Dialog w, int response) {
+
+		private void on_response (Gtk.Dialog w, int response) {
 			if(response == Gtk.ResponseType.OK && entry.get_text() != "") {
 				save_url(entry.get_text());
 			}
 		}
 
-		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+
+		public void set_configuration (GLib.KeyFile file)
+			throws GLib.KeyFileError
+		{
 			if (file.has_group("add_dialog")) {
 				if (file.has_key("add_dialog", "urls")) {
 					string[] list = file.get_string_list("add_dialog", "urls");
@@ -479,7 +549,9 @@ namespace Abraca {
 			}
 		}
 
-		public void get_configuration(GLib.KeyFile file) {
+
+		public void get_configuration (GLib.KeyFile file)
+		{
 			Gtk.TreeIter iter;
 			string current;
 			string[] list = new string[25];
@@ -496,10 +568,12 @@ namespace Abraca {
 		}
 	}
 
+
 	public class MedialibFileChooserDialog : Gtk.FileChooserDialog, IConfigurable {
 		private string current_folder;
 
-		construct {
+		public MedialibFileChooserDialog ()
+		{
 			Gtk.CheckButton button = new Gtk.CheckButton.with_label(
 					_("don't add to active playlist"));
 
@@ -507,7 +581,6 @@ namespace Abraca {
 			modal = true;
 			select_multiple = true;
 			title = _("Add File");
-			transient_for = Abraca.instance().main_window;
 
 			add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
 			add_button(Gtk.STOCK_OPEN, Gtk.ResponseType.OK);
@@ -519,17 +592,24 @@ namespace Abraca {
 			show_all();
 		}
 
-		private void on_close(Gtk.Dialog dialog) {
+
+		private void on_close (Gtk.Dialog dialog)
+		{
 			Configurable.unregister(this);
 		}
 
-		private void on_response(Gtk.Dialog dialog, int response) {
+
+		private void on_response (Gtk.Dialog dialog, int response)
+		{
 			if(response == Gtk.ResponseType.OK) {
 				current_folder = get_current_folder();
 			}
 		}
 
-		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+
+		public void set_configuration (GLib.KeyFile file)
+			throws GLib.KeyFileError
+		{
 			if (file.has_group("add_dialog")) {
 				if (file.has_key("add_dialog", "file")) {
 					current_folder = file.get_string("add_dialog", "file");
@@ -538,7 +618,9 @@ namespace Abraca {
 			}
 		}
 
-		public void get_configuration(GLib.KeyFile file) {
+
+		public void get_configuration (GLib.KeyFile file)
+		{
 			if(current_folder != null) {
 				file.set_string("add_dialog", "file", current_folder);
 			}
@@ -548,9 +630,23 @@ namespace Abraca {
 	public class Medialib : GLib.Object {
 		public MedialibInfoDialog info_dialog;
 
-		public void info_dialog_add_id(uint mid) {
+		private Client client;
+		private Gtk.Window parent;
+
+
+		public Medialib (Gtk.Window window, Client c)
+		{
+			client = c;
+			parent = window;
+		}
+
+
+		public void info_dialog_add_id (uint mid)
+		{
 			if (info_dialog == null) {
 				info_dialog = MedialibInfoDialog.build();
+				info_dialog.transient_for = parent;
+				info_dialog.set_client (client);
 				info_dialog.delete_event.connect((ev) => {
 					info_dialog = null;
 					return false;
@@ -560,23 +656,26 @@ namespace Abraca {
 			info_dialog.add_mid(mid);
 		}
 
-		public void create_add_url_dialog() {
-			MedialibAddUrlDialog dialog = new MedialibAddUrlDialog();
+
+		public static void create_add_url_dialog (Gtk.Window parent, Client client)
+		{
+			var dialog = new MedialibAddUrlDialog();
+			dialog.transient_for = parent;
 
 			if (dialog.run() == Gtk.ResponseType.OK) {
-				Client c = Client.instance();
-
-				c.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, dialog.entry.get_text());
+				client.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, dialog.entry.get_text());
 			}
 			dialog.close();
 		}
 
-		public void create_add_file_dialog(Gtk.FileChooserAction action) {
-			MedialibFileChooserDialog dialog = new MedialibFileChooserDialog();
+
+		public static void create_add_file_dialog (Gtk.Window parent, Client client, Gtk.FileChooserAction action)
+		{
+			var dialog = new MedialibFileChooserDialog();
 			dialog.set_action(action);
+			dialog.transient_for = parent;
 
 			if (dialog.run() == Gtk.ResponseType.OK) {
-				Client c = Client.instance();
 				GLib.SList<string> filenames;
 				string url;
 				Gtk.CheckButton button = (Gtk.CheckButton) dialog.extra_widget;
@@ -588,15 +687,15 @@ namespace Abraca {
 
 					if (action == Gtk.FileChooserAction.OPEN) {
 						if (button.get_active()) {
-							c.xmms.medialib_add_entry(url);
+							client.xmms.medialib_add_entry(url);
 						} else {
-							c.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, url);
+							client.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, url);
 						}
 					} else {
 						if (button.get_active()) {
-							c.xmms.medialib_import_path(url);
+							client.xmms.medialib_import_path(url);
 						} else {
-							c.xmms.playlist_radd(Xmms.ACTIVE_PLAYLIST, url);
+							client.xmms.playlist_radd(Xmms.ACTIVE_PLAYLIST, url);
 						}
 					}
 				}

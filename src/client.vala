@@ -22,12 +22,18 @@ using Gee;
 
 namespace Abraca {
 	public class Client : GLib.Object {
-		static Client _instance;
-		private Xmms.Client _xmms;
-		private void *_gmain;
+		private Xmms.Client _xmms = null;
+		private void *_gmain = null;
 
-		public signal void connected();
-		public signal void disconnected();
+		public enum ConnectionState
+		{
+			Disconnected,
+			Connecting,
+			Connected
+		}
+
+
+		public signal void connection_state_changed (ConnectionState state);
 
 		public signal void playback_status(int status);
 		public signal void playback_current_id(int mid);
@@ -71,26 +77,6 @@ namespace Abraca {
 			"*"
 		};
 
-		construct {
-			_xmms = new Xmms.Client("Abraca");
-		}
-
-		private void on_disconnect() {
-			disconnected();
-
-			GLib.Timeout.add(500, reconnect);
-
-			Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
-		}
-
-
-		public static Client instance() {
-			if (_instance == null)
-				_instance = new Client();
-
-			return _instance;
-		}
-
 
 		public Xmms.Client xmms {
 			get {
@@ -105,22 +91,41 @@ namespace Abraca {
 			}
 		}
 
-
 		public bool try_connect(string? path = null) {
 			if (path == null) {
 				path = GLib.Environment.get_variable("XMMS_PATH");
 			}
 
-			detach_callbacks();
+			var next_client = new Xmms.Client("Abraca");
 
-			if (_xmms.connect(path)) {
+			connection_state_changed (ConnectionState.Connecting);
+
+			if (next_client.connect(path)) {
+				detach_callbacks();
+
+				if (_gmain != null)
+					Xmms.MainLoop.GMain.shutdown(null, _gmain);
+
+				_xmms = next_client;
 				_gmain = Xmms.MainLoop.GMain.init(_xmms);
-				_xmms.disconnect_callback_set(on_disconnect);
+
+				_xmms.disconnect_callback_set(() => {
+					connection_state_changed (ConnectionState.Disconnected);
+					GLib.debug ("Lost connection to XMMS2, restart to reconnect.");
+
+					Gtk.main_quit ();
+				});
+
 				attach_callbacks();
 
-				connected();
+				connection_state_changed (ConnectionState.Connected);
 
 				return true;
+			}
+
+			/* Connection failed, using the already established one */
+			if (_xmms != null) {
+				connection_state_changed (ConnectionState.Connected);
 			}
 
 			return false;
@@ -157,10 +162,10 @@ namespace Abraca {
 		}
 
 		private void detach_callbacks() {
-			foreach (var result in _recallable_references) {
+			while (!_recallable_references.is_empty) {
+				var result = _recallable_references.remove_at(0);
 				result.disconnect();
 			}
-			_recallable_references.clear();
 		}
 
 		private void attach_callbacks() {
@@ -427,7 +432,7 @@ namespace Abraca {
 			bool ret = false;
 			bool numeric = true;
 
-			for(int i = 0; i < str.len(); i++) {
+			for(int i = 0; i < str.length; i++) {
 				switch(str[i]) {
 					case ' ':
 					case '\\':

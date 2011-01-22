@@ -1,5 +1,6 @@
 build/data/ui/about.xml
 build/data/ui/main_menu.xml
+build/data/ui/server_browser.xml
 build/src/collections_model.c
 build/src/collections_view.c
 build/src/components/collections/collections_model.c

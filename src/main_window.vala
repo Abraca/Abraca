@@ -19,20 +19,16 @@
 
 namespace Abraca {
 	public class MainWindow : Gtk.Window, IConfigurable {
-		private MainHPaned _main_hpaned;
+		private Config _config;
+		private ToolBar _toolbar;
+		private Gtk.HPaned _main_hpaned;
+		private Gtk.HPaned _right_hpaned;
 		private Gtk.CheckMenuItem _repeat_all;
 		private Gtk.CheckMenuItem _repeat_one;
 
-		public MainHPaned main_hpaned {
-			get {
-				return _main_hpaned;
-			}
-		}
-
-		construct {
-			var client = Client.instance();
-
-			create_widgets();
+		public MainWindow (Client client)
+		{
+			create_widgets(client);
 
 			try {
 				set_icon(new Gdk.Pixbuf.from_inline (
@@ -46,20 +42,12 @@ namespace Abraca {
 			height_request = 600;
 			allow_shrink = true;
 
-			main_hpaned.set_sensitive(false);
-
-			client.disconnected.connect(c => {
-				main_hpaned.set_sensitive(false);
-			});
-
-			client.connected.connect(c => {
-				main_hpaned.set_sensitive(true);
-			});
-
 			Configurable.register(this);
 		}
 
-		public void set_configuration(GLib.KeyFile file) throws GLib.KeyFileError {
+		public void set_configuration (GLib.KeyFile file)
+			throws GLib.KeyFileError
+		{
 			int xpos, ypos, width, height;
 
 			if (!file.has_group("main_win")) {
@@ -96,9 +84,26 @@ namespace Abraca {
 			if (width > 0 && height > 0) {
 				resize(width, height);
 			}
+
+			if (file.has_group("panes")) {
+				if (file.has_key("panes", "pos1")) {
+					var pos = file.get_integer("panes", "pos1");
+					if (pos >= 0) {
+						_main_hpaned.position = pos;
+					}
+				}
+				if (file.has_key("panes", "pos2")) {
+					var pos = file.get_integer ("panes", "pos2");
+					if (pos >= 0) {
+						_right_hpaned.position = pos;
+					}
+				}
+			}
 		}
 
-		public void get_configuration(GLib.KeyFile file) {
+
+		public void get_configuration (GLib.KeyFile file)
+		{
 			int xpos, ypos, width, height;
 
 			file.set_integer("main_win", "gravity", gravity);
@@ -112,21 +117,59 @@ namespace Abraca {
 
 			file.set_integer("main_win", "width", width);
 			file.set_integer("main_win", "height", height);
+
+			file.set_integer("panes", "pos1", _main_hpaned.position);
+			file.set_integer("panes", "pos2", _right_hpaned.position);
 		}
 
 
-		private void create_widgets() {
+		private void create_widgets (Client client)
+		{
+			_config = new Config ();
+
 			var accel_group = new Gtk.AccelGroup();
 
 			var vbox = new Gtk.VBox(false, 0);
 
-			var menubar = create_menubar();
+			var menubar = create_menubar(client);
 			vbox.pack_start(menubar, false, true, 0);
 
-			var toolbar = new ToolBar();
-			vbox.pack_start(toolbar, false, false, 6);
+			_toolbar = new ToolBar(client, this);
+			vbox.pack_start(_toolbar, false, false, 6);
 
-			_main_hpaned = new MainHPaned(accel_group);
+			var scrolled = new Gtk.ScrolledWindow (null, null);
+			scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
+			scrolled.set_shadow_type (Gtk.ShadowType.IN);
+
+			_right_hpaned = new Gtk.HPaned ();
+			_right_hpaned.position = 430;
+			_right_hpaned.position_set = true;
+
+			var medialib = new Medialib (this, client);
+
+			var filter = new FilterWidget (client, _config, medialib, accel_group);
+			var search = filter.get_searchable ();
+
+			var playlist = new PlaylistWidget (client, _config, medialib, search);
+
+			_right_hpaned.pack1(filter, true, true);
+			_right_hpaned.pack2(playlist, false, true);
+
+			var collections = new CollectionsView (client, search);
+			scrolled.add (collections);
+
+			_main_hpaned = new Gtk.HPaned ();
+			_main_hpaned.position = 135;
+			_main_hpaned.position_set = true;
+			_main_hpaned.sensitive = false;
+			_main_hpaned.pack1 (scrolled, false, true);
+			_main_hpaned.pack2 (_right_hpaned, true, true);
+
+			client.connection_state_changed.connect((c, state) => {
+				_main_hpaned.sensitive = (state == Client.ConnectionState.Connected);
+				_toolbar.sensitive = (state == Client.ConnectionState.Connected);
+			});
+
 			vbox.pack_start(_main_hpaned, true, true, 0);
 
 			add(vbox);
@@ -135,7 +178,8 @@ namespace Abraca {
 		}
 
 
-		private void on_config_changed (Client client, string key, string value) {
+		private void on_config_changed (Client client, string key, string value)
+		{
 			Gtk.CheckMenuItem item;
 
 			if (key == "playlist.repeat_all") {
@@ -154,9 +198,9 @@ namespace Abraca {
 			item.sensitive = true;
 		}
 
-		private Gtk.Widget create_menubar() {
+		private Gtk.Widget create_menubar (Client client)
+		{
 			var builder = new Gtk.Builder ();
-			var client = Client.instance();
 
 			try {
 				builder.add_from_string(
@@ -181,20 +225,34 @@ namespace Abraca {
 				Gtk.main_quit();
 			});
 
+			uiman.get_action("/Menu/Music/Connect").activate.connect ((action) => {
+				var sb = ServerBrowser.build(this);
+				while (sb.run() == 1) {
+					GLib.debug("host: %s", sb.selected_host);
+					if (client.try_connect (sb.selected_host)) {
+						break;
+					}
+				}
+			});
+
 			uiman.get_action("/Menu/Music/Add/Files").activate.connect((action) => {
-				Abraca.instance().medialib.create_add_file_dialog(Gtk.FileChooserAction.OPEN);
+				var parent = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
+				Medialib.create_add_file_dialog(parent, client, Gtk.FileChooserAction.OPEN);
 			});
 
 			uiman.get_action("/Menu/Music/Add/Directory").activate.connect((action) => {
-				Abraca.instance().medialib.create_add_file_dialog(Gtk.FileChooserAction.SELECT_FOLDER);
+				var parent = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
+				Medialib.create_add_file_dialog(parent, client, Gtk.FileChooserAction.SELECT_FOLDER);
 			});
 
 			uiman.get_action("/Menu/Music/Add/URL").activate.connect((action) => {
-				Abraca.instance().medialib.create_add_url_dialog();
+				var parent = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
+				Medialib.create_add_url_dialog(parent, client);
 			});
 
 			uiman.get_action("/Menu/Playlist/ConfigureSorting").activate.connect((action) => {
-				Config.instance().show_sorting_dialog();
+
+				_config.show_sorting_dialog(this);
 			});
 
 			uiman.get_action("/Menu/Playlist/Clear").activate.connect((action) => {
@@ -240,7 +298,7 @@ namespace Abraca {
 
 				about.version = Build.Config.VERSION;
 
-				about.transient_for = Abraca.instance().main_window;
+				about.transient_for = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
 
 				about.run();
 				about.hide();

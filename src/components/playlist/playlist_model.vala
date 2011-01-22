@@ -132,15 +132,23 @@ namespace Abraca {
 		 * TODO: Move row x to pos y.
 		 */
 		private void on_playlist_move(Client c, string playlist, int pos, int npos) {
-			Gtk.TreeIter? iter, niter = null;
-			if (iter_nth_child (out iter, null, pos) &&
-			    iter_nth_child(out niter, null, npos)) {
-				if (pos < npos) {
-					move_after (iter, niter);
-				} else {
-					move_before (iter, niter);
-				}
+			Gtk.TreeIter? niter = null;
+			Gtk.TreeIter iter;
+
+			if (playlist != client.current_playlist) {
+				return;
 			}
+
+			if (!iter_nth_child (out iter, null, pos))
+				return;
+
+			if (!iter_nth_child (out niter, null, npos))
+				return;
+
+			if (pos < npos)
+				move_after (ref iter, niter);
+			else
+				move_before (ref iter, niter);
 		}
 
 
@@ -150,6 +158,10 @@ namespace Abraca {
 		 */
 		private void on_playlist_position(Client c, string playlist, uint pos) {
 			Gtk.TreeIter iter;
+
+			if (playlist != client.current_playlist) {
+				return;
+			}
 
 			/* Remove the old position indicator */
 			if (_position.valid()) {

@@ -1,12 +1,14 @@
 Import('*')
 
 sources = Split("""
-	sv.po
-	en.po
-	de.po
-	nl.po
+    sv.po
+    en.po
+    de.po
+    nl.po
 """)
 
-for po in sources:
-	mo = env.MsgFmt(po)
-	env.InstallLocale(mo[0].attributes.install_path, mo)
+
+if env.get('HAVE_MSGFMT'):
+    for po in sources:
+        mo = env.MsgFmt(po)
+        env.InstallLocale(mo[0].attributes.install_path, mo)

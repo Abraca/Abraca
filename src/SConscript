@@ -6,11 +6,10 @@ vala_sources = """
     abraca.vala
     client.vala
     config.vala
+    coverart.vala
     dragdroptarget.vala
-    main_hpaned.vala
     main_window.vala
     medialib.vala
-    right_hpaned.vala
     stock.vala
     toolbar.vala
     transform.vala
@@ -27,12 +26,15 @@ widgets_sources = """
     widgets/cellrenderercollection.vala
     widgets/cellrenderertogglepixbuf.vala
     widgets/rating_entry.vala
+    widgets/prettylabel.vala
 """.split()
 
 components_sources = """
     components/collections/collections_model.vala
     components/collections/collections_view.vala
 
+    components/filter/filter_widget.vala
+    components/filter/filter_searchbox.vala
     components/filter/filter_editor.vala
     components/filter/filter_model.vala
     components/filter/filter_view.vala
@@ -40,6 +42,9 @@ components_sources = """
     components/playlist/playlist_model.vala
     components/playlist/playlist_view.vala
     components/playlist/playlist_widget.vala
+
+    components/server/server_browser.vala
+    components/server/server_model.vala
 """.split()
 
 gladeui_sources = """

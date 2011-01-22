@@ -1,4 +1,4 @@
-[CCode(cheader_filename = "xmmsclient/xmmsclient.h")]
+[CCode(cheader_filename = "xmmsclient/xmmsclient.h", cprefix="xmms")]
 namespace Xmms {
 	[CCode(cprefix="XMMS_COLLECTION_CHANGED_")]
 	public enum CollectionChanged {
@@ -66,7 +66,21 @@ namespace Xmms {
 		OPFIL_GREATEREQ,
 	}
 
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
 	[CCode(cprefix="XMMS_COLLECTION_TYPE_")]
+	public enum CollectionType {
+		REFERENCE,
+		UNIVERSE,
+		UNION,
+		INTERSECTION,
+		COMPLEMENT,
+		FILTER,
+		ORDER,
+		LIMIT,
+		MEDIASET,
+		IDLIST
+	}
+#else
 	public enum CollectionType {
 		REFERENCE,
 		UNION,
@@ -81,6 +95,7 @@ namespace Xmms {
 		QUEUE,
 		PARTYSHUFFLE,
 	}
+#endif
 
 	[CCode(cprefix="XMMS_MEDIALIB_ENTRY_STATUS_")]
 	public enum EntryStatus {
@@ -145,6 +160,14 @@ namespace Xmms {
 	public const string COLLECTION_NS_ALL;
 	public const string COLLECTION_NS_COLLECTIONS;
 	public const string COLLECTION_NS_PLAYLISTS;
+
+	public const size_t PATH_MAX;
+	public const uint16 DEFAULT_TCP_PORT;
+
+	public static unowned string? userconfdir_get (char[] buffer=new char[PATH_MAX]);
+	public static unowned string? usercachedir_get (char[] buffer=new char[PATH_MAX]);
+	public static unowned string? default_ipcpath_get (char[] buffer=new char[PATH_MAX]);
+	public static unowned string? fallback_ipcpath_get (char[] buffer=new char[PATH_MAX]);
 
 	[Compact]
 	[CCode (cname="xmmsc_coll_token_t")]
@@ -272,7 +295,7 @@ namespace Xmms {
 		/*
 		 * Bindata functions
 		 */
-		public Result bindata_add (uchar[] data);
+		public Result bindata_add (uint8[] data);
 		public Result bindata_retrieve(string hash);
 		public Result bindata_remove(string hash);
 
@@ -296,7 +319,7 @@ namespace Xmms {
 		/*
 		 * Other functions
 		 */
-		public static unowned string userconfdir_get (char[] buffer);
+		public static unowned string? userconfdir_get (char[] buffer=new char[PATH_MAX]);
 		public string get_last_error ();
 		public Result quit();
 		public Result broadcast_quit ();
@@ -312,18 +335,17 @@ namespace Xmms {
 	public class Collection {
 		[CCode (cname = "xmmsc_coll_new")]
 		public Collection(CollectionType type);
-		[CCode (array_length = false)]
-		public void set_idlist(uint[] ids);
+		public void set_idlist([CCode (array_length = false)] int[] ids);
 		public void add_operand(Collection op);
 		public void remove_operand(Collection op);
 
-		public bool idlist_append(uint id);
-		public bool idlist_insert(uint index, uint id);
-		public bool idlist_move(uint index, uint newindex);
-		public bool idlist_remove(uint index);
+		public bool idlist_append(int id);
+		public bool idlist_insert(int index, int id);
+		public bool idlist_move(int index, int newindex);
+		public bool idlist_remove(int index);
 		public bool idlist_clear();
-		public bool idlist_get_index(uint index, out int val);
-		public bool idlist_set_index(uint index, uint val);
+		public bool idlist_get_index(int index, out int val);
+		public bool idlist_set_index(int index, int val);
 		public uint idlist_get_size();
 
 		public CollectionType get_type();
@@ -380,7 +402,7 @@ namespace Xmms {
 		[CCode(cname="xmmsv_new_coll")]
 		public Value.from_coll(Xmms.Collection val);
 		[CCode(cname="xmmsv_new_bin")]
-		public Value.from_bin(uchar[] val);
+		public Value.from_bin(uint8[] val);
 		[CCode(cname="xmmsv_new_list")]
 		public Value.from_list();
 		[CCode(cname="xmmsv_new_dict")]
@@ -395,7 +417,7 @@ namespace Xmms {
 		public bool get_int (out int val);
 		public bool get_string (out unowned string val);
 		public bool get_coll (out unowned Xmms.Collection coll);
-		public bool get_bin ([CCode(array_length_type="uint")] out unowned uchar[] val);
+		public bool get_bin ([CCode(type="const unsigned char **", array_length_type="uint")] out unowned uint8[] val);
 
 		public bool get_list_iter (out unowned Xmms.ListIter iter);
 		public bool get_dict_iter (out unowned Xmms.DictIter iter);

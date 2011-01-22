@@ -49,9 +49,15 @@ namespace Abraca {
 		/** to keep track of our last drop target */
 		private Gtk.TreePath _drop_path = null;
 
-		construct {
-			Client c = Client.instance();
+		private Client client;
+		private Searchable search;
+
+		public CollectionsView (Client _client, Searchable _search)
+		{
 			CollectionsModel store;
+
+			client = _client;
+			search = _search;
 
 			search_column = 0;
 			enable_search = true;
@@ -59,11 +65,12 @@ namespace Abraca {
 			fixed_height_mode = true;
 
 			model = store = new CollectionsModel(render_icon(STOCK_COLLECTION,
-															 Gtk.IconSize.LARGE_TOOLBAR,
-															 null),
-												 render_icon(STOCK_PLAYLIST,
-															 Gtk.IconSize.LARGE_TOOLBAR,
-															 null));
+			                                                 Gtk.IconSize.LARGE_TOOLBAR,
+			                                                 null),
+			                                     render_icon(STOCK_PLAYLIST,
+			                                                 Gtk.IconSize.LARGE_TOOLBAR,
+			                                                 null),
+			                                     _client);
 
 			store.collection_loaded.connect((type) => {
 				expand_all();
@@ -141,8 +148,8 @@ namespace Abraca {
 			}
 
 			/* This should be removed as #515408 gets fixed. */
-			var data = new uchar[name.size () + 1];
-			GLib.Memory.copy (data, name, name.size ());
+			var data = new uchar[name.length + 1];
+			GLib.Memory.copy (data, name, name.length);
 
 			selection_data.set(
 				Gdk.Atom.intern(_target_entries[1].target, true),
@@ -200,10 +207,9 @@ namespace Abraca {
 		/**
 		 * Handle user input rename of collections.
 		 */
-		private void on_cell_edited (Gtk.CellRenderer renderer,
+		private void on_cell_edited (Gtk.CellRendererText renderer,
 		                             string path, string new_text)
 		{
-			Client c = Client.instance();
 			Gtk.TreeIter iter;
 			int type;
 			string name, ns;
@@ -222,7 +228,7 @@ namespace Abraca {
 				ns = Xmms.COLLECTION_NS_COLLECTIONS;
 			}
 
-			c.xmms.coll_rename(name, new_text, ns);
+			client.xmms.coll_rename(name, new_text, ns);
 		}
 
 
@@ -291,7 +297,7 @@ namespace Abraca {
 
 
 		/**
-		 * 
+		 *
 		 */
 		private void on_drag_data_received (Gtk.Widget w,
 		                                    Gdk.DragContext ctx,
@@ -333,16 +339,19 @@ namespace Abraca {
 		private void playlist_insert_drop_data (uint info, string name,
 		                                        Gtk.SelectionData sel)
 		{
-			Client c = Client.instance();
-
 			if (info == (uint) DragDropTargetType.MID) {
 				/* This should be removed as #515408 gets fixed. */
-				unowned uint[] ids = (uint[]) sel.data;
-				ids.length = (int)(sel.length / sizeof(uint));
+				unowned int[] ids = (int[]) sel.data;
+				ids.length = (int)(sel.length / sizeof(int));
 
-				for(int i = ids.length -1; i >= 0; i--) {
-					c.xmms.playlist_add_id(name, ids[i]);
-				}
+				var sort = new Xmms.Value.from_list();
+				sort.list_append (new Xmms.Value.from_string("album"));
+				sort.list_append (new Xmms.Value.from_string("tracknr"));
+
+				var coll = new Xmms.Collection (Xmms.CollectionType.IDLIST);
+				coll.set_idlist (ids);
+
+				client.xmms.playlist_add_collection(name, coll, sort);
 			} else if (info == (uint) DragDropTargetType.COLL) {
 				string[] collection_data;
 				string coll_ns, coll_name;
@@ -356,13 +365,13 @@ namespace Abraca {
 				coll.attribute_set("reference", coll_name);
 				coll.attribute_set("namespace", coll_ns);
 
-				c.xmms.playlist_add_collection(name, coll, null);
+				client.xmms.playlist_add_collection(name, coll, null);
 			}
 		}
 
 
 
-		private void on_row_activated (Gtk.Widget tree,
+		private void on_row_activated (Gtk.TreeView tree,
 		                               Gtk.TreePath path,
 		                               Gtk.TreeViewColumn column)
 		{
@@ -371,22 +380,16 @@ namespace Abraca {
 			Gtk.TreeIter iter;
 			string name;
 
-			Client c = Client.instance();
-
 			store.get_iter(out iter, path);
 			store.get(iter, CollectionsModel.Column.Name, out name);
 
 			type = CollectionsModel.CollectionType.Collection;
 			if (store.path_is_child_of_type(path, type)) {
-				if (Client.collection_needs_quoting(name)) {
-					Abraca.instance().main_window.main_hpaned.
-					right_hpaned.filter_entry_set_text("in:\"" + name + "\"");
-				} else {
-					Abraca.instance().main_window.main_hpaned.
-						right_hpaned.filter_entry_set_text("in:" + name);
-				}
+				if (Client.collection_needs_quoting(name))
+					name = "\"" + name + "\"";
+				search.search("in:" + name);
 			} else {
-				c.xmms.playlist_load(name);
+				client.xmms.playlist_load(name);
 			}
 		}
 
@@ -402,30 +405,22 @@ namespace Abraca {
 				Gtk.TreePath path = store.get_path(iter);
 
 				if (path.get_depth() == 2) {
-					CollectionsModel.CollectionType type;
 					unowned string ns;
 					string name;
 
 					store.get(iter, CollectionsModel.Column.Name, out name);
 
-					type = CollectionsModel.CollectionType.Collection;
-					if (store.path_is_child_of_type(path, type)) {
+					var type = CollectionsModel.CollectionType.Collection;
+					if (store.path_is_child_of_type(path, type))
 						ns = Xmms.COLLECTION_NS_COLLECTIONS;
-					} else {
+					else
 						ns = Xmms.COLLECTION_NS_PLAYLISTS;
-					}
 
-					if (Client.collection_needs_quoting(name)) {
-						Abraca.instance().main_window.main_hpaned.
-							right_hpaned.filter_entry_set_text(
-								"in:\"" + ns + "/" + name + "\""
-							);
-					} else {
-						Abraca.instance().main_window.main_hpaned.
-							right_hpaned.filter_entry_set_text(
-								"in:" + ns + "/" + name
-							);
-					}
+					var full_name = ns + "/" + name;
+					if (Client.collection_needs_quoting(full_name))
+						full_name = "\"" + full_name + "\"";
+
+					search.search ("in:" + full_name);
 				}
 			}
 		}
@@ -467,7 +462,6 @@ namespace Abraca {
 
 				if (path.get_depth() == 2) {
 					CollectionsModel.CollectionType type;
-					Client c = Client.instance();
 					var ns = Xmms.COLLECTION_NS_PLAYLISTS;
 					string name;
 
@@ -478,7 +472,7 @@ namespace Abraca {
 						ns = Xmms.COLLECTION_NS_COLLECTIONS;
 					}
 
-					c.xmms.coll_remove(name, ns);
+					client.xmms.coll_remove(name, ns);
 				}
 			}
 		}
