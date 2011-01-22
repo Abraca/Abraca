@@ -44,6 +44,8 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 		adjustment.lower = 0;
 		adjustment.upper = 100;
 
+		sensitive = false;
+
 		set_icons(_icons);
 
 		pressed.connect((w) => {
@@ -127,5 +129,7 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 			_tmp_apply_volume_value = (int) (total_volume / channels * 1.0);
 			value = _tmp_apply_volume_value;
 		}
+
+		sensitive = (channels > 0);
 	}
 }

@@ -34,7 +34,6 @@ namespace Abraca {
 		private Gtk.Label _track_label;
 		private Gtk.Label _time_label;
 		private Gtk.HScale _time_slider;
-		private VolumeButton _volume_button;
 		private Client client;
 		private CoverArtManager manager;
 
@@ -67,9 +66,8 @@ namespace Abraca {
 			create_cover_image();
 			create_track_label();
 
-			_volume_button = new VolumeButton(client);
-			_volume_button.no_show_all = true;
-			pack_end(_volume_button, false, false, 0);
+			btn = new VolumeButton(client);
+			pack_end(btn, false, false, 0);
 
 			client.playback_status.connect(on_playback_status_change);
 			client.playback_current_id.connect(on_playback_current_id);
@@ -78,8 +76,6 @@ namespace Abraca {
 			client.medialib_entry_changed.connect((client, res) => {
 				on_media_info(res);
 			});
-
-			client.connection_state_changed.connect(on_connection_state_changed);
 
 			manager = new CoverArtManager (client, parent);
 
@@ -121,23 +117,6 @@ namespace Abraca {
 			vbox.pack_start(_time_label, true, true, 0);
 
 			pack_start(vbox, false, false, 0);
-		}
-
-
-		private void on_connection_state_changed (Client client, Client.ConnectionState state)
-		{
-			if (state != Client.ConnectionState.Connected) {
-				return;
-			}
-
-			client.xmms.playback_volume_get().notifier_set((val) => {
-				if (val.is_error()) {
-					_volume_button.hide();
-				} else {
-					_volume_button.show();
-				}
-				return true;
-			});
 		}
 
 
