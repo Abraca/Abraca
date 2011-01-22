@@ -91,7 +91,6 @@ namespace Abraca {
 			}
 		}
 
-
 		public bool try_connect(string? path = null) {
 			if (path == null) {
 				path = GLib.Environment.get_variable("XMMS_PATH");
@@ -112,6 +111,9 @@ namespace Abraca {
 
 				_xmms.disconnect_callback_set(() => {
 					connection_state_changed (ConnectionState.Disconnected);
+					GLib.debug ("Lost connection to XMMS2, restart to reconnect.");
+
+					Gtk.main_quit ();
 				});
 
 				attach_callbacks();
