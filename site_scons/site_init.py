@@ -154,11 +154,15 @@ class AbracaEnvironment(SConsEnvironment):
 
 	def _install(self, dst, src):
 		if self.has_key('DESTDIR') and self['DESTDIR']:
+			if dst[0] == "/":
+				dst = dst[1:]
 			dst = os.path.join(self['DESTDIR'], dst)
 		return self.SConsInstall(dst, src)
 
 	def _install_as(self, dst, src):
 		if self.has_key('DESTDIR') and self['DESTDIR']:
+			if dst[0] == "/":
+				dst = dst[1:]
 			dst = os.path.join(self['DESTDIR'], dst)
 		return self.SConsInstallAs(dst, src)
 
