@@ -13,3 +13,4 @@ if [ x$NEW_TAG = "xN" ] || [ x$NEW_TAG = "xn" ]; then
 fi
 
 git archive --format=tar --prefix=abraca-${VERSION}/ HEAD | gzip -cn9 > ../abraca-${VERSION}.tar.gz
+gpg --armor --detach-sig ../abraca-${VERSION}.tar.gz
