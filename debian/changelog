@@ -1,3 +1,14 @@
+abraca (0.6.0-1) experimental; urgency=low
+
+  * New upstream release.
+  * Update my email address.
+  * Bump Standards-Version to 3.9.1 (no changes required).
+  * Update watch file to detect gz and bz2.
+  * Drop all patches (applied upstream).
+  * Bump valac build dependency to >= 0.10.0.
+
+ -- Benjamin Drung <bdrung@debian.org>  Sat, 22 Jan 2011 19:44:55 +0100
+
 abraca (0.5.0-3) unstable; urgency=low
 
   * Bump libxmmsclient-glib-dev dependency to >= 0.7DrNo.
