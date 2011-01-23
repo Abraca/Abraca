@@ -170,7 +170,7 @@ namespace Abraca {
 					}
 
 					if (s.has_prefix("Log output will be stored in")) {
-						_launcher_logfile = s.offset(28).strip();
+						_launcher_logfile = s.substring(28).strip();
 						return false;
 					}
 
@@ -196,7 +196,7 @@ namespace Abraca {
 							channel.seek_position(pos, GLib.SeekType.END);
 							channel.read_chars(buf, out len);
 
-							if (((string) buf).ndup(len) == "--- Starting new xmms2d ---") {
+							if (((string) buf).substring(0, (long) len) == "--- Starting new xmms2d ---") {
 								string s;
 
 								if (status == 0) {
