@@ -370,7 +370,9 @@ namespace Abraca {
 							} else {
 								order = Gtk.SortType.DESCENDING;
 							}
-							sorting = {column.title, order};
+							/* TODO: This temp variable is needed due to a bug in vala 0.11.5 */
+							Sorting tmp = {column.title, order};
+							sorting = tmp;
 							break;
 						}
 					}

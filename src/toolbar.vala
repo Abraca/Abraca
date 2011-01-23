@@ -343,7 +343,7 @@ namespace Abraca {
 
 			try {
 				var loader = new Gdk.PixbufLoader();
-				loader.write(data, data.length);
+				loader.write(data);
 				loader.close();
 
 				var pixbuf = loader.get_pixbuf();
