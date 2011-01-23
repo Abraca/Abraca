@@ -46,7 +46,7 @@ namespace Abraca {
 
 		public void add_path (int mid, Gtk.TreePath path)
 		{
-			if (!map.contains(mid)) {
+			if (!map.has_key(mid)) {
 				map.set(mid, new Gee.LinkedList<Gtk.TreeRowReference>(compare_refs));
 			}
 
@@ -61,7 +61,7 @@ namespace Abraca {
 
 		public bool remove_path (int mid, Gtk.TreePath path)
 		{
-			if (!map.contains(mid)) {
+			if (!map.has_key(mid)) {
 				return false;
 			}
 
@@ -75,7 +75,7 @@ namespace Abraca {
 				row_refs.remove(row_ref);
 
 				if (row_refs.size == 0) {
-					map.remove(mid);
+					map.unset(mid);
 				}
 
 				return true;
@@ -86,7 +86,7 @@ namespace Abraca {
 
 		public Gee.List<Gtk.TreeRowReference> get_paths (int mid)
 		{
-			if (!map.contains(mid)) {
+			if (!map.has_key(mid)) {
 				return new Gee.LinkedList<Gtk.TreeRowReference>();
 			}
 			return map.get(mid);
