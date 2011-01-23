@@ -105,7 +105,7 @@ namespace Abraca {
 				detach_callbacks();
 
 				if (_gmain != null)
-					Xmms.MainLoop.GMain.shutdown(null, _gmain);
+					Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
 
 				_xmms = next_client;
 				_gmain = Xmms.MainLoop.GMain.init(_xmms);
