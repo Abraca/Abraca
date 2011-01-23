@@ -203,9 +203,9 @@ namespace Abraca {
 			var dialog = new Gtk.FileChooserDialog ("Select cover art image.",
 			                                        parent,
 			                                        Gtk.FileChooserAction.OPEN,
-			                                        Gtk.STOCK_CANCEL,
+			                                        Gtk.Stock.CANCEL,
 			                                        Gtk.ResponseType.CANCEL,
-			                                        Gtk.STOCK_OK,
+			                                        Gtk.Stock.OK,
 			                                        Gtk.ResponseType.OK);
 
 			dialog.preview_widget = new Gtk.Image ();

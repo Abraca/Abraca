@@ -481,8 +481,8 @@ namespace Abraca {
 			title = _("Add URL");
 			urls = new Gtk.ListStore(1, typeof(string));
 
-			add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
-			add_button(Gtk.STOCK_OK, Gtk.ResponseType.OK);
+			add_button(Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL);
+			add_button(Gtk.Stock.OK, Gtk.ResponseType.OK);
 
 			Gtk.ComboBoxEntry combo = new Gtk.ComboBoxEntry.with_model(urls, 0);
 			Gtk.EntryCompletion comp = new Gtk.EntryCompletion();
@@ -582,8 +582,8 @@ namespace Abraca {
 			select_multiple = true;
 			title = _("Add File");
 
-			add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
-			add_button(Gtk.STOCK_OPEN, Gtk.ResponseType.OK);
+			add_button(Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL);
+			add_button(Gtk.Stock.OPEN, Gtk.ResponseType.OK);
 
 			close.connect(on_close);
 			response.connect(on_response);

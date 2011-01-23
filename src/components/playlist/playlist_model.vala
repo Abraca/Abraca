@@ -185,7 +185,7 @@ namespace Abraca {
 				set(
 					iter,
 					Column.POSITION_INDICATOR,
-					Gtk.STOCK_GO_FORWARD
+					Gtk.Stock.GO_FORWARD
 				);
 
 				path = get_path(iter);

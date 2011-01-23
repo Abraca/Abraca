@@ -48,18 +48,18 @@ namespace Abraca {
 
 			_seek = false;
 
-			btn = create_playback_button(Gtk.STOCK_MEDIA_PLAY);
+			btn = create_playback_button(Gtk.Stock.MEDIA_PLAY);
 			btn.clicked.connect(on_media_play);
 
 			play_pause = btn;
 
-			btn = create_playback_button(Gtk.STOCK_MEDIA_STOP);
+			btn = create_playback_button(Gtk.Stock.MEDIA_STOP);
 			btn.clicked.connect(on_media_stop);
 
-			btn = create_playback_button(Gtk.STOCK_MEDIA_PREVIOUS);
+			btn = create_playback_button(Gtk.Stock.MEDIA_PREVIOUS);
 			btn.clicked.connect(on_media_prev);
 
-			btn = create_playback_button(Gtk.STOCK_MEDIA_NEXT);
+			btn = create_playback_button(Gtk.Stock.MEDIA_NEXT);
 			btn.clicked.connect(on_media_next);
 
 			create_seekbar();
@@ -257,7 +257,7 @@ namespace Abraca {
 				_coverart = new Gtk.Image();
 			}
 
-			_coverart.set_from_stock(Gtk.STOCK_CDROM, Gtk.IconSize.LARGE_TOOLBAR);
+			_coverart.set_from_stock(Gtk.Stock.CDROM, Gtk.IconSize.LARGE_TOOLBAR);
 			_coverart_big = null;
 		}
 
@@ -394,7 +394,7 @@ namespace Abraca {
 			_status = status;
 
 			var icon = (_status != Xmms.PlaybackStatus.PLAY) ?
-				Gtk.STOCK_MEDIA_PLAY : Gtk.STOCK_MEDIA_PAUSE;
+				Gtk.Stock.MEDIA_PLAY : Gtk.Stock.MEDIA_PAUSE;
 
 			var image = new Gtk.Image.from_stock(icon, Gtk.IconSize.SMALL_TOOLBAR);
 

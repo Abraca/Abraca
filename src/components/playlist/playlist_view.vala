@@ -198,7 +198,7 @@ namespace Abraca {
 			);
 
 			/* Find out the width of the position idicator icon */
-			pbuf = render_icon(Gtk.STOCK_GO_FORWARD, Gtk.IconSize.MENU, null);
+			pbuf = render_icon(Gtk.Stock.GO_FORWARD, Gtk.IconSize.MENU, null);
 
 			/* Add some extra width otherwise it will not fit into the column */
 			column.set_min_width(pbuf.width + 3 * 2);
@@ -261,7 +261,7 @@ namespace Abraca {
 
 			/* Information */
 			item = new Gtk.ImageMenuItem.from_stock(
-				Gtk.STOCK_INFO, null
+				Gtk.Stock.INFO, null
 			);
 			item.activate.connect(on_menu_playlist_info);
 			_playlist_menu_item_when_some_selected.prepend(item);
@@ -289,7 +289,7 @@ namespace Abraca {
 			submenu.append(item);
 
 			img_item = new Gtk.ImageMenuItem.from_stock(
-				Gtk.STOCK_FIND, null
+				Gtk.Stock.FIND, null
 			);
 			img_item.set_submenu(submenu);
 			_playlist_menu_item_when_some_selected.prepend(img_item);
@@ -297,7 +297,7 @@ namespace Abraca {
 
 			/* Delete */
 			item = new Gtk.ImageMenuItem.from_stock(
-				Gtk.STOCK_DELETE, null
+				Gtk.Stock.DELETE, null
 			);
 			item.activate.connect(delete_selected);
 			_playlist_menu_item_when_some_selected.prepend(item);
@@ -346,7 +346,7 @@ namespace Abraca {
 			submenu.append(item);
 
 			img = new Gtk.Image.from_stock(
-				Gtk.STOCK_SORT_ASCENDING, Gtk.IconSize.MENU
+				Gtk.Stock.SORT_ASCENDING, Gtk.IconSize.MENU
 			);
 
 			img_item = new Gtk.ImageMenuItem.with_label(_("Sort"));
@@ -363,7 +363,7 @@ namespace Abraca {
 
 			/* Clear */
 			img_item = new Gtk.ImageMenuItem.from_stock(
-				Gtk.STOCK_CLEAR, null
+				Gtk.Stock.CLEAR, null
 			);
 			img_item.activate.connect(i => {
 				client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);

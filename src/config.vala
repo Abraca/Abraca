@@ -92,8 +92,8 @@ namespace Abraca {
 			var dialog = new Gtk.Dialog.with_buttons(
 				"Configure Sorting", parent,
 				Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.MODAL,
-				Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-				Gtk.STOCK_OK, Gtk.ResponseType.OK
+				Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
+				Gtk.Stock.OK, Gtk.ResponseType.OK
 			);
 
 			dialog.resize (300, 200);

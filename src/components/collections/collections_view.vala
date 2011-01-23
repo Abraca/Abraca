@@ -514,7 +514,7 @@ namespace Abraca {
 
 			item = new Gtk.ImageMenuItem.with_mnemonic(_("_Show"));
 			item.image = new Gtk.Image.from_stock(
-				Gtk.STOCK_FIND, Gtk.IconSize.MENU
+				Gtk.Stock.FIND, Gtk.IconSize.MENU
 			);
 			item.activate.connect(on_menu_collection_get);
 			_collection_menu_item_when_coll_selected.prepend(item);
@@ -522,7 +522,7 @@ namespace Abraca {
 
 			item = new Gtk.ImageMenuItem.with_mnemonic(_("_Rename"));
 			item.image = new Gtk.Image.from_stock(
-				Gtk.STOCK_EDIT, Gtk.IconSize.MENU
+				Gtk.Stock.EDIT, Gtk.IconSize.MENU
 			);
 			item.activate.connect((menu) => {
 				selected_collection_rename();
@@ -532,7 +532,7 @@ namespace Abraca {
 
 			item = new Gtk.ImageMenuItem.with_mnemonic(_("Delete"));
 			item.image = new Gtk.Image.from_stock(
-				Gtk.STOCK_DELETE, Gtk.IconSize.MENU
+				Gtk.Stock.DELETE, Gtk.IconSize.MENU
 			);
 			item.activate.connect((menu) => {
 				selected_collection_delete();

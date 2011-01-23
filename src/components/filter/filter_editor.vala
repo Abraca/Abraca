@@ -67,7 +67,7 @@ namespace Abraca {
 			notebook.append_page(child, new Gtk.Label("Columns"));
 			notebook.border_width = 6;
 
-			var button = new Gtk.Button.from_stock(Gtk.STOCK_OK);
+			var button = new Gtk.Button.from_stock(Gtk.Stock.OK);
 			button.clicked.connect((widget) => {
 				destroy();
 			});

@@ -123,8 +123,8 @@ namespace Abraca {
 
 				append(out iter);
 				set(iter,
-					Column.ICON, uri.has_prefix("unix://") ? Gtk.STOCK_HOME
-														   : Gtk.STOCK_NETWORK,
+					Column.ICON, uri.has_prefix("unix://") ? Gtk.Stock.HOME
+														   : Gtk.Stock.NETWORK,
 					Column.NAME, name,
 					Column.URI, uri,
 					Column.FAVORITE, favorite);
