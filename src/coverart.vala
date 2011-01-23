@@ -412,19 +412,21 @@ namespace Abraca {
 			if (!get_track_ids (candidates, pixbuf, out ids))
 				return true;
 
-			uint8[] buffer;
-			if (!pixbuf.save_to_buffer (out buffer, "png"))
-				return true;
+			try {
+				uint8[] buffer;
+				if (!pixbuf.save_to_buffer (out buffer, "png"))
+					return true;
 
 
-			/* TODO: Need to store ids here due to a Vala reference bug. */
-			selected_ids = ids;
+				/* TODO: Need to store ids here due to a Vala reference bug. */
+				selected_ids = ids;
 
-			client.xmms.bindata_add (buffer).notifier_set (on_bindata_add);
-
+				client.xmms.bindata_add (buffer).notifier_set (on_bindata_add);
+			} catch (GLib.Error e) {
+				GLib.warning ("Could not add cover art.");
+			}
 
 			return true;
-
 		}
 
 
