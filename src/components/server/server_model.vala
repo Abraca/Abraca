@@ -80,7 +80,7 @@ namespace Abraca {
 			try {
 				resolver.attach(_avahi_client);
 			} catch (Avahi.Error e) {
-				GLib.error(e.message);
+				GLib.warning(e.message);
 				return;
 			}
 

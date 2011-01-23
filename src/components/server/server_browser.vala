@@ -229,7 +229,7 @@ namespace Abraca {
 						 * strange is happened, we are going to show the
 						 * error dialog, but without details and log the
 						 * error message. */
-						GLib.error(e.message);
+						GLib.warning(e.message);
 						_launcher_error_details_expander.hide();
 					}
 				} else {
