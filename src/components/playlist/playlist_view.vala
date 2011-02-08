@@ -531,9 +531,10 @@ namespace Abraca {
 				}
 
 				dest = dst;
-				return true;
+			} else {
+				dest = model.iter_n_children (null);
 			}
-			return false;
+			return true;
 		}
 
 		/**
