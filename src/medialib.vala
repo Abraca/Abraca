@@ -47,7 +47,7 @@ namespace Abraca {
 
 		private RatingEntry rating_entry;
 		private Gtk.SpinButton tracknr_button;
-		private Gtk.ComboBoxEntry genre_combo_box_entry;
+		private Gtk.ComboBox genre_combo_box_entry;
 
 		private const string[] genres = { "Acid Jazz", "Acid Punk", "Acid",
 			"Alternative Rock", "Alternative", "Ambient", "Bass", "Blues",
@@ -75,7 +75,7 @@ namespace Abraca {
 					Resources.XML.mediainfo, Resources.XML.mediainfo.length
 				);
 			} catch (GLib.Error e) {
-				GLib.error(e.message);
+				GLib.error("Could not load UI: %s", e.message);
 			}
 
 			var instance = builder.get_object("mediainfo_dialog") as MedialibInfoDialog;
@@ -98,19 +98,15 @@ namespace Abraca {
 
 		public void parser_finished (Gtk.Builder builder)
 		{
-			genre_combo_box_entry = builder.get_object("ent_genre") as Gtk.ComboBoxEntry;
+			genre_combo_box_entry = builder.get_object("ent_genre") as Gtk.ComboBox;
+
+			var genre_model = builder.get_object ("genre_model") as Gtk.ListStore;
 
 			foreach (var genre in genres) {
-				genre_combo_box_entry.append_text(genre);
+				Gtk.TreeIter iter;
+				genre_model.append (out iter);
+				genre_model.set(iter, 0, genre);
 			}
-
-			// TODO: text-column property is not loaded by Gtk.Builder
-			//       due to a bug in GTK, remove this when bug has
-			//       been resolved and released.
-			genre_combo_box_entry.text_column = 0;
-			var widget = genre_combo_box_entry.get_child() as Gtk.Entry;
-			widget.activate.connect(on_genre_box_button_activated);
-
 
 			store = builder.get_object("details_model") as Gtk.TreeStore;
 
@@ -479,19 +475,22 @@ namespace Abraca {
 			destroy_with_parent = true;
 			modal = true;
 			title = _("Add URL");
-			urls = new Gtk.ListStore(1, typeof(string));
 
 			add_button(Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL);
 			add_button(Gtk.Stock.OK, Gtk.ResponseType.OK);
 
-			Gtk.ComboBoxEntry combo = new Gtk.ComboBoxEntry.with_model(urls, 0);
-			Gtk.EntryCompletion comp = new Gtk.EntryCompletion();
+			var combo = new Gtk.ComboBoxText.with_entry();
+			var comp = new Gtk.EntryCompletion();
 
 			comp.model = urls;
 			comp.set_text_column(0);
-			entry = (Gtk.Entry) combo.child;
+			entry = (Gtk.Entry) combo.get_child ();
 			entry.set_completion(comp);
 			entry.activates_default = true;
+			var vbox = get_content_area () as Gtk.Box;
+
+			var label = new PrettyLabel ("Enter Address");
+			vbox.pack_start(label, true, true, 0);
 			vbox.pack_start(combo, true, true, 0);
 
 			close.connect(on_close);

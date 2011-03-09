@@ -13,7 +13,7 @@ conf.CheckApp('gdk-pixbuf-csource')
 conf.CheckGitVersion()
 
 vala_dependencies = (
-	('gtk+-2.0', '2.16.0', env.Dependency.Mandatory),
+	('gtk+-3.0', '2.16.0', env.Dependency.Mandatory),
 	('gmodule-2.0', '2.16.0', env.Dependency.Mandatory),
 	('gio-2.0', '2.16.0', env.Dependency.Mandatory),
 	('xmms2-client', '0.6', env.Dependency.Mandatory),
@@ -55,7 +55,7 @@ if api_version and api_version.isdigit() and int(api_version) > 18:
 
 conf.Finish()
 
-env.Append(VALAPKGS = ['build-config', 'gdk-keysyms'])
+env.Append(VALAPKGS = ['build-config'])
 env.Append(CCFLAGS = ['-Wall', '-Wno-unused-variable'])
 env.Append(CPPPATH = Dir('build'))
 

@@ -56,7 +56,6 @@ namespace Abraca {
 
 			title = _("Select Columns");
 
-			has_separator = false;
 			resizable = false;
 
 			var notebook = new Gtk.Notebook();
@@ -72,14 +71,16 @@ namespace Abraca {
 				destroy();
 			});
 
+			var action_area = get_action_area() as Gtk.Box;
 			action_area.add(button);
 			action_area.border_width = 0;
 			action_area.spacing = 0;
 
-			vbox.border_width = 0;
-			vbox.pack_start(new PrettyLabel ("Select Columns"), false, true, 0);
-			vbox.pack_start(notebook, true, true, 0);
-			vbox.set_child_packing(action_area, false, false, 0, Gtk.PackType.END);
+			var box = get_content_area() as Gtk.Box;
+			box.border_width = 0;
+			box.pack_start(new PrettyLabel("Select Columns"), false, true, 0);
+			box.pack_start(notebook, true, true, 0);
+			box.set_child_packing(action_area, false, false, 0, Gtk.PackType.END);
 
 			response.connect((widget,response) => {
 				destroy();

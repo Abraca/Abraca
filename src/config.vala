@@ -97,7 +97,6 @@ namespace Abraca {
 			);
 
 			dialog.resize (300, 200);
-			dialog.has_separator = false;
 
 			var table = new Gtk.Table(6, 2, false);
 			table.set_row_spacings(7);
@@ -123,8 +122,10 @@ namespace Abraca {
 				table.attach_defaults(entries[i], 1, 2, i + 0, i + 1);
 			}
 
-			dialog.vbox.pack_start(new PrettyLabel ("Configure Sorting"), false, true, 0);
-			dialog.vbox.pack_start(table, true, true, 0);
+			var box = dialog.get_content_area () as Gtk.Box;
+			box.pack_start(new PrettyLabel ("Configure Sorting"), false, true, 0);
+			box.pack_start(table, true, true, 0);
+
 			dialog.show_all();
 
 			var response_id = dialog.run();

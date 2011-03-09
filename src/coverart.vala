@@ -308,9 +308,8 @@ namespace Abraca {
 				coll.idlist_append (mid);
 			} else {
 #if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
-				var album_coll = new Xmms.Collection (Xmms.CollectionType.FILTER);
+				var album_coll = new Xmms.Collection (Xmms.CollectionType.MATCH);
 				album_coll.add_operand (universe);
-				album_coll.attribute_set ("operation", "=");
 				album_coll.attribute_set ("field", "album");
 				album_coll.attribute_set ("value", album);
 
@@ -318,16 +317,14 @@ namespace Abraca {
 				coll.add_operand (album_coll);
 
 				if (is_compilation == (int) true) {
-					var other_coll = new Xmms.Collection (Xmms.CollectionType.FILTER);
+					var other_coll = new Xmms.Collection (Xmms.CollectionType.MATCH);
 					other_coll.add_operand (universe);
-					other_coll.attribute_set ("operation", "=");
 					other_coll.attribute_set ("field", "compilation");
 					other_coll.attribute_set ("value", "1");
 					coll.add_operand (other_coll);
 				} else if (!val.dict_entry_get_string ("artist", out artist) && artist.length > 0) {
-					var other_coll = new Xmms.Collection (Xmms.CollectionType.FILTER);
+					var other_coll = new Xmms.Collection (Xmms.CollectionType.MATCH);
 					other_coll.add_operand (universe);
-					other_coll.attribute_set ("operation", "=");
 					other_coll.attribute_set ("field", "artist");
 					other_coll.attribute_set ("value", artist);
 					coll.add_operand (other_coll);

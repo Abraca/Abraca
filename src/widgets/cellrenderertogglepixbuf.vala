@@ -28,13 +28,13 @@ namespace Abraca {
 			mode = Gtk.CellRendererMode.ACTIVATABLE;
 		}
 
-		public override void render(Gdk.Window window, Gtk.Widget widget,
-									Gdk.Rectangle background_area,
-									Gdk.Rectangle cell_area,
-									Gdk.Rectangle expose_area,
-									Gtk.CellRendererState flags) {
+		public override void render (Cairo.Context cr, Gtk.Widget widget,
+		                             Gdk.Rectangle background_area,
+		                             Gdk.Rectangle cell_area,
+		                             Gtk.CellRendererState flags)
+		{
 			if (active) {
-				base.render(window, widget, background_area, cell_area, expose_area, flags);
+				base.render(cr, widget, background_area, cell_area, flags);
 				return;
 			}
 
@@ -64,7 +64,7 @@ namespace Abraca {
 				}
 			}
 
-			base.render(window, widget, background_area, cell_area, expose_area, flags);
+			base.render(cr, widget, background_area, cell_area, flags);
 
 			pixbuf = original_pixbuf;
 		}

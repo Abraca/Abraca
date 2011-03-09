@@ -38,7 +38,7 @@ public class Abraca.FilterWidget : Gtk.VBox {
 		scrolled.add(treeview);
 
 		searchbox = new FilterSearchBox (client, config, treeview);
-		searchbox.add_accelerator("grab-focus", group, Gdk.Keysym.l,
+		searchbox.add_accelerator("grab-focus", group, Gdk.keyval_from_name ("l"),
 		                          Gdk.ModifierType.CONTROL_MASK, 0);
 
 

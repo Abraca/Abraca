@@ -164,7 +164,7 @@ namespace Abraca {
 
 		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e)
 		{
-			if (e.keyval != Gdk.Keysym.Delete)
+			if (e.keyval != Gdk.keyval_from_name("Delete"))
 				return false;
 			delete_selected();
 			return true;
@@ -544,8 +544,8 @@ namespace Abraca {
 			int dest;
 
 			/* TODO: Updated when #515408 vala bug has been fixed */
-			unowned uint[] source = (uint[]) sel.data;
-			source.length = (int)(sel.length / sizeof(uint));
+			unowned uint[] source = (uint[]) sel.get_data();
+			source.length = (int)(sel.get_length () / sizeof(uint));
 
 			if (get_drop_destination(x, y, out dest)) {
 				int downward = 0;
@@ -574,8 +574,8 @@ namespace Abraca {
 			int pos;
 
 			/* TODO: Updated when #515408 vala bug has been fixed */
-			unowned int[] ids = (int[]) sel.data;
-			ids.length = (int)(sel.length / sizeof(int));
+			unowned int[] ids = (int[]) sel.get_data();
+			ids.length = (int)(sel.get_length () / sizeof(int));
 
 			var coll = new Xmms.Collection (Xmms.CollectionType.IDLIST);
 			coll.set_idlist (ids);
@@ -601,7 +601,7 @@ namespace Abraca {
 			string[] uri_list;
 			int pos;
 
-			uri_list = ((string) sel.data).split("\r\n");
+			uri_list = ((string) sel.get_data()).split("\r\n");
 
 			for (int i = 0; uri_list != null && uri_list[i] != null; i++) {
 				if (internet && (i % 2 != 0)) {
@@ -639,7 +639,7 @@ namespace Abraca {
 			Xmms.Collection coll;
 			int pos;
 
-			string[] collection_data = ((string) sel.data).split("/");
+			string[] collection_data = ((string) sel.get_data()).split("/");
 			string coll_ns = collection_data[0];
 			string coll_name = collection_data[1];
 
