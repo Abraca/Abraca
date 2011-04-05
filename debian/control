@@ -18,7 +18,7 @@ Package: abraca
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Recommends: xmms2
-Description: A simple and powerful graphical client for XMMS2
+Description: Simple and powerful graphical client for XMMS2
  Abraca is a client for the XMMS2 music player. It is designed with
  collections in mind, which makes managing your music a breeze.
  .
