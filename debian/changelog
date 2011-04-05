@@ -1,3 +1,9 @@
+abraca (0.6.0-3) unstable; urgency=low
+
+  * New maintainer (Closes: #619778).
+
+ -- Fabrizio Regalli <fabreg@fabreg.it>  Tue, 05 Apr 2011 15:28:30 +0200
+
 abraca (0.6.0-2) unstable; urgency=low
 
   * Upload to unstable.
