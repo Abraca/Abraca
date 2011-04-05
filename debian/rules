@@ -6,6 +6,9 @@
 override_dh_auto_build:
 	scons DESTDIR=$(CURDIR)/debian/abraca PREFIX=/usr verbose=yes
 
+override_dh_installchangelogs:
+	dh_installchangelogs $(CURDIR)/debian/abraca.changelog-upstream
+
 override_dh_auto_install:
 	scons install
 

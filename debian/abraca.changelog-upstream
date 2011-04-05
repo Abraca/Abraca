@@ -1,0 +1,51 @@
+Feature #175: Tray icon?
+0.4
+
+08/22/2009
+
+Related issues
+Feature #133: turn scons into a waf-ish single file
+Feature #199: Add repeat options to playlist menu
+Feature #204: Simplify SCons env.Program a bit
+Feature #207: the dynamic columns can't be changed while running
+Feature #214: missing changelog
+0.4.1
+
+10/13/2009
+
+Mostly a bug fix for 0.4.0
+
+Compability with Vala 0.7.7
+Binary objects are built properly. fixes debian bug #543251.
+Solaris interoperability.
+Fix the vapi file for XMMS2 clientlib.
+Media info window can now be closed. fixes #221
+0.4.2
+
+0.4.3
+
+01/15/2010
+
+No issues for this version
+
+0.5
+
+04/3/2010
+
+Related issues
+Feature #28: Make it possible to open more than one collection at a time
+Feature #49: add coverart to the playlist
+Feature #206: add a configuration dialog for filterview columns
+Feature #210: use datatypes from libgee
+Feature #218: Option to launch xmms2d on startup
+Feature #224: Add german translation
+Feature #232: Bigger cover art for current song
+Feature #234: Add "date" to the available columns
+Feature #241: Dutch translation
+
+0.6
+
+01/22/2011
+
+Related issues
+Feature #225: Write vala bindings for avahi and use it to find xmms2 daemons on the local network.
