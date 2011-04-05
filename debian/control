@@ -1,7 +1,7 @@
 Source: abraca
 Section: sound
 Priority: optional
-Maintainer: Benjamin Drung <bdrung@debian.org>
+Maintainer: Fabrizio Regalli <fabreg@fabreg.it>
 Build-Depends: debhelper (>= 7.0.50~),
                libgee-dev (>= 0.5),
                libgtk2.0-dev,
