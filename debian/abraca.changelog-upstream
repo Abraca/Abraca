@@ -1,213 +1,197 @@
-0.2
+Version 0.2 (2007-05-10)
 
-10-05-2007
+ * Bug #2: Glade file contains german menu texts
+ * Bug #3: Making Queue+PartyShuffle-Playlist
+ * Bug #4: Multiple status indicators showing up in playlist
+ * Bug #5: all playlist-broadcasts are refered to the (_)active playlist
+ * Bug #6: Redesign the User Interface
+ * Bug #8: Inconsistent behaviour of GUI when artist/title/album-medata is not set
+ * Bug #9: Adding/removing files/paths to the medialib
+ * Bug #10: Remove notifications
+ * Bug #11: Creation of Party Shuffle playlists broken
+ * Bug #12: abraca crashes when loading collection
+ * Bug #13: Make Abraca translateable
+ * Bug #15: Filter for Artist/Album/Genre/[...] of specific track in playlist
+ * Bug #16: We can't delete the active playlist anymore
+ * Bug #17: playlist_label doesn't get updated when renaming the active playlist
+ * Bug #20: Seeking in media with length 0 should be prohibited
+ * Bug #22: Status indicator still broken
+ * Bug #23: config doesn't save window-position
+ * Bug #25: Don't try to save empty collections
+ * Bug #26: Make the currently active playlist modifiable
+ * Bug #31: adding file to playlist is missing
+ * Bug #34: choose connection method
+ * Bug #35: Abrace does not even compile
+ * Bug #36: Segfault when trying to create a New Playlist
+ * Bug #37: 'Music > Add' disabled in GUI
+ * Bug #67: patch: g_printf compilation warnings
 
- 	Bug #2: Glade file contains german menu texts
-	Bug #3: Making Queue+PartyShuffle-Playlist
-	Bug #4: Multiple status indicators showing up in playlist
-	Bug #5: all playlist-broadcasts are refered to the (_)active playlist
-	Bug #6: Redesign the User Interface
-	Bug #8: Inconsistent behaviour of GUI when artist/title/album-medata is not set
-	Bug #9: Adding/removing files/paths to the medialib
-	Bug #10: Remove notifications
-	Bug #11: Creation of Party Shuffle playlists broken
-	Bug #12: abraca crashes when loading collection
-	Bug #13: Make Abraca translateable
-	Bug #15: Filter for Artist/Album/Genre/[...] of specific track in playlist
-	Bug #16: We can't delete the active playlist anymore
-	Bug #17: playlist_label doesn't get updated when renaming the active playlist
-	Bug #20: Seeking in media with length 0 should be prohibited
-	Bug #22: Status indicator still broken
-	Bug #23: config doesn't save window-position
-	Bug #25: Don't try to save empty collections
-	Bug #26: Make the currently active playlist modifiable
-	Bug #31: adding file to playlist is missing
-	Bug #34: choose connection method
-	Bug #35: Abrace does not even compile
-	Bug #36: Segfault when trying to create a New Playlist
-	Bug #37: 'Music > Add' disabled in GUI
-	Bug #67: patch: g_printf compilation warnings
-0.3
+Version 0.3 (2008-03-30)
 
-30-03-2008
+ * Bug #18: Make adding urls to playlist/mlib possible
+ * Bug #21: Update playlist view if an entries meta data changes
+ * Bug #24: Check bindata mimetype
+ * Bug #27: Make Drag & Drop work
+ * Bug #32: Sorting the playlist?
+ * Bug #39: icons
+ * Bug #41: no need to show id in filter-tree
+ * Bug #42: move playlist items with dragndrop
+ * Bug #45: drag medialib items to inactive playlists
+ * Bug #47: ellipsise the tree views
+ * Bug #48: fix pos_map to handle lists of positions
+ * Bug #50: add coverart to current playing in toolbal
+ * Bug #52: create a generic metadata treeview
+ * Bug #53: Handle compiletime defines correctly.
+ * Bug #57: do not hardcode row height
+ * Bug #59: remove \"margin\" from left pane
+ * Bug #61: add ability to rename playlists
+ * Bug #62: counter conflicts with counter in new playlist name
+ * Bug #64: subscribe to medialib_updated thing
+ * Bug #65: mark the current playlist position somehow
+ * Bug #66: mark the active playlist somehow
+ * Bug #90: advanced sorting
+ * Bug #104: collections_treeview doesn't update when adding/renaming/removing a collection/playlist
+ * Bug #105: calculate playlist pos indicator column width based on pixmap size
+ * Bug #106: playlist seems to leak
+ * Bug #108: add ability to reconnect if disconnected
+ * Bug #109: double click filterview to add item
+ * Bug #115: Re-enable the playlist menubar items
+ * Bug #117: dragndrop breaks memory
+ * Bug #118: Filter for Artist/Album/Genre in playlist
+ * Bug #120: add playlist remove context menu item
+ * Bug #122: add delete context menu item to collection tree
+ * Bug #123: icons for collections and playlists missing
+ * Bug #126: Dropping playlist-entry in New Playlist doesn't work properly
+ * Bug #130: Dnd'ing collection into active playlist doesn't work
+ * Bug #132: inactive playlists are draggable, but can't be dropped anywhere
+ * Bug #134: Filter entry doesn't change when loading a collection
+ * Bug #135: Smaller gtk-asserts
+ * Bug #150: Installed valac 0.1.7 is not found by abracaenv.py
+ * Bug #176: Problem compiling latest git version
+ * Feature #175: Tray icon?
 
+Version 0.4 (2009-08-22)
 
- 	Bug #18: Make adding urls to playlist/mlib possible
-	Bug #21: Update playlist view if an entries meta data changes
-	Bug #24: Check bindata mimetype
-	Bug #27: Make Drag & Drop work
-	Bug #32: Sorting the playlist?
-	Bug #39: icons
-	Bug #41: no need to show id in filter-tree
-	Bug #42: move playlist items with dragndrop
-	Bug #45: drag medialib items to inactive playlists
-	Bug #47: ellipsise the tree views
-	Bug #48: fix pos_map to handle lists of positions
-	Bug #50: add coverart to current playing in toolbal
-	Bug #52: create a generic metadata treeview
-	Bug #53: Handle compiletime defines correctly.
-	Bug #57: do not hardcode row height
-	Bug #59: remove \"margin\" from left pane
-	Bug #61: add ability to rename playlists
-	Bug #62: counter conflicts with counter in new playlist name
-	Bug #64: subscribe to medialib_updated thing
-	Bug #65: mark the current playlist position somehow
-	Bug #66: mark the active playlist somehow
-	Bug #90: advanced sorting
-	Bug #104: collections_treeview doesn't update when adding/renaming/removing a collection/playlist
-	Bug #105: calculate playlist pos indicator column width based on pixmap size
-	Bug #106: playlist seems to leak
-	Bug #108: add ability to reconnect if disconnected
-	Bug #109: double click filterview to add item
-	Bug #115: Re-enable the playlist menubar items
-	Bug #117: dragndrop breaks memory
-	Bug #118: Filter for Artist/Album/Genre in playlist
-	Bug #120: add playlist remove context menu item
-	Bug #122: add delete context menu item to collection tree
-	Bug #123: icons for collections and playlists missing
-	Bug #126: Dropping playlist-entry in New Playlist doesn't work properly
-	Bug #130: Dnd'ing collection into active playlist doesn't work
-	Bug #132: inactive playlists are draggable, but can't be dropped anywhere
-	Bug #134: Filter entry doesn't change when loading a collection
-	Bug #135: Smaller gtk-asserts
-	Bug #150: Installed valac 0.1.7 is not found by abracaenv.py
-	Bug #176: Problem compiling latest git version
-	Feature #175: Tray icon?
-0.4
+ * Bug #14: Medialib-Info-Dialog
+ * Bug #19: Show filename in the playlist if not enough
+ * Bug #38: rating
+ * Bug #44: allow playlist drop events from local file system
+ * Bug #46: drag collection to any playlist
+ * Bug #51: custom treeview with lazy loading metadata
+ * Bug #110: filterview column modification
+ * Bug #119: fix remaining compiler warnings
+ * Bug #121: disable context menu for collection tree headers
+ * Bug #131: drag collection to inactive playlist fails
+ * Bug #136: \"New Playlist\" display doesn't work consistent
+ * Bug #137: resizing of the main window is pretty crappy
+ * Bug #139: Remember last used folder/url from file dialogs
+ * Bug #140: playlist add always emits active playlist
+ * Bug #141: SCons silent=>verbose, prefix=>PREFIX
+ * Bug #143: Easy mingw builds from SCons
+ * Bug #144: upgrade to vala 0.1.8
+ * Bug #146: add i18n
+ * Bug #148: s/prefix/PREFiX/ in src/SConscript
+ * Bug #149: add PKG_CONFIG_PATH fallback to abracaenv.py
+ * Bug #151: Use SCons config header file generation + vapi for settings
+ * Bug #152: Proper localization for printf-related stuff.
+ * Bug #153: handle exceptions properly
+ * Bug #154: import GLib to be used for gettext _(\"...\")
+ * Bug #155: Change SCons installdirs to use DATADIR and LOCALEDIR
+ * Bug #156: SCons rebuilds due to unscanned dependencies
+ * Bug #157: scroll to active playlist position
+ * Bug #158: playback bar and total time not updated when starting paused
+ * Bug #159: Missing .mo file breaks install of current development snapshot
+ * Bug #160: try to (re)connect even when not connected on startup
+ * Bug #162: Make Config class just a dispatcher
+ * Bug #163: toolbar mediainfo doesn't listen to updates
+ * Bug #164: default size properties are a bit strange
+ * Bug #165: allow for late config retrieval/early saving
+ * Bug #167: we ignore the available flag
+ * Bug #169: rename playlist and add songs to it fails
+ * Bug #171: Change add url/filter Entry into ComboBoxEntry with auto completion of 25 last entries
+ * Bug #172: Update least supported version of Vala to 0.3.1
+ * Bug #177: disable treeview search in playlist widget
+ * Bug #178: Playlist position indicator broken
+ * Bug #181: on_delete_event ignored in mainwindow -> no geometry save
+ * Bug #185: Merge images into binary with gdk-pixbuf-csource
+ * Bug #186: '&' char in playlist names makes abraca cry
+ * Bug #187: Collections tree should be more keyboard friendly
+ * Bug #188: Make metadata window resizable
+ * Bug #189: Also quote purely numerical collection-labels
+ * Bug #190: Allow playlist to be displayed as mediasets
+ * Bug #191: When rightclicking for a context-menu, move the selection
+ * Bug #192: Update the query-string when searching by artist/album/genre from playlist
+ * Bug #193: Separation in context-menu of playlist tree, of items working on the whole playlist or on just the selected entries
+ * Bug #194: Add delete to playlist_tree context-menu
+ * Bug #195: Add jump to context menu and make menu_item-sensitivity selection dependant
+ * Bug #196: Add/Replace filter results menu-items in main menu are confusing
+ * Bug #198: [InstanceLast] is a nop nowdays
+ * Bug #200: Abraca does not compile with Vala 0.3.4
+ * Bug #201: crash if config directory is missing on shutdown
+ * Bug #202: Handle the exception when no vala compiler is found
+ * Bug #203: missing volume control
+ * Bug #208: add metadata converters for common types
+ * Bug #211: crash on exit
+ * Bug #212: Encoding key in .desktop file deprecated
+ * Bug #213: manpage is missing
+ * Bug #215: volume widget does not work
+ * Feature #133: turn scons into a waf-ish single file
+ * Feature #199: Add repeat options to playlist menu
+ * Feature #204: Simplify SCons env.Program a bit
+ * Feature #207: the dynamic columns can't be changed while running
+ * Feature #214: missing changelog
 
-22-08-2009
-
-
- 	Bug #14: Medialib-Info-Dialog
-	Bug #19: Show filename in the playlist if not enough
-	Bug #38: rating
-	Bug #44: allow playlist drop events from local file system
-	Bug #46: drag collection to any playlist
-	Bug #51: custom treeview with lazy loading metadata
-	Bug #110: filterview column modification
-	Bug #119: fix remaining compiler warnings
-	Bug #121: disable context menu for collection tree headers
-	Bug #131: drag collection to inactive playlist fails
-	Bug #136: \"New Playlist\" display doesn't work consistent
-	Bug #137: resizing of the main window is pretty crappy
-	Bug #139: Remember last used folder/url from file dialogs
-	Bug #140: playlist add always emits active playlist
-	Bug #141: SCons silent=>verbose, prefix=>PREFIX
-	Bug #143: Easy mingw builds from SCons
-	Bug #144: upgrade to vala 0.1.8
-	Bug #146: add i18n
-	Bug #148: s/prefix/PREFiX/ in src/SConscript
-	Bug #149: add PKG_CONFIG_PATH fallback to abracaenv.py
-	Bug #151: Use SCons config header file generation + vapi for settings
-	Bug #152: Proper localization for printf-related stuff.
-	Bug #153: handle exceptions properly
-	Bug #154: import GLib to be used for gettext _(\"...\")
-	Bug #155: Change SCons installdirs to use DATADIR and LOCALEDIR
-	Bug #156: SCons rebuilds due to unscanned dependencies
-	Bug #157: scroll to active playlist position
-	Bug #158: playback bar and total time not updated when starting paused
-	Bug #159: Missing .mo file breaks install of current development snapshot
-	Bug #160: try to (re)connect even when not connected on startup
-	Bug #162: Make Config class just a dispatcher
-	Bug #163: toolbar mediainfo doesn't listen to updates
-	Bug #164: default size properties are a bit strange
-	Bug #165: allow for late config retrieval/early saving
-	Bug #167: we ignore the available flag
-	Bug #169: rename playlist and add songs to it fails
-	Bug #171: Change add url/filter Entry into ComboBoxEntry with auto completion of 25 last entries
-	Bug #172: Update least supported version of Vala to 0.3.1
-	Bug #177: disable treeview search in playlist widget
-	Bug #178: Playlist position indicator broken
-	Bug #181: on_delete_event ignored in mainwindow -> no geometry save
-	Bug #185: Merge images into binary with gdk-pixbuf-csource
-	Bug #186: '&' char in playlist names makes abraca cry
-	Bug #187: Collections tree should be more keyboard friendly
-	Bug #188: Make metadata window resizable
-	Bug #189: Also quote purely numerical collection-labels
-	Bug #190: Allow playlist to be displayed as mediasets
-	Bug #191: When rightclicking for a context-menu, move the selection
-	Bug #192: Update the query-string when searching by artist/album/genre from playlist
-	Bug #193: Separation in context-menu of playlist tree, of items working on the whole playlist or on just the selected entries
-	Bug #194: Add delete to playlist_tree context-menu
-	Bug #195: Add jump to context menu and make menu_item-sensitivity selection dependant
-	Bug #196: Add/Replace filter results menu-items in main menu are confusing
-	Bug #198: [InstanceLast] is a nop nowdays
-	Bug #200: Abraca does not compile with Vala 0.3.4
-	Bug #201: crash if config directory is missing on shutdown
-	Bug #202: Handle the exception when no vala compiler is found
-	Bug #203: missing volume control
-	Bug #208: add metadata converters for common types
-	Bug #211: crash on exit
-	Bug #212: Encoding key in .desktop file deprecated
-	Bug #213: manpage is missing
-	Bug #215: volume widget does not work
-	Feature #133: turn scons into a waf-ish single file
-	Feature #199: Add repeat options to playlist menu
-	Feature #204: Simplify SCons env.Program a bit
-	Feature #207: the dynamic columns can't be changed while running
-	Feature #214: missing changelog
-0.4.1
-
-13-10-2009
-
+Version 0.4.1 (2009-10-13)
 
 Abraca 0.4.1
 
 Mostly a bug fix for 0.4.0
 
-    * Compability with Vala 0.7.7
-    * Binary objects are built properly. fixes debian bug #543251.
-    * Solaris interoperability.
-    * Fix the vapi file for XMMS2 clientlib.
-    * Media info window can now be closed. fixes #221
+ * Compability with Vala 0.7.7
+ * Binary objects are built properly. fixes debian bug #543251.
+ * Solaris interoperability.
+ * Fix the vapi file for XMMS2 clientlib.
+ * Media info window can now be closed. fixes #221
+ * Bug #221: Information/metadata-dialog will not close
 
-	Bug #221: Information/metadata-dialog will not close
-0.4.2
+Version 0.4.2 (2009-11-27)
 
-27-11-2009
+Version 0.4.3 (2010-01-15)
 
-0.4.3
+Version 0.5 (2010-04-03)
 
-15-01-2010
+ * Bug #168: search as you type
+ * Bug #220: setting medialib properties is flaky
+ * Bug #222: reconnects does not unref old client
+ * Bug #223: Abraca crashes sometime when typing a backslash into the filter field.
+ * Bug #226: Can't add multiple tracks to the playlist using enter key.
+ * Bug #227: Check for vala 0.7.7
+ * Bug #228: Texts from Gtk.Builder xml files are not translated.
+ * Bug #229: Replace weak by unowned
+ * Bug #230: Respect LOCALEDIR as configured by scons.
+ * Bug #231: Use <widget>.<signal>.connect(<handler>) instead of <widget>.<signal> += <handler>
+ * Bug #233: Volume control does not work
+ * Bug #235: Column order in FilterTreeView is not saved
+ * Bug #240: Valac version check fails for 0.7.10
+ * Feature #28: Make it possible to open more than one collection at a time
+ * Feature #49: add coverart to the playlist
+ * Feature #206: add a configuration dialog for filterview columns
+ * Feature #210: use datatypes from libgee
+ * Feature #218: Option to launch xmms2d on startup
+ * Feature #224: Add german translation
+ * Feature #232: Bigger cover art for current song
+ * Feature #234: Add "date" to the available columns
+ * Feature #241: Dutch translation
 
-0.5
+Version 0.6 (2011-01-22)
 
-3-04-2010
-
-
- 	Bug #168: search as you type
-	Bug #220: setting medialib properties is flaky
-	Bug #222: reconnects does not unref old client
-	Bug #223: Abraca crashes sometime when typing a backslash into the filter field.
-	Bug #226: Can't add multiple tracks to the playlist using enter key.
-	Bug #227: Check for vala 0.7.7
-	Bug #228: Texts from Gtk.Builder xml files are not translated.
-	Bug #229: Replace weak by unowned
-	Bug #230: Respect LOCALEDIR as configured by scons.
-	Bug #231: Use <widget>.<signal>.connect(<handler>) instead of <widget>.<signal> += <handler>
-	Bug #233: Volume control does not work
-	Bug #235: Column order in FilterTreeView is not saved
-	Bug #240: Valac version check fails for 0.7.10
-	Feature #28: Make it possible to open more than one collection at a time
-	Feature #49: add coverart to the playlist
-	Feature #206: add a configuration dialog for filterview columns
-	Feature #210: use datatypes from libgee
-	Feature #218: Option to launch xmms2d on startup
-	Feature #224: Add german translation
-	Feature #232: Bigger cover art for current song
-	Feature #234: Add "date" to the available columns
-	Feature #241: Dutch translation
-0.6
-
-22-01-2011
-
- 	Bug #60: add search button to filter input box
-	Bug #216: volume button is a bit flaky
-	Bug #217: release script
-	Bug #242: properly sort search result
-	Bug #244: update all rendering to cairo
-	Bug #245: Pane size wrong after restarting abraca
-	Bug #246: Playlist does not update when moving songs
-	Bug #247: Dropping in playlist is inaccurate
-	Bug #248: Changing non-active playlist changes representation of active playlist
-	Feature #225: Write vala bindings for avahi and use it to find xmms2 daemons on the local network.
+ * Bug #60: add search button to filter input box
+ * Bug #216: volume button is a bit flaky
+ * Bug #217: release script
+ * Bug #242: properly sort search result
+ * Bug #244: update all rendering to cairo
+ * Bug #245: Pane size wrong after restarting abraca
+ * Bug #246: Playlist does not update when moving songs
+ * Bug #247: Dropping in playlist is inaccurate
+ * Bug #248: Changing non-active playlist changes representation of active playlist
+ * Feature #225: Write vala bindings for avahi and use it to find xmms2 daemons on the local network.
