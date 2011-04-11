@@ -9,7 +9,7 @@ Build-Depends: debhelper (>= 7.0.50~),
                pkg-config,
                scons,
                valac-0.10 (>= 0.10.0)
-Standards-Version: 3.9.1
+Standards-Version: 3.9.2
 DM-Upload-Allowed: yes
 Homepage: http://abraca.xmms.se/
 Vcs-Git: git://git.debian.org/git/pkg-xmms2/abraca.git
