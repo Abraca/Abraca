@@ -20,6 +20,7 @@ vala_dependencies = (
 	('xmms2-client-glib', '0.6', env.Dependency.Mandatory),
 	('gee-1.0', '0.5', env.Dependency.Mandatory),
 	('avahi-gobject', '0.6.0', env.Dependency.Optional),
+	('ige-mac-integration', '0.9.8', env.Dependency.Optional),
 )
 
 for pkg, version, option in vala_dependencies:

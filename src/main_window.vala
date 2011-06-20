@@ -21,6 +21,9 @@ namespace Abraca {
 	public class MainWindow : Gtk.Window, IConfigurable {
 		private Config _config;
 		private ToolBar _toolbar;
+#if HAVE_IGE_MAC_INTEGRATION
+		private Gtk.MenuShell _menushell;
+#endif
 		private Gtk.HPaned _main_hpaned;
 		private Gtk.HPaned _right_hpaned;
 		private Gtk.CheckMenuItem _repeat_all;
@@ -131,7 +134,11 @@ namespace Abraca {
 			var vbox = new Gtk.VBox(false, 0);
 
 			var menubar = create_menubar(client);
+
+#if HAVE_IGE_MAC_INTEGRATION
+#else
 			vbox.pack_start(menubar, false, true, 0);
+#endif
 
 			_toolbar = new ToolBar(client, this);
 			vbox.pack_start(_toolbar, false, false, 6);
@@ -214,7 +221,7 @@ namespace Abraca {
 			var group = uiman.get_accel_group();
 			add_accel_group(group);
 
-			var menubar = uiman.get_widget("/Menu");
+			var menushell = uiman.get_widget("/Menu") as Gtk.MenuShell;
 
 			_repeat_all = uiman.get_widget("/Menu/Playlist/RepeatAll") as Gtk.CheckMenuItem;
 			_repeat_one = uiman.get_widget("/Menu/Playlist/RepeatOne") as Gtk.CheckMenuItem;
@@ -303,7 +310,18 @@ namespace Abraca {
 				about.hide();
 			});
 
-			return menubar;
+
+#if HAVE_IGE_MAC_INTEGRATION
+			menushell.hide();
+
+			var integration = Gtk.OSXApplication.get_instance();
+			integration.set_menu_bar(menushell);
+			integration.ready();
+
+			_menushell = menushell;
+#endif
+
+			return menushell;
 		}
 	}
 }
