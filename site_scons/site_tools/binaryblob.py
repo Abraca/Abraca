@@ -19,7 +19,8 @@ import os
 
 _code_template = """
 const char %(full_name)s[] = {
-%(bytes)s
+%(bytes)s,
+\t0x0
 };
 """
 
