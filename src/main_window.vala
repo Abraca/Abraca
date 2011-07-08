@@ -231,6 +231,11 @@ namespace Abraca {
 				Gtk.main_quit();
 			});
 
+#if HAVE_IGE_MAC_INTEGRATION
+			uiman.get_widget("/Menu/Music/Quit").no_show_all = true;
+			uiman.get_widget("/Menu/Music/Quit").visible = false;
+#endif
+
 			uiman.get_action("/Menu/Music/Connect").activate.connect ((action) => {
 				var sb = ServerBrowser.build(this);
 				while (sb.run() == 1) {
