@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+  <requires lib="gtk+" version="2.16"/>
   <!-- interface-requires abraca 0.0 -->
   <object class="GtkAction" id="action1"/>
   <object class="GtkAdjustment" id="adjustment1">
@@ -93,21 +94,21 @@
           </packing>
         </child>
         <child>
-          <object class="GtkViewport" id="viewport1">
+          <object class="GtkScrolledWindow" id="scrolledwindow1">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can_focus">True</property>
             <property name="border_width">6</property>
-            <property name="resize_mode">queue</property>
+            <property name="hscrollbar_policy">never</property>
+            <property name="shadow_type">in</property>
             <child>
               <object class="GtkTreeView" id="treeview1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="model">liststore1</property>
-                <property name="headers_visible">False</property>
                 <property name="headers_clickable">False</property>
-                <property name="reorderable">True</property>
                 <property name="enable_search">False</property>
                 <property name="search_column">0</property>
+                <property name="fixed_height_mode">True</property>
                 <property name="tooltip_column">2</property>
                 <signal name="row-activated" handler="abraca_server_browser_on_treeview_row_activated" swapped="no"/>
                 <child internal-child="selection">
@@ -115,6 +116,9 @@
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                    <property name="sizing">fixed</property>
+                    <property name="min_width">35</property>
+                    <property name="max_width">35</property>
                     <property name="title">column</property>
                     <child>
                       <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf1">
@@ -128,6 +132,7 @@
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="treeviewcolumn2">
+                    <property name="sizing">fixed</property>
                     <property name="title">column</property>
                     <property name="expand">True</property>
                     <child>
@@ -140,7 +145,9 @@
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="treeviewcolumn3">
+                    <property name="sizing">fixed</property>
                     <property name="min_width">35</property>
+                    <property name="max_width">35</property>
                     <property name="title">column</property>
                     <child>
                       <object class="AbracaCellRendererTogglePixbuf" id="cellrenderertogglepixbuf1">
@@ -169,7 +176,7 @@
             <property name="left_padding">5</property>
             <property name="right_padding">5</property>
             <child>
-              <object class="GtkHBox" id="hbox1">
+              <object class="GtkBox" id="hbox1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="spacing">5</property>
