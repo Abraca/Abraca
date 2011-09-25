@@ -1,9 +1,11 @@
-abraca (0.6.0-4) unstable; urgency=low
+abraca (0.6.0-3.1) unstable; urgency=low
 
-  * Switched to 3.9.2 standard compatibility.
-  * Added 'DM-Upload-Allowed' field.
+  * Non-Maintainer Upload.
+  * debian/rules:
+    - Build using the bundled version of scons.
+      Fixes FTBFS on amd64 machines. (Closes: #642678)
 
- -- Fabrizio Regalli <fabreg@fabreg.it>  Mon, 11 Apr 2011 15:48:55 +0200
+ -- Andrea Veri <and@debian.org>  Sun, 25 Sep 2011 15:58:38 +0200
 
 abraca (0.6.0-3) unstable; urgency=low
 
