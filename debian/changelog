@@ -1,3 +1,10 @@
+abraca (0.6.0-4) UNRELEASED; urgency=low
+
+  * Added DM-Upload-Allowed field
+  * Upgraded to 3.9.2 standard compatibility
+
+ -- Fabrizio Regalli <fabreg@fabreg.it>  Mon, 26 Sep 2011 17:27:39 +0200
+
 abraca (0.6.0-3.1) unstable; urgency=low
 
   * Non-Maintainer Upload.
