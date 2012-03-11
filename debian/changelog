@@ -1,9 +1,10 @@
-abraca (0.6.0-4) UNRELEASED; urgency=low
+abraca (0.6.0-3.2) UNRELEASED; urgency=low
 
   * Added DM-Upload-Allowed field
-  * Upgraded to 3.9.2 standard compatibility
+  * Upgraded to 3.9.3 standard compatibility
+  * Updated valac B-D to valac-0.14 (Closes: #663292)
 
- -- Fabrizio Regalli <fabreg@fabreg.it>  Mon, 26 Sep 2011 17:27:39 +0200
+ -- Fabrizio Regalli <fabreg@fabreg.it>  Sun, 11 Mar 2012 10:08:35 +0100
 
 abraca (0.6.0-3.1) unstable; urgency=low
 

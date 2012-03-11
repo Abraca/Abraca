@@ -9,8 +9,8 @@ Build-Depends: debhelper (>= 7.0.50~),
                libxmmsclient-glib-dev (>= 0.7DrNo),
                pkg-config,
                scons,
-               valac-0.10 (>= 0.10.0)
-Standards-Version: 3.9.2
+               valac-0.14 (>= 0.14.0)
+Standards-Version: 3.9.3
 Homepage: http://abraca.xmms.se/
 Vcs-Git: git://git.debian.org/git/pkg-xmms2/abraca.git
 Vcs-Browser: http://git.debian.org/?p=pkg-xmms2/abraca.git
