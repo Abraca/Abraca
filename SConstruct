@@ -31,8 +31,9 @@ for pkg, version, option in vala_dependencies:
 env.Append(VALAPKGS = ['posix'])
 
 c_dependencies = (
-	('gladeui-1.0', '3.6.0', env.Dependency.Optional),
-	('avahi-client', '0.6.0', env.Dependency.Optional),
+	('gladeui-2.0', '3.6.0', env.Dependency.Optional),
+#	('avahi-client', '0.6.0', env.Dependency.Optional),
+#	('avahi-glib', '0.6.0', env.Dependency.Optional),
 )
 
 for pkg, version, option in c_dependencies:
