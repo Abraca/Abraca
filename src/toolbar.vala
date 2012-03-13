@@ -22,6 +22,8 @@ using GLib;
 namespace Abraca {
 	public class ToolBar : Gtk.HBox {
 		private Gtk.Button play_pause;
+		private Gtk.Button equalizer_button;
+		private Gtk.Dialog equalizer_dialog;
 
 		private uint _current_id;
 		private int _status;
@@ -69,6 +71,16 @@ namespace Abraca {
 			btn = new VolumeButton(client);
 			pack_end(btn, false, false, 0);
 
+			/*
+			equalizer_button = new Gtk.Button();
+			equalizer_button.no_show_all = true;
+			equalizer_button.relief = Gtk.ReliefStyle.NONE;
+			equalizer_button.image = new Gtk.Image.from_stock(Abraca.STOCK_EQUALIZER,
+			                                                  Gtk.IconSize.SMALL_TOOLBAR);
+			equalizer_button.clicked.connect (on_equalizer_show);
+			pack_end(equalizer_button, false, false, 0);
+			*/
+
 			client.playback_status.connect(on_playback_status_change);
 			client.playback_current_id.connect(on_playback_current_id);
 			client.playback_playtime.connect(on_playback_playtime);
@@ -77,10 +89,24 @@ namespace Abraca {
 				on_media_info(res);
 			});
 
+			client.connection_state_changed.connect(on_connection_state_changed);
+
 			manager = new CoverArtManager (client, parent);
+
+			/*
+			equalizer_dialog = new Gtk.Dialog.with_buttons(
+				"Equalizer", parent,
+				Gtk.DialogFlags.DESTROY_WITH_PARENT
+			);
+			equalizer_dialog.window_position = Gtk.WindowPosition.CENTER_ON_PARENT;
+
+			var box = equalizer_dialog.get_content_area () as Gtk.Box;
+			box.pack_start (new Equalizer (client));
+			*/
 
 			set_sensitive(false);
 		}
+
 
 
 		private Gtk.Button create_playback_button (string s)
@@ -403,6 +429,55 @@ namespace Abraca {
 			if (_status == Xmms.PlaybackStatus.STOP) {
 				update_time_label();
 			}
+		}
+
+		/**
+		 * Only show the icon if the equalizer capability is available.
+		 */
+		private bool on_list_plugins (Xmms.Value value)
+		{
+			unowned Xmms.ListIter iter;
+
+			equalizer_button.hide();
+
+			for (value.get_list_iter(out iter); iter.valid(); iter.next()) {
+				Xmms.Value entry;
+				string name;
+
+				if (!iter.entry(out entry)) {
+					continue;
+				}
+
+				if (!entry.dict_entry_get_string("shortname", out name)) {
+					continue;
+				}
+
+				if (name == "equalizer") {
+					equalizer_button.show ();
+				}
+			}
+
+			return true;
+		}
+
+		private void on_connection_state_changed (Client client, Client.ConnectionState state)
+		{
+			if (state != Client.ConnectionState.Connected) {
+				return;
+			}
+
+			/*
+			client.xmms.main_list_plugins(Xmms.PluginType.XFORM).notifier_set (
+				on_list_plugins
+			);
+			*/
+		}
+
+		private void on_equalizer_show (Gtk.Button button)
+		{
+			equalizer_dialog.show_all ();
+			equalizer_dialog.run ();
+			equalizer_dialog.hide ();
 		}
 	}
 }
