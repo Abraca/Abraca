@@ -44,11 +44,11 @@ namespace Abraca {
 		set = new Gtk.IconSet();
 
 		source = new Gtk.IconSource();
-		source.set_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_collection_24,  false));
+		source.set_pixbuf(new Gdk.Pixbuf.from_inline(Resources.abraca_collection_24,  false));
 		set.add_source(source);
 
 		source = new Gtk.IconSource();
-		source.set_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_collection_16,  false));
+		source.set_pixbuf(new Gdk.Pixbuf.from_inline(Resources.abraca_collection_16,  false));
 		source.set_size(Gtk.IconSize.MENU);
 		source.set_size_wildcarded(false);
 		set.add_source(source);
@@ -60,11 +60,11 @@ namespace Abraca {
 		set = new Gtk.IconSet();
 
 		source = new Gtk.IconSource();
-		source.set_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_playlist_24,  false));
+		source.set_pixbuf(new Gdk.Pixbuf.from_inline(Resources.abraca_playlist_24,  false));
 		set.add_source(source);
 
 		source = new Gtk.IconSource();
-		source.set_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_playlist_16,  false));
+		source.set_pixbuf(new Gdk.Pixbuf.from_inline(Resources.abraca_playlist_16,  false));
 		source.set_size(Gtk.IconSize.MENU);
 		source.set_size_wildcarded(false);
 		set.add_source(source);
@@ -73,9 +73,9 @@ namespace Abraca {
 
 		/* Other icons */
 
-		factory.add(STOCK_RATED,    new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_rating_rated,   false)));
-		factory.add(STOCK_UNRATED,  new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_rating_unrated, false)));
-		factory.add(STOCK_FAVORITE, new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_favorite,       false)));
+		factory.add(STOCK_RATED,    new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_inline(Resources.abraca_rating_rated,   false)));
+		factory.add(STOCK_UNRATED,  new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_inline(Resources.abraca_rating_unrated, false)));
+		factory.add(STOCK_FAVORITE, new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_inline(Resources.abraca_favorite,       false)));
 
 		return factory;
 	}

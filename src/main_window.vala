@@ -34,9 +34,7 @@ namespace Abraca {
 			create_widgets(client);
 
 			try {
-				set_icon(new Gdk.Pixbuf.from_inline (
-					-1, Resources.abraca_32, false
-				));
+				set_icon(new Gdk.Pixbuf.from_inline (Resources.abraca_32, false));
 			} catch (GLib.Error e) {
 				GLib.assert_not_reached ();
 			}
@@ -301,9 +299,7 @@ namespace Abraca {
 				var about = about_builder.get_object("abraca_about") as Gtk.AboutDialog;
 
 				try {
-					about.set_logo(new Gdk.Pixbuf.from_inline (
-						-1, Resources.abraca_192, false
-					));
+					about.set_logo(new Gdk.Pixbuf.from_inline (Resources.abraca_192, false));
 				} catch (GLib.Error e) {
 					GLib.assert_not_reached ();
 				}

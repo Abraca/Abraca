@@ -66,7 +66,7 @@ def gdk_pixbuf_csource_action(target, source, env):
 	fd.write('#include <glib.h>\n')
 
 	for decl in decls:
-		fd.write('extern const guint8 ' + decl + '[];\n')
+		fd.write('extern const guint8 ' + decl + '[' + str(len(tgt_content)) + '];\n')
 
 	fd.write('#endif\n')
 	fd.close()
