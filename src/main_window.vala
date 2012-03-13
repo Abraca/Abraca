@@ -235,7 +235,8 @@ namespace Abraca {
 #endif
 
 			uiman.get_action("/Menu/Music/Connect").activate.connect ((action) => {
-				ServerBrowser sb = ServerBrowser.build(this);
+				/*
+				var sb = ServerBrowser.build(this);
 				while (sb.run() == 1) {
 					GLib.debug("host: %s", sb.selected_host);
 					if (client.try_connect (sb.selected_host)) {
@@ -243,6 +244,7 @@ namespace Abraca {
 					}
 					sb = ServerBrowser.build(this);
 				}
+				*/
 			});
 
 			uiman.get_action("/Menu/Music/Add/Files").activate.connect((action) => {

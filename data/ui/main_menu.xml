@@ -36,6 +36,7 @@
           <object class="GtkAction" id="MusicMenuConnectAction">
             <property name="label" translatable="yes">_Connect</property>
             <property name="stock-id">gtk-connect</property>
+            <property name="sensitive">False</property>
           </object>
         </child>
         <child>

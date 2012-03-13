@@ -9,6 +9,9 @@
 		<!-- Widgets -->
 		<glade-widget-class name="AbracaRatingEntry" generic-name="ratingentry" title="Rating Entry"/>
 
+		<!-- Widgets -->
+		<glade-widget-class name="AbracaPrettyLabel" generic-name="prettylabel" title="Pretty Label"/>
+
 		<!-- Cell Renderers -->
 		<glade-widget-class name="AbracaCellRendererCollection" generic-name="cellrenderercollection" title="Collection Cell Renderer">
 			<properties>
@@ -67,6 +70,7 @@
 		<glade-widget-class-ref name="AbracaMedialibInfoDialog"/>
 		<glade-widget-class-ref name="AbracaServerBrowser"/>
 		<glade-widget-class-ref name="AbracaRatingEntry"/>
+		<glade-widget-class-ref name="AbracaPrettyLabel"/>
 		<glade-widget-class-ref name="AbracaServerModel"/>
 	</glade-widget-group>
 </glade-catalog>

@@ -95,8 +95,7 @@ namespace Abraca {
 		{
 			var model = (ServerModel) _view.model;
 
-			model.add_server_from_address(null, _entry_host.text,
-			                              (uint16) _spin_button_port.value);
+			model.add_server_from_address(_entry_host.text, (uint16) _spin_button_port.value);
 		}
 
 		[CCode(instance_pos=-1)]

@@ -20,6 +20,8 @@
 namespace Abraca {
 	public class ServerModel: Gtk.ListStore, Gtk.Buildable
 	{
+		private DMAP.MdnsBrowser _browser;
+
 		public enum Column {
 			ICON,
 			NAME,
@@ -27,29 +29,26 @@ namespace Abraca {
 			FAVORITE
 		}
 
-#if HAVE_AVAHI_GOBJECT
-		private Avahi.Client _avahi_client;
-		private Avahi.ServiceBrowser _avahi_service_browser;
-		private Gee.LinkedList<Avahi.ServiceResolver> _avahi_service_resolvers;
-#endif
-
 		public void parser_finished(Gtk.Builder builder)
 		{
-#if HAVE_AVAHI_GOBJECT
-			_avahi_client            = new Avahi.Client(Avahi.ClientFlags.NO_FAIL);
-			_avahi_service_browser   = new Avahi.ServiceBrowser("_xmms2._tcp");
-			_avahi_service_resolvers = new Gee.LinkedList<Avahi.ServiceResolver>();
-
+			_browser = new DMAP.MdnsBrowser (DMAP.MdnsBrowserServiceType.XMMS2);
 			try {
-				_avahi_client.start();
-
-				_avahi_service_browser.new_service.connect(on_new_service);
-				_avahi_service_browser.removed_service.connect(on_removed_service);
-				_avahi_service_browser.attach(_avahi_client);
-			} catch (Avahi.Error e) {
-				GLib.warning ("Unable to connect to Avahi Daemon (%s).", e.message);
+				_browser.start ();
+			} catch (GLib.Error e) {
+				GLib.debug (e.message);
 			}
-#endif
+
+			_browser.service_added.connect ((service) => {
+				GLib.debug ("%s", service.host);
+			});
+
+
+			/*
+			foreach (var service in _browser.get_services ()) {
+				GLib.debug ("%s", service.host);
+			}
+			*/
+
 
 //			var name = GLib.Environment.get_host_name();
 //			var path = Xmms.fallback_ipcpath_get();
@@ -58,59 +57,6 @@ namespace Abraca {
 //				add_server(name, path);
 //			}
 		}
-
-#if HAVE_AVAHI_GOBJECT
-		private void on_new_service(Avahi.Interface i, Avahi.Protocol p, string n, string t, string d, Avahi.LookupResultFlags f) {
-			if (p != Avahi.Protocol.INET) {
-				// Ignoring IPv6 address as latest stable xmms2-mdns-avahi incorrectly announces these even if not listening
-				return;
-			}
-
-			var resolver = new Avahi.ServiceResolver(i, p, n, t, d, Avahi.Protocol.UNSPEC);
-
-			resolver.found.connect((i, p, n, t, d, h, a, port, txt, f) => {
-				add_server_from_address(n, a.to_string(), port);
-				_avahi_service_resolvers.remove(resolver);
-			});
-			resolver.failure.connect((e) => {
-				GLib.warning(e.message);
-				_avahi_service_resolvers.remove(resolver);
-			});
-
-			try {
-				resolver.attach(_avahi_client);
-			} catch (Avahi.Error e) {
-				GLib.warning(e.message);
-				return;
-			}
-
-			_avahi_service_resolvers.add(resolver);
-		}
-
-		private void on_removed_service(Avahi.Interface i, Avahi.Protocol p, string n, string t, string d, Avahi.LookupResultFlags f) {
-			// Never remove the local xmms2d from the model.
-			if (n == GLib.Environment.get_host_name()) {
-				return;
-			}
-
-			Gtk.TreeIter iter;
-
-			if (!get_iter_first(out iter)) {
-				return;
-			}
-
-			do {
-				string name;
-
-				get(iter, Column.NAME, out name);
-
-				if (name == n) {
-					remove(iter);
-					break;
-				}
-			} while (iter_next(ref iter));
-		}
-#endif
 
 		public void add_server(string? name, string uri, bool favorite=false)
 		{
@@ -132,25 +78,21 @@ namespace Abraca {
 		}
 
 
-		public void add_server_from_address (string? name, string host, uint16 port, bool favorite=false)
+		public void add_server_from_address (string host, uint16 port=9667, bool favorite=false)
 		{
 			var resolver = GLib.Resolver.get_default();
 			var address = new GLib.InetAddress.from_string(host);
+			string name = host;
 
-			if (name == null) {
-				if (address.is_loopback) {
-					name = GLib.Environment.get_host_name();
-				} else if (address.is_site_local) {
-					try {
-						name = resolver.lookup_by_address(address, null);
-					} catch (GLib.Error e) {
-						name = host;
-					}
+			if (address.is_loopback) {
+				name = GLib.Environment.get_host_name();
+			} else if (address.is_site_local) {
+				try {
+					name = resolver.lookup_by_address(address, null);
+				} catch (GLib.Error e) {
+					name = host;
 				}
 			}
-
-			if (name == null)
-				name = host;
 
 			GLib.debug ("Found host: %s", name);
 
