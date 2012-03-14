@@ -17,8 +17,8 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 		model = new Gtk.ListStore.newv({ typeof(string) });
 
 		var entry = get_child() as Gtk.Entry;
-		entry.primary_icon_name = Gtk.Stock.FIND;
-		entry.secondary_icon_name = Gtk.Stock.CLEAR;
+		entry.primary_icon_stock = Gtk.Stock.FIND;
+		entry.secondary_icon_stock = Gtk.Stock.CLEAR;
 		entry.secondary_icon_activatable = true;
 
 		entry.changed.connect(on_filter_entry_changed);
