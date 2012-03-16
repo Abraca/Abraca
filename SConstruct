@@ -13,12 +13,12 @@ conf.CheckApp('gdk-pixbuf-csource')
 conf.CheckGitVersion()
 
 vala_dependencies = (
-	('gtk+-3.0', '2.16.0', env.Dependency.Mandatory),
+	('gtk+-3.0', '3.0.0', env.Dependency.Mandatory),
 	('gmodule-2.0', '2.16.0', env.Dependency.Mandatory),
 	('gio-2.0', '2.16.0', env.Dependency.Mandatory),
-	('xmms2-client', '0.6', env.Dependency.Mandatory),
-	('xmms2-client-glib', '0.6', env.Dependency.Mandatory),
-	('gee-1.0', '0.5', env.Dependency.Mandatory),
+	('xmms2-client', '0.8', env.Dependency.Mandatory),
+	('xmms2-client-glib', '0.8', env.Dependency.Mandatory),
+	('gee-1.0', '0.6', env.Dependency.Mandatory),
 	('ige-mac-integration', '0.9.8', env.Dependency.Optional),
 #	('avahi-gobject', '0.6.0', env.Dependency.Optional),
 )
