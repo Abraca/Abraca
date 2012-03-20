@@ -7,6 +7,7 @@ abraca (0.7.0-1) UNRELEASED; urgency=low
   * Imported Upstream version 0.7.0
   * Removed libgtk2.0-dev in B-D in favor of newer libgtk-3-dev
   * Bump libxmmsclient-glib-dev B-D to (>= 0.8)
+  * Added 01-change-icon.diff patch for using different icon
 
  -- Fabrizio Regalli <fabreg@fabreg.it>  Tue, 20 Mar 2012 20:59:50 +0100
 
