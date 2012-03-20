@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008-2010  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -91,6 +91,7 @@ namespace Abraca {
 			}
 		}
 
+
 		public bool try_connect(string? path = null) {
 			if (path == null) {
 				path = GLib.Environment.get_variable("XMMS_PATH");
@@ -104,16 +105,13 @@ namespace Abraca {
 				detach_callbacks();
 
 				if (_gmain != null)
-					Xmms.MainLoop.GMain.shutdown(null, _gmain);
+					Xmms.MainLoop.GMain.shutdown(_xmms, _gmain);
 
 				_xmms = next_client;
 				_gmain = Xmms.MainLoop.GMain.init(_xmms);
 
 				_xmms.disconnect_callback_set(() => {
 					connection_state_changed (ConnectionState.Disconnected);
-					GLib.debug ("Lost connection to XMMS2, restart to reconnect.");
-
-					Gtk.main_quit ();
 				});
 
 				attach_callbacks();

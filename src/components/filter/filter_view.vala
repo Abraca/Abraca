@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008-2010  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@ namespace Abraca {
 
 		/** context menu */
 		private Gtk.Menu filter_menu;
+		private Gtk.Menu header_menu;
 
 		/* sensitivity conditions of filter_menu-items */
 		private GLib.List<Gtk.MenuItem>
@@ -63,6 +64,7 @@ namespace Abraca {
 
 			get_selection().set_mode(Gtk.SelectionMode.MULTIPLE);
 
+			create_header_menu();
 			create_context_menu();
 			get_selection().changed.connect(on_selection_changed_update_menu);
 			on_selection_changed_update_menu(get_selection());
@@ -241,16 +243,16 @@ namespace Abraca {
 
 		private bool on_key_press_event (Gdk.EventKey e)
 		{
-			if (e.keyval != Gdk.Keysym.Return) {
+			if (e.keyval != Gdk.keyval_from_name("Return")) {
 				return false;
 			}
 
 			if ((e.state & Gdk.ModifierType.CONTROL_MASK) > 0) {
-				client.xmms.playlist_clear (Xmms.ACTIVE_PLAYLIST);
+				client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
 			}
 
 			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
-				client.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
+				client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, mid);
 			});
 
 			return true;
@@ -370,44 +372,23 @@ namespace Abraca {
 							} else {
 								order = Gtk.SortType.DESCENDING;
 							}
-							sorting = {column.title, order};
+							/* TODO: This temp variable is needed due to a bug in vala 0.11.5 */
+							Sorting tmp = {column.title, order};
+							sorting = tmp;
 							break;
 						}
 					}
 					return true;
 				case 3:
-					Gtk.MenuItem item;
-					var menu = new Gtk.Menu();
-					var columns = get_columns();
-
-					foreach (var column in columns) {
+					foreach (var column in get_columns()) {
 						if (column.widget.get_ancestor(typeof(Gtk.Button)) == w) {
-							menu.set_title(column.title);
+							header_menu.set_title(column.title);
 							break;
 						}
 					}
 
-					item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_EDIT, null);
-					item.activate.connect(on_header_edit);
-					menu.append(item);
-
-					if (columns.length() > 1) {
-						item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_REMOVE, null);
-						item.activate.connect(on_header_remove);
-						menu.append(item);
-					}
-
-					if (sorting.field != null) {
-						menu.append(new Gtk.SeparatorMenuItem());
-
-						item = new Gtk.MenuItem.with_label(_("Reset sorting"));
-						item.activate.connect(on_header_reset_sorting);
-						menu.append(item);
-					}
-
-					menu.popup(null, null, null, e.button, Gtk.get_current_event_time());
-
-					menu.show_all();
+					header_menu.popup(null, null, null, e.button, Gtk.get_current_event_time());
+					header_menu.show_all();
 					return true;
 				default:
 					return false;
@@ -471,6 +452,26 @@ namespace Abraca {
 			sorting = Sorting();
 		}
 
+		private void create_header_menu ()
+		{
+			Gtk.MenuItem item;
+
+			header_menu = new Gtk.Menu();
+
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.Stock.EDIT, null);
+			item.activate.connect(on_header_edit);
+			header_menu.append(item);
+
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.Stock.REMOVE, null);
+			item.activate.connect(on_header_remove);
+			header_menu.append(item);
+
+			header_menu.append(new Gtk.SeparatorMenuItem());
+
+			item = new Gtk.MenuItem.with_label(_("Reset sorting"));
+			item.activate.connect(on_header_reset_sorting);
+			header_menu.append(item);
+		}
 
 		private void create_context_menu ()
 		{
@@ -478,7 +479,7 @@ namespace Abraca {
 
 			filter_menu = new Gtk.Menu();
 
-			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_SELECT_ALL, null);
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.Stock.SELECT_ALL, null);
 			item.activate.connect(on_menu_select_all);
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
@@ -487,7 +488,7 @@ namespace Abraca {
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
-			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_INFO, null);
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.Stock.INFO, null);
 			item.activate.connect(on_menu_info);
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
@@ -496,7 +497,7 @@ namespace Abraca {
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
-			item = new Gtk.ImageMenuItem.from_stock(Gtk.STOCK_ADD, null);
+			item = new Gtk.ImageMenuItem.from_stock(Gtk.Stock.ADD, null);
 			item.activate.connect(on_menu_add);
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);

@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008-2010  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,7 +38,7 @@ public class Abraca.FilterWidget : Gtk.VBox {
 		scrolled.add(treeview);
 
 		searchbox = new FilterSearchBox (client, config, treeview);
-		searchbox.add_accelerator("grab-focus", group, Gdk.Keysym.l,
+		searchbox.add_accelerator("grab-focus", group, Gdk.keyval_from_name ("l"),
 		                          Gdk.ModifierType.CONTROL_MASK, 0);
 
 

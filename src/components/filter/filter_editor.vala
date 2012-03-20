@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008-2010  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,7 +56,6 @@ namespace Abraca {
 
 			title = _("Select Columns");
 
-			has_separator = false;
 			resizable = false;
 
 			var notebook = new Gtk.Notebook();
@@ -67,19 +66,21 @@ namespace Abraca {
 			notebook.append_page(child, new Gtk.Label("Columns"));
 			notebook.border_width = 6;
 
-			var button = new Gtk.Button.from_stock(Gtk.STOCK_OK);
+			var button = new Gtk.Button.from_stock(Gtk.Stock.OK);
 			button.clicked.connect((widget) => {
 				destroy();
 			});
 
+			var action_area = get_action_area() as Gtk.Box;
 			action_area.add(button);
 			action_area.border_width = 0;
 			action_area.spacing = 0;
 
-			vbox.border_width = 0;
-			vbox.pack_start(new PrettyLabel ("Select Columns"), false, true, 0);
-			vbox.pack_start(notebook, true, true, 0);
-			vbox.set_child_packing(action_area, false, false, 0, Gtk.PackType.END);
+			var box = get_content_area() as Gtk.Box;
+			box.border_width = 0;
+			box.pack_start(new PrettyLabel("Select Columns"), false, true, 0);
+			box.pack_start(notebook, true, true, 0);
+			box.set_child_packing(action_area, false, false, 0, Gtk.PackType.END);
 
 			response.connect((widget,response) => {
 				destroy();

@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008-2010  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,9 @@ namespace Abraca {
 	public class MainWindow : Gtk.Window, IConfigurable {
 		private Config _config;
 		private ToolBar _toolbar;
+#if HAVE_IGE_MAC_INTEGRATION
+		private Gtk.MenuShell _menushell;
+#endif
 		private Gtk.HPaned _main_hpaned;
 		private Gtk.HPaned _right_hpaned;
 		private Gtk.CheckMenuItem _repeat_all;
@@ -31,16 +34,13 @@ namespace Abraca {
 			create_widgets(client);
 
 			try {
-				set_icon(new Gdk.Pixbuf.from_inline (
-					-1, Resources.abraca_32, false
-				));
+				set_icon(new Gdk.Pixbuf.from_inline (-1, Resources.abraca_32, false));
 			} catch (GLib.Error e) {
 				GLib.assert_not_reached ();
 			}
 
 			width_request = 800;
 			height_request = 600;
-			allow_shrink = true;
 
 			Configurable.register(this);
 		}
@@ -132,7 +132,11 @@ namespace Abraca {
 			var vbox = new Gtk.VBox(false, 0);
 
 			var menubar = create_menubar(client);
+
+#if HAVE_IGE_MAC_INTEGRATION
+#else
 			vbox.pack_start(menubar, false, true, 0);
+#endif
 
 			_toolbar = new ToolBar(client, this);
 			vbox.pack_start(_toolbar, false, false, 6);
@@ -215,7 +219,7 @@ namespace Abraca {
 			var group = uiman.get_accel_group();
 			add_accel_group(group);
 
-			var menubar = uiman.get_widget("/Menu");
+			var menushell = uiman.get_widget("/Menu") as Gtk.MenuShell;
 
 			_repeat_all = uiman.get_widget("/Menu/Playlist/RepeatAll") as Gtk.CheckMenuItem;
 			_repeat_one = uiman.get_widget("/Menu/Playlist/RepeatOne") as Gtk.CheckMenuItem;
@@ -225,14 +229,22 @@ namespace Abraca {
 				Gtk.main_quit();
 			});
 
+#if HAVE_IGE_MAC_INTEGRATION
+			uiman.get_widget("/Menu/Music/Quit").no_show_all = true;
+			uiman.get_widget("/Menu/Music/Quit").visible = false;
+#endif
+
 			uiman.get_action("/Menu/Music/Connect").activate.connect ((action) => {
+				/*
 				var sb = ServerBrowser.build(this);
 				while (sb.run() == 1) {
 					GLib.debug("host: %s", sb.selected_host);
 					if (client.try_connect (sb.selected_host)) {
 						break;
 					}
+					sb = ServerBrowser.build(this);
 				}
+				*/
 			});
 
 			uiman.get_action("/Menu/Music/Add/Files").activate.connect((action) => {
@@ -289,9 +301,7 @@ namespace Abraca {
 				var about = about_builder.get_object("abraca_about") as Gtk.AboutDialog;
 
 				try {
-					about.set_logo(new Gdk.Pixbuf.from_inline (
-						-1, Resources.abraca_192, false
-					));
+					about.set_logo(new Gdk.Pixbuf.from_inline (-1, Resources.abraca_192, false));
 				} catch (GLib.Error e) {
 					GLib.assert_not_reached ();
 				}
@@ -304,7 +314,18 @@ namespace Abraca {
 				about.hide();
 			});
 
-			return menubar;
+
+#if HAVE_IGE_MAC_INTEGRATION
+			menushell.hide();
+
+			var integration = Gtk.OSXApplication.get_instance();
+			integration.set_menu_bar(menushell);
+			integration.ready();
+
+			_menushell = menushell;
+#endif
+
+			return menushell;
 		}
 	}
 }

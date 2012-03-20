@@ -1,11 +1,11 @@
-env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.6.0')
+env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.7.0')
 
 env.VariantDir('build', '.')
 
 env.Append(VALAPKGPATH = ['vapi'])
 
 conf = env.Configure('build/build-config.h')
-conf.CheckVala('0.10.0')
+conf.CheckVala('0.11.5')
 conf.CheckCCompiler()
 conf.CheckPkgConfig()
 conf.CheckApp('msgfmt')
@@ -13,13 +13,14 @@ conf.CheckApp('gdk-pixbuf-csource')
 conf.CheckGitVersion()
 
 vala_dependencies = (
-	('gtk+-2.0', '2.16.0', env.Dependency.Mandatory),
+	('gtk+-3.0', '3.0.0', env.Dependency.Mandatory),
 	('gmodule-2.0', '2.16.0', env.Dependency.Mandatory),
 	('gio-2.0', '2.16.0', env.Dependency.Mandatory),
-	('xmms2-client', '0.6', env.Dependency.Mandatory),
-	('xmms2-client-glib', '0.6', env.Dependency.Mandatory),
-	('gee-1.0', '0.5', env.Dependency.Mandatory),
-	('avahi-gobject', '0.6.0', env.Dependency.Optional),
+	('xmms2-client', '0.8', env.Dependency.Mandatory),
+	('xmms2-client-glib', '0.8', env.Dependency.Mandatory),
+	('gee-1.0', '0.6', env.Dependency.Mandatory),
+	('ige-mac-integration', '0.9.8', env.Dependency.Optional),
+#	('avahi-gobject', '0.6.0', env.Dependency.Optional),
 )
 
 for pkg, version, option in vala_dependencies:
@@ -28,10 +29,12 @@ for pkg, version, option in vala_dependencies:
 		env.Append(VALAPKGS = [pkg])
 
 env.Append(VALAPKGS = ['posix'])
+#env.Append(VALAPKGS = ['posix', 'dmap-mdns-browser'])
 
 c_dependencies = (
-	('gladeui-1.0', '3.6.0', env.Dependency.Optional),
-	('avahi-client', '0.6.0', env.Dependency.Optional),
+	('gladeui-2.0', '3.6.0', env.Dependency.Optional),
+#	('avahi-client', '0.6.0', env.Dependency.Optional),
+#	('avahi-glib', '0.6.0', env.Dependency.Optional),
 )
 
 for pkg, version, option in c_dependencies:
@@ -55,9 +58,12 @@ if api_version and api_version.isdigit() and int(api_version) > 18:
 
 conf.Finish()
 
-env.Append(VALAPKGS = ['build-config', 'gdk-keysyms'])
-env.Append(CCFLAGS = ['-Wall', '-Wno-unused-variable'])
+env.Append(VALAPKGS = ['build-config'])
+env.Append(CCFLAGS = ['-Wall', '-Wno-unused-variable', '-Wno-unused-but-set-variable'])
+#env.Append(CCFLAGS = ['-Wall', '-Wno-unused-variable', '-Wno-unused-but-set-variable', '-DHAVE_AVAHI_0_6'])
 env.Append(CPPPATH = Dir('build'))
+env.Append(LIBS = ['m'])
+
 
 if env.DebugVariant():
 	env.Append(CCFLAGS = ['-g'])

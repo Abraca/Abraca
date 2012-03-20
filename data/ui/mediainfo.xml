@@ -213,20 +213,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBoxEntry" id="ent_genre">
+                  <object class="GtkComboBox" id="ent_genre">
                     <property name="model">genre_model</property>
+                    <property name="has_entry">True</property>
+                    <property name="entry_text_column">0</property>
                     <signal name="changed" handler="abraca_medialib_info_dialog_on_genre_combo_box_entry_changed"/>
-                    <!--
-                    TODO: Bug in GTK causing ComboBoxEntry to be right aligned.
-                    <child>
-                      <object class="GtkCellRendererText" id="ent_genre_renderer">
-                        <property name="alignment">left</property>
-                      </object>
-                      <attributes>
-                        <attribute name="text">0</attribute>
-                      </attributes>
-                    </child>
-                    -->
                   </object>
                   <packing>
                     <property name="top_attach">5</property>
@@ -296,7 +287,7 @@
                             <property name="sizing">fixed</property>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderer_value">
-                                <property name="ellipsize">none</property>
+                                <property name="ellipsize">end</property>
                               </object>
                               <attributes>
                                 <attribute name="text">1</attribute>

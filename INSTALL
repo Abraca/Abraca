@@ -1,10 +1,10 @@
 You'll need the following applications and libraries to build and run Abraca:
 
-    o XMMS2 0.6DrMattDestruction
-    o GTK 2.16.0 (older may work)
+    o XMMS2 0.8DrMattDestruction
+    o GTK 3.0.0 (older may work)
     o pkg-config 0.22 (older may work)
-    o vala 0.10.0
-    o libgee 0.5.0 (or newer)
+    o vala 0.14.0
+    o libgee 0.6.0 (or newer)
     o gcc 4.2.3 (older may work)
     o gettext for localization
     o python for running SCons
@@ -43,12 +43,6 @@ Environment variables SCons listens to:
 
 
 Crosscompiling Linux -> Windows:
-
-    wget http://abraca.xmms.se/gtkwin32.tar.gz
-
-    tar xvfz gtkwin32.tar.gz
-
-    cd abraca
 
     ./scons CC=/usr/bin/i586-mingw32msvc-gcc \
        PKG_CONFIG_FLAGS="--define-variable=prefix=/path/to/gtkwin32/" \

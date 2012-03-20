@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008-2010  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@ namespace Abraca {
 			set {
 				if (_rating != value) {
 					_rating = value;
+					update_size_request();
 					changed ();
 				}
 			}
@@ -48,6 +49,7 @@ namespace Abraca {
 			}
 			set {
 				_unrated_icon = value;
+				update_size_request();
 			}
 		}
 
@@ -59,6 +61,7 @@ namespace Abraca {
 			}
 			set {
 				_rated_icon = value;
+				update_size_request();
 			}
 		}
 
@@ -70,13 +73,14 @@ namespace Abraca {
 			add_events (Gdk.EventMask.BUTTON_PRESS_MASK |
 			            Gdk.EventMask.POINTER_MOTION_MASK |
 			            Gdk.EventMask.LEAVE_NOTIFY_MASK);
+			update_size_request();
 		}
 
 
-		public override void size_request (out Gtk.Requisition requisition)
+		/* TODO: Should use adjust_size_request but that's broken in GIR */
+		public void update_size_request ()
 		{
-			requisition.width = rated_icon.width * (max_rating - min_rating + 1);
-			requisition.height = rated_icon.height;
+			set_size_request(rated_icon.width * (max_rating - min_rating + 1), rated_icon.height);
 		}
 
 
@@ -115,10 +119,8 @@ namespace Abraca {
 		}
 
 
-		public override bool expose_event (Gdk.EventExpose ev)
+		public override bool draw (Cairo.Context cr)
 		{
-			var cr = Gdk.cairo_create (ev.window);
-
 			var value = (_volatile_rating == null) ? _rating : _volatile_rating;
 
 			for (var i = min_rating; i < max_rating; i++) {

@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -95,8 +95,7 @@ namespace Abraca {
 		{
 			var model = (ServerModel) _view.model;
 
-			model.add_server_from_address(null, _entry_host.text,
-			                              (uint16) _spin_button_port.value);
+			model.add_server_from_address(_entry_host.text, (uint16) _spin_button_port.value);
 		}
 
 		[CCode(instance_pos=-1)]
@@ -170,7 +169,7 @@ namespace Abraca {
 					}
 
 					if (s.has_prefix("Log output will be stored in")) {
-						_launcher_logfile = s.offset(28).strip();
+						_launcher_logfile = s.substring(28).strip();
 						return false;
 					}
 
@@ -196,7 +195,7 @@ namespace Abraca {
 							channel.seek_position(pos, GLib.SeekType.END);
 							channel.read_chars(buf, out len);
 
-							if (((string) buf).ndup(len) == "--- Starting new xmms2d ---") {
+							if (((string) buf).substring(0, (long) len) == "--- Starting new xmms2d ---") {
 								string s;
 
 								if (status == 0) {
@@ -229,7 +228,7 @@ namespace Abraca {
 						 * strange is happened, we are going to show the
 						 * error dialog, but without details and log the
 						 * error message. */
-						GLib.error(e.message);
+						GLib.warning(e.message);
 						_launcher_error_details_expander.hide();
 					}
 				} else {
