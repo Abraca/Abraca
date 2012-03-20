@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008-2010  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -203,9 +203,9 @@ namespace Abraca {
 			var dialog = new Gtk.FileChooserDialog ("Select cover art image.",
 			                                        parent,
 			                                        Gtk.FileChooserAction.OPEN,
-			                                        Gtk.STOCK_CANCEL,
+			                                        Gtk.Stock.CANCEL,
 			                                        Gtk.ResponseType.CANCEL,
-			                                        Gtk.STOCK_OK,
+			                                        Gtk.Stock.OK,
 			                                        Gtk.ResponseType.OK);
 
 			dialog.preview_widget = new Gtk.Image ();
@@ -308,9 +308,8 @@ namespace Abraca {
 				coll.idlist_append (mid);
 			} else {
 #if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
-				var album_coll = new Xmms.Collection (Xmms.CollectionType.FILTER);
+				var album_coll = new Xmms.Collection (Xmms.CollectionType.MATCH);
 				album_coll.add_operand (universe);
-				album_coll.attribute_set ("operation", "=");
 				album_coll.attribute_set ("field", "album");
 				album_coll.attribute_set ("value", album);
 
@@ -318,16 +317,14 @@ namespace Abraca {
 				coll.add_operand (album_coll);
 
 				if (is_compilation == (int) true) {
-					var other_coll = new Xmms.Collection (Xmms.CollectionType.FILTER);
+					var other_coll = new Xmms.Collection (Xmms.CollectionType.MATCH);
 					other_coll.add_operand (universe);
-					other_coll.attribute_set ("operation", "=");
 					other_coll.attribute_set ("field", "compilation");
 					other_coll.attribute_set ("value", "1");
 					coll.add_operand (other_coll);
 				} else if (!val.dict_entry_get_string ("artist", out artist) && artist.length > 0) {
-					var other_coll = new Xmms.Collection (Xmms.CollectionType.FILTER);
+					var other_coll = new Xmms.Collection (Xmms.CollectionType.MATCH);
 					other_coll.add_operand (universe);
-					other_coll.attribute_set ("operation", "=");
 					other_coll.attribute_set ("field", "artist");
 					other_coll.attribute_set ("value", artist);
 					coll.add_operand (other_coll);
@@ -412,19 +409,21 @@ namespace Abraca {
 			if (!get_track_ids (candidates, pixbuf, out ids))
 				return true;
 
-			char[] buffer;
-			if (!pixbuf.save_to_buffer (out buffer, "png"))
-				return true;
+			try {
+				uint8[] buffer;
+				if (!pixbuf.save_to_buffer (out buffer, "png"))
+					return true;
 
 
-			/* TODO: Need to store ids here due to a Vala reference bug. */
-			selected_ids = ids;
+				/* TODO: Need to store ids here due to a Vala reference bug. */
+				selected_ids = ids;
 
-			client.xmms.bindata_add ((uint8[]) buffer).notifier_set (on_bindata_add);
-
+				client.xmms.bindata_add (buffer).notifier_set (on_bindata_add);
+			} catch (GLib.Error e) {
+				GLib.warning ("Could not add cover art.");
+			}
 
 			return true;
-
 		}
 
 

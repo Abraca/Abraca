@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2009-2010  Abraca Team
+ * Copyright (C) 2009-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,6 +18,7 @@
  */
 
 namespace Abraca {
+	public const string STOCK_EQUALIZER  = "abraca-equalizer";
 	public const string STOCK_COLLECTION = "abraca-collection";
 	public const string STOCK_PLAYLIST   = "abraca-playlist";
 	public const string STOCK_RATED      = "abraca-rated";
@@ -28,6 +29,15 @@ namespace Abraca {
 		Gtk.IconFactory factory = new Gtk.IconFactory();
 		Gtk.IconSet set;
 		Gtk.IconSource source;
+
+		/* Equalizer icon */
+		set = new Gtk.IconSet();
+
+		source = new Gtk.IconSource();
+		source.set_pixbuf(new Gdk.Pixbuf.from_inline(-1, Resources.abraca_equalizer, false));
+		set.add_source(source);
+
+		factory.add(STOCK_EQUALIZER, set);
 
 		/* Collection icon */
 

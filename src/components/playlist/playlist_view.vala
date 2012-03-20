@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008-2010  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -164,7 +164,7 @@ namespace Abraca {
 
 		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e)
 		{
-			if (e.keyval != Gdk.Keysym.Delete)
+			if (e.keyval != Gdk.keyval_from_name("Delete"))
 				return false;
 			delete_selected();
 			return true;
@@ -198,7 +198,7 @@ namespace Abraca {
 			);
 
 			/* Find out the width of the position idicator icon */
-			pbuf = render_icon(Gtk.STOCK_GO_FORWARD, Gtk.IconSize.MENU, null);
+			pbuf = render_icon(Gtk.Stock.GO_FORWARD, Gtk.IconSize.MENU, null);
 
 			/* Add some extra width otherwise it will not fit into the column */
 			column.set_min_width(pbuf.width + 3 * 2);
@@ -261,7 +261,7 @@ namespace Abraca {
 
 			/* Information */
 			item = new Gtk.ImageMenuItem.from_stock(
-				Gtk.STOCK_INFO, null
+				Gtk.Stock.INFO, null
 			);
 			item.activate.connect(on_menu_playlist_info);
 			_playlist_menu_item_when_some_selected.prepend(item);
@@ -289,7 +289,7 @@ namespace Abraca {
 			submenu.append(item);
 
 			img_item = new Gtk.ImageMenuItem.from_stock(
-				Gtk.STOCK_FIND, null
+				Gtk.Stock.FIND, null
 			);
 			img_item.set_submenu(submenu);
 			_playlist_menu_item_when_some_selected.prepend(img_item);
@@ -297,7 +297,7 @@ namespace Abraca {
 
 			/* Delete */
 			item = new Gtk.ImageMenuItem.from_stock(
-				Gtk.STOCK_DELETE, null
+				Gtk.Stock.DELETE, null
 			);
 			item.activate.connect(delete_selected);
 			_playlist_menu_item_when_some_selected.prepend(item);
@@ -346,7 +346,7 @@ namespace Abraca {
 			submenu.append(item);
 
 			img = new Gtk.Image.from_stock(
-				Gtk.STOCK_SORT_ASCENDING, Gtk.IconSize.MENU
+				Gtk.Stock.SORT_ASCENDING, Gtk.IconSize.MENU
 			);
 
 			img_item = new Gtk.ImageMenuItem.with_label(_("Sort"));
@@ -363,7 +363,7 @@ namespace Abraca {
 
 			/* Clear */
 			img_item = new Gtk.ImageMenuItem.from_stock(
-				Gtk.STOCK_CLEAR, null
+				Gtk.Stock.CLEAR, null
 			);
 			img_item.activate.connect(i => {
 				client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
@@ -544,8 +544,8 @@ namespace Abraca {
 			int dest;
 
 			/* TODO: Updated when #515408 vala bug has been fixed */
-			unowned uint[] source = (uint[]) sel.data;
-			source.length = (int)(sel.length / sizeof(uint));
+			unowned uint[] source = (uint[]) sel.get_data();
+			source.length = (int)(sel.get_length () / sizeof(uint));
 
 			if (get_drop_destination(x, y, out dest)) {
 				int downward = 0;
@@ -574,8 +574,8 @@ namespace Abraca {
 			int pos;
 
 			/* TODO: Updated when #515408 vala bug has been fixed */
-			unowned int[] ids = (int[]) sel.data;
-			ids.length = (int)(sel.length / sizeof(int));
+			unowned int[] ids = (int[]) sel.get_data();
+			ids.length = (int)(sel.get_length () / sizeof(int));
 
 			var coll = new Xmms.Collection (Xmms.CollectionType.IDLIST);
 			coll.set_idlist (ids);
@@ -601,7 +601,7 @@ namespace Abraca {
 			string[] uri_list;
 			int pos;
 
-			uri_list = ((string) sel.data).split("\r\n");
+			uri_list = ((string) sel.get_data()).split("\r\n");
 
 			for (int i = 0; uri_list != null && uri_list[i] != null; i++) {
 				if (internet && (i % 2 != 0)) {
@@ -639,7 +639,7 @@ namespace Abraca {
 			Xmms.Collection coll;
 			int pos;
 
-			string[] collection_data = ((string) sel.data).split("/");
+			string[] collection_data = ((string) sel.get_data()).split("/");
 			string coll_ns = collection_data[0];
 			string coll_name = collection_data[1];
 

@@ -1,35 +1,35 @@
-public class Abraca.FilterSearchBox : Gtk.ComboBoxEntry, Searchable {
-	private Gee.Queue<string> _pending_queries;
+public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
+	private Gee.Queue<string> _pending_queries = new Gee.LinkedList<string>();
 	private string _unsaved_query;
 	private string _current_query;
-	private uint _timer;
+	private uint _timer = 0;
+	private Gtk.Image test;
 
 	/* TODO: this is a hack, remove me */
 	private FilterView treeview;
 
-
 	public FilterSearchBox (Client client, Config config, FilterView tv)
 	{
-		_timer = 0;
-		_pending_queries = new Gee.LinkedList<string>();
+		Object (has_entry: true, entry_text_column: 0);
+
 		treeview = tv;
 
+		model = new Gtk.ListStore.newv({ typeof(string) });
 
-		var entry = child as Gtk.Entry;
-
-		entry.primary_icon_stock = Gtk.STOCK_FIND;
-		entry.secondary_icon_stock = Gtk.STOCK_CLEAR;
+		var entry = get_child() as Gtk.Entry;
+		entry.primary_icon_stock = Gtk.Stock.FIND;
+		entry.secondary_icon_stock = Gtk.Stock.CLEAR;
 		entry.secondary_icon_activatable = true;
 
-		entry.icon_release.connect (on_filter_entry_clear);
 		entry.changed.connect(on_filter_entry_changed);
+		entry.icon_release.connect(on_filter_entry_clear);
 		entry.focus_out_event.connect(on_filter_entry_focus_out_event);
 
-		var comp = new Gtk.EntryCompletion();
-		comp.model = model;
-		comp.set_text_column(0);
+		var completion = new Gtk.EntryCompletion();
+		completion.set_text_column(0);
+		completion.model = model;
 
-		entry.set_completion(comp);
+		entry.set_completion(completion);
 	}
 
 
@@ -143,7 +143,7 @@ public class Abraca.FilterSearchBox : Gtk.ComboBoxEntry, Searchable {
 		treeview.query_collection(coll, (val) => {
 			var s = _pending_queries.poll();
 			if (s != null && val.list_get_size() > 0) {
-				if (child.has_focus) {
+				if (get_child().has_focus) {
 					_unsaved_query = s;
 				} else if (_pending_queries.is_empty) {
 					_filter_save(s);
@@ -172,7 +172,7 @@ public class Abraca.FilterSearchBox : Gtk.ComboBoxEntry, Searchable {
 
 	public void search(string text)
 	{
-		Gtk.Entry entry = (Gtk.Entry) child;
+		var entry = get_child() as Gtk.Entry;
 		entry.text = text;
 	}
 

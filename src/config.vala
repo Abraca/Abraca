@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008-2010  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -92,12 +92,11 @@ namespace Abraca {
 			var dialog = new Gtk.Dialog.with_buttons(
 				"Configure Sorting", parent,
 				Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.MODAL,
-				Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-				Gtk.STOCK_OK, Gtk.ResponseType.OK
+				Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
+				Gtk.Stock.OK, Gtk.ResponseType.OK
 			);
 
 			dialog.resize (300, 200);
-			dialog.has_separator = false;
 
 			var table = new Gtk.Table(6, 2, false);
 			table.set_row_spacings(7);
@@ -123,8 +122,10 @@ namespace Abraca {
 				table.attach_defaults(entries[i], 1, 2, i + 0, i + 1);
 			}
 
-			dialog.vbox.pack_start(new PrettyLabel ("Configure Sorting"), false, true, 0);
-			dialog.vbox.pack_start(table, true, true, 0);
+			var box = dialog.get_content_area () as Gtk.Box;
+			box.pack_start(new PrettyLabel ("Configure Sorting"), false, true, 0);
+			box.pack_start(table, true, true, 0);
+
 			dialog.show_all();
 
 			var response_id = dialog.run();

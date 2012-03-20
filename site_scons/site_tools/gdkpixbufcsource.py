@@ -1,4 +1,4 @@
-# Copyright (c) 2008-2010, Abraca Team
+# Copyright (c) 2008-2011, Abraca Team
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -66,7 +66,7 @@ def gdk_pixbuf_csource_action(target, source, env):
 	fd.write('#include <glib.h>\n')
 
 	for decl in decls:
-		fd.write('extern const guint8 ' + decl + '[];\n')
+		fd.write('extern const guint8 ' + decl + '[' + str(len(tgt_content)) + '];\n')
 
 	fd.write('#endif\n')
 	fd.close()

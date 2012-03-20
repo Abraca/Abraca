@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008-2010  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,19 +23,18 @@ namespace Abraca {
 			get; set;
 		}
 
-		public override void render (Gdk.Window window, Gtk.Widget widget,
-		                             Gdk.Rectangle bg, Gdk.Rectangle cell,
-		                             Gdk.Rectangle expose, Gtk.CellRendererState flags)
+		public override void render (Cairo.Context cr, Gtk.Widget widget,
+		                             Gdk.Rectangle background_area,
+		                             Gdk.Rectangle cell_area,
+		                             Gtk.CellRendererState flags)
 		{
-			base.render(window, widget, bg, cell, expose, flags);
+			base.render(cr, widget, background_area, cell_area, flags);
 
 			if (pixbuf == null)
 				return;
 
-			var cr = Gdk.cairo_create (window);
-
-			var xpos = cell.x - (pixbuf.width + 4);
-			var ypos = cell.y;
+			var xpos = cell_area.x - (pixbuf.width + 4);
+			var ypos = cell_area.y;
 
 			Gdk.cairo_set_source_pixbuf (cr, pixbuf, xpos, ypos);
 			cr.paint ();

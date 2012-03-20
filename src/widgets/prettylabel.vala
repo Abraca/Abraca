@@ -11,18 +11,15 @@ namespace Abraca {
 		public PrettyLabel (string str)
 		{
 			label = str;
-
 		}
 
-		public override bool expose_event (Gdk.EventExpose ev)
+		public override bool draw (Cairo.Context cr)
 		{
-			var cr = Gdk.cairo_create (this.window);
-
-			var width = ev.area.width;
-			var height = ev.area.height;
+			var width = get_allocated_width();
+			var height = get_allocated_height();
 
 			cr.set_source_rgb(152/255.0, 186/255.0, 94/255.0);
-			cr.rectangle(ev.area.x, ev.area.y, ev.area.width, ev.area.height);
+			cr.rectangle(0, 0, width, height);
 			cr.stroke_preserve();
 
 			cr.fill_preserve();

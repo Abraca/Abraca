@@ -1,6 +1,6 @@
 /**
  * Abraca, an XMMS2 client.
- * Copyright (C) 2008-2010  Abraca Team
+ * Copyright (C) 2008-2011  Abraca Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -191,13 +191,14 @@ namespace Abraca {
 
 		private bool on_key_press_event (Gtk.Widget w, Gdk.EventKey e)
 		{
-			switch (e.keyval) {
-				case Gdk.Keysym.F2:
-					selected_collection_rename();
-					return true;
-				case Gdk.Keysym.Delete:
-					selected_collection_delete();
-					return true;
+			if (e.keyval == Gdk.keyval_from_name("F2")) {
+				selected_collection_rename();
+				return true;
+			}
+
+			if (e.keyval == Gdk.keyval_from_name("Delete")) {
+				selected_collection_delete();
+				return true;
 			}
 
 			return false;
@@ -341,8 +342,8 @@ namespace Abraca {
 		{
 			if (info == (uint) DragDropTargetType.MID) {
 				/* This should be removed as #515408 gets fixed. */
-				unowned int[] ids = (int[]) sel.data;
-				ids.length = (int)(sel.length / sizeof(int));
+				unowned int[] ids = (int[]) sel.get_data();
+				ids.length = (int)(sel.get_length () / sizeof(int));
 
 				var sort = new Xmms.Value.from_list();
 				sort.list_append (new Xmms.Value.from_string("album"));
@@ -357,7 +358,7 @@ namespace Abraca {
 				string coll_ns, coll_name;
 				Xmms.Collection coll;
 
-				collection_data = ((string) sel.data).split("/");
+				collection_data = ((string) sel.get_data()).split("/");
 				coll_ns = collection_data[0];
 				coll_name = collection_data[1];
 
@@ -514,7 +515,7 @@ namespace Abraca {
 
 			item = new Gtk.ImageMenuItem.with_mnemonic(_("_Show"));
 			item.image = new Gtk.Image.from_stock(
-				Gtk.STOCK_FIND, Gtk.IconSize.MENU
+				Gtk.Stock.FIND, Gtk.IconSize.MENU
 			);
 			item.activate.connect(on_menu_collection_get);
 			_collection_menu_item_when_coll_selected.prepend(item);
@@ -522,7 +523,7 @@ namespace Abraca {
 
 			item = new Gtk.ImageMenuItem.with_mnemonic(_("_Rename"));
 			item.image = new Gtk.Image.from_stock(
-				Gtk.STOCK_EDIT, Gtk.IconSize.MENU
+				Gtk.Stock.EDIT, Gtk.IconSize.MENU
 			);
 			item.activate.connect((menu) => {
 				selected_collection_rename();
@@ -532,7 +533,7 @@ namespace Abraca {
 
 			item = new Gtk.ImageMenuItem.with_mnemonic(_("Delete"));
 			item.image = new Gtk.Image.from_stock(
-				Gtk.STOCK_DELETE, Gtk.IconSize.MENU
+				Gtk.Stock.DELETE, Gtk.IconSize.MENU
 			);
 			item.activate.connect((menu) => {
 				selected_collection_delete();

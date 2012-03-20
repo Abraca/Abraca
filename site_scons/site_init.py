@@ -1,4 +1,4 @@
-# Copyright (c) 2008-2010, Abraca Team
+# Copyright (c) 2008-2011, Abraca Team
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -178,14 +178,14 @@ class AbracaEnvironment(SConsEnvironment):
 		self.Alias('install', self.InstallAs(os.path.join('$LOCALEDIR', target), source))
 
 	def InstallGladeUiModule(self, source):
-		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=moduledir gladeui-1.0')
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=moduledir gladeui-2.0')
 		target = AbracaEnvironment.Run(cmd)
 		if not target:
 			raise SCons.Errors.UserError('Glade module directory could not be determined')
 		self.Alias('install', self.Install(target, source))
 
 	def InstallGladeUiCatalog(self, source):
-		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=catalogdir gladeui-1.0')
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=catalogdir gladeui-2.0')
 		target = AbracaEnvironment.Run(cmd)
 		if not target:
 			raise SCons.Errors.UserError('Glade catalog directory could not be determined')
@@ -194,7 +194,7 @@ class AbracaEnvironment(SConsEnvironment):
 	def InstallGladeUiPixmap(self, size, source):
 		if size not in ('16x16', '22x22'):
 			raise SCons.Errors.UserError('Unsupported size for glade pixmap: %r' % size)
-		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=pixmapdir gladeui-1.0')
+		cmd = self.subst('pkg-config $PKG_CONFIG_FLAGS --variable=pixmapdir gladeui-2.0')
 		target = AbracaEnvironment.Run(cmd)
 		if not target:
 			raise SCons.Errors.UserError('Glade pixmap directory could not be determined')

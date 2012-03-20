@@ -1,8 +1,0 @@
-build
-*.swp
-*.pyc
-.scon*
-config.log
-*.rej
-*~
-*.orig
