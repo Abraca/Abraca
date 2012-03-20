@@ -10,6 +10,7 @@ abraca (0.7.0-1) UNRELEASED; urgency=low
   * Added 01-change-icon.diff patch for using different icon
   * Added myself to d/copyright and bumped year
   * Fixed d/watch
+  * Changed Homepage field in d/control
 
  -- Fabrizio Regalli <fabreg@fabreg.it>  Tue, 20 Mar 2012 20:59:50 +0100
 
