@@ -11,6 +11,8 @@ abraca (0.7.0-1) UNRELEASED; urgency=low
   * Added myself to d/copyright and bumped year
   * Fixed d/watch
   * Changed Homepage field in d/control
+  * Fixed missing-field-in-dep5-copyright lintian message
+  * Added missing copyright files and licenses
 
  -- Fabrizio Regalli <fabreg@fabreg.it>  Tue, 20 Mar 2012 20:59:50 +0100
 
