@@ -1,4 +1,4 @@
-abraca (0.7.0-1) UNRELEASED; urgency=low
+abraca (0.7.0-1) unstable; urgency=low
 
   * Added DM-Upload-Allowed field
   * Bumped Standards-Version to 3.9.3 (use copyright-format 1.0)
@@ -14,7 +14,7 @@ abraca (0.7.0-1) UNRELEASED; urgency=low
   * Fixed missing-field-in-dep5-copyright lintian message
   * Added missing copyright files and licenses
 
- -- Fabrizio Regalli <fabreg@fabreg.it>  Tue, 20 Mar 2012 20:59:50 +0100
+ -- Fabrizio Regalli <fabreg@fabreg.it>  Tue, 20 Mar 2012 23:52:52 +0100
 
 abraca (0.6.0-3.1) unstable; urgency=low
 
