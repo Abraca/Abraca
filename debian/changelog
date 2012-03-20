@@ -1,8 +1,8 @@
 abraca (0.7.0-1) UNRELEASED; urgency=low
 
   * Added DM-Upload-Allowed field
-  * Upgraded to 3.9.3 standard compatibility
-  * Updated valac B-D to valac-0.14 (Closes: #663292)
+  * Bumped Standards-Version to 3.9.3 (use copyright-format 1.0)
+  * Updated valac-0.10 B-D to valac-0.14 (Closes: #663292)
   * Fixed DM-Allow-Upload field in d/control
   * Imported Upstream version 0.7.0
   * Removed libgtk2.0-dev in B-D in favor of newer libgtk-3-dev

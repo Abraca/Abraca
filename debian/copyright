@@ -1,6 +1,6 @@
-Format-Specification: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?op=file&rev=135
-Name: Abraca
-Maintainer: Daniel Svensson <daniel.svensson@purplescout.se>
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Abraca
+Upstream-Contact: Daniel Svensson <daniel.svensson@purplescout.se>
 Source: http://abraca.xmms.se/
 
 Files: *
