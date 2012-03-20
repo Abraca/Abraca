@@ -1,4 +1,2 @@
 version=3
-opts="uversionmangle=s/-/~/" \
-http://abraca.xmms.se/projects/list_files/abraca \
-	/attachments/download/[0-9]+/abraca-(.*)\.tar\.[^.]*
+http://githubredir.debian.net/github/Abraca/Abraca/ (.*).tar.gz 
