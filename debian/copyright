@@ -4,7 +4,7 @@ Upstream-Contact: Daniel Svensson <daniel.svensson@purplescout.se>
 Source: http://abraca.xmms.se/
 
 Files: *
-Copyright: 2007-2010, Abraca Team
+Copyright: 2007-2011, Abraca Team
 License: GPL-2+
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ License: ISC
 Files: debian/*
 Copyright: 2007, Thomas Jollans <thomas@jollans.com>
            2009-2010, Benjamin Drung <bdrung@ubuntu.com>
+	   2011-2012, Fabrizio Regalli <fabreg@fabreg.it>
 License: GPL-2+
  On Debian systems the full text of the GNU General Public License
  can be found in the `/usr/share/common-licenses/GPL-2' file.
