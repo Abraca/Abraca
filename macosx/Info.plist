@@ -7,7 +7,7 @@
     <key>CFBundleExecutable</key>
     <string>Abraca</string>
     <key>CFBundleGetInfoString</key>
-    <string>0.6, (C) 2007-2011 The Abraca Team http://abraca.xmms.se</string>
+    <string>0.6, (C) 2007-2011 The Abraca Team http://abraca.github.com/Abraca</string>
     <key>CFBundleIconFile</key>
     <string>icon.icns</string>
     <key>CFBundleIdentifier</key>

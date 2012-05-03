@@ -7,7 +7,7 @@
 
     <property name="copyright" translatable="yes">Copyright © 2007-2011 Abraca Developers</property>
 
-    <property name="website">http://abraca.xmms.se</property>
+    <property name="website">http://abraca.github.com/Abraca</property>
 
     <property name="authors">
 Carl-Emil Kjellstrand &lt;carl-emil.kjellstrand@purplescout.se&gt;
