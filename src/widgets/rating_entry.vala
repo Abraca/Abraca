@@ -89,7 +89,7 @@ namespace Abraca {
 			var val = (ev.x / (double) rated_icon.width) + 0.75;
 			var tmp = (int) Math.fmin (max_rating, Math.fmax (min_rating, val));
 
-			if (tmp != _volatile_rating) {
+			if (_volatile_rating == null || tmp != _volatile_rating) {
 				_volatile_rating = tmp;
 				queue_draw ();
 			} else {
