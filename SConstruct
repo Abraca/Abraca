@@ -1,4 +1,4 @@
-env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.7.0')
+env = AbracaEnvironment(APPNAME = 'abraca', VERSION = '0.7.1')
 
 env.VariantDir('build', '.')
 
