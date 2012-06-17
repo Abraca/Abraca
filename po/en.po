@@ -165,7 +165,7 @@ msgstr ""
 msgid ""
 "\n"
 "Abraca, an XMMS2 client.\n"
-"Copyright (C) 2007-2011  Abraca Team\n"
+"Copyright (C) 2007-2012 Abraca Team\n"
 "\n"
 "This program is free software; you can redistribute it and/or modify it\n"
 "under the terms of the GNU General Public License as published by the\n"
@@ -184,7 +184,7 @@ msgid ""
 msgstr ""
 
 #: ../data/ui/about.xml.h:19
-msgid "Copyright © 2007-2011 Abraca Developers"
+msgid "Copyright © 2007-2012 Abraca Developers"
 msgstr ""
 
 #: ../data/ui/main_menu.xml.h:1

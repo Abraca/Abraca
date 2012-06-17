@@ -1,4 +1,4 @@
-# Copyright (c) 2009-2011, Abraca Team
+# Copyright (C) 2009-2012 Abraca Team
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
