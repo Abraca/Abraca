@@ -357,6 +357,8 @@ namespace Abraca {
 					playlist_move(playlist, pos, npos);
 					break;
 				case Xmms.PlaylistChange.UPDATE:
+					/* not really interesting */
+					break;
 				case Xmms.PlaylistChange.CLEAR:
 				case Xmms.PlaylistChange.SHUFFLE:
 				case Xmms.PlaylistChange.SORT:
