@@ -67,7 +67,7 @@ namespace Xmms {
 	}
 
 #if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
-	[CCode(cprefix="XMMS_COLLECTION_TYPE_")]
+	[CCode(cprefix="XMMS_COLLECTION_TYPE_", cname="xmmsv_coll_type_t")]
 	public enum CollectionType {
 		REFERENCE,
 		UNIVERSE,
@@ -85,6 +85,7 @@ namespace Xmms {
 		IDLIST
 	}
 #else
+	[CCode(cprefix="XMMS_COLLECTION_TYPE_", cname="xmmsv_coll_type_t")]
 	public enum CollectionType {
 		REFERENCE,
 		UNION,
@@ -355,6 +356,7 @@ namespace Xmms {
 		public CollectionType get_type();
 		public uint[] get_idlist();
 
+		public unowned Xmms.Value operands_get();
 		public bool operand_list_first();
 		public bool operand_list_valid();
 		public bool operand_list_entry(out Collection operand);
@@ -426,8 +428,16 @@ namespace Xmms {
 		public bool get_list_iter (out unowned Xmms.ListIter iter);
 		public bool get_dict_iter (out unowned Xmms.DictIter iter);
 
-		public bool list_get(int pos, out Xmms.Value val);
+		public bool list_get(int pos, out unowned Xmms.Value val);
+		public bool list_get_int(int pos, out int val);
+		public bool list_get_string(int pos, out unowned string val);
+		public bool list_get_coll(int pos, out unowned Xmms.Collection val);
+
 		public bool list_set(Xmms.Value val);
+		public bool list_set_int(Xmms.Value val);
+		public bool list_set_string(Xmms.Value val);
+		public bool list_set_coll(Xmms.Value val);
+
 		public bool list_append(Xmms.Value val);
 		public bool list_insert(int pos, Xmms.Value val);
 		public bool list_remove(int pos);
@@ -457,10 +467,23 @@ namespace Xmms {
 		public bool entry(out unowned Xmms.Value val);
 		public bool valid();
 		public void first();
-		public bool next();
+		public void last();
+		public void next();
+		public void prev();
 		public bool seek(int pos);
+		public int tell();
+		public unowned Xmms.Value get_parent();
+
 		public bool insert(Xmms.Value val);
 		public bool remove();
+
+		public bool entry_int(out unowned string val);
+		public bool entry_string(out int val);
+		public bool entry_coll(out unowned Xmms.Collection val);
+
+		public bool insert_int(int value);
+		public bool insert_string(string value);
+		public bool insert_coll(Xmms.Collection coll);
 	}
 
 	[Compact]
