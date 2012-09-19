@@ -24,7 +24,7 @@ public class Abraca.FilterBrowserView : Gtk.TreeView, SelectedRowsMixin {
 
 	public string query { get; private set; }
 
-	public FilterBrowserView (FilterBrowserModel model, FilterBrowserView? previous = null) {
+	public FilterBrowserView(FilterBrowserModel model, FilterBrowserView? previous = null) {
 		this.previous = previous;
 		set_model(model);
 
@@ -33,58 +33,58 @@ public class Abraca.FilterBrowserView : Gtk.TreeView, SelectedRowsMixin {
 		selection.changed.connect(on_selection_changed);
 
 		if (previous != null) {
-			previous.notify["filter"].connect ((s,p) => {
-				GLib.debug ("setting model filter for %s", ((FilterBrowserModel) model).field);
+			previous.notify["filter"].connect((s,p) => {
+				GLib.debug("setting model filter for %s", ((FilterBrowserModel) model).field);
 
 				((FilterBrowserModel) model).filter = previous.filter;
-				on_selection_changed (selection);
+				on_selection_changed(selection);
 			});
 		}
 	}
 
-	private void on_selection_changed (Gtk.TreeSelection selection)
+	private void on_selection_changed(Gtk.TreeSelection selection)
 	{
-		var intersection = new Xmms.Collection (Xmms.CollectionType.INTERSECTION);
+		var intersection = new Xmms.Collection(Xmms.CollectionType.INTERSECTION);
 		if (previous != null) {
-			intersection.add_operand (previous.filter);
+			intersection.add_operand(previous.filter);
 		} else {
-			intersection.add_operand (Xmms.Collection.universe());
+			intersection.add_operand(Xmms.Collection.universe());
 		}
 
 		var entries = get_selected_rows<string>(0);
 		if (entries.size > 0) {
 			var field = ((FilterBrowserModel) model).field;
-			var union = new Xmms.Collection (Xmms.CollectionType.UNION);
+			var union = new Xmms.Collection(Xmms.CollectionType.UNION);
 			foreach (var entry in entries) {
-				var match = new Xmms.Collection (Xmms.CollectionType.MATCH);
-				match.attribute_set ("field", field);
-				match.attribute_set ("value", entry);
-				match.add_operand (Xmms.Collection.universe());
-				union.add_operand (match);
+				var match = new Xmms.Collection(Xmms.CollectionType.MATCH);
+				match.attribute_set("field", field);
+				match.attribute_set("value", entry);
+				match.add_operand(Xmms.Collection.universe());
+				union.add_operand(match);
 			}
-			intersection.add_operand (union);
-			update_query_string (union);
+			intersection.add_operand(union);
+			update_query_string(union);
 		} else {
-			intersection.add_operand (Xmms.Collection.universe());
-			update_query_string (null);
+			intersection.add_operand(Xmms.Collection.universe());
+			update_query_string(null);
 		}
 
 		filter = intersection;
 	}
 
-	private void update_query_string (Xmms.Collection? union)
+	private void update_query_string(Xmms.Collection? union)
 	{
 		var sb = new GLib.StringBuilder();
 
-		if (previous != null && previous.query.length > 0)
-			sb.append (previous.query);
+		if (previous != null)
+			sb.append(previous.query);
 
 		if (union != null) {
 			unowned Xmms.ListIter it;
 
 			var operands = union.operands_get();
 			if (sb.len > 0 && operands.list_get_size() > 0)
-				sb.append (" AND ");
+				sb.append(" AND ");
 
 			if (operands.list_get_size() > 1)
 				sb.append("(");
@@ -98,19 +98,19 @@ public class Abraca.FilterBrowserView : Gtk.TreeView, SelectedRowsMixin {
 				if (it.tell() > 0)
 					sb.append(" OR ");
 
-				match.attribute_get ("field", out field);
-				match.attribute_get ("value", out value);
-				sb.append (field);
-				sb.append (":\"");
-				sb.append (value.replace ("\"", "\\\""));
-				sb.append ("\"");
+				match.attribute_get("field", out field);
+				match.attribute_get("value", out value);
+				sb.append(field);
+				sb.append(":\"");
+				sb.append(value.replace ("\"", "\\\""));
+				sb.append("\"");
 			}
 
 			if (operands.list_get_size() > 1)
 				sb.append(")");
 		}
 
-		query = sb.str.dup ();
+		query = sb.str.dup();
 	}
 
 }
