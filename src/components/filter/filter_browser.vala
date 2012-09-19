@@ -22,17 +22,6 @@ public class Abraca.FilterBrowserView : Gtk.TreeView, SelectedRowsMixin {
 
 	public Xmms.Collection filter { get; private set; }
 
-	private static void query_from_match (GLib.StringBuilder sb, Xmms.Collection match) {
-		unowned string value, field;
-
-		match.attribute_get ("field", out field);
-		match.attribute_get ("value", out value);
-		sb.append (field);
-		sb.append (":\"");
-		sb.append (value.replace ("\"", "\\\""));
-		sb.append ("\"");
-	}
-
 	public string query { get; private set; }
 
 	public FilterBrowserView (FilterBrowserModel model, FilterBrowserView? previous = null) {
@@ -103,10 +92,18 @@ public class Abraca.FilterBrowserView : Gtk.TreeView, SelectedRowsMixin {
 			operands.get_list_iter(out it);
 			for (it.first(); it.valid(); it.next()) {
 				unowned Xmms.Collection match;
+				unowned string value, field;
+
 				it.entry_coll(out match);
 				if (it.tell() > 0)
 					sb.append(" OR ");
-				query_from_match(sb, match);
+
+				match.attribute_get ("field", out field);
+				match.attribute_get ("value", out value);
+				sb.append (field);
+				sb.append (":\"");
+				sb.append (value.replace ("\"", "\\\""));
+				sb.append ("\"");
 			}
 
 			if (operands.list_get_size() > 1)
