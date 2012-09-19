@@ -362,11 +362,10 @@ namespace Abraca {
 				case Xmms.PlaylistChange.CLEAR:
 				case Xmms.PlaylistChange.SHUFFLE:
 				case Xmms.PlaylistChange.SORT:
+				default:
 					xmms.playlist_current_active().notifier_set(
 						on_playlist_loaded
 					);
-					break;
-				default:
 					break;
 			}
 
