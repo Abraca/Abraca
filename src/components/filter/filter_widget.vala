@@ -22,11 +22,12 @@ public interface Abraca.Searchable : GLib.Object {
 	public abstract void search (string query);
 }
 
-public class Abraca.FilterWidget : Gtk.VBox {
+public class Abraca.FilterWidget : Gtk.VPaned {
 	private FilterSearchBox searchbox;
 
 	public FilterWidget (Client client, Config config, Medialib medialib,  Gtk.AccelGroup group)
 	{
+		Object (position: 200);
 		var scrolled = new Gtk.ScrolledWindow(null, null);
 
 		scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
@@ -41,9 +42,14 @@ public class Abraca.FilterWidget : Gtk.VBox {
 		searchbox.add_accelerator("grab-focus", group, Gdk.keyval_from_name ("l"),
 		                          Gdk.ModifierType.CONTROL_MASK, 0);
 
+		var browser = new FilterBrowser (client, config, searchbox);
 
-		pack_start(searchbox, false, false, 2);
-		pack_start(scrolled, true, true, 0);
+		var vbox = new Gtk.VBox (false, 2);
+		vbox.pack_start(searchbox, false, false, 2);
+		vbox.pack_start(scrolled, true, true, 0);
+
+		pack1 (browser, true, true);
+		pack2 (vbox, true, true);
 	}
 
 	/** TODO: remove this hack */

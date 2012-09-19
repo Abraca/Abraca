@@ -38,6 +38,8 @@ components_sources = """
     components/filter/filter_editor.vala
     components/filter/filter_model.vala
     components/filter/filter_view.vala
+	components/filter/filter_browser.vala
+	components/filter/filter_browser_model.vala
 
     components/playlist/playlist_model.vala
     components/playlist/playlist_view.vala
