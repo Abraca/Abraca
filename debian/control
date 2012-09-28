@@ -2,7 +2,6 @@ Source: abraca
 Section: sound
 Priority: optional
 Maintainer: Fabrizio Regalli <fabreg@fabreg.it>
-DM-Upload-Allowed: yes
 Build-Depends: debhelper (>= 7.0.50~),
                libgee-dev (>= 0.5),
                libgtk-3-dev,
