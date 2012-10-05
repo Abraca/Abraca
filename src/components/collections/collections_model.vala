@@ -157,7 +157,7 @@ namespace Abraca {
 		 */
 		public void remove_temporary_playlist ()
 		{
-			remove(_temporary_playlist_iter);
+			remove(ref _temporary_playlist_iter);
 			has_temporary_playlist = false;
 		}
 
@@ -201,7 +201,7 @@ namespace Abraca {
 				parts = name.split("-", 2);
 				if (parts[0] == _("New Playlist")) {
 					if (parts[1] != null) {
-						current = parts[1].to_int();
+						current = int.parse(parts[1]);
 					} else {
 						current = 0;
 					}
@@ -258,7 +258,7 @@ namespace Abraca {
 			}
 
 			while (iter_children(out child, parent)) {
-				remove(child);
+				remove(ref child);
 			}
 
 			int pos = iter_n_children(parent);
@@ -433,7 +433,7 @@ namespace Abraca {
 
 				get(iter, Column.Name, out current);
 				if (name == current) {
-					remove(iter);
+					remove(ref iter);
 					break;
 				}
 			} while (iter_next(ref iter));
