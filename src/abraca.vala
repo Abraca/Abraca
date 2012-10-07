@@ -17,7 +17,85 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-namespace Abraca {
+public class Abraca.Application : Gtk.Application {
+	private Gtk.Window w;
+
+	private const ActionEntry[] actions = {
+		{ "about", on_menu_about },
+		{ "quit", on_menu_quit }
+	};
+
+	public Application()
+	{
+		Object(application_id: "org.xmms2.abraca", flags: ApplicationFlags.FLAGS_NONE);
+		add_action_entries (actions, this);
+	}
+
+	private void on_menu_about ()
+	{
+		try {
+			var builder = new Gtk.Builder();
+
+			builder.add_from_string(Resources.XML.about, Resources.XML.about.length);
+
+			var about = builder.get_object("abraca_about") as Gtk.AboutDialog;
+
+			about.set_logo(new Gdk.Pixbuf.from_inline(Resources.abraca_192, false));
+			about.version = Build.Config.VERSION;
+
+			about.transient_for = w;
+
+			about.run();
+			about.hide();
+		} catch (GLib.Error e) {
+			GLib.error("About dialog could not be shown. (%s)", e.message);
+		}
+	}
+
+	private void on_menu_quit ()
+	{
+		quit();
+	}
+
+	protected override void activate ()
+	{
+		unowned List<Gtk.Window> windows = get_windows();
+
+		if (windows != null)
+			return;
+
+		var client = new Client();
+
+		var builder = new Gtk.Builder ();
+
+		try {
+			builder.add_from_string(Resources.XML.main_menu, Resources.XML.main_menu.length);
+
+			app_menu = builder.get_object ("app-menu") as MenuModel;
+			menubar = builder.get_object("win-menu") as MenuModel;
+
+			var window = new MainWindow(this, client);
+
+			w = window;
+
+			Configurable.load();
+
+			window.show_all ();
+
+			if (!client.try_connect())
+				GLib.Timeout.add(500, client.reconnect);
+
+		} catch (GLib.Error e) {
+			GLib.error("%s", e.message);
+		}
+		base.activate();
+	}
+
+	protected override void shutdown ()
+	{
+		base.shutdown();
+	}
+
 	public static int main (string[] args)
 	{
 		var context = new OptionContext (_("- Abraca, an XMMS2 client."));
@@ -31,8 +109,6 @@ namespace Abraca {
 			Posix.exit (1);
 		}
 
-		Gtk.init(ref args);
-
 		try {
 			create_icon_factory().add_default();
 		} catch (GLib.Error e) {
@@ -45,24 +121,8 @@ namespace Abraca {
 		GLib.Intl.bindtextdomain(Build.Config.APPNAME, Build.Config.LOCALEDIR);
 		GLib.Intl.bind_textdomain_codeset(Build.Config.APPNAME, "UTF-8");
 
-		var client = new Client();
+		var main = new Abraca.Application();
 
-		var window = new MainWindow(client);
-		window.delete_event.connect((ev) => {
-			Configurable.save();
-			Gtk.main_quit();
-			return true;
-		});
-
-		Configurable.load();
-
-		window.show_all ();
-
-		if (!client.try_connect())
-			GLib.Timeout.add(500, client.reconnect);
-
-		Gtk.main();
-
-		return 0;
+		return main.run();
 	}
 }

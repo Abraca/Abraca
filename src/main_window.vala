@@ -18,16 +18,32 @@
  */
 
 namespace Abraca {
-	public class MainWindow : Gtk.Window, IConfigurable {
+	public class MainWindow : Gtk.ApplicationWindow, IConfigurable {
+		private Client _client;
 		private Config _config;
 		private ToolBar _toolbar;
 		private Gtk.HPaned _main_hpaned;
 		private Gtk.HPaned _right_hpaned;
-		private Gtk.CheckMenuItem _repeat_all;
-		private Gtk.CheckMenuItem _repeat_one;
 
-		public MainWindow (Client client)
+		private const ActionEntry[] actions = {
+			{ "add-url", on_menu_music_add_url },
+			{ "add-files", on_menu_music_add_files },
+			{ "add-directories", on_menu_music_add_directories },
+			{ "playlist-sorting", on_menu_playlist_configure_sorting },
+			{ "playlist-clear", on_menu_playlist_clear },
+			{ "playlist-shuffle", on_menu_playlist_shuffle },
+			{ "playlist-repeat-all", on_menu_playlist_repeat_all, null, "false" },
+			{ "playlist-repeat-one", on_menu_playlist_repeat_one, null, "false" }
+		};
+
+		public MainWindow (Gtk.Application app, Client client)
 		{
+			Object(application: app);
+
+			_client = client;
+
+			add_action_entries (actions, this);
+
 			create_widgets(client);
 
 			try {
@@ -40,6 +56,22 @@ namespace Abraca {
 			height_request = 600;
 
 			Configurable.register(this);
+
+			client.configval_changed.connect(on_config_changed);
+
+			destroy.connect(() => {
+				Configurable.save();
+			});
+		}
+
+		private void on_config_changed (Client c, string key, string value)
+		{
+			if ("playlist.repeat_all" == key) {
+				change_action_state("playlist-repeat-all", int.parse(value) > 0);
+			}
+			else if ("playlist.repeat_one" == key) {
+				change_action_state("playlist-repeat-one", int.parse(value) > 0);
+			}
 		}
 
 		public void set_configuration (GLib.KeyFile file)
@@ -50,7 +82,6 @@ namespace Abraca {
 			if (!file.has_group("main_win")) {
 				return;
 			}
-
 
 			if (file.has_key("main_win", "gravity")) {
 				gravity = (Gdk.Gravity) file.get_integer("main_win", "gravity");
@@ -98,7 +129,6 @@ namespace Abraca {
 			}
 		}
 
-
 		public void get_configuration (GLib.KeyFile file)
 		{
 			int xpos, ypos, width, height;
@@ -119,7 +149,6 @@ namespace Abraca {
 			file.set_integer("panes", "pos2", _right_hpaned.position);
 		}
 
-
 		private void create_widgets (Client client)
 		{
 			_config = new Config ();
@@ -128,8 +157,6 @@ namespace Abraca {
 
 			var vbox = new Gtk.VBox(false, 0);
 
-			var menubar = create_menubar(client);
-			vbox.pack_start(menubar, false, true, 0);
 			_toolbar = new ToolBar(client, this);
 			vbox.pack_start(_toolbar, false, false, 6);
 
@@ -173,140 +200,44 @@ namespace Abraca {
 			add_accel_group(accel_group);
 		}
 
-
-		private void on_config_changed (Client client, string key, string value)
+		private void on_menu_music_add_url(GLib.SimpleAction action, GLib.Variant? state)
 		{
-			Gtk.CheckMenuItem item;
-
-			if (key == "playlist.repeat_all") {
-				item = _repeat_all;
-			} else if (key == "playlist.repeat_one") {
-				item = _repeat_one;
-			} else {
-				return;
-			}
-
-			if (value == "1") {
-				item.active = true;
-			} else {
-				item.active = false;
-			}
-			item.sensitive = true;
+			Medialib.create_add_url_dialog(this, _client);
 		}
 
-		private Gtk.Widget create_menubar (Client client)
+		private void on_menu_music_add_files(GLib.SimpleAction action, GLib.Variant? state)
 		{
-			var builder = new Gtk.Builder ();
+			Medialib.create_add_file_dialog(this, _client, Gtk.FileChooserAction.OPEN);
+		}
 
-			try {
-				builder.add_from_string(
-					Resources.XML.main_menu, Resources.XML.main_menu.length
-				);
-			} catch (GLib.Error e) {
-				GLib.assert_not_reached ();
-			}
+		private void on_menu_music_add_directories(GLib.SimpleAction action, GLib.Variant? state)
+		{
+			Medialib.create_add_file_dialog(this, _client, Gtk.FileChooserAction.SELECT_FOLDER);
+		}
 
-			var uiman = builder.get_object("uimanager") as Gtk.UIManager;
+		private void on_menu_playlist_configure_sorting(GLib.SimpleAction action, GLib.Variant? state)
+		{
+			_config.show_sorting_dialog(this);
+		}
 
-			var group = uiman.get_accel_group();
-			add_accel_group(group);
+		private void on_menu_playlist_clear(GLib.SimpleAction action, GLib.Variant? state)
+		{
+			_client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
+		}
 
-			var menushell = uiman.get_widget("/Menu") as Gtk.MenuShell;
+		private void on_menu_playlist_shuffle(GLib.SimpleAction action, GLib.Variant? state)
+		{
+			_client.xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
+		}
 
-			_repeat_all = uiman.get_widget("/Menu/Playlist/RepeatAll") as Gtk.CheckMenuItem;
-			_repeat_one = uiman.get_widget("/Menu/Playlist/RepeatOne") as Gtk.CheckMenuItem;
+		private void on_menu_playlist_repeat_one(GLib.SimpleAction action, GLib.Variant? state)
+		{
+			_client.xmms.config_set_value("playlist.repeat_one", action.get_state().get_boolean() ? "0" : "1");
+		}
 
-			uiman.get_action("/Menu/Music/Quit").activate.connect((action) => {
-				Configurable.save();
-				Gtk.main_quit();
-			});
-
-
-			uiman.get_action("/Menu/Music/Connect").activate.connect ((action) => {
-				/*
-				var sb = ServerBrowser.build(this);
-				while (sb.run() == 1) {
-					GLib.debug("host: %s", sb.selected_host);
-					if (client.try_connect (sb.selected_host)) {
-						break;
-					}
-					sb = ServerBrowser.build(this);
-				}
-				*/
-			});
-
-			uiman.get_action("/Menu/Music/Add/Files").activate.connect((action) => {
-				var parent = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
-				Medialib.create_add_file_dialog(parent, client, Gtk.FileChooserAction.OPEN);
-			});
-
-			uiman.get_action("/Menu/Music/Add/Directory").activate.connect((action) => {
-				var parent = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
-				Medialib.create_add_file_dialog(parent, client, Gtk.FileChooserAction.SELECT_FOLDER);
-			});
-
-			uiman.get_action("/Menu/Music/Add/URL").activate.connect((action) => {
-				var parent = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
-				Medialib.create_add_url_dialog(parent, client);
-			});
-
-			uiman.get_action("/Menu/Playlist/ConfigureSorting").activate.connect((action) => {
-
-				_config.show_sorting_dialog(this);
-			});
-
-			uiman.get_action("/Menu/Playlist/Clear").activate.connect((action) => {
-				client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
-			});
-
-			uiman.get_action("/Menu/Playlist/Shuffle").activate.connect((action) => {
-				client.xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
-			});
-
-			_repeat_all.toggled.connect((action) => {
-				client.xmms.config_set_value("playlist.repeat_all",
-				                             "%d".printf((int) action.active));
-			});
-
-			_repeat_one.toggled.connect((action) => {
-				client.xmms.config_set_value("playlist.repeat_one",
-				                             "%d".printf((int) action.active));
-			});
-
-			client.configval_changed.connect(on_config_changed);
-
-			uiman.get_action("/Menu/Help/About").activate.connect((action) => {
-				var about_builder = new Gtk.Builder ();
-
-				try {
-					about_builder.add_from_string(
-						Resources.XML.about, Resources.XML.about.length
-					);
-				} catch (GLib.Error e) {
-					GLib.assert_not_reached ();
-				}
-
-				var about = about_builder.get_object("abraca_about") as Gtk.AboutDialog;
-
-				try {
-					about.set_logo(new Gdk.Pixbuf.from_inline (Resources.abraca_192, false));
-				} catch (GLib.Error e) {
-					GLib.assert_not_reached ();
-				}
-
-				about.version = Build.Config.VERSION;
-
-				about.transient_for = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
-
-				about.run();
-				about.hide();
-			});
-
-
-
-
-
-			return menushell;
+		private void on_menu_playlist_repeat_all(GLib.SimpleAction action, GLib.Variant? state)
+		{
+			_client.xmms.config_set_value("playlist.repeat_all", action.get_state().get_boolean() ? "0" : "1");
 		}
 	}
 }
