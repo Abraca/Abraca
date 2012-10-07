@@ -166,7 +166,6 @@ namespace Abraca {
 
 	public class CoverArtManager : GLib.Object {
 		private Client client;
-		private CoverArtDialog dialog;
 		private Gtk.Window parent;
 		private Gee.Collection<int> selected_ids;
 		private string artist;
@@ -221,12 +220,14 @@ namespace Abraca {
 
 			var response_id = dialog.run ();
 			if (response_id == Gtk.ResponseType.CANCEL) {
+				pixbuf = null;
 				dialog.close ();
 				return false;
 			}
 
 			var filename = dialog.get_filename ();
 			if (filename == null) {
+				pixbuf = null;
 				dialog.close ();
 				return false;
 			}
@@ -237,6 +238,7 @@ namespace Abraca {
 				pixbuf = new Gdk.Pixbuf.from_file (filename);
 			} catch (GLib.Error e) {
 				GLib.warning (e.message);
+				pixbuf = null;
 				return false;
 			}
 
@@ -258,11 +260,13 @@ namespace Abraca {
 
 
 			if (dialog.run () != Gtk.ResponseType.OK) {
+				ids = null;
 				dialog.close ();
 				return false;
 			}
 
 			if (!dialog.get_selected_ids (out ids)) {
+				ids = null;
 				dialog.close ();
 				return false;
 			}

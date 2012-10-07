@@ -75,8 +75,10 @@ namespace Abraca {
 		{
 			int size;
 
-			if (!val.get_int (out size))
+			if (!val.get_int (out size)) {
+				repr = null;
 				return false;
+			}
 
 			repr = "%dkB".printf (size / 1024);
 
@@ -88,6 +90,7 @@ namespace Abraca {
 			int dur_sec, dur_min, duration;
 
 			if (!val.get_int(out duration)) {
+				repr = null;
 				return false;
 			}
 
@@ -104,6 +107,7 @@ namespace Abraca {
 			int bitrate;
 
 			if (!val.get_int(out bitrate)) {
+				repr = null;
 				return false;
 			}
 
@@ -117,6 +121,7 @@ namespace Abraca {
 			int timestamp;
 
 			if (!val.get_int(out timestamp)) {
+				repr = null;
 				return false;
 			}
 
@@ -144,17 +149,20 @@ namespace Abraca {
 				case Xmms.ValueType.INT32:
 					int tmp;
 					if (!val.get_int(out tmp)) {
+						repr = null;
 						return false;
 					}
 					repr = "%d".printf(tmp);
 					break;
 				case Xmms.ValueType.STRING:
 					if (!val.get_string(out repr)) {
+						repr = null;
 						return false;
 					}
 					repr = "%s".printf(repr);
 					break;
 				default:
+					repr = null;
 					return false;
 			}
 
