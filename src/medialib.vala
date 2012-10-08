@@ -126,15 +126,14 @@ namespace Abraca {
 
 		private void change_color (Gtk.Entry editable, string origin)
 		{
-			Gdk.Color? color = null;
+			Gdk.RGBA? color = null;
 
 			if (origin != editable.get_text()) {
-				if (!Gdk.Color.parse("#ffff66", out color)) {
-					color = null;
-				}
+				color = Gdk.RGBA();
+				color.parse("#ffff66");
 			}
 
-			editable.modify_base(Gtk.StateType.NORMAL, color);
+			editable.override_background_color(Gtk.StateFlags.NORMAL, color);
 			editable.set_tooltip_text(editable.get_text());
 		}
 
@@ -359,7 +358,7 @@ namespace Abraca {
 			if (!updated || artist_entry.get_text() == tmp) {
 				artist = tmp;
 				artist_entry.text = tmp;
-				artist_entry.modify_base(Gtk.StateType.NORMAL, null);
+				artist_entry.override_background_color(Gtk.StateFlags.NORMAL, null);
 			}
 
 			if (!val.dict_entry_get_string("album", out tmp)) {
@@ -368,7 +367,7 @@ namespace Abraca {
 			if (!updated || album_entry.get_text() == tmp) {
 				album = tmp;
 				album_entry.text = tmp;
-				album_entry.modify_base(Gtk.StateType.NORMAL, null);
+				album_entry.override_background_color(Gtk.StateFlags.NORMAL, null);
 			}
 
 			if (!val.dict_entry_get_string("title", out tmp)) {
@@ -377,7 +376,7 @@ namespace Abraca {
 			if (!updated || song_entry.get_text() == tmp) {
 				song = tmp;
 				song_entry.text = tmp;
-				song_entry.modify_base(Gtk.StateType.NORMAL, null);
+				song_entry.override_background_color(Gtk.StateFlags.NORMAL, null);
 			}
 
 			if (!val.dict_entry_get_int("tracknr", out itmp)) {
@@ -389,7 +388,7 @@ namespace Abraca {
 			if (!updated || tracknr_button.get_text() == tmp) {
 				tracknr = tmp;
 				tracknr_button.set_value(itmp);
-				tracknr_button.modify_base(Gtk.StateType.NORMAL, null);
+				tracknr_button.override_background_color(Gtk.StateFlags.NORMAL, null);
 			}
 
 			if (!val.dict_entry_get_string("date", out tmp)) {
@@ -398,7 +397,7 @@ namespace Abraca {
 			if (!updated || date_entry.get_text() == tmp) {
 				date = tmp;
 				date_entry.text = tmp;
-				date_entry.modify_base(Gtk.StateType.NORMAL, null);
+				date_entry.override_background_color(Gtk.StateFlags.NORMAL, null);
 			}
 
 			if (!val.dict_entry_get_string("genre", out tmp)) {
@@ -409,7 +408,7 @@ namespace Abraca {
 			if (!updated || entry.text == tmp) {
 				genre = tmp;
 				entry.text = tmp;
-				entry.modify_base(Gtk.StateType.NORMAL, null);
+				entry.override_background_color(Gtk.StateFlags.NORMAL, null);
 			}
 
 			if (!val.dict_entry_get_int("rating", out itmp)) {

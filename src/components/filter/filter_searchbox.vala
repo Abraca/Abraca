@@ -100,7 +100,7 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 
 	private void on_filter_entry_changed (Gtk.Editable widget)
 	{
-		Gdk.Color? color = null;
+		Gdk.RGBA? color = null;
 		Xmms.Collection coll;
 
 		var entry = widget as Gtk.Entry;
@@ -115,11 +115,12 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 					_timer = GLib.Timeout.add(450, on_collection_query_timeout);
 				}
 			} else {
-				Gdk.Color.parse("#ff6666", out color);
+				color = Gdk.RGBA();
+				color.parse("#ff6666");
 			}
 		}
 
-		entry.modify_base(Gtk.StateType.NORMAL, color);
+		entry.override_background_color(Gtk.StateFlags.NORMAL, color);
 	}
 
 
