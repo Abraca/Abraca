@@ -52,12 +52,14 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 
 		set_icons(_icons);
 
-		pressed.connect((w) => {
+		button_press_event.connect((w) => {
 			_accept_updates = false;
+			return false;
 		});
 
-		released.connect((w) => {
+		button_release_event.connect((w) => {
 			_accept_updates = true ;
+			return false;
 		});
 
 		scroll_event.connect(on_scroll_event);
