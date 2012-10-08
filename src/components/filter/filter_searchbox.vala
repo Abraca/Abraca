@@ -3,7 +3,6 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 	private string _unsaved_query;
 	private string _current_query;
 	private uint _timer = 0;
-	private Gtk.Image test;
 
 	/* TODO: this is a hack, remove me */
 	private FilterView treeview;
