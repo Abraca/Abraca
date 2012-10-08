@@ -35,7 +35,7 @@ namespace Abraca {
 		private Gdk.Pixbuf _coverart_big;
 		private Gtk.Label _track_label;
 		private Gtk.Label _time_label;
-		private Gtk.HScale _time_slider;
+		private Gtk.Scale _time_slider;
 		private Client client;
 		private CoverArtManager manager;
 
@@ -124,9 +124,9 @@ namespace Abraca {
 
 		private void create_seekbar ()
 		{
-			var vbox = new Gtk.VBox(false, 0);
+			var vbox = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
-			_time_slider = new Gtk.HScale.with_range(0, 1, 0.01);
+			_time_slider = new Gtk.Scale.with_range(Gtk.Orientation.HORIZONTAL, 0, 1, 0.01);
 
 			_time_slider.digits = 1;
 			_time_slider.draw_value = false;

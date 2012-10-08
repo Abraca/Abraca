@@ -22,12 +22,12 @@ public interface Abraca.Searchable : GLib.Object {
 	public abstract void search (string query);
 }
 
-public class Abraca.FilterWidget : Gtk.VPaned {
+public class Abraca.FilterWidget : Gtk.Paned {
 	private FilterSearchBox searchbox;
 
 	public FilterWidget (Client client, Config config, Medialib medialib,  Gtk.AccelGroup group)
 	{
-		Object (position: 200);
+		Object (orientation: Gtk.Orientation.VERTICAL, position: 200);
 		var scrolled = new Gtk.ScrolledWindow(null, null);
 
 		scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
@@ -44,7 +44,7 @@ public class Abraca.FilterWidget : Gtk.VPaned {
 
 		var browser = new FilterBrowser (client, config, searchbox);
 
-		var vbox = new Gtk.VBox (false, 2);
+		var vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
 		vbox.pack_start(searchbox, false, false, 2);
 		vbox.pack_start(scrolled, true, true, 0);
 

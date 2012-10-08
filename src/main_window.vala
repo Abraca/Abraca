@@ -22,8 +22,8 @@ namespace Abraca {
 		private Client _client;
 		private Config _config;
 		private ToolBar _toolbar;
-		private Gtk.HPaned _main_hpaned;
-		private Gtk.HPaned _right_hpaned;
+		private Gtk.Paned _main_hpaned;
+		private Gtk.Paned _right_hpaned;
 
 		private const ActionEntry[] actions = {
 			{ "add-url", on_menu_music_add_url },
@@ -155,7 +155,7 @@ namespace Abraca {
 
 			var accel_group = new Gtk.AccelGroup();
 
-			var vbox = new Gtk.VBox(false, 0);
+			var vbox = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
 			_toolbar = new ToolBar(client, this);
 			vbox.pack_start(_toolbar, false, false, 6);
@@ -164,7 +164,7 @@ namespace Abraca {
 			scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
 			scrolled.set_shadow_type (Gtk.ShadowType.IN);
 
-			_right_hpaned = new Gtk.HPaned ();
+			_right_hpaned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
 			_right_hpaned.position = 430;
 			_right_hpaned.position_set = true;
 
@@ -181,7 +181,7 @@ namespace Abraca {
 			var collections = new CollectionsView (client, search);
 			scrolled.add (collections);
 
-			_main_hpaned = new Gtk.HPaned ();
+			_main_hpaned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
 			_main_hpaned.position = 135;
 			_main_hpaned.position_set = true;
 			_main_hpaned.sensitive = false;
