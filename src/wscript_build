@@ -6,6 +6,12 @@ sources = """
     abraca-collections-view.vala
     abraca-config.vala
     abraca-configurable.vala
+    abraca-context-abstract-parser.vala
+    abraca-context-builders.vala
+    abraca-context-lastfm-parser.vala
+    abraca-context-musicbrainz-parser.vala
+    abraca-context-parsers.vala
+    abraca-context-widget.vala
     abraca-coverart.vala
     abraca-drag-and-drop.vala
     abraca-equalizer-bands.vala
@@ -18,6 +24,7 @@ sources = """
     abraca-filter-searchbox.vala
     abraca-filter-view.vala
     abraca-filter-widget.vala
+    abraca-http-client.vala
     abraca-main-window.vala
     abraca-medialib.vala
     abraca-nowplaying.vala

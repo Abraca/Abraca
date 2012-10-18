@@ -205,7 +205,8 @@ namespace Abraca {
 
 			var playlist = new PlaylistWidget (client, _config, medialib, search);
 
-			_right_hpaned.pack1(filter, true, true);
+			var context = new ContextWidget (client);
+			_right_hpaned.pack1(context, true, true);
 			_right_hpaned.pack2(playlist, false, true);
 
 			var collections = new CollectionsView (client, search);
