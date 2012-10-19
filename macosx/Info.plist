@@ -26,5 +26,7 @@
     <string>Copyright 2007 - 2012 Abraca Team, GNU General Public License v2.</string>
     <key>LSMinimumSystemVersion</key>
     <string>10.5</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
 </dict>
 </plist>
