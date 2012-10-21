@@ -75,7 +75,6 @@ namespace Abraca {
 			search_column = 1;
 			headers_visible = false;
 			rules_hint = true;
-			fixed_height_mode = true;
 
 			create_columns ();
 			create_context_menu(config);
@@ -179,13 +178,7 @@ namespace Abraca {
 			Gtk.CellRendererText text_renderer;
 			Gtk.CellRendererPixbuf pbuf_renderer;
 			Gtk.TreeViewColumn column;
-			unowned Gtk.Settings settings;
-			Pango.FontDescription desc;
-			unowned Pango.Context ctx;
-			Pango.Layout layout;
 			Gdk.Pixbuf pbuf;
-			int w, h;
-
 
 			pbuf_renderer = new Gtk.CellRendererPixbuf();
 			pbuf_renderer.stock_size = Gtk.IconSize.MENU;
@@ -206,25 +199,10 @@ namespace Abraca {
 
 			append_column (column);
 
-
 			text_renderer = new Gtk.CellRendererText();
 
-			/* Find out the current font height */
-			settings = Gtk.Settings.get_default();
+			text_renderer.set_fixed_height_from_font(2);
 
-			desc = new Pango.FontDescription();
-			desc.set_family (settings.gtk_font_name);
-
-			ctx = get_pango_context();
-
-			layout = new Pango.Layout(ctx);
-			layout.set_text("look behind you! a three-headed monkey!", -1);
-			layout.set_font_description (desc);
-
-			layout.get_pixel_size(out w, out h);
-
-			/* Two rows, plus some extra height */
-			text_renderer.height = h * 2 + 4;
 			text_renderer.ellipsize = Pango.EllipsizeMode.END;
 			text_renderer.ellipsize_set = true;
 
