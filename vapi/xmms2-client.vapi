@@ -390,7 +390,7 @@ namespace Xmms {
 		public void disconnect();
 		public Xmms.Value get_value();
 		public void notifier_set(NotifierFunc func);
-		public void notifier_set_full(NotifierFunc func, UserDataFreeFunc free_func);
+		public void notifier_set_full(owned NotifierFunc func);
 		public void wait();
 	}
 
@@ -439,6 +439,10 @@ namespace Xmms {
 		public bool list_set_coll(Xmms.Value val);
 
 		public bool list_append(Xmms.Value val);
+		public bool list_append_int(int val);
+		public bool list_append_string(string val);
+		public bool list_append_coll(Xmms.Collection val);
+
 		public bool list_insert(int pos, Xmms.Value val);
 		public bool list_remove(int pos);
 		public bool list_clear();
