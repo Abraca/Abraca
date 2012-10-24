@@ -59,8 +59,9 @@ namespace Abraca {
 
 			client.configval_changed.connect(on_config_changed);
 
-			destroy.connect(() => {
+			delete_event.connect(() => {
 				Configurable.save();
+				return false;
 			});
 		}
 

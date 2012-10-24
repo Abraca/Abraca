@@ -54,6 +54,7 @@ public class Abraca.Application : Gtk.Application {
 
 	private void on_menu_quit ()
 	{
+		Configurable.save();
 		quit();
 	}
 
