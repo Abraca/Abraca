@@ -61,6 +61,7 @@ class AbracaEnvironment(SConsEnvironment):
 		self.Tool('gzip')
 		self.Tool('msgfmt')
 		self.Tool('gdkpixbufcsource')
+		self.Tool('gresources')
 		self.Tool('binaryblob')
 
 		# Beef up performance a bit by caching implicit deps
@@ -102,6 +103,7 @@ class AbracaEnvironment(SConsEnvironment):
 			self['BINARYBLOBCOMSTR']  = '  Embedding: $SOURCES'
 			self['ASCOMSTR']          = ' Assembling: $SOURCES'
 			self['GZIPCOMSTR']        = 'Compressing: $SOURCE'
+			self['GRESOURCESCOMSTR']  = '  Embedding: $SOURCES'
 
 		self.SConsInstall = self.Install
 		self.Install = self._install
