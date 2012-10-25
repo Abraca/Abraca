@@ -99,8 +99,6 @@ class AbracaEnvironment(SConsEnvironment):
 			self['LINKCOMSTR']        = '    Linking: $TARGET'
 			self['MSGFMTCOMSTR']      = '   Localize: $TARGET'
 			self['STRIPCOMSTR']       = '  Stripping: $TARGET'
-			self['GDKPBUFCOMSTR']     = '  Embedding: $SOURCES'
-			self['BINARYBLOBCOMSTR']  = '  Embedding: $SOURCES'
 			self['ASCOMSTR']          = ' Assembling: $SOURCES'
 			self['GZIPCOMSTR']        = 'Compressing: $SOURCE'
 			self['GRESOURCESCOMSTR']  = '  Embedding: $SOURCES'
