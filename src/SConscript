@@ -1,6 +1,5 @@
 Import('env')
-Import('images')
-Import('ui')
+Import('resource_c')
 
 vala_sources = """
     abraca.vala
@@ -68,7 +67,7 @@ extra = []
 sources = env.Vala(vala_sources + types_sources + widgets_sources + components_sources + gladeui_sources)
 gladeui = sources.pop()
 
-prog = env.Program('abraca', sources + [images, ui] + extra, install=True)
+prog = env.Program('abraca', sources + [resource_c] + extra, install=True)
 
 Export('sources')
 Export('gladeui')

@@ -36,11 +36,11 @@ public class Abraca.Application : Gtk.Application {
 		try {
 			var builder = new Gtk.Builder();
 
-			builder.add_from_string(Resources.XML.about, Resources.XML.about.length);
+			builder.add_from_resource("/org/xmms2/Abraca/ui/about.xml");
 
 			var about = builder.get_object("abraca_about") as Gtk.AboutDialog;
 
-			about.set_logo(new Gdk.Pixbuf.from_inline(Resources.abraca_192, false));
+			about.set_logo(new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-192.png"));
 			about.version = Build.Config.VERSION;
 
 			about.transient_for = w;
@@ -69,8 +69,9 @@ public class Abraca.Application : Gtk.Application {
 
 		var builder = new Gtk.Builder ();
 
+
 		try {
-			builder.add_from_string(Resources.XML.main_menu, Resources.XML.main_menu.length);
+			builder.add_from_resource("/org/xmms2/Abraca/ui/main_menu.xml");
 
 			app_menu = builder.get_object ("app-menu") as MenuModel;
 			menubar = builder.get_object("win-menu") as MenuModel;
@@ -89,6 +90,7 @@ public class Abraca.Application : Gtk.Application {
 		} catch (GLib.Error e) {
 			GLib.error("%s", e.message);
 		}
+
 		base.activate();
 	}
 

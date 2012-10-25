@@ -1,11 +1,10 @@
 Import('env')
 Import('sources')
 Import('gladeui')
-Import('images')
-Import('ui')
+Import('resource_c')
 
 if env.get('HAVE_GLADEUI_2_0'):
-    env.InstallGladeUiModule(env.SharedLibrary('libgladeabraca', sources + [images, ui, gladeui]))
+    env.InstallGladeUiModule(env.SharedLibrary('libgladeabraca', sources + [resource_c, gladeui]))
 
     env.InstallGladeUiCatalog('abraca.xml')
 

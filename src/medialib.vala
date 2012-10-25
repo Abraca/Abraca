@@ -71,9 +71,7 @@ namespace Abraca {
 			var builder = new Gtk.Builder ();
 
 			try {
-				builder.add_from_string(
-					Resources.XML.mediainfo, Resources.XML.mediainfo.length
-				);
+				builder.add_from_resource("/org/xmms2/Abraca/ui/mediainfo.xml");
 			} catch (GLib.Error e) {
 				GLib.error("Could not load UI: %s", e.message);
 			}

@@ -47,7 +47,7 @@ namespace Abraca {
 			create_widgets(client);
 
 			try {
-				set_icon(new Gdk.Pixbuf.from_inline (Resources.abraca_32, false));
+				set_icon(new Gdk.Pixbuf.from_resource ("/org/xmms2/Abraca/abraca-32.png"));
 			} catch (GLib.Error e) {
 				GLib.assert_not_reached ();
 			}

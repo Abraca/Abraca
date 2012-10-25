@@ -42,8 +42,7 @@ namespace Abraca {
 		{
 			var builder = new Gtk.Builder();
 			try {
-				builder.add_from_string(Resources.XML.server_browser,
-				                        Resources.XML.server_browser.length);
+				builder.add_from_resource("/org/xmms2/Abraca/ui/server_browser.xml");
 			} catch (GLib.Error e) {
 				GLib.error(e.message);
 			}

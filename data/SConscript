@@ -1,25 +1,29 @@
 Import('env')
 
 lst = Split("""
-	abraca-32.png
-	abraca-192.png
-	abraca-equalizer.png
-	abraca-playlist-16.png
-	abraca-playlist-24.png
-	abraca-collection-16.png
-	abraca-collection-24.png
-	abraca-rating-rated.png
-	abraca-rating-unrated.png
-	abraca-favorite.png
+    abraca-128.png
+    abraca-16.png
+    abraca-192.png
+    abraca-32.png
+    abraca-collection-16.png
+    abraca-collection-24.png
+    abraca-equalizer.png
+    abraca-favorite.png
+    abraca-playlist-16.png
+    abraca-playlist-24.png
+    abraca-rating-rated.png
+    abraca-rating-unrated.png
+    abraca.svg
+    ui/about.xml
+    ui/coverart.xml
+    ui/main_menu.xml
+    ui/mediainfo.xml
+    ui/server_browser.xml
 """)
 
-images, header, vapi = env.GdkPixBufCSource('abraca_images', lst)
+resource_xml, resource_c = env.GResources('resources', lst, gresource_path="/org/xmms2/Abraca")
 
-env.Append(CPPPATH = [Dir('.')])
-env.Append(VALAPKGPATH = [Dir('.')])
-env.Append(VALAPKGS = ['abraca_images'])
-
-Export('images')
+Export('resource_c')
 
 env.InstallMan(env.GZip('abraca.1'))
 env.InstallData('icons', 'abraca.svg')

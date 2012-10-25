@@ -56,8 +56,7 @@ namespace Abraca {
 			var builder = new Gtk.Builder ();
 
 			try {
-				builder.add_from_string (Resources.XML.coverart,
-				                         Resources.XML.coverart.length);
+				builder.add_from_resource ("/org/xmms2/Abraca/ui/coverart.xml");
 			} catch (GLib.Error e) {
 				GLib.error (e.message);
 			}
