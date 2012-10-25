@@ -60,9 +60,7 @@ class AbracaEnvironment(SConsEnvironment):
 		self.Tool('vala')
 		self.Tool('gzip')
 		self.Tool('msgfmt')
-		self.Tool('gdkpixbufcsource')
 		self.Tool('gresources')
-		self.Tool('binaryblob')
 
 		# Beef up performance a bit by caching implicit deps
 		self.SetOption('implicit_cache', True)
