@@ -32,6 +32,8 @@ namespace Abraca {
 			Connected
 		}
 
+		public signal void playback_current_info (Xmms.Value value);
+		public signal void playback_current_coverart (Gdk.Pixbuf? value);
 
 		public signal void connection_state_changed (ConnectionState state);
 
@@ -88,6 +90,7 @@ namespace Abraca {
 		public void set_playlist_id (int mid) {
 			if (current_playback_status == Xmms.PlaybackStatus.STOP) {
 				playback_current_id(mid);
+				xmms.medialib_get_info(mid).notifier_set(on_playback_current_info);
 			}
 		}
 
@@ -271,6 +274,7 @@ namespace Abraca {
 
 			if (val.get_int(out mid)) {
 				playback_current_id(mid);
+				xmms.medialib_get_info(mid).notifier_set(on_playback_current_info);
 			}
 
 			return true;
@@ -424,6 +428,41 @@ namespace Abraca {
 			if (!val.is_error()) {
 				medialib_entry_changed(val);
 			}
+			return true;
+		}
+
+		private bool on_playback_current_info(Xmms.Value value) {
+			string picture_front, artist;
+
+			var metadata = value.propdict_to_dict();
+
+			if (metadata.dict_entry_get_string("picture_front", out picture_front))
+				xmms.bindata_retrieve(picture_front).notifier_set(on_playback_current_coverart);
+
+			playback_current_info(metadata);
+
+			return true;
+		}
+
+		private Gdk.Pixbuf? load_coverart(uchar[] data) {
+			try {
+				var loader = new Gdk.PixbufLoader();
+				loader.write(data);
+				loader.close();
+				return loader.get_pixbuf();
+			} catch (GLib.Error e) {
+				return null;
+			}
+		}
+
+		private bool on_playback_current_coverart(Xmms.Value value) {
+			unowned uchar[] data;
+
+			if (value.get_bin(out data))
+				playback_current_coverart(load_coverart(data));
+			else
+				playback_current_coverart(null);
+
 			return true;
 		}
 
