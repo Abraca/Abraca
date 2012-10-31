@@ -458,7 +458,7 @@ namespace Xmms {
 		public bool dict_entry_get_uint(string key, out uint val);
 		public bool dict_entry_get_collection(string key, out Xmms.Collection coll);
 
-		public Xmms.Value propdict_to_dict([CCode (array_length = false)] string[]? prefs=null);
+		public Xmms.Value propdict_to_dict([CCode (array_length = false, array_null_terminated = true)] string[]? prefs=null);
 	}
 
 	[Compact]
