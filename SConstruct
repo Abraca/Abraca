@@ -27,7 +27,7 @@ for pkg, version, option in vala_dependencies:
 		env.AppendPkg(pkg, version)
 		env.Append(VALAPKGS = [pkg])
 
-env.Append(VALAPKGS = ['posix'])
+env.Append(VALAPKGS = ['posix', 'gdk-add-filter'])
 #env.Append(VALAPKGS = ['posix', 'dmap-mdns-browser'])
 
 c_dependencies = (

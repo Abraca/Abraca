@@ -19,6 +19,13 @@
 
 public class Abraca.Application : Gtk.Application {
 	private Gtk.Window w;
+	private const int IDLE_INTERVAL = 3;
+	private const int IDLE_DELAY = 20;
+
+	private time_t idle_last_event = 0;
+	private uint idle_handler = 0;
+
+	public signal void application_timeout ();
 
 	private const ActionEntry[] actions = {
 		{ "about", on_menu_about },
@@ -29,6 +36,25 @@ public class Abraca.Application : Gtk.Application {
 	{
 		Object(application_id: "org.xmms2.abraca", flags: ApplicationFlags.FLAGS_NONE);
 		add_action_entries (actions, this);
+		gdk_window_add_filter (null, on_gdk_event);
+	}
+
+	private Gdk.FilterReturn on_gdk_event (Gdk.XEvent xev, Gdk.Event ev)
+	{
+		idle_last_event = time_t();
+		if (idle_handler == 0)
+			idle_handler = GLib.Timeout.add_seconds(IDLE_INTERVAL, on_timeout_tickle);
+		return Gdk.FilterReturn.CONTINUE;
+	}
+
+	private bool on_timeout_tickle ()
+	{
+		if ((idle_last_event + IDLE_DELAY) < time_t()) {
+			idle_handler = 0;
+			application_timeout();
+			return false;
+		}
+		return true;
 	}
 
 	private void on_menu_about ()
