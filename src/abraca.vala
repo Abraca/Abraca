@@ -18,12 +18,13 @@
  */
 
 public class Abraca.Application : Gtk.Application {
-	private Gtk.Window w;
 	private const int IDLE_INTERVAL = 3;
 	private const int IDLE_DELAY = 20;
 
 	private time_t idle_last_event = 0;
 	private uint idle_handler = 0;
+
+	private MainWindow window;
 
 	public signal void application_timeout ();
 
@@ -69,7 +70,7 @@ public class Abraca.Application : Gtk.Application {
 			about.set_logo(new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-192.png"));
 			about.version = Build.Config.VERSION;
 
-			about.transient_for = w;
+			about.transient_for = window;
 
 			about.run();
 			about.hide();
@@ -102,9 +103,7 @@ public class Abraca.Application : Gtk.Application {
 			app_menu = builder.get_object ("app-menu") as MenuModel;
 			menubar = builder.get_object("win-menu") as MenuModel;
 
-			var window = new MainWindow(this, client);
-
-			w = window;
+			window = new MainWindow(this, client);
 
 			Configurable.load();
 
@@ -150,8 +149,8 @@ public class Abraca.Application : Gtk.Application {
 		GLib.Intl.bindtextdomain(Build.Config.APPNAME, Build.Config.LOCALEDIR);
 		GLib.Intl.bind_textdomain_codeset(Build.Config.APPNAME, "UTF-8");
 
-		var main = new Abraca.Application();
+		var app = new Abraca.Application();
 
-		return main.run();
+		return app.run();
 	}
 }
