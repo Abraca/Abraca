@@ -24,6 +24,9 @@ namespace Abraca {
 		private ToolBar _toolbar;
 		private Gtk.Paned _main_hpaned;
 		private Gtk.Paned _right_hpaned;
+		private Gtk.Widget _main_ui;
+		private NowPlaying _now_playing;
+		private bool is_idle = false;
 
 		private const ActionEntry[] actions = {
 			{ "add-url", on_menu_music_add_url },
@@ -44,7 +47,12 @@ namespace Abraca {
 
 			add_action_entries (actions, this);
 
-			create_widgets(client);
+			_main_ui = create_widgets(client);
+
+			_now_playing = new NowPlaying(client);
+			_now_playing.hide_now_playing.connect (on_hide_now_playing);
+
+			add(_main_ui);
 
 			try {
 				set_icon(new Gdk.Pixbuf.from_resource ("/org/xmms2/Abraca/abraca-32.png"));
@@ -63,6 +71,26 @@ namespace Abraca {
 				Configurable.save();
 				return false;
 			});
+		}
+
+		public void on_application_idle ()
+		{
+			if (!is_idle) {
+				is_idle = true;
+				remove(_main_ui);
+				show_menubar = false;
+				add(_now_playing);
+				_now_playing.grab_focus();
+				show_all();
+			}
+		}
+
+		public void on_hide_now_playing ()
+		{
+			is_idle = false;
+			remove(_now_playing);
+			show_menubar = true;
+			add(_main_ui);
 		}
 
 		private void on_config_changed (Client c, string key, string value)
@@ -150,7 +178,7 @@ namespace Abraca {
 			file.set_integer("panes", "pos2", _right_hpaned.position);
 		}
 
-		private void create_widgets (Client client)
+		private Gtk.Widget create_widgets (Client client)
 		{
 			_config = new Config ();
 
@@ -196,9 +224,9 @@ namespace Abraca {
 
 			vbox.pack_start(_main_hpaned, true, true, 0);
 
-			add(vbox);
-
 			add_accel_group(accel_group);
+
+			return vbox;
 		}
 
 		private void on_menu_music_add_url(GLib.SimpleAction action, GLib.Variant? state)

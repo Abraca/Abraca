@@ -104,6 +104,7 @@ public class Abraca.Application : Gtk.Application {
 			menubar = builder.get_object("win-menu") as MenuModel;
 
 			window = new MainWindow(this, client);
+			application_timeout.connect(window.on_application_idle);
 
 			Configurable.load();
 
