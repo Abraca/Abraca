@@ -22,6 +22,7 @@ using Gee;
 
 namespace Abraca {
 	public class Client : GLib.Object {
+		private Gdk.Pixbuf default_coverart;
 		private Xmms.Client _xmms = null;
 		private void *_gmain = null;
 
@@ -86,6 +87,13 @@ namespace Abraca {
 			}
 		}
 
+		construct {
+			try {
+				default_coverart = new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-kopimi-coverart.png");
+			} catch (GLib.Error e) {
+				GLib.error (e.message);
+			}
+		}
 
 		public void set_playlist_id (int mid) {
 			if (current_playback_status == Xmms.PlaybackStatus.STOP) {
@@ -438,6 +446,8 @@ namespace Abraca {
 
 			if (metadata.dict_entry_get_string("picture_front", out picture_front))
 				xmms.bindata_retrieve(picture_front).notifier_set(on_playback_current_coverart);
+			else
+				playback_current_coverart(default_coverart);
 
 			playback_current_info(metadata);
 
@@ -451,7 +461,7 @@ namespace Abraca {
 				loader.close();
 				return loader.get_pixbuf();
 			} catch (GLib.Error e) {
-				return null;
+				return default_coverart;
 			}
 		}
 
@@ -461,7 +471,7 @@ namespace Abraca {
 			if (value.get_bin(out data))
 				playback_current_coverart(load_coverart(data));
 			else
-				playback_current_coverart(null);
+				playback_current_coverart(default_coverart);
 
 			return true;
 		}
