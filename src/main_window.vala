@@ -29,6 +29,7 @@ namespace Abraca {
 		private bool is_idle = false;
 
 		private const ActionEntry[] actions = {
+			{ "connect", on_menu_connect },
 			{ "add-url", on_menu_music_add_url },
 			{ "add-files", on_menu_music_add_files },
 			{ "add-directories", on_menu_music_add_directories },
@@ -227,6 +228,15 @@ namespace Abraca {
 			add_accel_group(accel_group);
 
 			return vbox;
+		}
+
+		private void on_menu_connect(GLib.SimpleAction action, GLib.Variant? state)
+		{
+			GLib.Idle.add(() => {
+				var browser = new ServerBrowser(this, _client);
+				browser.run();
+				return false;
+			});
 		}
 
 		private void on_menu_music_add_url(GLib.SimpleAction action, GLib.Variant? state)

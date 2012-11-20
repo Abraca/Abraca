@@ -110,9 +110,11 @@ public class Abraca.Application : Gtk.Application {
 
 			window.show_all ();
 
-			if (!client.try_connect())
-				GLib.Timeout.add(500, client.reconnect);
-
+			GLib.Idle.add(() => {
+				var sb = new ServerBrowser(window, client);
+				sb.run();
+				return false;
+			});
 		} catch (GLib.Error e) {
 			GLib.error("%s", e.message);
 		}

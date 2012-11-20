@@ -14,12 +14,12 @@ conf.CheckGitVersion()
 
 vala_dependencies = (
 	('gtk+-3.0', '3.0.0', env.Dependency.Mandatory),
-	('gmodule-2.0', '2.16.0', env.Dependency.Mandatory),
-	('gio-2.0', '2.16.0', env.Dependency.Mandatory),
+	('gmodule-2.0', '2.34.0', env.Dependency.Mandatory),
+	('gio-2.0', '2.34.0', env.Dependency.Mandatory),
+	('gio-unix-2.0', '2.34.0', env.Dependency.Mandatory),
 	('xmms2-client', '0.8', env.Dependency.Mandatory),
 	('xmms2-client-glib', '0.8', env.Dependency.Mandatory),
 	('gee-1.0', '0.6', env.Dependency.Mandatory),
-#	('avahi-gobject', '0.6.0', env.Dependency.Optional),
 )
 
 for pkg, version, option in vala_dependencies:
@@ -28,12 +28,9 @@ for pkg, version, option in vala_dependencies:
 		env.Append(VALAPKGS = [pkg])
 
 env.Append(VALAPKGS = ['posix', 'gdk-add-filter'])
-#env.Append(VALAPKGS = ['posix', 'dmap-mdns-browser'])
 
 c_dependencies = (
 	('gladeui-2.0', '3.6.0', env.Dependency.Optional),
-#	('avahi-client', '0.6.0', env.Dependency.Optional),
-#	('avahi-glib', '0.6.0', env.Dependency.Optional),
 )
 
 for pkg, version, option in c_dependencies:

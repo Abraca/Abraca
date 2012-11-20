@@ -45,6 +45,17 @@ components_sources = """
     components/playlist/playlist_widget.vala
 
 	components/nowplaying/nowplaying.vala
+
+	components/server/server_browser.vala
+	components/server/server_prober.vala
+	components/server/server_discover.vala
+	components/server/server_discover_tcp.vala
+	components/server/server_discover_unix.vala
+
+	components/server/subzero/subzero/subzero-browser.vala
+	components/server/subzero/subzero/subzero-dns.vala
+	components/server/subzero/subzero/subzero-dns-record-visitor.vala
+	components/server/subzero/subzero/subzero-util.vala
 """.split()
 
 """
@@ -52,8 +63,6 @@ components/equalizer/equalizer.vala
 components/equalizer/equalizer_model.vala
 components/equalizer/equalizer_bands.vala
 
-components/server/server_browser.vala
-components/server/server_model.vala
 """
 
 
@@ -61,15 +70,10 @@ gladeui_sources = """
     ../gladeui/glade-abraca.vala
 """.split()
 
-extra = []
-"""
-    components/server/zeroconf/dmap-mdns-browser-avahi.c
-""".split()
-
 sources = env.Vala(vala_sources + types_sources + widgets_sources + components_sources + gladeui_sources)
 gladeui = sources.pop()
 
-prog = env.Program('abraca', sources + [resource_c] + extra, install=True)
+prog = env.Program('abraca', sources + [resource_c], install=True)
 
 Export('sources')
 Export('gladeui')

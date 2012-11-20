@@ -20,7 +20,7 @@
       <section>
         <item>
           <attribute name="label" translatable="yes">_Connect</attribute>
-          <attribute name='action'>app.disabled</attribute>
+          <attribute name='action'>win.connect</attribute>
         </item>
         <submenu>
           <attribute name='label' translatable='yes'>_Add</attribute>

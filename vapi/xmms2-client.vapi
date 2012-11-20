@@ -463,6 +463,9 @@ namespace Xmms {
 		public bool dict_entry_get_collection(string key, out Xmms.Collection coll);
 
 		public Xmms.Value propdict_to_dict([CCode (array_length = false, array_null_terminated = true)] string[]? prefs=null);
+
+		public Xmms.Value serialize();
+		public Xmms.Value deserialize();
 	}
 
 	[Compact]
@@ -500,5 +503,23 @@ namespace Xmms {
 		public bool seek(string key);
 		public bool set(Xmms.Value val);
 		public bool remove();
+	}
+
+	/* Protocol details */
+	public const int IPC_PROTOCOL_VERSION;
+
+	public enum IpcObject {
+		MAIN
+	}
+
+	[CCode (cprefix="XMMS_IPC_CMD_")]
+	public enum IpcMainCommand {
+		HELLO
+	}
+
+	public enum IpcReply {
+		[CCode (cname="XMMS_IPC_CMD_REPLY")]
+		OK,
+		ERROR
 	}
 }

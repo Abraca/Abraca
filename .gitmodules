@@ -1,0 +1,3 @@
+[submodule "src/components/server/subzero"]
+	path = src/components/server/subzero
+	url = git://github.com/dsvensson/subzero.git
