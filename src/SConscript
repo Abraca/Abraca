@@ -1,76 +1,56 @@
 Import('env')
 Import('resource_c')
+Import('external')
 
-vala_sources = """
-    abraca.vala
-    client.vala
-    config.vala
-    coverart.vala
-    dragdroptarget.vala
-    main_window.vala
-    medialib.vala
-    stock.vala
-    toolbar.vala
-    transform.vala
-    treerow_map.vala
-    volume_button.vala
-""".split()
-
-types_sources = """
-    types/configurable.vala
-    types/selected_rows_mixin.vala
-""".split()
-
-widgets_sources = """
-    widgets/cellrenderercollection.vala
-    widgets/cellrenderertogglepixbuf.vala
-    widgets/rating_entry.vala
-    widgets/prettylabel.vala
-""".split()
-
-components_sources = """
-    components/collections/collections_model.vala
-    components/collections/collections_view.vala
-
-    components/filter/filter_widget.vala
-    components/filter/filter_searchbox.vala
-    components/filter/filter_editor.vala
-    components/filter/filter_model.vala
-    components/filter/filter_view.vala
-	components/filter/filter_browser.vala
-	components/filter/filter_browser_model.vala
-
-    components/playlist/playlist_model.vala
-    components/playlist/playlist_view.vala
-    components/playlist/playlist_widget.vala
-
-	components/nowplaying/nowplaying.vala
-
-	components/server/server_browser.vala
-	components/server/server_prober.vala
-	components/server/server_discover.vala
-	components/server/server_discover_tcp.vala
-	components/server/server_discover_unix.vala
-
-	components/server/subzero/subzero/subzero-browser.vala
-	components/server/subzero/subzero/subzero-dns.vala
-	components/server/subzero/subzero/subzero-dns-record-visitor.vala
-	components/server/subzero/subzero/subzero-util.vala
+sources = """
+    abraca-application.vala
+    abraca-client.vala
+    abraca-collections-cellrenderer.vala
+    abraca-collections-model.vala
+    abraca-collections-view.vala
+    abraca-config.vala
+    abraca-configurable.vala
+    abraca-coverart.vala
+    abraca-dragdroptarget.vala
+    abraca-filter-browser-model.vala
+    abraca-filter-browser.vala
+    abraca-filter-editor.vala
+    abraca-filter-model.vala
+    abraca-filter-searchbox.vala
+    abraca-filter-view.vala
+    abraca-filter-widget.vala
+    abraca-main-window.vala
+    abraca-medialib.vala
+    abraca-nowplaying.vala
+    abraca-playlist-model.vala
+    abraca-playlist-view.vala
+    abraca-playlist-widget.vala
+    abraca-pretty-label.vala
+    abraca-rating-entry.vala
+    abraca-selected-rows-mixin.vala
+    abraca-server-browser.vala
+    abraca-server-discover-tcp.vala
+    abraca-server-discover-unix.vala
+    abraca-server-discover.vala
+    abraca-server-prober.vala
+    abraca-stock.vala
+    abraca-toolbar.vala
+    abraca-transform.vala
+    abraca-treerow-map.vala
+    abraca-volume-button.vala
 """.split()
 
 """
-components/equalizer/equalizer.vala
-components/equalizer/equalizer_model.vala
-components/equalizer/equalizer_bands.vala
-
+    abraca-equalizer-bands.vala
+    abraca-equalizer-model.vala
+    abraca-equalizer-widget.vala
 """
-
 
 gladeui_sources = """
     ../gladeui/glade-abraca.vala
 """.split()
 
-sources = env.Vala(vala_sources + types_sources + widgets_sources + components_sources + gladeui_sources)
+sources = env.Vala(sources + external + gladeui_sources)
 gladeui = sources.pop()
 
 prog = env.Program('abraca', sources + [resource_c], install=True)
