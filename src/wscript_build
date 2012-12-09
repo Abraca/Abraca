@@ -1,7 +1,3 @@
-Import('env')
-Import('resource_c')
-Import('external')
-
 sources = """
     abraca-application.vala
     abraca-client.vala
@@ -40,16 +36,14 @@ sources = """
     abraca-volume-button.vala
 """.split()
 
-"""
-    abraca-equalizer-bands.vala
-    abraca-equalizer-model.vala
-    abraca-equalizer-widget.vala
-"""
-
-sources = env.Vala(sources + external)
-
-prog = env.Program('abraca', sources + [resource_c], install=True)
-
-Export('sources')
-
-env.Append(CPPPATH = ['utils'])
+bld.program(
+    features     = 'c cprogram',
+    target       = 'abraca',
+    use          = 'subzero resources',
+    packages     = 'gtk+-3.0 gio-unix-2.0 gee-1.0 xmms2-client-glib subzero posix gdk-add-filter build-config',
+    uselib       = 'GTK+-3.0 GMODULE-2.0 GIO-2.0 GEE-1.0 XMMS2-CLIENT XMMS2-CLIENT-GLIB',
+    source       = sources,
+    vapi_dirs    = '../vapi ../external',
+    vala_defines = bld.env.VALADEFINES,
+    vala_target_glib = '2.34',
+)

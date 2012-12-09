@@ -1,0 +1,14 @@
+bld.objects(
+    features = 'c',
+    uselib = 'GIO-2.0',
+    source='resources.gresource.xml',
+    target='resources',
+)
+
+bld(
+    features = 'man',
+    source = 'abraca.1'
+)
+
+bld.install_files('${DATADIR}/icons', 'abraca.svg')
+bld.install_files('${DATADIR}/applications', 'abraca.desktop')

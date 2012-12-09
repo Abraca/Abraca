@@ -1,8 +1,9 @@
 build
 *.swp
 *.pyc
-.scon*
 config.log
 *.rej
 *~
 *.orig
+.waf*
+.lock-waf*
