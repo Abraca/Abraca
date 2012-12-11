@@ -46,16 +46,10 @@ sources = """
     abraca-equalizer-widget.vala
 """
 
-gladeui_sources = """
-    ../gladeui/glade-abraca.vala
-""".split()
-
-sources = env.Vala(sources + external + gladeui_sources)
-gladeui = sources.pop()
+sources = env.Vala(sources + external)
 
 prog = env.Program('abraca', sources + [resource_c], install=True)
 
 Export('sources')
-Export('gladeui')
 
 env.Append(CPPPATH = ['utils'])

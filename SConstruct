@@ -29,10 +29,6 @@ for pkg, version, option in vala_dependencies:
 
 env.Append(VALAPKGS = ['posix', 'gdk-add-filter'])
 
-c_dependencies = (
-	('gladeui-2.0', '3.6.0', env.Dependency.Optional),
-)
-
 for pkg, version, option in c_dependencies:
 	if conf.CheckPkg(pkg, version, option):
 		env.AppendPkg(pkg, version)
@@ -69,5 +65,4 @@ else:
 env.SConscript('build/external/SConscript', exports='env', duplicate=0)
 env.SConscript('build/data/SConscript', exports='env', duplicate=0)
 env.SConscript('build/src/SConscript', exports='env', duplicate=0)
-env.SConscript('build/gladeui/SConscript', exports='env', duplicate=0)
 env.SConscript('build/po/SConscript', exports='env', duplicate=0)
