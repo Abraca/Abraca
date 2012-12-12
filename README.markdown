@@ -6,6 +6,7 @@ your music a breeze.
 Goals
 =====
 * Fast interaction with very large media libraries.
+* Reward metadata addicts.
 * Experiment with latest GTK technologies.
 * Provide deep context around currently playing media.
 * Fast and easy to switch between which XMMS2 to control.
