@@ -1,0 +1,27 @@
+SO_REUSEPORT_FRAGMENT = """
+#include <sys/socket.h>
+int main(int argc, char **argv) {
+	return SO_REUSEPORT;
+}
+"""
+
+def build(bld):
+	bld.objects(
+		features         = 'c',
+		source           = bld.path.ant_glob('subzero/subzero/*.vala'),
+		target           = 'subzero',
+		packages         = 'gio-2.0',
+		packages_private = 'platform-socket posix',
+		uselib           = 'GIO-2.0',
+		install_path     = None,
+		install_binding  = False,
+		vapi_dirs        = 'subzero/vapi',
+		vala_defines     = bld.env.VALADEFINES,
+		vala_target_glib = '2.34',
+	)
+
+def configure(conf):
+	conf.env.VALADEFINES = []
+	if conf.check_cc(fragment=SO_REUSEPORT_FRAGMENT, mandatory=False):
+		conf.env.VALADEFINES = ['HAVE_SO_REUSEPORT']
+

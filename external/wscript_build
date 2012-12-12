@@ -1,9 +1,0 @@
-bld.objects(
-	features = 'c',
-	source   = bld.path.ant_glob('subzero/subzero/*.vala'),
-	target   = 'subzero',
-	packages = 'gio-2.0',
-	uselib   = 'GIO-2.0',
-	install_path = None,
-	install_binding = False,
-)

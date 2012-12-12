@@ -39,5 +39,7 @@ def configure(conf):
 
 	conf.write_config_header('build-config.h')
 
+	conf.recurse('external')
+
 def build(bld):
 	bld.recurse('external src data po')
