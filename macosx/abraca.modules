@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<moduleset>
+  <!--<include href="https://raw.github.com/jralls/gtk-osx-build/master/modulesets-stable/gtk-osx.modules"/> -->
+  <repository type="git" name="git.gnome.org" href="git://git.gnome.org/"/>
+  <repository type="git" name="git.xmms2.org" href="git://git.xmms2.org/"/>
+  <repository type="tarball" name="cairographics.org" href="http://cairographics.org"/>
+  <repository type="tarball" name="ftp.gnome.org" default="yes" href="http://ftp.gnome.org/pub/GNOME/sources/"/>
+  <!--<repository type="tarball" name="iso-codes" href="http://pkg-isocodes.alioth.debian.org/downloads/"/> -->
+  <repository type="tarball" name="sourceware.org" href="ftp://sourceware.org/pub/"/>
+  <repository type="tarball" name="freedesktop.org" href="http://www.freedesktop.org"/>
+  <repository type="tarball" name="dbus.freedesktop.org" href="http://dbus.freedesktop.org/releases/"/>
+  <repository type="tarball" name="cpan" href="http://search.cpan.org/CPAN/" />
+  <repository type="tarball" name="sourceforge" href="http://heanet.dl.sourceforge.net/sourceforge"/>
+  <repository type="tarball" name="tango.freedesktop.org" href="http://tango.freedesktop.org/releases/"/>
+  <repository type="tarball" name="jpeg" href="http://www.ijg.org/files/"/>
+  <repository type="tarball" name="xmlsoft.org" href="ftp://xmlsoft.org/libxml2/"/>
+  <repository type="git" name="nongnu" href="git://git.sv.nongnu.org/"/>
+  <repository type="tarball" name="intltool" href="http://launchpad.net/intltool/trunk/"/>
+
+  <autotools id="libpng" autogenargs="--enable-shared" autogen-sh="configure">
+    <branch version="1.5.13" module="libpng/libpng-1.5.13.tar.bz2" repo="sourceforge"/>
+  </autotools>
+
+  <autotools id="libjpeg">
+    <branch module="jpegsrc.v8d.tar.gz" version="8c" repo="jpeg" checkoutdir="jpeg-8d">
+    </branch>
+  </autotools>
+
+  <autotools id="libxml2" autogen-sh="configure">
+   <branch version="2.9.0" module="libxml2-2.9.0.tar.gz" repo="xmlsoft.org">
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/libxml2-Bug-686118-pthreads_once_init.patch" strip="1"/>
+    </branch>
+  </autotools>
+
+  <autotools id="gdk-pixbuf" autogenargs="--with-included-loaders=png,gif,jpeg --without-libtiff">
+    <branch module="gdk-pixbuf/2.26/gdk-pixbuf-2.26.4.tar.xz" version="2.26.4" hash="sha256:a91458645f078debf204fef8bb06b30f356fcb5d48f65395132a5dba2b3510be"/>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="libpng"/>
+      <dep package="libjpeg"/>
+      <dep package="gobject-introspection"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="atk">
+    <branch module="atk/2.7/atk-2.7.2.tar.xz" version="2.7.2" hash="sha256:e4efab9c6b076e19049438db6f799cba5b462bdf2b96e35d7c387a49d2a50a94"/>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="gobject-introspection"/>
+    </dependencies>
+  </autotools>
+
+ <autotools id="gtk+-3.0" autogen-sh="configure" autogenargs="--enable-quartz-backend --enable-broadway-backend --enable-quartz-relocation --disable-glibtest --disable-cups --disable-papi --enable-packagekit=no --enable-colord=no">
+    <branch module="gtk+/3.7/gtk+-3.7.2.tar.xz" version="3.7.2" hash="sha256:e9bf652afc30edb3b9542ab7536579e8d6195f5e3f9a0cfe2a9537ed6e20f795"/>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="pango"/>
+      <dep package="atk"/>
+      <dep package="gdk-pixbuf"/>
+      <dep package="gobject-introspection"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="pango"  autogen-sh="configure" autogenargs="--without-x --with-included-modules=yes" makeargs="-k -C modules; make">
+    <branch version="1.32.4" module="pango/1.32/pango-1.32.4.tar.xz" hash="sha256:9895b2e6572c3b3e0cc1c174b8bf55791a47de1995af21a1787f6c573b4b58db">
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/0001-Fix-relative-module-paths.patch" strip="1"/>
+    </branch>
+    <dependencies>
+      <dep package="cairo"/>
+      <dep package="fontconfig"/>
+      <dep package="glib"/>
+      <dep package="gobject-introspection"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="libcroco" autogenargs="--disable-Bsymbolic">
+    <pkg-config>libcroco-0.6.pc</pkg-config>
+    <branch module="libcroco/0.6/libcroco-0.6.7.tar.xz" version="0.6.7" hash="sha256:892b8a7e311b80d0a5a633b8204fed5656d7af20e884719e5ec6e340e1f0cd88"/>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="libxml2"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="librsvg" autogenargs="--disable-Bsymbolic">
+    <branch module="librsvg/2.36/librsvg-2.36.4.tar.xz" version="2.36.4" hash="sha256:1021935204798f4f0ad3004a09b583668ea94a48593461b147fdcff68a18e6c2"/>
+    <dependencies>
+      <dep package="libcroco"/>
+      <dep package="gobject-introspection"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="pixman" autogen-sh="configure" autogenargs="--enable-quartz --enable-gtk=no">
+    <pkg-config>pixman-1.pc</pkg-config>
+    <branch module="releases/pixman-0.24.0.tar.gz" version="0.24.0" repo="cairographics.org" hash="sha256:a5647c7158f103eedff5fba799018f4169f6b26b573ab7685812ebc9a1c5d2e4"/>
+  </autotools>
+
+  <autotools id="freetype" autogen-sh="configure" skip-autogen="never">
+    <branch module="freetype/freetype2" repo="nongnu"/>
+  </autotools>
+
+  <autotools id="fontconfig" autogen-sh="configure" autogenargs="--disable-docs">
+    <branch repo="freedesktop.org" version="2.10.1" module="/software/fontconfig/release/fontconfig-2.10.1.tar.gz"/>
+    <dependencies>
+      <dep package="freetype"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="cairo" autogen-sh="configure" autogenargs="--disable-silent-rules">
+    <branch module="releases/cairo-1.12.4.tar.xz" version="1.12.4" repo="cairographics.org" hash="sha256:a467b2e1f04bfd3f848370ce5e82cfe0a7f712bac05a04d133bc34c94f677a28"/>
+    <dependencies>
+      <dep package="fontconfig"/>
+      <dep package="pixman"/>
+      <dep package="libpng"/>
+	</dependencies>
+  </autotools>
+
+  <autotools id="vala">
+    <branch module="vala/0.18/vala-0.18.0.tar.xz" version="0.18.0" hash="sha256:18cb2220ce7352a9dd71be058530f7d4a6c8215a1d9c471430af60a04496a60b">
+    </branch>
+    <dependencies>
+    </dependencies>
+  </autotools>
+
+  <autotools id="libgee">
+    <branch module="libgee/0.6/libgee-0.6.7.tar.xz" version="0.6.7" hash="sha256:b512bf1785fbbb6a264be5fac325c42d4e96cc560b22e3f19ea5b01b1414106d">
+    </branch>
+    <dependencies>
+		<dep package="vala"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gnome-themes-standard" autogenargs="--disable-gtk2-engine">
+    <branch module="gnome-themes-standard/3.7/gnome-themes-standard-3.7.2.tar.xz" version="3.7.2" hash="sha256:720c79f30d7792c23a60b98b2ff2cdfc6a04db9f7e3d508c7fc912850ef01cef">
+	</branch>
+    <dependencies>
+      <dep package="librsvg"/>
+      <dep package="intltool"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="icon-naming-utils">
+    <branch repo="tango.freedesktop.org" module="icon-naming-utils-0.8.90.tar.gz" version="0.8.90"/>
+  </autotools>
+
+  <autotools id="gnome-icon-theme">
+    <branch module="gnome-icon-theme/3.6/gnome-icon-theme-3.6.2.tar.xz" version="3.6.2" hash="sha256:314d5535c12af5d62ba0e51addd3457e39140fb149efb9769eacbcc0449f1045">
+    </branch>
+    <dependencies>
+      <dep package="icon-naming-utils"/>
+      <dep package="intltool"/>
+      <dep package="glib"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gnome-icon-theme-extras">
+    <branch module="gnome-icon-theme-extras/3.6/gnome-icon-theme-extras-3.6.2.tar.xz" version="3.6.2" hash="sha256:93aaaadf40c85ebc42232a4d8e45ca507754b8e1271e797bbcdaded52bd03ec7">
+    </branch>
+    <dependencies>
+      <dep package="icon-naming-utils"/>
+      <dep package="intltool"/>
+      <dep package="glib"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gnome-icon-theme-symbolic">
+    <branch module="gnome-icon-theme-symbolic/3.6/gnome-icon-theme-symbolic-3.6.2.tar.xz" version="3.6.2" hash="sha256:c6a803db440ccb7cedc996224695cdfa6c6927b40082878372b21326697faeae">
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="gnome-themes-standard"/>
+      <dep package="intltool"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="libffi" autogenargs="--disable-builddir">
+    <branch module="libffi/libffi-3.0.11.tar.gz" repo="sourceware.org" version="3.0.11">
+    </branch>
+  </autotools>
+
+  <autotools id="gobject-introspection">
+    <branch module="gobject-introspection/1.34/gobject-introspection-1.34.1.1.tar.xz" version="1.34.1.1" hash="sha256:85b9ac268d34311138f3c6bf646c07975eebfae6ae67d9239e1066a42c5d525b">
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </autotools>
+
+  <waf id="xmmsclient">
+    <branch module="xmms2/xmms2-nano" repo="git.xmms2.org" tag="2bfd4b89c7806cc762e2f1a7683c7b24bc5ec03f"/>
+  </waf>
+
+  <autotools id="glib" autogen-sh="configure" autogenargs="--disable-modular-tests --enable-dtrace">
+    <branch module="glib/2.35/glib-2.35.2.tar.xz" version="2.35.2" hash="sha256:84fffa2041850352b83a7b27c127f1c4e8b3d169aa3a000b100820ba10f8c19e">
+    </branch>
+    <dependencies>
+      <dep package="libffi"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="intltool" autogen-sh="configure">
+    <branch repo="intltool" module="0.50.2/+download/intltool-0.50.2.tar.gz" version="0.50.2" hash="md5:23fbd879118253cb99aeac067da5f591"/>
+    <dependencies>
+      <dep package="perl-xml-parser"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gnome-common">
+     <branch module="gnome-common/3.6/gnome-common-3.6.0.tar.xz" version="3.6.0"
+	     hash="sha256:e10f09de06bddcc8f980422e3bfdcd8185eee7f1eae11543a765ec8e764b8d95"/>
+  </autotools>
+
+  <perl id="perl-xml-parser" makeargs="EXPATLIBPATH=${prefix}/lib EXPATINCPATH=${prefix}/include">
+    <branch repo="cpan" module="authors/id/T/TO/TODDR/XML-Parser-2.41.tar.gz" version="2.41"/>
+  </perl>
+
+
+  <perl id="perl-xml-simple">
+    <branch repo="cpan" module="authors/id/G/GR/GRANTM/XML-Simple-2.20.tar.gz" version="2.20"/>
+    <dependencies>
+      <dep package="perl-xml-parser"/>
+    </dependencies>
+  </perl>
+
+  <metamodule id="abraca">
+    <dependencies>
+		<dep package="glib"/>
+		<dep package="gnome-icon-theme"/>
+		<dep package="gnome-icon-theme-extras"/>
+		<dep package="gnome-icon-theme-symbolic"/>
+		<dep package="gnome-themes-standard"/>
+		<dep package="gobject-introspection"/>
+		<dep package="gtk+-3.0"/>
+		<dep package="libffi"/>
+		<dep package="libgee"/>
+		<dep package="pango"/>
+		<dep package="vala"/>
+    </dependencies>
+  </metamodule>
+</moduleset>
