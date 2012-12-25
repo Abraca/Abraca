@@ -449,7 +449,7 @@ namespace Abraca {
 		}
 
 		private bool on_playback_current_info(Xmms.Value value) {
-			string picture_front, artist;
+			string picture_front;
 			int mid = -1;
 
 			var metadata = value.propdict_to_dict();
