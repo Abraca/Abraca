@@ -180,7 +180,7 @@ namespace Abraca {
 
 				/* Notify the Client of the current medialib id */
 				get(iter, Column.ID, out mid);
-				client.set_playlist_id(mid);
+				client.current_id = mid;
 
 				set(
 					iter,
@@ -231,7 +231,7 @@ namespace Abraca {
 				get_iter(out iter, _position.get_path());
 				get(iter, Column.ID, out mid);
 
-				client.set_playlist_id(mid);
+				client.current_id = mid;
 			}
 		}
 

@@ -26,6 +26,8 @@ namespace Abraca {
 		private Xmms.Client _xmms = null;
 		private void *_gmain = null;
 
+		private int _current_id;
+
 		public enum ConnectionState
 		{
 			Disconnected,
@@ -71,6 +73,16 @@ namespace Abraca {
 			get; set; default = "";
 		}
 
+		public int current_id {
+			get { return _current_id; }
+			set {
+				if (current_playback_status == Xmms.PlaybackStatus.STOP) {
+					_current_id = value;
+					playback_current_id(value);
+					xmms.medialib_get_info(value).notifier_set(on_playback_current_info);
+				}
+			}
+		}
 		public const string[] source_preferences = {
 			"server",
 			"client/*",
@@ -79,7 +91,6 @@ namespace Abraca {
 			"plugin/*",
 			"*"
 		};
-
 
 		public Xmms.Client xmms {
 			get {
@@ -94,14 +105,6 @@ namespace Abraca {
 				GLib.error (e.message);
 			}
 		}
-
-		public void set_playlist_id (int mid) {
-			if (current_playback_status == Xmms.PlaybackStatus.STOP) {
-				playback_current_id(mid);
-				xmms.medialib_get_info(mid).notifier_set(on_playback_current_info);
-			}
-		}
-
 
 		public bool try_connect(string? path = null) {
 			if (path == null) {
@@ -281,6 +284,7 @@ namespace Abraca {
 			int mid;
 
 			if (val.get_int(out mid)) {
+				_current_id = mid;
 				playback_current_id(mid);
 				xmms.medialib_get_info(mid).notifier_set(on_playback_current_info);
 			}
