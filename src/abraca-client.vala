@@ -83,6 +83,9 @@ namespace Abraca {
 				}
 			}
 		}
+
+		public Gdk.Pixbuf? current_coverart { get; private set; }
+
 		public const string[] source_preferences = {
 			"server",
 			"client/*",
@@ -104,6 +107,7 @@ namespace Abraca {
 			} catch (GLib.Error e) {
 				GLib.error (e.message);
 			}
+			current_coverart = default_coverart;
 		}
 
 		public bool try_connect(string? path = null) {
@@ -439,26 +443,34 @@ namespace Abraca {
 		private bool on_medialib_get_info(Xmms.Value val) {
 			if (!val.is_error()) {
 				medialib_entry_changed(val);
+				on_playback_current_info(val);
 			}
 			return true;
 		}
 
 		private bool on_playback_current_info(Xmms.Value value) {
 			string picture_front, artist;
+			int mid = -1;
 
 			var metadata = value.propdict_to_dict();
 
-			if (metadata.dict_entry_get_string("picture_front", out picture_front))
+			/* guard for medialib entry changes not affecting current id */
+			if (!metadata.dict_entry_get_int("id", out mid) || mid != current_id)
+				return true;
+
+			if (metadata.dict_entry_get_string("picture_front", out picture_front)) {
 				xmms.bindata_retrieve(picture_front).notifier_set(on_playback_current_coverart);
-			else
-				playback_current_coverart(default_coverart);
+			} else if (current_coverart != default_coverart) {
+				current_coverart = default_coverart;
+				playback_current_coverart(current_coverart);
+			}
 
 			playback_current_info(metadata);
 
 			return true;
 		}
 
-		private Gdk.Pixbuf? load_coverart(uchar[] data) {
+		private Gdk.Pixbuf? coverart_from_bindata(uchar[] data) {
 			try {
 				var loader = new Gdk.PixbufLoader();
 				loader.write(data);
@@ -473,9 +485,9 @@ namespace Abraca {
 			unowned uchar[] data;
 
 			if (value.get_bin(out data))
-				playback_current_coverart(load_coverart(data));
-			else
-				playback_current_coverart(default_coverart);
+				current_coverart = coverart_from_bindata(data);
+
+			playback_current_coverart(current_coverart);
 
 			return true;
 		}
