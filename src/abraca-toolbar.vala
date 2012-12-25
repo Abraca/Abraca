@@ -25,14 +25,12 @@ namespace Abraca {
 		private Gtk.Button equalizer_button;
 		private Gtk.Dialog equalizer_dialog;
 
-		private uint _current_id;
 		private int _status;
 		private int _duration;
 		private uint _pos;
 		private bool _seek;
 
 		private Gtk.Image _coverart;
-		private Gdk.Pixbuf _coverart_big;
 		private Gtk.Label _track_label;
 		private Gtk.Label _time_label;
 		private Gtk.Scale _time_slider;
@@ -64,6 +62,7 @@ namespace Abraca {
 			btn = create_playback_button(Gtk.Stock.MEDIA_NEXT);
 			btn.clicked.connect(on_media_next);
 
+
 			create_seekbar();
 			create_cover_image();
 			create_track_label();
@@ -82,14 +81,10 @@ namespace Abraca {
 			*/
 
 			client.playback_status.connect(on_playback_status_change);
-			client.playback_current_id.connect(on_playback_current_id);
 			client.playback_playtime.connect(on_playback_playtime);
-
-			client.medialib_entry_changed.connect((client, res) => {
-				on_media_info(res);
-			});
-
 			client.connection_state_changed.connect(on_connection_state_changed);
+			client.playback_current_info.connect(on_playback_current_info);
+			client.playback_current_coverart.connect(on_playback_current_coverart);
 
 			manager = new CoverArtManager (client, parent);
 
@@ -197,19 +192,19 @@ namespace Abraca {
 		private bool on_coverart_tooltip (Gtk.Widget widget, int xpos, int ypos,
 		                                  bool mode, Gtk.Tooltip tooltip)
 		{
-			if (_coverart_big != null) {
-				tooltip.set_icon (_coverart_big);
-				return true;
-			}
-			return false;
+			tooltip.set_icon (client.current_coverart);
+			return true;
 		}
 
 
 		private void create_cover_image ()
 		{
-			set_default_coverart();
-
+			_coverart = new Gtk.Image();
 			_coverart.has_tooltip = true;
+
+			var thumbnail = client.current_coverart.scale_simple(32, 32, Gdk.InterpType.BILINEAR);
+			_coverart.set_from_pixbuf(thumbnail);
+
 			_coverart.query_tooltip.connect(on_coverart_tooltip);
 
 			var eventbox = new Gtk.EventBox ();
@@ -229,17 +224,6 @@ namespace Abraca {
 			_track_label.set_alignment (0.0f, 0.5f);
 
 			pack_start(_track_label, true, true, 4);
-		}
-
-
-		private void on_playback_current_id (Client c, int mid)
-		{
-			_current_id = mid;
-			_pos = 0;
-
-			c.xmms.medialib_get_info(mid).notifier_set(
-				on_media_info
-			);
 		}
 
 
@@ -276,20 +260,9 @@ namespace Abraca {
 			_time_label.set_markup(info);
 		}
 
-
-		private void set_default_coverart ()
-		{
-			if (_coverart == null) {
-				_coverart = new Gtk.Image();
-			}
-
-			_coverart.set_from_stock(Gtk.Stock.CDROM, Gtk.IconSize.LARGE_TOOLBAR);
-			_coverart_big = null;
-		}
-
 		private bool on_coverart_clicked (Gtk.Widget w, Gdk.EventButton button)
 		{
-			manager.update_coverart ((int) _current_id);
+			manager.update_coverart (client.current_id);
 			return false;
 		}
 
@@ -302,29 +275,13 @@ namespace Abraca {
 			}
 		}
 
-
-		private bool on_media_info (Xmms.Value propdict)
+		private void on_playback_current_info (Xmms.Value val)
 		{
-			string title, cover, info, url;
-			int duration, id;
-
-			var val = propdict.propdict_to_dict();
-
-			val.dict_entry_get_int("id", out id);
-			if (_current_id != id) {
-				return true;
-			}
+			string title, info, url;
+			int duration;
 
 			if (!val.dict_entry_get_int("duration", out duration)) {
 				duration = 0;
-			}
-
-			if (!val.dict_entry_get_string("picture_front", out cover)) {
-				set_default_coverart();
-			} else {
-				client.xmms.bindata_retrieve(cover).notifier_set(
-					on_bindata_retrieve
-				);
 			}
 
 			if (val.dict_entry_get_string("title", out title)) {
@@ -347,43 +304,18 @@ namespace Abraca {
 				info = "%s".printf("Unknown");
 			}
 
-
 			_track_label.set_markup(info);
 
 			_duration = duration;
 
 			update_time_label();
-
-			return true;
 		}
 
-
-		private bool on_bindata_retrieve (Xmms.Value val)
+		private void on_playback_current_coverart (Gdk.Pixbuf? pixbuf)
 		{
-			unowned uchar[] data;
-
-			if (!val.get_bin(out data)) {
-				set_default_coverart();
-				return true;
-			}
-
-			try {
-				var loader = new Gdk.PixbufLoader();
-				loader.write(data);
-				loader.close();
-
-				var pixbuf = loader.get_pixbuf();
-				var thumbnail = pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR);
-
-				_coverart.set_from_pixbuf(thumbnail);
-				_coverart_big = pixbuf;
-			} catch (GLib.Error e) {
-				set_default_coverart();
-			}
-
-			return true;
+			var thumbnail = pixbuf.scale_simple(32, 32, Gdk.InterpType.BILINEAR);
+			_coverart.set_from_pixbuf(thumbnail);
 		}
-
 
 		private void on_media_play (Gtk.Button button)
 		{
