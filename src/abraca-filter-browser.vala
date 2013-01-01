@@ -32,6 +32,8 @@ public class Abraca.FilterBrowserView : Gtk.TreeView, SelectedRowsMixin {
 		selection.set_mode(Gtk.SelectionMode.MULTIPLE);
 		selection.changed.connect(on_selection_changed);
 
+		query_tooltip.connect(on_query_tooltip);
+
 		if (previous != null) {
 			previous.notify["filter"].connect((s,p) => {
 				GLib.debug("setting model filter for %s", ((FilterBrowserModel) model).field);
@@ -40,6 +42,24 @@ public class Abraca.FilterBrowserView : Gtk.TreeView, SelectedRowsMixin {
 				on_selection_changed(selection);
 			});
 		}
+	}
+
+	private bool on_query_tooltip(int x, int y, bool keyboard_mode, Gtk.Tooltip tooltip)
+	{
+		Gtk.TreeIter iter;
+		Gtk.TreePath path;
+		string text;
+
+		if (!get_tooltip_context(ref x, ref y, keyboard_mode, null, out path, out iter))
+			return false;
+
+		model.get(iter, tooltip_column, out text);
+
+		tooltip.set_markup(GLib.Markup.escape_text(text));
+
+		set_tooltip_row(tooltip, path);
+
+		return true;
 	}
 
 	private void on_selection_changed(Gtk.TreeSelection selection)
@@ -121,12 +141,11 @@ public class Abraca.FilterBrowser : Gtk.HBox {
 		var view = new FilterBrowserView (model, previous);
 		view.set_model (model);
 
-
 		var renderer = new Gtk.CellRendererText();
 		renderer.ellipsize = Pango.EllipsizeMode.END;
 
 		var column = new Gtk.TreeViewColumn.with_attributes (
-			model.field, renderer, "markup", 0, null
+			model.field, renderer, "text", 0, null
 		);
 		column.sizing = Gtk.TreeViewColumnSizing.FIXED;
 		view.append_column (column);

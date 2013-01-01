@@ -72,7 +72,7 @@ public class Abraca.FilterBrowserModel : Gtk.ListStore, Gtk.TreeModel {
 			entry.dict_entry_get_string(field, out value);
 
 			append(out tree_iter);
-			set(tree_iter, 0, GLib.Markup.escape_text (value));
+			set(tree_iter, 0, value);
 		}
 
 		return false;
