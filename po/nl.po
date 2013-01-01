@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <foppe.benedictus@gmail.com>, 2010-2012.
+# FIRST AUTHOR <foppe.benedictus@gmail.com>, 2010-2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -166,7 +166,7 @@ msgstr "Nooit"
 msgid ""
 "\n"
 "Abraca, an XMMS2 client.\n"
-"Copyright (C) 2007-2012 Abraca Team\n"
+"Copyright (C) 2007-2013 Abraca Team\n"
 "\n"
 "This program is free software; you can redistribute it and/or modify it\n"
 "under the terms of the GNU General Public License as published by the\n"
@@ -185,7 +185,7 @@ msgid ""
 msgstr ""
 "\n"
 "Abraca, een XMMS2 client.\n"
-"Copyright (C) 2007-2012 Abraca Team\n"
+"Copyright (C) 2007-2013 Abraca Team\n"
 "\n"
 "This program is free software; you can redistribute it and/or modify it\n"
 "under the terms of the GNU General Public License as published by the\n"
@@ -202,8 +202,8 @@ msgstr ""
 "51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
 "    "
 #: ../data/ui/about.xml.h:19
-msgid "Copyright © 2007-2012 Abraca Developers"
-msgstr "Copyright © 2007-2012 Abraca ontwikkelaars"
+msgid "Copyright © 2007-2013 Abraca Developers"
+msgstr "Copyright © 2007-2013 Abraca ontwikkelaars"
 
 #: ../data/ui/main_menu.xml.h:1
 msgid "Clear"
