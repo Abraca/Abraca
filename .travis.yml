@@ -1,0 +1,18 @@
+language: c
+
+before_script:
+  - echo "deb http://archive.ubuntu.com/ubuntu/ quantal main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
+  - sudo apt-get -qq update
+  - sudo apt-get -qq install valac-0.18 libglib2.0-dev gobject-introspection libgirepository1.0-dev libxmmsclient-dev libxmmsclient-glib-dev intltool libgtk-3-dev libgee-dev
+
+script:
+  - ./waf configure --prefix=/usr
+  - ./waf build
+  - sudo ./waf install
+
+notifications:
+  email:
+    recipients:
+      - dsvensson@gmail.com
+    on_success: change
+    on_failure: always
