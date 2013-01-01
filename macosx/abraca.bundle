@@ -23,7 +23,7 @@
   <data dest="${bundle}/Contents/Resources">${project}/icon.icns</data>
 
   <!-- Theme -->
-  <data>${prefix}/share/themes/Zukitwo</data>
+  <data>${prefix}/share/themes/Gnome-Cupertino</data>
 
   <!-- Automatically include the icon subset in use -->
   <icon-theme icons="auto">gnome</icon-theme>
