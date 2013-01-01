@@ -75,6 +75,7 @@ namespace Abraca {
 			search_column = 1;
 			headers_visible = false;
 			rules_hint = true;
+			tooltip_column = PlaylistModel.Column.INFO;
 
 			create_columns ();
 			create_context_menu(config);
