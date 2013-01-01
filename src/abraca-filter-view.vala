@@ -20,7 +20,7 @@
 using GLib;
 
 namespace Abraca {
-	public class FilterView : Gtk.TreeView, IConfigurable, SelectedRowsMixin {
+	public class FilterView : Abraca.TreeView, IConfigurable, SelectedRowsMixin {
 		/* field and order used for sorting, see sorting property */
 		public struct Sorting {
 			public unowned string field;
@@ -58,7 +58,7 @@ namespace Abraca {
 			medialib = m;
 			client = c;
 
-			fixed_height_mode = true;
+			//fixed_height_mode = true;
 			enable_search = false;
 			headers_clickable = true;
 

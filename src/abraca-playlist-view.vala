@@ -20,7 +20,7 @@
 using GLib;
 
 namespace Abraca {
-	public class PlaylistView : Gtk.TreeView, SelectedRowsMixin {
+	public class PlaylistView : Abraca.TreeView, SelectedRowsMixin {
 		/** context menu */
 		private Gtk.Menu _playlist_menu;
 
