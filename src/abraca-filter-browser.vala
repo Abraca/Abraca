@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public class Abraca.FilterBrowserView : Gtk.TreeView, SelectedRowsMixin {
+public class Abraca.FilterBrowserView : Abraca.TreeView, SelectedRowsMixin {
 	private FilterBrowserView previous;
 
 	public Xmms.Collection filter { get; private set; }
@@ -32,7 +32,12 @@ public class Abraca.FilterBrowserView : Gtk.TreeView, SelectedRowsMixin {
 		selection.set_mode(Gtk.SelectionMode.MULTIPLE);
 		selection.changed.connect(on_selection_changed);
 
+		enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
+		                         { Abraca.TargetEntry.Collection },
+		                         Gdk.DragAction.MOVE);
+
 		query_tooltip.connect(on_query_tooltip);
+		drag_data_get.connect(on_drag_data_get);
 
 		if (previous != null) {
 			previous.notify["filter"].connect((s,p) => {
@@ -42,6 +47,11 @@ public class Abraca.FilterBrowserView : Gtk.TreeView, SelectedRowsMixin {
 				on_selection_changed(selection);
 			});
 		}
+	}
+
+	private void on_drag_data_get(Gdk.DragContext ctx, Gtk.SelectionData selection_data, uint info, uint time)
+	{
+		DragDropUtil.send_collection(selection_data, filter);
 	}
 
 	private bool on_query_tooltip(int x, int y, bool keyboard_mode, Gtk.Tooltip tooltip)
