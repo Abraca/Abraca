@@ -431,44 +431,32 @@ namespace Abraca {
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time)
 		{
-			GLib.List<uint> pos_list = new GLib.List<uint>();
 			unowned uchar[] data;
-			Gdk.Atom dnd_atom;
-
-			var sel = get_selection();
-			var lst = sel.get_selected_rows(null);
+			Xmms.Value value;
+			Gdk.Atom atom;
 
 			if (info == (uint) DragDropTargetType.ROW) {
-				foreach (unowned Gtk.TreePath p in lst) {
-					pos_list.prepend(p.get_indices()[0]);
-				}
-				dnd_atom = Gdk.Atom.intern(_source_entries[0].target, true);
+				value = new Xmms.Value.from_list();
+				foreach_selected_row<int>(PlaylistModel.Column.ID, (pos, mid) => {
+					value.list_insert_int(0, pos);
+				});
 
-
-				uint len = pos_list.length();
-				uint[] pos_array = new uint[len];
-
-				int pos = 0;
-				foreach (uint position in pos_list) {
-					pos_array[pos++] = position;
-				}
-
-				/* This should be removed as #515408 gets fixed. */
-				data = (uchar[]) pos_array;
-				data.length = (int)(pos_array.length * sizeof(uint));
+				atom = Gdk.Atom.intern(_source_entries[0].target, true);
 			} else {
 				var list = new Xmms.Collection(Xmms.CollectionType.IDLIST);
 				foreach_selected_row<int>(PlaylistModel.Column.ID, (pos, mid) => {
 					list.idlist_append(mid);
 				});
 
-				var bin = new Xmms.Value.from_coll(list).serialize();
-				bin.get_bin(out data);
+				value = new Xmms.Value.from_coll(list);
 
-				dnd_atom = Gdk.Atom.intern(_source_entries[1].target, true);
+				atom = Gdk.Atom.intern(_source_entries[1].target, true);
 			}
 
-			selection_data.set(dnd_atom, 8, data);
+			var bin = value.serialize();
+			bin.get_bin(out data);
+
+			selection_data.set(atom, 8, data);
 		}
 
 
@@ -522,20 +510,23 @@ namespace Abraca {
 		{
 			int dest;
 
-			/* TODO: Updated when #515408 vala bug has been fixed */
-			unowned uint[] source = (uint[]) sel.get_data();
-			source.length = (int)(sel.get_length () / sizeof(uint));
+			unowned uchar[] data = sel.get_data();
+			data.length = sel.get_length();
+
+			var value = new Xmms.Value.from_bin(data).deserialize();
 
 			if (get_drop_destination(x, y, out dest)) {
 				int downward = 0;
 				int upward = 0;
 
-				for (int i = source.length - 1; i >= 0; i--) {
-					if (source[i] < dest) {
-						client.xmms.playlist_move_entry(Xmms.ACTIVE_PLAYLIST, source[i]-downward, (uint) dest-1);
+				for (int i = value.list_get_size() - 1; i >= 0; i--) {
+					int position;
+					value.list_get_int(i, out position);
+					if (position < dest) {
+						client.xmms.playlist_move_entry(Xmms.ACTIVE_PLAYLIST, position-downward, (uint) dest-1);
 						downward++;
 					} else {
-						client.xmms.playlist_move_entry(Xmms.ACTIVE_PLAYLIST, source[i], (uint) dest+upward);
+						client.xmms.playlist_move_entry(Xmms.ACTIVE_PLAYLIST, position, (uint) dest+upward);
 						upward++;
 					}
 				}
