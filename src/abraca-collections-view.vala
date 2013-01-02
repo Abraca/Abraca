@@ -24,15 +24,13 @@ namespace Abraca {
 	public class CollectionsView : Gtk.TreeView {
 
 		/** drag-n-drop targets */
-		private const Gtk.TargetEntry[] _target_entries = {
-			//DragDropTarget.Collection
-			{"application/x-xmmsclient-collection", 0, DragDropTargetType.COLL}
+		private Gtk.TargetEntry[] _target_entries = {
+			DragDropTarget.Collection
 		};
 
 		/** drag-n-drop sources */
-		private const Gtk.TargetEntry[] _source_entries = {
-			//DragDropTarget.Collection
-			{"application/x-xmmsclient-collection", 0, DragDropTargetType.COLL}
+		private Gtk.TargetEntry[] _source_entries = {
+			DragDropTarget.Collection
 		};
 
 		/** context menu */

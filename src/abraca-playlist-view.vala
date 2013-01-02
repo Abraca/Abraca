@@ -33,23 +33,17 @@ namespace Abraca {
 			_playlist_menu_item_when_none_selected = null;
 
 		/** drag-n-drop targets */
-		private const Gtk.TargetEntry[] _target_entries = {
-			//DragDropTarget.PlaylistRow,
-			{"application/x-xmmsclient-playlist-row", 0, DragDropTargetType.ROW},
-			//DragDropTarget.Collection,
-			{"application/x-xmmsclient-collection", 0, DragDropTargetType.COLL},
-			//DragDropTarget.UriList,
-			{"text/uri-list", 0, DragDropTargetType.URI},
-			//DragDropTarget.Internet
-			{"_NETSCAPE_URL", 0, DragDropTargetType.INTERNET}
+		private Gtk.TargetEntry[] _target_entries = {
+			DragDropTarget.PlaylistRow,
+			DragDropTarget.Collection,
+			DragDropTarget.UriList,
+			DragDropTarget.Internet
 		};
 
 		/** drag-n-drop sources */
-		private const Gtk.TargetEntry[] _source_entries = {
-			//DragDropTarget.PlaylistRow,
-			{"application/x-xmmsclient-playlist-row", 0, DragDropTargetType.ROW},
-			//DragDropTarget.Collection,
-			{"application/x-xmmsclient-collection", 0, DragDropTargetType.COLL},
+		private Gtk.TargetEntry[] _source_entries = {
+			DragDropTarget.PlaylistRow,
+			DragDropTarget.Collection,
 		};
 
 		/** current playlist sort order */

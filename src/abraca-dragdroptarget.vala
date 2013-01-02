@@ -20,20 +20,14 @@
 namespace Abraca {
 	public enum DragDropTargetType {
 		ROW,
-		MID,
 		COLL,
 		URI,
 		INTERNET,
 	}
 
 	public class DragDropTarget {
-		/*
 		public const Gtk.TargetEntry PlaylistRow = {
 			"application/x-xmmsclient-playlist-row", 0, DragDropTargetType.ROW
-		};
-
-		public const Gtk.TargetEntry TrackId = {
- 			"application/x-xmmsclient-track-id", 0, DragDropTargetType.MID
 		};
 
 		public const Gtk.TargetEntry Collection = {
@@ -47,6 +41,5 @@ namespace Abraca {
 		public const Gtk.TargetEntry Internet = {
 			"_NETSCAPE_URL", 0, DragDropTargetType.INTERNET
 		};
-		*/
 	}
 }

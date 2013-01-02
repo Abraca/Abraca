@@ -43,9 +43,8 @@ namespace Abraca {
 			filter_menu_item_when_none_selected = null;
 
 		/** allowed drag-n-drop variants */
-		private const Gtk.TargetEntry[] _target_entries = {
-			//DragDropTarget.TrackId
-			{ "application/x-xmmsclient-collection", 0, DragDropTargetType.COLL }
+		private Gtk.TargetEntry[] _target_entries = {
+			DragDropTarget.Collection
 		};
 
 		/* properties */
