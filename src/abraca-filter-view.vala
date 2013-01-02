@@ -45,7 +45,7 @@ namespace Abraca {
 		/** allowed drag-n-drop variants */
 		private const Gtk.TargetEntry[] _target_entries = {
 			//DragDropTarget.TrackId
-			{"application/x-xmmsclient-track-id", 0, DragDropTargetType.MID}
+			{ "application/x-xmmsclient-collection", 0, DragDropTargetType.COLL }
 		};
 
 		/* properties */

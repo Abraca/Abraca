@@ -38,8 +38,6 @@ namespace Abraca {
 			{"application/x-xmmsclient-playlist-row", 0, DragDropTargetType.ROW},
 			//DragDropTarget.Collection,
 			{"application/x-xmmsclient-collection", 0, DragDropTargetType.COLL},
-			//DragDropTarget.TrackId,
- 			{"application/x-xmmsclient-track-id", 0, DragDropTargetType.MID},
 			//DragDropTarget.UriList,
 			{"text/uri-list", 0, DragDropTargetType.URI},
 			//DragDropTarget.Internet
@@ -50,8 +48,8 @@ namespace Abraca {
 		private const Gtk.TargetEntry[] _source_entries = {
 			//DragDropTarget.PlaylistRow,
 			{"application/x-xmmsclient-playlist-row", 0, DragDropTargetType.ROW},
-			//DragDropTarget.TrackId
- 			{"application/x-xmmsclient-track-id", 0, DragDropTargetType.MID}
+			//DragDropTarget.Collection,
+			{"application/x-xmmsclient-collection", 0, DragDropTargetType.COLL},
 		};
 
 		/** current playlist sort order */
@@ -434,6 +432,7 @@ namespace Abraca {
 		                              uint info, uint time)
 		{
 			GLib.List<uint> pos_list = new GLib.List<uint>();
+			unowned uchar[] data;
 			Gdk.Atom dnd_atom;
 
 			var sel = get_selection();
@@ -444,28 +443,30 @@ namespace Abraca {
 					pos_list.prepend(p.get_indices()[0]);
 				}
 				dnd_atom = Gdk.Atom.intern(_source_entries[0].target, true);
-			} else {
-				Gtk.TreeIter iter;
-				uint mid;
-				foreach (unowned Gtk.TreePath p in lst) {
-					model.get_iter(out iter, p);
-					model.get(iter, PlaylistModel.Column.ID, out mid);
-					pos_list.prepend(mid);
+
+
+				uint len = pos_list.length();
+				uint[] pos_array = new uint[len];
+
+				int pos = 0;
+				foreach (uint position in pos_list) {
+					pos_array[pos++] = position;
 				}
+
+				/* This should be removed as #515408 gets fixed. */
+				data = (uchar[]) pos_array;
+				data.length = (int)(pos_array.length * sizeof(uint));
+			} else {
+				var list = new Xmms.Collection(Xmms.CollectionType.IDLIST);
+				foreach_selected_row<int>(PlaylistModel.Column.ID, (pos, mid) => {
+					list.idlist_append(mid);
+				});
+
+				var bin = new Xmms.Value.from_coll(list).serialize();
+				bin.get_bin(out data);
+
 				dnd_atom = Gdk.Atom.intern(_source_entries[1].target, true);
 			}
-
-			uint len = pos_list.length();
-			uint[] pos_array = new uint[len];
-
-			int pos = 0;
-			foreach (uint position in pos_list) {
-				pos_array[pos++] = position;
-			}
-
-			/* This should be removed as #515408 gets fixed. */
-			unowned uchar[] data = (uchar[]) pos_array;
-			data.length = (int)(pos_array.length * sizeof(uint));
 
 			selection_data.set(dnd_atom, 8, data);
 		}
@@ -481,8 +482,6 @@ namespace Abraca {
 
 			if (info == (uint) DragDropTargetType.ROW) {
 				success = on_drop_playlist_entries(sel, x, y);
-			} else if (info == (uint) DragDropTargetType.MID) {
-				success = on_drop_medialib_id(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.COLL) {
 				success = on_drop_collection(sel, x, y);
 			} else if (info == (uint) DragDropTargetType.URI) {
@@ -549,7 +548,7 @@ namespace Abraca {
 		/**
 		 * Handle dropping of medialib ids.
 		 */
-		private bool on_drop_medialib_id(Gtk.SelectionData sel, int x, int y)
+		private bool on_drop_collection(Gtk.SelectionData sel, int x, int y)
 		{
 			Xmms.Collection coll;
 			int pos;
@@ -608,30 +607,6 @@ namespace Abraca {
 						client.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, uri);
 					}
 				}
-			}
-
-			return true;
-		}
-
-
-		private bool on_drop_collection(Gtk.SelectionData sel, int x, int y)
-		{
-			Xmms.Collection coll;
-			int pos;
-
-			string[] collection_data = ((string) sel.get_data()).split("/");
-			string coll_ns = collection_data[0];
-			string coll_name = collection_data[1];
-
-			coll = new Xmms.Collection(Xmms.CollectionType.REFERENCE);
-			coll.attribute_set("reference", coll_name);
-			coll.attribute_set("namespace", coll_ns);
-
-			/* TODO: Check if store is empty to get rid of assert */
-			if (get_drop_destination(x, y, out pos)) {
-				client.xmms.playlist_insert_collection(Xmms.ACTIVE_PLAYLIST, pos, coll, _sort);
-			} else {
-				client.xmms.playlist_add_collection(Xmms.ACTIVE_PLAYLIST, coll, _sort);
 			}
 
 			return true;

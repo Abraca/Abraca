@@ -25,8 +25,6 @@ namespace Abraca {
 
 		/** drag-n-drop targets */
 		private const Gtk.TargetEntry[] _target_entries = {
-			//DragDropTarget.TrackId,
-			{"application/x-xmmsclient-track-id", 0, DragDropTargetType.MID},
 			//DragDropTarget.Collection
 			{"application/x-xmmsclient-collection", 0, DragDropTargetType.COLL}
 		};
@@ -126,8 +124,9 @@ namespace Abraca {
 		                               Gtk.SelectionData selection_data,
 		                               uint info, uint time)
 		{
+			unowned string coll_name, coll_ns;
+			unowned uchar[] data;
 			Gtk.TreeIter iter;
-			string name;
 			int type;
 
 			var sel = get_selection();
@@ -137,24 +136,24 @@ namespace Abraca {
 
 			model.get(
 				iter,
-				CollectionsModel.Column.Name, out name,
+				CollectionsModel.Column.Name, out coll_name,
 				CollectionsModel.Column.Type, out type
 			);
 
 			if (type == CollectionsModel.CollectionType.Playlist) {
-				name = Xmms.COLLECTION_NS_PLAYLISTS + "/" + name;
+				coll_ns = Xmms.COLLECTION_NS_PLAYLISTS;
 			} else {
-				name = Xmms.COLLECTION_NS_COLLECTIONS + "/" + name;
+				coll_ns = Xmms.COLLECTION_NS_COLLECTIONS;
 			}
 
-			/* This should be removed as #515408 gets fixed. */
-			var data = new uchar[name.length + 1];
-			GLib.Memory.copy (data, name, name.length);
+			var reference = new Xmms.Collection(Xmms.CollectionType.REFERENCE);
+			reference.attribute_set("reference", coll_name);
+			reference.attribute_set("namespace", coll_ns);
 
-			selection_data.set(
-				Gdk.Atom.intern(_target_entries[1].target, true),
-				8, data
-			);
+			var bin = new Xmms.Value.from_coll(reference).serialize();
+			bin.get_bin(out data);
+
+			selection_data.set(Gdk.Atom.intern(_target_entries[1].target, true), 8, data);
 		}
 
 
@@ -340,37 +339,20 @@ namespace Abraca {
 		private void playlist_insert_drop_data (uint info, string name,
 		                                        Gtk.SelectionData sel)
 		{
-			if (info == (uint) DragDropTargetType.MID) {
-				Xmms.Collection coll;
+			Xmms.Collection coll;
 
-				unowned uchar[] data = sel.get_data();
-				data.length = sel.get_length();
+			unowned uchar[] data = sel.get_data();
+			data.length = sel.get_length();
 
-				var value = new Xmms.Value.from_bin(data).deserialize();
-				value.get_coll(out coll);
+			var value = new Xmms.Value.from_bin(data).deserialize();
+			value.get_coll(out coll);
 
-				var sort = new Xmms.Value.from_list();
-				sort.list_append (new Xmms.Value.from_string("album"));
-				sort.list_append (new Xmms.Value.from_string("tracknr"));
+			var sort = new Xmms.Value.from_list();
+			sort.list_append (new Xmms.Value.from_string("album"));
+			sort.list_append (new Xmms.Value.from_string("tracknr"));
 
-				client.xmms.playlist_add_collection(name, coll, sort);
-			} else if (info == (uint) DragDropTargetType.COLL) {
-				string[] collection_data;
-				string coll_ns, coll_name;
-				Xmms.Collection coll;
-
-				collection_data = ((string) sel.get_data()).split("/");
-				coll_ns = collection_data[0];
-				coll_name = collection_data[1];
-
-				coll = new Xmms.Collection(Xmms.CollectionType.REFERENCE);
-				coll.attribute_set("reference", coll_name);
-				coll.attribute_set("namespace", coll_ns);
-
-				client.xmms.playlist_add_collection(name, coll, null);
-			}
+			client.xmms.playlist_add_collection(name, coll, sort);
 		}
-
 
 
 		private void on_row_activated (Gtk.TreeView tree,
