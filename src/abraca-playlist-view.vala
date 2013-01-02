@@ -34,16 +34,16 @@ namespace Abraca {
 
 		/** drag-n-drop targets */
 		private Gtk.TargetEntry[] _target_entries = {
-			DragDropTarget.PlaylistRow,
-			DragDropTarget.Collection,
-			DragDropTarget.UriList,
-			DragDropTarget.Internet
+			Abraca.TargetEntry.PlaylistEntries,
+			Abraca.TargetEntry.Collection,
+			Abraca.TargetEntry.UriList,
+			Abraca.TargetEntry.Internet
 		};
 
 		/** drag-n-drop sources */
 		private Gtk.TargetEntry[] _source_entries = {
-			DragDropTarget.PlaylistRow,
-			DragDropTarget.Collection,
+			Abraca.TargetEntry.PlaylistEntries,
+			Abraca.TargetEntry.Collection,
 		};
 
 		/** current playlist sort order */
@@ -429,7 +429,7 @@ namespace Abraca {
 			Xmms.Value value;
 			Gdk.Atom atom;
 
-			if (info == (uint) DragDropTargetType.ROW) {
+			if (info == Abraca.TargetInfo.PLAYLIST_ENTRIES) {
 				value = new Xmms.Value.from_list();
 				foreach_selected_row<int>(PlaylistModel.Column.ID, (pos, mid) => {
 					value.list_insert_int(0, pos);
@@ -462,13 +462,13 @@ namespace Abraca {
 		{
 			bool success = false;
 
-			if (info == (uint) DragDropTargetType.ROW) {
+			if (info == Abraca.TargetInfo.PLAYLIST_ENTRIES) {
 				success = on_drop_playlist_entries(sel, x, y);
-			} else if (info == (uint) DragDropTargetType.COLL) {
+			} else if (info == Abraca.TargetInfo.COLLECTION) {
 				success = on_drop_collection(sel, x, y);
-			} else if (info == (uint) DragDropTargetType.URI) {
+			} else if (info == Abraca.TargetInfo.URI) {
 				success = on_drop_files(sel, x, y);
-			} else if (info == (uint) DragDropTargetType.INTERNET) {
+			} else if (info == Abraca.TargetInfo.INTERNET) {
 				success = on_drop_files(sel, x, y, true);
 			}
 

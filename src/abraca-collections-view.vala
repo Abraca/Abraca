@@ -25,12 +25,12 @@ namespace Abraca {
 
 		/** drag-n-drop targets */
 		private Gtk.TargetEntry[] _target_entries = {
-			DragDropTarget.Collection
+			Abraca.TargetEntry.Collection
 		};
 
 		/** drag-n-drop sources */
 		private Gtk.TargetEntry[] _source_entries = {
-			DragDropTarget.Collection
+			Abraca.TargetEntry.Collection
 		};
 
 		/** context menu */

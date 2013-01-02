@@ -7,7 +7,7 @@ sources = """
     abraca-config.vala
     abraca-configurable.vala
     abraca-coverart.vala
-    abraca-dragdroptarget.vala
+    abraca-drag-and-drop.vala
     abraca-filter-browser-model.vala
     abraca-filter-browser.vala
     abraca-filter-editor.vala

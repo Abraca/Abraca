@@ -17,29 +17,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-namespace Abraca {
-	public enum DragDropTargetType {
-		ROW,
-		COLL,
-		URI,
-		INTERNET,
-	}
+public enum Abraca.TargetInfo {
+	PLAYLIST_ENTRIES,
+	COLLECTION,
+	URI,
+	INTERNET,
+}
 
-	public class DragDropTarget {
-		public const Gtk.TargetEntry PlaylistRow = {
-			"application/x-xmmsclient-playlist-row", 0, DragDropTargetType.ROW
-		};
+public class Abraca.TargetEntry {
+	public const Gtk.TargetEntry PlaylistEntries = {
+		"application/x-xmmsclient-playlist-row", 0, TargetInfo.PLAYLIST_ENTRIES
+	};
 
-		public const Gtk.TargetEntry Collection = {
-			"application/x-xmmsclient-collection", 0, DragDropTargetType.COLL
-		};
+	public const Gtk.TargetEntry Collection = {
+		"application/x-xmmsclient-collection", 0, TargetInfo.COLLECTION
+	};
 
-		public const Gtk.TargetEntry UriList = {
-			"text/uri-list", 0, DragDropTargetType.URI
-		};
+	public const Gtk.TargetEntry UriList = {
+		"text/uri-list", 0, TargetInfo.URI
+	};
 
-		public const Gtk.TargetEntry Internet = {
-			"_NETSCAPE_URL", 0, DragDropTargetType.INTERNET
-		};
-	}
+	public const Gtk.TargetEntry Internet = {
+		"_NETSCAPE_URL", 0, TargetInfo.INTERNET
+	};
 }

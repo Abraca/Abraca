@@ -44,7 +44,7 @@ namespace Abraca {
 
 		/** allowed drag-n-drop variants */
 		private Gtk.TargetEntry[] _target_entries = {
-			DragDropTarget.Collection
+			Abraca.TargetEntry.Collection
 		};
 
 		/* properties */
