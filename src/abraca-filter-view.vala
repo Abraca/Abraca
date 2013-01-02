@@ -534,17 +534,12 @@ namespace Abraca {
 		                               Gtk.SelectionData selection_data,
 		                               uint info, uint time)
 		{
-			unowned uchar[] data;
-
 			var list = new Xmms.Collection(Xmms.CollectionType.IDLIST);
 			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
 				list.idlist_append(mid);
 			});
 
-			var bin = new Xmms.Value.from_coll(list).serialize();
-			bin.get_bin(out data);
-
-			selection_data.set(Gdk.Atom.intern(_target_entries[0].target, true), 8, data);
+			DragDropUtil.send_collection(selection_data, Gdk.Atom.intern(_target_entries[0].target, true), list);
 		}
 	}
 }

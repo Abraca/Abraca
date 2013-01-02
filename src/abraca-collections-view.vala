@@ -148,12 +148,8 @@ namespace Abraca {
 			reference.attribute_set("reference", coll_name);
 			reference.attribute_set("namespace", coll_ns);
 
-			var bin = new Xmms.Value.from_coll(reference).serialize();
-			bin.get_bin(out data);
-
-			selection_data.set(Gdk.Atom.intern(_target_entries[1].target, true), 8, data);
+			DragDropUtil.send_collection(selection_data, Gdk.Atom.intern(_target_entries[0].target, true), reference);
 		}
-
 
 		private bool on_button_press_event (Gtk.Widget w, Gdk.EventButton button)
 		{
@@ -337,13 +333,7 @@ namespace Abraca {
 		private void playlist_insert_drop_data (uint info, string name,
 		                                        Gtk.SelectionData sel)
 		{
-			Xmms.Collection coll;
-
-			unowned uchar[] data = sel.get_data();
-			data.length = sel.get_length();
-
-			var value = new Xmms.Value.from_bin(data).deserialize();
-			value.get_coll(out coll);
+			var coll = DragDropUtil.receive_collection(sel);
 
 			var sort = new Xmms.Value.from_list();
 			sort.list_append (new Xmms.Value.from_string("album"));

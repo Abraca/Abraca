@@ -425,32 +425,19 @@ namespace Abraca {
 		                              Gtk.SelectionData selection_data,
 		                              uint info, uint time)
 		{
-			unowned uchar[] data;
-			Xmms.Value value;
-			Gdk.Atom atom;
-
 			if (info == Abraca.TargetInfo.PLAYLIST_ENTRIES) {
-				value = new Xmms.Value.from_list();
+				var value = new Xmms.Value.from_list();
 				foreach_selected_row<int>(PlaylistModel.Column.ID, (pos, mid) => {
 					value.list_insert_int(0, pos);
 				});
-
-				atom = Gdk.Atom.intern(_source_entries[0].target, true);
+				DragDropUtil.send_playlist_entries(selection_data, Gdk.Atom.intern(_source_entries[0].target, true), value);
 			} else {
 				var list = new Xmms.Collection(Xmms.CollectionType.IDLIST);
 				foreach_selected_row<int>(PlaylistModel.Column.ID, (pos, mid) => {
 					list.idlist_append(mid);
 				});
-
-				value = new Xmms.Value.from_coll(list);
-
-				atom = Gdk.Atom.intern(_source_entries[1].target, true);
+				DragDropUtil.send_collection(selection_data, Gdk.Atom.intern(_source_entries[1].target, true), list);
 			}
-
-			var bin = value.serialize();
-			bin.get_bin(out data);
-
-			selection_data.set(atom, 8, data);
 		}
 
 
@@ -504,10 +491,7 @@ namespace Abraca {
 		{
 			int dest;
 
-			unowned uchar[] data = sel.get_data();
-			data.length = sel.get_length();
-
-			var value = new Xmms.Value.from_bin(data).deserialize();
+			var value = DragDropUtil.receive_playlist_entries(sel);
 
 			if (get_drop_destination(x, y, out dest)) {
 				int downward = 0;
@@ -535,14 +519,9 @@ namespace Abraca {
 		 */
 		private bool on_drop_collection(Gtk.SelectionData sel, int x, int y)
 		{
-			Xmms.Collection coll;
 			int pos;
 
-			unowned uchar[] data = sel.get_data();
-			data.length = sel.get_length();
-
-			var value = new Xmms.Value.from_bin(data).deserialize();
-			value.get_coll(out coll);
+			var coll = DragDropUtil.receive_collection(sel);
 
 			if (get_drop_destination(x, y, out pos)) {
 				client.xmms.playlist_insert_collection(Xmms.ACTIVE_PLAYLIST, pos, coll, _sort);

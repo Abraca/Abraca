@@ -41,3 +41,50 @@ public class Abraca.TargetEntry {
 		"_NETSCAPE_URL", 0, TargetInfo.INTERNET
 	};
 }
+
+public abstract class Abraca.DragDropUtil {
+	private static unowned uchar[] get_selection_data(Gtk.SelectionData selection_data)
+	{
+		unowned uchar[] data = selection_data.get_data();
+		data.length = selection_data.get_length();
+		return data;
+	}
+
+	public static Xmms.Value receive_playlist_entries(Gtk.SelectionData selection_data)
+	{
+		unowned uchar[] data = get_selection_data(selection_data);
+		return new Xmms.Value.from_bin(data).deserialize();
+	}
+
+	public static Xmms.Collection receive_collection(Gtk.SelectionData selection_data)
+	{
+		Xmms.Collection collection;
+
+		unowned uchar[] data = get_selection_data(selection_data);
+		var value = new Xmms.Value.from_bin(data).deserialize();
+
+		value.get_coll(out collection);
+
+		return collection;
+	}
+
+	public static void send_playlist_entries(Gtk.SelectionData selection_data, Gdk.Atom atom, Xmms.Value value)
+	{
+		unowned uchar[] data;
+
+		var bin = value.serialize();
+		bin.get_bin(out data);
+
+		selection_data.set(atom, 8, data);
+	}
+
+	public static void send_collection(Gtk.SelectionData selection_data, Gdk.Atom atom, Xmms.Collection collection)
+	{
+		unowned uchar[] data;
+
+		var bin = new Xmms.Value.from_coll(collection).serialize();
+		bin.get_bin(out data);
+
+		selection_data.set(atom, 8, data);
+	}
+}
