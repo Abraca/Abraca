@@ -398,25 +398,22 @@ namespace Abraca {
 
 		private void on_header_edit (Gtk.MenuItem item)
 		{
-			FilterModel store = (FilterModel) model;
-			FilterEditor edit = new FilterEditor();
+			var store = (FilterModel) model;
+			var edit = new FilterEditor();
 
 			edit.transient_for = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
 
 			edit.column_changed.connect((editor, prop, enabled) => {
-				// TODO: Should use outer store when vala supports this.
-				FilterModel tmp_store = (FilterModel) model;
-
 				string[] modified;
 				int i = 0;
 
 				if (enabled) {
-					modified = new string[tmp_store.dynamic_columns.length + 1];
+					modified = new string[store.dynamic_columns.length + 1];
 				} else {
-					modified = new string[tmp_store.dynamic_columns.length - 1];
+					modified = new string[store.dynamic_columns.length - 1];
 				}
 
-				foreach (unowned string s in tmp_store.dynamic_columns) {
+				foreach (unowned string s in store.dynamic_columns) {
 					if (!enabled && s == prop) {
 						continue;
 					}
