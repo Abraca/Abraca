@@ -148,7 +148,7 @@ namespace Abraca {
 			reference.attribute_set("reference", coll_name);
 			reference.attribute_set("namespace", coll_ns);
 
-			DragDropUtil.send_collection(selection_data, Gdk.Atom.intern(_target_entries[0].target, true), reference);
+			DragDropUtil.send_collection(selection_data, reference);
 		}
 
 		private bool on_button_press_event (Gtk.Widget w, Gdk.EventButton button)

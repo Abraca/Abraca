@@ -539,7 +539,7 @@ namespace Abraca {
 				list.idlist_append(mid);
 			});
 
-			DragDropUtil.send_collection(selection_data, Gdk.Atom.intern(_target_entries[0].target, true), list);
+			DragDropUtil.send_collection(selection_data, list);
 		}
 	}
 }

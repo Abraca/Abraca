@@ -430,13 +430,13 @@ namespace Abraca {
 				foreach_selected_row<int>(PlaylistModel.Column.ID, (pos, mid) => {
 					value.list_insert_int(0, pos);
 				});
-				DragDropUtil.send_playlist_entries(selection_data, Gdk.Atom.intern(_source_entries[0].target, true), value);
+				DragDropUtil.send_playlist_entries(selection_data, value);
 			} else {
 				var list = new Xmms.Collection(Xmms.CollectionType.IDLIST);
 				foreach_selected_row<int>(PlaylistModel.Column.ID, (pos, mid) => {
 					list.idlist_append(mid);
 				});
-				DragDropUtil.send_collection(selection_data, Gdk.Atom.intern(_source_entries[1].target, true), list);
+				DragDropUtil.send_collection(selection_data, list);
 			}
 		}
 

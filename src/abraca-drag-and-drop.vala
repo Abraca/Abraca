@@ -24,7 +24,7 @@ public enum Abraca.TargetInfo {
 	INTERNET,
 }
 
-public class Abraca.TargetEntry {
+public abstract class Abraca.TargetEntry {
 	public const Gtk.TargetEntry PlaylistEntries = {
 		"application/x-xmmsclient-playlist-row", 0, TargetInfo.PLAYLIST_ENTRIES
 	};
@@ -68,23 +68,25 @@ public abstract class Abraca.DragDropUtil {
 		return collection;
 	}
 
-	public static void send_playlist_entries(Gtk.SelectionData selection_data, Gdk.Atom atom, Xmms.Value value)
+	public static void send_playlist_entries(Gtk.SelectionData selection_data, Xmms.Value value)
 	{
 		unowned uchar[] data;
 
 		var bin = value.serialize();
 		bin.get_bin(out data);
 
+		var atom = Gdk.Atom.intern_static_string(Abraca.TargetEntry.PlaylistEntries.target);
 		selection_data.set(atom, 8, data);
 	}
 
-	public static void send_collection(Gtk.SelectionData selection_data, Gdk.Atom atom, Xmms.Collection collection)
+	public static void send_collection(Gtk.SelectionData selection_data, Xmms.Collection collection)
 	{
 		unowned uchar[] data;
 
 		var bin = new Xmms.Value.from_coll(collection).serialize();
 		bin.get_bin(out data);
 
+		var atom = Gdk.Atom.intern_static_string(Abraca.TargetEntry.Collection.target);
 		selection_data.set(atom, 8, data);
 	}
 }
