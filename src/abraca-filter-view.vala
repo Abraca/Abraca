@@ -535,22 +535,17 @@ namespace Abraca {
 		                               Gtk.SelectionData selection_data,
 		                               uint info, uint time)
 		{
-			var entries = get_selected_rows<int>(FilterModel.Column.ID);
-			var mid_array = new int[entries.size + 1];
-			int pos = 0;
+			unowned uchar[] data;
 
-			foreach (int mid in entries) {
-				mid_array[pos++] = mid;
-			}
+			var list = new Xmms.Collection(Xmms.CollectionType.IDLIST);
+			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
+				list.idlist_append(mid);
+			});
 
-			/* This should be removed as #515408 gets fixed. */
-			unowned uchar[] data = (uchar[]) mid_array;
-			data.length = (int)((mid_array.length + 1) * sizeof(int));
+			var bin = new Xmms.Value.from_coll(list).serialize();
+			bin.get_bin(out data);
 
-			selection_data.set(
-				Gdk.Atom.intern(_target_entries[0].target, true),
-				8, data
-			);
+			selection_data.set(Gdk.Atom.intern(_target_entries[0].target, true), 8, data);
 		}
 	}
 }

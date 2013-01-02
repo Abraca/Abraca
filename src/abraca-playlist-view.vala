@@ -551,14 +551,14 @@ namespace Abraca {
 		 */
 		private bool on_drop_medialib_id(Gtk.SelectionData sel, int x, int y)
 		{
+			Xmms.Collection coll;
 			int pos;
 
-			/* TODO: Updated when #515408 vala bug has been fixed */
-			unowned int[] ids = (int[]) sel.get_data();
-			ids.length = (int)(sel.get_length () / sizeof(int));
+			unowned uchar[] data = sel.get_data();
+			data.length = sel.get_length();
 
-			var coll = new Xmms.Collection (Xmms.CollectionType.IDLIST);
-			coll.set_idlist (ids);
+			var value = new Xmms.Value.from_bin(data).deserialize();
+			value.get_coll(out coll);
 
 			if (get_drop_destination(x, y, out pos)) {
 				client.xmms.playlist_insert_collection(Xmms.ACTIVE_PLAYLIST, pos, coll, _sort);

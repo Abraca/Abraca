@@ -341,16 +341,17 @@ namespace Abraca {
 		                                        Gtk.SelectionData sel)
 		{
 			if (info == (uint) DragDropTargetType.MID) {
-				/* This should be removed as #515408 gets fixed. */
-				unowned int[] ids = (int[]) sel.get_data();
-				ids.length = (int)(sel.get_length () / sizeof(int));
+				Xmms.Collection coll;
+
+				unowned uchar[] data = sel.get_data();
+				data.length = sel.get_length();
+
+				var value = new Xmms.Value.from_bin(data).deserialize();
+				value.get_coll(out coll);
 
 				var sort = new Xmms.Value.from_list();
 				sort.list_append (new Xmms.Value.from_string("album"));
 				sort.list_append (new Xmms.Value.from_string("tracknr"));
-
-				var coll = new Xmms.Collection (Xmms.CollectionType.IDLIST);
-				coll.set_idlist (ids);
 
 				client.xmms.playlist_add_collection(name, coll, sort);
 			} else if (info == (uint) DragDropTargetType.COLL) {
