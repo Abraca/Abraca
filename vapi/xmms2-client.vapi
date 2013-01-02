@@ -444,6 +444,9 @@ namespace Xmms {
 		public bool list_append_coll(Xmms.Collection val);
 
 		public bool list_insert(int pos, Xmms.Value val);
+		public bool list_insert_int(int pos, int val);
+		public bool list_insert_string(int pos, string val);
+		public bool list_insert_coll(int pos, Xmms.Collection val);
 		public bool list_remove(int pos);
 		public bool list_clear();
 		public bool list_foreach(Xmms.ListForeachFunc func);
