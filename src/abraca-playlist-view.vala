@@ -156,7 +156,7 @@ namespace Abraca {
 
 		private bool on_key_press_event(Gtk.Widget w, Gdk.EventKey e)
 		{
-			if (e.keyval != Gdk.keyval_from_name("Delete"))
+			if (e.keyval != Gdk.keyval_from_name("Delete") && e.keyval != Gdk.keyval_from_name("BackSpace"))
 				return false;
 			delete_selected();
 			return true;
