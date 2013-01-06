@@ -187,7 +187,7 @@ namespace Abraca {
 
 			var vbox = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
-			_toolbar = new ToolBar(client, this);
+			_toolbar = new ToolBar(client, this, accel_group);
 			vbox.pack_start(_toolbar, false, false, 6);
 
 			var scrolled = new Gtk.ScrolledWindow (null, null);

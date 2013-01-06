@@ -37,7 +37,7 @@ namespace Abraca {
 		private Client client;
 		private CoverArtManager manager;
 
-		public ToolBar (Client c, Gtk.Window parent)
+		public ToolBar (Client c, Gtk.Window parent, Gtk.AccelGroup group)
 		{
 			Gtk.Button btn;
 
@@ -48,18 +48,18 @@ namespace Abraca {
 
 			_seek = false;
 
-			btn = create_playback_button(Gtk.Stock.MEDIA_PLAY);
+			btn = create_playback_button(Gtk.Stock.MEDIA_PLAY, group, "<Primary>p");
 			btn.clicked.connect(on_media_play);
 
 			play_pause = btn;
 
-			btn = create_playback_button(Gtk.Stock.MEDIA_STOP);
+			btn = create_playback_button(Gtk.Stock.MEDIA_STOP, group, "<Primary>s");
 			btn.clicked.connect(on_media_stop);
 
-			btn = create_playback_button(Gtk.Stock.MEDIA_PREVIOUS);
+			btn = create_playback_button(Gtk.Stock.MEDIA_PREVIOUS, group, "<Primary>Left");
 			btn.clicked.connect(on_media_prev);
 
-			btn = create_playback_button(Gtk.Stock.MEDIA_NEXT);
+			btn = create_playback_button(Gtk.Stock.MEDIA_NEXT, group, "<Primary>Right");
 			btn.clicked.connect(on_media_next);
 
 
@@ -104,12 +104,17 @@ namespace Abraca {
 
 
 
-		private Gtk.Button create_playback_button (string s)
+		private Gtk.Button create_playback_button (string stock_id, Gtk.AccelGroup group, string accel)
 		{
-			var button = new Gtk.Button();
+			Gdk.ModifierType accel_type;
+			uint accel_key;
 
+			Gtk.accelerator_parse(accel, out accel_key, out accel_type);
+
+			var button = new Gtk.Button();
 			button.relief = Gtk.ReliefStyle.NONE;
-			button.image = new Gtk.Image.from_stock(s, Gtk.IconSize.SMALL_TOOLBAR);
+			button.image = new Gtk.Image.from_stock(stock_id, Gtk.IconSize.SMALL_TOOLBAR);
+			button.add_accelerator("activate", group, accel_key, accel_type, 0);
 
 			pack_start(button, false, false, 0);
 
