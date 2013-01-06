@@ -11,6 +11,7 @@
       <item>
         <attribute name='label' translatable="yes">_Quit Abraca</attribute>
         <attribute name='action'>app.quit</attribute>
+        <attribute name='accel'>&lt;Primary&gt;q</attribute>
       </item>
     </section>
   </menu>
@@ -21,6 +22,7 @@
         <item>
           <attribute name="label" translatable="yes">_Connect</attribute>
           <attribute name='action'>win.connect</attribute>
+          <attribute name='accel'>&lt;Primary&gt;&lt;Shift&gt;c</attribute>
         </item>
         <submenu>
           <attribute name='label' translatable='yes'>_Add</attribute>

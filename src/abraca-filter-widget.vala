@@ -38,9 +38,13 @@ public class Abraca.FilterWidget : Gtk.Paned {
 		var treeview = new FilterView(client, medialib);
 		scrolled.add(treeview);
 
+		Gdk.ModifierType accel_type;
+		uint accel_key;
+
+		Gtk.accelerator_parse("<Primary>l", out accel_key, out accel_type);
+
 		searchbox = new FilterSearchBox (client, config, treeview);
-		searchbox.add_accelerator("grab-focus", group, Gdk.keyval_from_name ("l"),
-		                          Gdk.ModifierType.CONTROL_MASK, 0);
+		searchbox.add_accelerator("grab-focus", group, accel_key, accel_type, 0);
 
 		var browser = new FilterBrowser (client, config, searchbox);
 
