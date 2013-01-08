@@ -20,6 +20,8 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 		this.client.playback_current_coverart.connect(on_playback_current_coverart);
 		this.client.playback_playtime.connect(on_playback_playtime);
 
+		coverart = client.current_coverart;
+
 		events |= Gdk.EventMask.BUTTON_RELEASE_MASK;
 		events |= Gdk.EventMask.BUTTON_PRESS_MASK;
 		events |= Gdk.EventMask.KEY_PRESS_MASK;
