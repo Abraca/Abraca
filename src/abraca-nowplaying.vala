@@ -48,11 +48,25 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 		queue_draw();
 	}
 
+	private static bool is_fullscreen_toggle_event (Gdk.EventKey ev)
+	{
+		Gdk.ModifierType type;
+		uint key;
+
+		Gtk.accelerator_parse("<Primary>f", out key, out type);
+
+		return ev.keyval == key && (ev.state & type) > 0);
+	}
+
 	public override bool key_press_event (Gdk.EventKey ev)
 	{
 		var parent = get_ancestor(typeof(Gtk.ApplicationWindow)) as Gtk.ApplicationWindow;
 
-		if (ev.keyval == Gdk.Key.F11) {
+		/* Need to press a real key/combo to modify fullscreen state or exit now-playing */
+		if (ev.is_modifier == 1)
+			return true;
+
+		if (is_fullscreen_toggle_event(ev)) {
 			if (fullscreen)
 				parent.unfullscreen();
 			else
