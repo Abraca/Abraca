@@ -12,9 +12,14 @@ Goals
 * Fast and easy to switch between which XMMS2 to control.
 * Full Linux, BSD and Mac OS X support, and possibly also Windows.
 
+Build Status
+------------
+* Ubuntu 12.10
+    * [![Build Status](https://travis-ci.org/Abraca/Abraca.png)](https://travis-ci.org/Abraca/Abraca)
+
 Install
 =======
-    ./waf configure --prefix=/path/to/prefix
+    ./waf configure --prefix=/usr
     ./waf build
     sudo ./waf install
 
