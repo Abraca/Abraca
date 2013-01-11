@@ -18,7 +18,7 @@
  */
 
 public class EqualizerBands : Gtk.HBox {
-	public signal void band_changed (int band, double value);
+	public signal void band_changed(int band, double value);
 	private Gee.List<Gtk.Range> ranges = new Gee.ArrayList<Gtk.Scale>();
 	private int band_count = 0;
 
@@ -35,9 +35,9 @@ public class EqualizerBands : Gtk.HBox {
 
 	private bool defer_updates = false;
 
-	public EqualizerBands ()
+	public EqualizerBands()
 	{
-		Object (spacing: 5);
+		Object(spacing: 5);
 		create_bands();
 
 		for (var i=0; i < EqualizerBands.MAX_BANDS; i++) {
@@ -45,28 +45,28 @@ public class EqualizerBands : Gtk.HBox {
 		}
 	}
 
-	private void create_bands ()
+	private void create_bands()
 	{
 		for (var i=0; i < EqualizerBands.MAX_BANDS; i++) {
-			var adjustment = new Gtk.Adjustment (
+			var adjustment = new Gtk.Adjustment(
 				EqualizerBands.START_VALUE,
 				EqualizerBands.MIN_VALUE,
 				EqualizerBands.MAX_VALUE,
 				0.1, 0.1, 0.1
 			);
 
-			var scale = new Gtk.VScale (adjustment);
+			var scale = new Gtk.Scale(Gtk.Orientation.VERTICAL, adjustment);
 			scale.draw_value = false;
 			scale.inverted = true;
 			scale.no_show_all = true;
-			scale.change_value.connect (on_change_value);
+			scale.change_value.connect(on_change_value);
 
-			scale.button_press_event.connect ((w) => {
+			scale.button_press_event.connect((w) => {
 				defer_updates = true;
 				return false;
 			});
 
-			scale.button_release_event.connect ((w) => {
+			scale.button_release_event.connect((w) => {
 				defer_updates = false;
 				apply_changes();
 				return false;
@@ -78,132 +78,123 @@ public class EqualizerBands : Gtk.HBox {
 		}
 	}
 
-	public void set_band (int band, double value)
+	public void set_band(int band, double value)
 	{
-		GLib.stdout.printf ("set_band\n");
-
 		next_band_changes[band] = value;
-
 		apply_changes();
 	}
 
-	public void set_bands (Gee.List<double?> bands)
+	public void set_bands(Gee.List<double?> bands)
 	{
-		GLib.stdout.printf ("set_bands\n");
 		next_band_count = bands.size;
-		next_band_changes.insert_all (0, bands);
-
+		next_band_changes.insert_all(0, bands);
 		apply_changes();
 	}
 
-	private void apply_changes ()
+	private void apply_changes()
 	{
-		GLib.stdout.printf ("omg1\n");
-
 		if (defer_updates) {
 			/* local updates in progress, defer remote updates */
 			return;
 		}
 
-		GLib.stdout.printf ("omg2\n");
 		band_count = next_band_count;
 
 		for (var i=0; i < MAX_BANDS; i++) {
 			if (band_count <= i) {
-				ranges.get(i).hide ();
+				ranges.get(i).hide();
 			} else {
-				ranges.get(i).show ();
+				ranges.get(i).show();
 			}
 
 			if (next_band_changes[i] != null) {
-				apply_gain (i, next_band_changes[i]);
+				apply_gain(i, next_band_changes[i]);
 				next_band_changes[i] = null;
 			}
 		}
 
 		var window = get_ancestor(typeof(Gtk.Window)) as Gtk.Window;
-		window.resize (100, 180);
-		queue_draw ();
+		window.resize(100, 180);
+		queue_draw();
 	}
 
-	private double normalize (Gtk.Adjustment adjustment, double scale)
+	private double normalize(Gtk.Adjustment adjustment, double scale)
 	{
 		return (-adjustment.value / (-adjustment.lower + adjustment.upper) + 0.5) * scale;
 	}
 
-	private Cairo.Pattern draw_line (Cairo.Context cr)
+	private Cairo.Pattern draw_line(Cairo.Context cr)
 	{
 		var box_width = get_allocated_width();
 
-		var range = ranges.get (0);
+		var range = ranges.get(0);
 
 		int slider_length;
-		range.style_get ("slider-length", out slider_length);
+		range.style_get("slider-length", out slider_length);
 
-		var range_height = range.get_allocated_height ();
+		var range_height = range.get_allocated_height();
 
 		var height = range_height - slider_length;
 		var x_offset = box_width * 1.0 / band_count;
 		var x_middle = x_offset / 2.0;
 		var y_offset = slider_length / 2.0;
 
-		cr.push_group ();
+		cr.push_group();
 
-		cr.set_line_width (LINE_WIDTH);
-		cr.move_to (x_middle, normalize (range.adjustment, height) + y_offset);
+		cr.set_line_width(LINE_WIDTH);
+		cr.move_to(x_middle, normalize(range.adjustment, height) + y_offset);
 
 		for (var i=0; i < band_count; i++) {
-			var prev = (int) Math.fmax (i - 1, 0);
+			var prev = int.max(i - 1, 0);
 			var last = ranges.get(prev).adjustment;
 			var curr = ranges.get(i).adjustment;
 
-			cr.curve_to (
-				(i * x_offset), normalize (last, height) + y_offset,
-				(i * x_offset), normalize (curr, height) + y_offset,
-				(i * x_offset + x_middle), normalize (curr, height) + y_offset
+			cr.curve_to(
+				(i * x_offset), normalize(last, height) + y_offset,
+				(i * x_offset), normalize(curr, height) + y_offset,
+				(i * x_offset + x_middle), normalize(curr, height) + y_offset
 			);
 		}
 
-		cr.stroke ();
+		cr.stroke();
 
-		return cr.pop_group ();
+		return cr.pop_group();
 	}
 
-	public override bool draw (Cairo.Context cr)
+	public override bool draw(Cairo.Context cr)
 	{
-		var line = draw_line (cr);
+		var line = draw_line(cr);
 
-		var linear = new Cairo.Pattern.linear (0, 0, 0, get_allocated_height ());
+		var linear = new Cairo.Pattern.linear(0, 0, 0, get_allocated_height());
 		linear.add_color_stop_rgba(0.00,  1, 0, 0, 1);
 		linear.add_color_stop_rgba(0.25,  1, 1, 0, 1);
 		linear.add_color_stop_rgba(0.50,  0, 1, 0, 1);
 		linear.add_color_stop_rgba(0.75,  1, 1, 0, 1);
 		linear.add_color_stop_rgba(1.00,  1, 0, 0, 1);
 
-		cr.rectangle (0.0, 0.0, get_allocated_width (), get_allocated_height ());
-		cr.set_source (linear);
+		cr.rectangle(0.0, 0.0, get_allocated_width(), get_allocated_height());
+		cr.set_source(linear);
 
-		cr.mask (line);
+		cr.mask(line);
 
-		base.draw (cr);
+		base.draw(cr);
 
 		return true;
 	}
 
-	public bool on_change_value (Gtk.Range range, Gtk.ScrollType type, double value)
+	public bool on_change_value(Gtk.Range range, Gtk.ScrollType type, double value)
 	{
-		queue_draw ();
+		queue_draw();
 
-		/* TODO: This Math.fmax shouldn't be needed.. file bug */
-		band_changed (ranges.index_of (range),
-		              Math.fmax (EqualizerBands.MIN_VALUE, value));
+		band_changed(ranges.index_of(range),
+		             double.max(EqualizerBands.MIN_VALUE, value));
 
 		return false;
 	}
 
-	private void apply_gain (int band, double gain)
-		requires (0 <= band && band <= EqualizerBands.MAX_BANDS)
-		requires (EqualizerBands.MIN_VALUE <= gain && gain <= EqualizerBands.MAX_VALUE)
+	private void apply_gain(int band, double gain)
+		requires(0 <= band && band <= EqualizerBands.MAX_BANDS)
+		requires(EqualizerBands.MIN_VALUE <= gain && gain <= EqualizerBands.MAX_VALUE)
 	{
 		ranges.get(band).adjustment.value = gain;
 	}

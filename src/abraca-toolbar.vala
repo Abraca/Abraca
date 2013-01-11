@@ -70,15 +70,13 @@ namespace Abraca {
 			btn = new VolumeButton(client);
 			pack_end(btn, false, false, 0);
 
-			/*
 			equalizer_button = new Gtk.Button();
 			equalizer_button.no_show_all = true;
 			equalizer_button.relief = Gtk.ReliefStyle.NONE;
 			equalizer_button.image = new Gtk.Image.from_stock(Abraca.STOCK_EQUALIZER,
 			                                                  Gtk.IconSize.SMALL_TOOLBAR);
-			equalizer_button.clicked.connect (on_equalizer_show);
+			equalizer_button.clicked.connect(on_equalizer_show);
 			pack_end(equalizer_button, false, false, 0);
-			*/
 
 			client.playback_status.connect(on_playback_status_change);
 			client.playback_playtime.connect(on_playback_playtime);
@@ -88,7 +86,6 @@ namespace Abraca {
 
 			manager = new CoverArtManager (client, parent);
 
-			/*
 			equalizer_dialog = new Gtk.Dialog.with_buttons(
 				"Equalizer", parent,
 				Gtk.DialogFlags.DESTROY_WITH_PARENT
@@ -97,7 +94,6 @@ namespace Abraca {
 
 			var box = equalizer_dialog.get_content_area () as Gtk.Box;
 			box.pack_start (new Equalizer (client));
-			*/
 
 			set_sensitive(false);
 		}
@@ -403,11 +399,9 @@ namespace Abraca {
 				return;
 			}
 
-			/*
 			client.xmms.main_list_plugins(Xmms.PluginType.XFORM).notifier_set (
 				on_list_plugins
 			);
-			*/
 		}
 
 		private void on_equalizer_show (Gtk.Button button)
