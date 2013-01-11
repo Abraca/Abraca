@@ -55,7 +55,7 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 
 		Gtk.accelerator_parse("<Primary>f", out key, out type);
 
-		return ev.keyval == key && (ev.state & type) > 0);
+		return ev.keyval == key && (ev.state & type) > 0;
 	}
 
 	public override bool key_press_event (Gdk.EventKey ev)
