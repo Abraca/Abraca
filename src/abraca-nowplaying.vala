@@ -126,14 +126,14 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 		if (artist != null) {
 			cr.set_source_rgb(0.7, 0.7, 0.7);
 			cr.move_to(text_left, text_top + 1 * (text_size + text_size / 2.0));
-			layout.set_text(artist, -1);
+			layout.set_markup("<i><span size=\"xx-small\" foreground=\"#555\">by</span></i> " + GLib.Markup.escape_text(artist), -1);
 			Pango.cairo_show_layout(cr, layout);
 		}
 
 		if (album != null) {
 			cr.set_source_rgb(0.7, 0.7, 0.7);
 			cr.move_to(text_left, text_top + 2 * (text_size + text_size / 2.0));
-			layout.set_text(album, -1);
+			layout.set_markup("<i><span size=\"xx-small\" foreground=\"#555\">on</span></i> " + GLib.Markup.escape_text(album), -1);
 			Pango.cairo_show_layout(cr, layout);
 		}
 	}
