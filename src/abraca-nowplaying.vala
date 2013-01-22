@@ -119,7 +119,7 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 		if (title != null) {
 			cr.set_source_rgb(1.0, 1.0, 1.0);
 			cr.move_to(text_left, text_top);
-			layout.set_text(title, -1);
+			layout.set_markup("<span size=\"large\">" + GLib.Markup.escape_text(title) + "</span>", -1);
 			Pango.cairo_show_layout(cr, layout);
 		}
 
