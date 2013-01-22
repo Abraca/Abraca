@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public class Abraca.TreeView : Gtk.TreeView
+public class Abraca.TreeView : Gtk.TreeView, SelectedRowsMixin
 {
 	private ulong event_handle_drag_begin;
 	private ulong event_handle_button_release;

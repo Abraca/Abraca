@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public class Abraca.FilterBrowserView : Abraca.TreeView, SelectedRowsMixin {
+public class Abraca.FilterBrowserView : Abraca.TreeView {
 	private FilterBrowserView previous;
 
 	public Xmms.Collection filter { get; private set; }

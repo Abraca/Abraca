@@ -20,7 +20,7 @@
 using GLib;
 
 namespace Abraca {
-	public class FilterView : Abraca.TreeView, IConfigurable, SelectedRowsMixin {
+	public class FilterView : Abraca.TreeView, IConfigurable {
 		/* field and order used for sorting, see sorting property */
 		public struct Sorting {
 			public unowned string field;
