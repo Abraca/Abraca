@@ -21,7 +21,6 @@ def build(bld):
 	)
 
 def configure(conf):
-	conf.env.VALADEFINES = []
 	if conf.check_cc(fragment=SO_REUSEPORT_FRAGMENT, mandatory=False):
-		conf.env.VALADEFINES = ['HAVE_SO_REUSEPORT']
+		conf.env.VALADEFINES.append('HAVE_SO_REUSEPORT')
 

@@ -379,6 +379,11 @@ namespace Xmms {
 		public static bool parse_custom(string pattern, CollectionParseTokensFunc tokens_func, CollectionParseBuildFunc build_func, out Collection coll);
 		public static Collection default_parse_build(CollectionToken[] tokens);
 		public static CollectionToken[] default_parse_tokens(string str, out unowned string newpos);
+
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode(cname="xmmsv_serialize")]
+		public Xmms.Value serialize();
+#endif
 	}
 
 
@@ -406,7 +411,11 @@ namespace Xmms {
 		[CCode(cname="xmmsv_new_string")]
 		public Value.from_string(string val);
 		[CCode(cname="xmmsv_new_coll")]
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		public Value.from_coll(Xmms.CollectionType val);
+#else
 		public Value.from_coll(Xmms.Collection val);
+#endif
 		[CCode(cname="xmmsv_new_bin")]
 		public Value.from_bin(uint8[] val);
 		[CCode(cname="xmmsv_new_list")]
@@ -466,6 +475,43 @@ namespace Xmms {
 		public bool dict_entry_get_collection(string key, out Xmms.Collection coll);
 
 		public Xmms.Value propdict_to_dict([CCode (array_length = false, array_null_terminated = true)] string[]? prefs=null);
+
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		public void coll_set_idlist([CCode (array_length = false)] int[] ids);
+		public void coll_add_operand(Collection op);
+		public void coll_remove_operand(Collection op);
+
+		public bool coll_idlist_append(int id);
+		public bool coll_idlist_insert(int index, int id);
+		public bool coll_idlist_move(int index, int newindex);
+		public bool coll_idlist_remove(int index);
+		public bool coll_idlist_clear();
+		public bool coll_idlist_get_index(int index, out int val);
+		public bool coll_idlist_set_index(int index, int val);
+		public uint coll_idlist_get_size();
+
+		public CollectionType coll_get_type();
+		public uint[] coll_get_idlist();
+
+		public unowned Xmms.Value coll_operands_get();
+		public bool coll_operand_list_first();
+		public bool coll_operand_list_valid();
+		public bool coll_operand_list_entry(out Collection operand);
+		public bool coll_operand_list_next();
+		public bool coll_operand_list_save();
+		public bool coll_operand_list_restore();
+		public void coll_operand_list_clear();
+
+		public unowned Xmms.Value coll_attributes_get();
+		public void coll_attribute_list_first();
+		public bool coll_attribute_list_valid();
+		public void coll_attribute_list_entry(out unowned string key, out unowned string val);
+		public void coll_attribute_list_next();
+		public void coll_attribute_set(string key, string val);
+		public bool coll_attribute_remove(string key);
+		public bool coll_attribute_get(string key, out unowned string val);
+		public void coll_attribute_foreach(CollectionAttributeForeachFunc func);
+#endif
 
 		public Xmms.Value serialize();
 		public Xmms.Value deserialize();

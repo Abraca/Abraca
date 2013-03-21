@@ -83,7 +83,11 @@ public abstract class Abraca.DragDropUtil {
 	{
 		unowned uchar[] data;
 
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		var bin = collection.serialize();
+#else
 		var bin = new Xmms.Value.from_coll(collection).serialize();
+#endif
 		bin.get_bin(out data);
 
 		var atom = Gdk.Atom.intern_static_string(Abraca.TargetEntry.Collection.target);
