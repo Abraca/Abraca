@@ -213,7 +213,7 @@ namespace Abraca {
 				append(out iter);
 			}
 
-			set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
+			set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid, Column.INFO, "\n");
 
 			playlist_map.add_iter((int) mid, iter);
 		}
@@ -255,7 +255,7 @@ namespace Abraca {
 			}
 
 			append(out iter);
-			set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
+			set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid, Column.INFO, "\n");
 
 			playlist_map.add_iter((int) mid, iter);
 		}
@@ -293,7 +293,7 @@ namespace Abraca {
 					insert_after(out iter, sibling);
 				}
 
-				set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid);
+				set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid, Column.INFO, "\n");
 
 				sibling = iter;
 
