@@ -12,7 +12,6 @@
 
   <binary>${prefix}/lib/${gtkdir}/${pkg:${gtk}:gtk_binary_version}/immodules/*</binary>
   <binary>${prefix}/lib/${gtkdir}/${pkg:${gtk}:gtk_binary_version}/theming-engines/*.so</binary>
-  <binary>${prefix}/lib/pango/${pkg:pango:pango_module_version}/modules/*.so</binary>
   <binary>${prefix}/lib/gdk-pixbuf-2.0/${pkg:gdk-pixbuf-2.0:gdk_pixbuf_binary_version}/loaders/*.so</binary>
 
   <!-- Translations -->
