@@ -117,7 +117,7 @@ namespace Abraca {
 		 * When GTK asks for the value of a column, check if the row
 		 * has been resolved or not, otherwise resolve it.
 		 */
-		public void get_value (Gtk.TreeIter iter, int column, ref GLib.Value val)
+		public void get_value (Gtk.TreeIter iter, int column, out GLib.Value val)
 		{
 			GLib.Value tmp1;
 
