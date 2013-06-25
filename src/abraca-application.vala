@@ -108,6 +108,12 @@ public class Abraca.Application : Gtk.Application {
 
 			Configurable.load();
 
+			var provider = new Gtk.CssProvider();
+			provider.load_from_file(GLib.File.new_for_uri("resource:///org/xmms2/Abraca/ui/abraca.css"));
+
+			Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), provider,
+			                                         Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+
 			window.show_all ();
 
 			GLib.Idle.add(() => {
