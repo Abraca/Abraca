@@ -74,7 +74,7 @@ if __name__ == "__main__":
     repos, default = parse_repositories(root)
     modules = parse_modules(root, repos, default)
 
-    update_gnome([x for x in modules if "ftp.gnome.org" in x["repo"] and "gee" not in x["name"] and "vala" not in x["name"]], root)
+    update_gnome([x for x in modules if "ftp.gnome.org" in x["repo"] and "gee" not in x["name"]], root)
     update_cairo([x for x in modules if "cairo" in x["repo"]], root)
 
     print ElementTree.tostring(root)
