@@ -14,7 +14,7 @@ def configure(conf):
 	conf.load('compiler_c vala intltool')
 	conf.load('gresource man', tooldir='waftools')
 
-	conf.check_vala((0, 18, 0))
+	conf.check_vala((0, 20, 0))
 
 	conf.check_cfg(package='gio-2.0', atleast_version='2.34.0', args='--cflags --libs')
 	conf.check_cfg(package='gio-unix-2.0', atleast_version='2.34.0', args='--cflags --libs')
