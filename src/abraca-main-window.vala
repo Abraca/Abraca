@@ -21,7 +21,7 @@ namespace Abraca {
 	public class MainWindow : Gtk.ApplicationWindow, IConfigurable {
 		private Client _client;
 		private Config _config;
-		private ToolBar _toolbar;
+		private Gtk.Widget _toolbar;
 		private Gtk.Paned _main_hpaned;
 		private Gtk.Paned _right_hpaned;
 		private Gtk.Widget _main_ui;
@@ -187,8 +187,8 @@ namespace Abraca {
 
 			var vbox = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
-			_toolbar = new ToolBar(client, this, accel_group);
-			vbox.pack_start(_toolbar, false, false, 6);
+			_toolbar = ToolBar.create (client, this, accel_group);
+			vbox.pack_start(_toolbar, false, false, 0);
 
 			var scrolled = new Gtk.ScrolledWindow (null, null);
 			scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);

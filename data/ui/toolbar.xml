@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <object class="AbracaToolBar" id="toolbar">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkGrid" id="toolbar-layout">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_left">5</property>
+        <property name="margin_right">5</property>
+        <property name="hexpand">True</property>
+        <property name="vexpand">False</property>
+        <style>
+          <class name="abraca-toolbar"/>
+        </style>
+        <child>
+          <object class="GtkLabel" id="playback-label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">5</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
+            <property name="hexpand">True</property>
+            <property name="label" translatable="yes">first\nsecond</property>
+            <property name="justify">center</property>
+            <property name="ellipsize">end</property>
+          </object>
+          <packing>
+            <property name="left_attach">1</property>
+            <property name="top_attach">0</property>
+            <property name="width">1</property>
+            <property name="height">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScale" id="playback-playtime-slider">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
+            <property name="hexpand">True</property>
+            <property name="draw_value">False</property>
+            <property name="adjustment">playback-playtime-adjustment</property>
+            <signal name="scroll-event" handler="abraca_tool_bar_on_time_slider_scroll" swapped="yes"/>
+            <signal name="button-press-event" handler="abraca_tool_bar_on_time_slider_press" swapped="yes"/>
+            <signal name="button-release-event" handler="abraca_tool_bar_on_time_slider_release" swapped="yes"/>
+          </object>
+          <packing>
+            <property name="left_attach">1</property>
+            <property name="top_attach">1</property>
+            <property name="width">1</property>
+            <property name="height">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="playback-btnbox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="valign">center</property>
+            <style>
+              <class name="linked"/>
+            </style>
+            <child>
+              <object class="GtkButton" id="playback-btn-prev">
+                <property name="width_request">42</property>
+                <property name="height_request">42</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">playback-img-prev</property>
+                <property name="always_show_image">True</property>
+                <signal name="clicked" handler="abraca_tool_bar_on_media_prev" swapped="yes"/>
+                <style>
+                  <class name="fading-button"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="playback-btn-play-pause-stop">
+                <property name="use_action_appearance">False</property>
+                <property name="width_request">42</property>
+                <property name="height_request">42</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="image">playback-img-play</property>
+                <property name="always_show_image">True</property>
+                <signal name="clicked" handler="abraca_tool_bar_on_media_play" swapped="yes"/>
+                <style>
+                  <class name="fading-button"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="playback-btn-next">
+                <property name="use_action_appearance">False</property>
+                <property name="width_request">42</property>
+                <property name="height_request">42</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="image">playback-img-next</property>
+                <property name="always_show_image">True</property>
+                <signal name="clicked" handler="abraca_tool_bar_on_media_next" swapped="yes"/>
+                <style>
+                  <class name="fading-button"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="left_attach">0</property>
+            <property name="top_attach">0</property>
+            <property name="width">1</property>
+            <property name="height">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkAlignment" id="other-btnbox-align">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="xalign">1</property>
+            <property name="yalign">1</property>
+            <property name="vexpand">True</property>
+            <style>
+              <class name="apan"/>
+            </style>
+            <child>
+              <object class="GtkBox" id="other-btnbox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="valign">center</property>
+                <property name="halign">end</property>
+                <style>
+                  <class name="linked"/>
+                </style>
+                <child>
+                  <object class="GtkButton" id="equalizer-btn">
+                    <property name="use_action_appearance">False</property>
+                    <property name="width_request">42</property>
+                    <property name="height_request">42</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="image">equalizer-img</property>
+                    <property name="always_show_image">True</property>
+                    <signal name="clicked" handler="abraca_tool_bar_on_equalizer_show" swapped="yes"/>
+                    <style>
+                      <class name="fading-button"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="AbracaVolumeButton" id="volume-btn">
+                    <property name="use_action_appearance">False</property>
+                    <property name="width_request">42</property>
+                    <property name="height_request">42</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="focus_on_click">False</property>
+                    <property name="always_show_image">True</property>
+                    <property name="relief">normal</property>
+                    <style>
+                      <class name="fading-button"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="left_attach">2</property>
+            <property name="top_attach">0</property>
+            <property name="width">1</property>
+            <property name="height">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <object class="GtkAdjustment" id="playback-playtime-adjustment">
+    <property name="lower">0</property>
+    <property name="upper">1</property>
+    <property name="step_increment">0.01</property>
+    <property name="page_increment">1</property>
+    <property name="page_size">0.10</property>
+  </object>
+  <object class="GtkImage" id="playback-img-prev">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-previous</property>
+  </object>
+  <object class="GtkImage" id="playback-img-play">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-play</property>
+  </object>
+  <object class="GtkImage" id="playback-img-pause">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-pause</property>
+  </object>
+  <object class="GtkImage" id="playback-img-stop">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-stop</property>
+  </object>
+  <object class="GtkImage" id="playback-img-next">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-next</property>
+  </object>
+  <object class="GtkImage" id="equalizer-img">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">abraca-equalizer</property>
+  </object>
+  <object class="GtkSizeGroup" id="toolbar-btn-sizegroup">
+    <property name="mode">horizontal</property>
+    <widgets>
+      <widget name="playback-btnbox"/>
+      <widget name="other-btnbox-align"/>
+    </widgets>
+  </object>
+</interface>

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public class Abraca.VolumeButton : Gtk.ScaleButton {
+public class Abraca.VolumeButton : Gtk.ScaleButton, Gtk.Buildable {
 	private const int GRACE_PERIOD_USEC = 250 * 1000;
 
 	private const string[] _icons = {
@@ -37,12 +37,13 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 
 	private Client client;
 
-	public VolumeButton (Client c)
+	public void parser_finished (Gtk.Builder builder)
 	{
-		client = c;
+		client = builder.get_object("abraca-client") as Client;
 
 		has_tooltip = true;
-		relief = Gtk.ReliefStyle.NONE;
+
+		relief = Gtk.ReliefStyle.NORMAL;
 
 		adjustment.lower = 0;
 		adjustment.upper = 100;
@@ -67,12 +68,10 @@ public class Abraca.VolumeButton : Gtk.ScaleButton {
 		client.playback_volume.connect(on_volume_changed);
 	}
 
-
 	private void on_request_volume (Gtk.ScaleButton w, double volume)
 	{
 		request_volume (volume);
 	}
-
 
 	private void request_volume (double volume)
 	{

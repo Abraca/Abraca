@@ -1,0 +1,9 @@
+.fading-button {
+	opacity: 0.0;
+	transition: 200ms ease-in-out;
+}
+
+.abraca-toolbar-visible .fading-button {
+	opacity: 1.0;
+	transition: 200ms ease-in-out;
+}
