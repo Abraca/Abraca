@@ -20,7 +20,7 @@ def configure(conf):
 	conf.check_cfg(package='gio-unix-2.0', atleast_version='2.34.0', args='--cflags --libs')
 	conf.check_cfg(package='glib-2.0', atleast_version='2.34.0', args='--cflags --libs')
 	conf.check_cfg(package='gmodule-2.0', atleast_version='2.34.0', args='--cflags --libs')
-	conf.check_cfg(package='gtk+-3.0', atleast_version='3.4.0', args='--cflags --libs')
+	conf.check_cfg(package='gtk+-3.0', atleast_version='3.8.0', args='--cflags --libs')
 	conf.check_cfg(package='gee-1.0', atleast_version='0.6', args='--cflags --libs')
 	conf.check_cfg(package='xmms2-client', atleast_version='0.8', args='--cflags --libs')
 	conf.check_cfg(package='xmms2-client-glib', atleast_version='0.8', args='--cflags --libs')
