@@ -21,11 +21,10 @@ public class Abraca.VolumeButton : Gtk.ScaleButton, Gtk.Buildable {
 	private const int GRACE_PERIOD_USEC = 250 * 1000;
 
 	private const string[] _icons = {
-		"stock_volume-mute",
-		"stock_volume-max",
-		"stock_volume-0",
-		"stock_volume-min",
-		"stock_volume-med",
+		"audio-volume-muted",
+		"audio-volume-high",
+		"audio-volume-medium",
+		"audio-volume-low",
 		null
 	};
 
