@@ -20,7 +20,7 @@
 namespace Abraca {
 	public class Config : GLib.Object, IConfigurable {
 		const string[] _sort_keys = {
-			"Artist", "Album", "Title", "Year", "Path", "Custom"
+			N_("Artist"), N_("Album"), N_("Title"), N_("Year"), N_("Path"), N_("Custom")
 		};
 
 		public string sorting_artist {
@@ -90,7 +90,7 @@ namespace Abraca {
 		public void show_sorting_dialog (Gtk.Window parent)
 		{
 			var dialog = new Gtk.Dialog.with_buttons(
-				"Configure Sorting", parent,
+				_("Configure Sorting"), parent,
 				Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.MODAL,
 				Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
 				Gtk.Stock.OK, Gtk.ResponseType.OK
@@ -112,7 +112,7 @@ namespace Abraca {
 			};
 
 			for (var i = 0; i < 6; i++) {
-				var label = new Gtk.Label("<b>" + _sort_keys[i] + "</b>");
+				var label = new Gtk.Label("<b>" + _(_sort_keys[i]) + "</b>");
 				label.xalign = 0;
 				label.use_markup = true;
 				table.attach_defaults(label, 0, 1, i + 0, i + 1);
@@ -123,7 +123,7 @@ namespace Abraca {
 			}
 
 			var box = dialog.get_content_area () as Gtk.Box;
-			box.pack_start(new PrettyLabel ("Configure Sorting"), false, true, 0);
+			box.pack_start(new PrettyLabel (_("Configure Sorting")), false, true, 0);
 			box.pack_start(table, true, true, 0);
 
 			dialog.show_all();
