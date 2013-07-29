@@ -30,12 +30,17 @@
         <p>Abraca is a GTK client for the XMMS2 music player which makes managing your music a breeze.</p>
         <p style="text-align: center"><a href="images/abraca-osx.png"><img src="images/abraca-osx-small.png"/></a></p>
         <p>
-          Installing:
+          Building and installing from source:
+          <pre>
+            git clone git@github.com:Abraca/Abraca.git
+            cd Abraca
+            ./waf configure --prefix=/usr/local
+            ./waf build
+            sudo ./waf install
+          </pre>
           <ul>
-            <li><pre>./scons PREFIX=/usr/local</pre>
-            <li><pre>./scons install</pre>
+          <li>See <a href="https://github.com/Abraca/Abraca/blob/master/README.markdown">README</a> for more details.
           </ul>
-          See <a href="https://github.com/Abraca/Abraca/blob/master/INSTALL">INSTALL</a> for more details.
         </p>
       </section>
     </div>
