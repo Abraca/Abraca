@@ -16,6 +16,8 @@ def configure(conf):
 
 	conf.check_vala((0, 20, 0))
 
+	conf.env.append_unique("CFLAGS", ["-g", "-O0"])
+
 	conf.check_cfg(package='gio-2.0', atleast_version='2.34.0', args='--cflags --libs')
 	conf.check_cfg(package='gio-unix-2.0', atleast_version='2.34.0', args='--cflags --libs')
 	conf.check_cfg(package='glib-2.0', atleast_version='2.34.0', args='--cflags --libs')
