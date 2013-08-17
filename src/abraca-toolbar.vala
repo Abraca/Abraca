@@ -315,7 +315,7 @@ public class Abraca.ToolBar : Gtk.EventBox, Gtk.Buildable {
 
 	private void on_playback_status_change (Client c, int status)
 	{
-		switch (client.current_playback_status) {
+		switch (status) {
 		case Xmms.PlaybackStatus.PLAY:
 			playback_button.image = playback_image_pause;
 			break;
@@ -324,7 +324,7 @@ public class Abraca.ToolBar : Gtk.EventBox, Gtk.Buildable {
 			break;
 		}
 
-		if (client.current_playback_status == Xmms.PlaybackStatus.STOP) {
+		if (status == Xmms.PlaybackStatus.STOP) {
 			update_time_label();
 		}
 	}
