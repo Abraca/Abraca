@@ -4,6 +4,6 @@ Comment=Manage Music
 Comment[de]=Musik verwalten
 Categories=GNOME;Application;AudioVideo;
 Exec=abraca
-Icon=abraca
+Icon=abraca-192
 Terminal=false
 Type=Application
