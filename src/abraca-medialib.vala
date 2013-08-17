@@ -73,7 +73,7 @@ namespace Abraca {
 			try {
 				builder.add_from_resource("/org/xmms2/Abraca/ui/mediainfo.xml");
 			} catch (GLib.Error e) {
-				GLib.error("Could not load UI: %s", e.message);
+				GLib.error(_("Could not load UI: %s"), e.message);
 			}
 
 			var instance = builder.get_object("mediainfo_dialog") as MedialibInfoDialog;
@@ -301,7 +301,7 @@ namespace Abraca {
 
 		private void refresh_border ()
 		{
-			string info = "Metadata for song %d of %d".printf(
+			string info = _("Metadata for song %d of %d").printf(
 				ids.position(current) + 1, (int) ids.length()
 			);
 
@@ -486,7 +486,7 @@ namespace Abraca {
 			entry.activates_default = true;
 			var vbox = get_content_area () as Gtk.Box;
 
-			var label = new PrettyLabel ("Enter Address");
+			var label = new PrettyLabel (_("Enter Address"));
 			vbox.pack_start(label, true, true, 0);
 			vbox.pack_start(combo, true, true, 0);
 

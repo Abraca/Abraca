@@ -78,7 +78,7 @@
                 <property name="border_width">10</property>
                 <child>
                   <object class="GtkLabel" id="lbl_title">
-                    <property name="label">Title:</property>
+                    <property name="label" translatable="yes">Title:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -102,7 +102,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_artist">
-                    <property name="label">Artist:</property>
+                    <property name="label" translatable="yes">Artist:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -126,7 +126,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_album">
-                    <property name="label">Album:</property>
+                    <property name="label" translatable="yes">Album:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -150,7 +150,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_tracknr">
-                    <property name="label">Track number:</property>
+                    <property name="label" translatable="yes">Track number:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -178,7 +178,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_year">
-                    <property name="label">Date:</property>
+                    <property name="label" translatable="yes">Date:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -202,7 +202,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_genre">
-                    <property name="label">Genre:</property>
+                    <property name="label" translatable="yes">Genre:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -228,7 +228,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_rating">
-                    <property name="label">Rating:</property>
+                    <property name="label" translatable="yes">Rating:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -256,7 +256,7 @@
             </child>
             <child type="tab">
               <object class="GtkLabel" id="lbl_overview">
-                <property name="label">Overview</property>
+                <property name="label" translatable="yes">Overview</property>
               </object>
             </child>
             <child>
@@ -306,7 +306,7 @@
             </child>
             <child type="tab">
               <object class="GtkLabel" id="lbl_details">
-                <property name="label">Details</property>
+                <property name="label" translatable="yes">Details</property>
               </object>
             </child>
           </object>

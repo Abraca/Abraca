@@ -26,6 +26,7 @@ def configure(conf):
 	conf.check_cfg(package='gee-1.0', atleast_version='0.6', args='--cflags --libs')
 	conf.check_cfg(package='xmms2-client', atleast_version='0.8', args='--cflags --libs')
 	conf.check_cfg(package='xmms2-client-glib', atleast_version='0.8', args='--cflags --libs')
+	conf.check_cc(lib="m", uselib_store="math")
 
 	conf.env.VALADEFINES = []
 
