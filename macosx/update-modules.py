@@ -22,6 +22,8 @@ def parse_modules(root, repos, default):
     modules = []
     for branch in root.findall("*/branch"):
         repo = repos[branch.get("repo") or default]
+        if branch.get("module") is None:
+            continue
         path = os.path.dirname(os.path.dirname(branch.get("module")))
         version = branch.get("version")
         modules.append({ "repo": repo, "path": path, "version": version, "name": parent_map[branch].get("id")})
