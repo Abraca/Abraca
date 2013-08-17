@@ -23,7 +23,7 @@
             <property name="margin_left">5</property>
             <property name="margin_right">5</property>
             <property name="hexpand">True</property>
-            <property name="label" translatable="yes">first\nsecond</property>
+            <property name="label" translatable="yes">Metadata of current song will appear here</property>
             <property name="justify">center</property>
             <property name="ellipsize">end</property>
           </object>

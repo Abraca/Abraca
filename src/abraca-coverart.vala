@@ -198,7 +198,7 @@ namespace Abraca {
 
 		private bool get_pixbuf (out Gdk.Pixbuf pixbuf)
 		{
-			var dialog = new Gtk.FileChooserDialog ("Select cover art image.",
+			var dialog = new Gtk.FileChooserDialog (_("Select cover art image."),
 			                                        parent,
 			                                        Gtk.FileChooserAction.OPEN,
 			                                        Gtk.Stock.CANCEL,
@@ -212,7 +212,7 @@ namespace Abraca {
 			dialog.update_preview.connect (on_update_preview);
 
 			var filter = new Gtk.FileFilter ();
-			filter.set_name ("Coverart Images");
+			filter.set_name (_("Coverart Images"));
 			filter.add_mime_type ("image/*");
 
 			dialog.add_filter (filter);
@@ -423,7 +423,7 @@ namespace Abraca {
 
 				client.xmms.bindata_add (buffer).notifier_set (on_bindata_add);
 			} catch (GLib.Error e) {
-				GLib.warning ("Could not add cover art.");
+				GLib.warning (_("Could not add cover art."));
 			}
 
 			return true;
