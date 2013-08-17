@@ -130,7 +130,7 @@ public class Abraca.ToolBar : Gtk.EventBox, Gtk.Buildable {
 	public override bool leave_notify_event (Gdk.EventCrossing ev)
 	{
 		if (ev.x <= 0 || ev.y <= 0 || ev.x >= get_child().get_window().get_width() || ev.y >= get_child().get_window().get_height())
-			fadeout_event_source = GLib.Timeout.add(500, on_fadeout);
+			fadeout_event_source = GLib.Timeout.add(1000, on_fadeout);
 		return true;
 	}
 
