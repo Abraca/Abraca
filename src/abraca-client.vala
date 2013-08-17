@@ -22,7 +22,7 @@ using Gee;
 
 namespace Abraca {
 	public class Client : GLib.Object {
-		private Gdk.Pixbuf default_coverart;
+		public Gdk.Pixbuf default_coverart;
 		private Xmms.Client _xmms = null;
 		private void *_gmain = null;
 

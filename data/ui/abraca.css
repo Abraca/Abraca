@@ -6,3 +6,21 @@
 .abraca-toolbar-visible .fading-button {
 	opacity: 1.0;
 }
+
+.abraca-track-list {
+	border: 1px solid rgb(220,220,220);
+	background-color: white;
+	padding: 0px 10px 10px 10px;
+}
+
+.abraca-album-name {
+	font-size: 16px;
+}
+
+.abraca-album-date {
+	font-size: 12px;
+}
+
+.abraca-coverart {
+	border: 1px solid rgba(80, 80, 80, 1);
+}

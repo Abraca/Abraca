@@ -1,5 +1,7 @@
 sources = """
     abraca-application.vala
+    abraca-album-view.vala
+    abraca-artist-grid.vala
     abraca-client.vala
     abraca-collections-cellrenderer.vala
     abraca-collections-model.vala
