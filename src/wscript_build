@@ -28,6 +28,7 @@ sources = """
     abraca-playlist-widget.vala
     abraca-pretty-label.vala
     abraca-rating-entry.vala
+    abraca-resolver.vala
     abraca-selected-rows-mixin.vala
     abraca-server-browser.vala
     abraca-server-discover-tcp.vala

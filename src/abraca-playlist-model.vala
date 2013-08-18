@@ -59,8 +59,23 @@ namespace Abraca {
 			typeof(string)
 		};
 
-		public PlaylistModel (Client _client) {
+		private MetadataRequestor requestor;
+
+		public PlaylistModel (Client _client, MetadataResolver resolver) {
 			set_column_types(_types);
+
+			string[] attributes = {
+				"status",
+				"album",
+				"genre",
+				"title",
+				"artist",
+				"duration",
+				"url"
+			};
+
+			requestor = resolver.register(on_resolver_complete);
+			requestor.set_attributes(attributes);
 
 			playlist_map = new TreeRowMap(this);
 
@@ -96,9 +111,7 @@ namespace Abraca {
 
 				set(iter, Column.STATUS, Status.RESOLVING);
 
-				client.xmms.medialib_get_info(mid.get_uint()).notifier_set(
-					on_medialib_info
-				);
+				requestor.resolve((int) mid.get_uint());
 			}
 
 			base.get_value(iter, column, out val);
@@ -309,12 +322,26 @@ namespace Abraca {
 		}
 
 
-		private bool on_medialib_info(Xmms.Value propdict) {
+		private void on_resolver_complete(Xmms.Value value)
+		{
+			unowned Xmms.ListIter iter;
+			Xmms.Value entry;
+
+			value.get_list_iter(out iter);
+
+			GLib.print("p: %d\n", value.list_get_size());
+
+			while (iter.entry(out entry)) {
+				on_medialib_info(entry);
+				iter.next();
+			}
+		}
+
+
+		private bool on_medialib_info(Xmms.Value val) {
 			string album, title, genre, artist = null;
 			string info;
 			int status, mid;
-
-			Xmms.Value val = propdict.propdict_to_dict();
 
 			val.dict_entry_get_int("id", out mid);
 			val.dict_entry_get_int("status", out status);

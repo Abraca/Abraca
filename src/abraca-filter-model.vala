@@ -41,10 +41,12 @@ namespace Abraca {
 		private Gee.Map<int,Gtk.TreeRowReference> pos_map = new Gee.HashMap<int,Gtk.TreeRowReference>();
 
 		private Client client;
+		private MetadataRequestor requestor;
 
-		public FilterModel (Client c, owned string[] props)
+		public FilterModel (Client c, MetadataResolver resolver, owned string[] props)
 		{
 			client = c;
+
 
 			var types = new GLib.Type[2 + props.length];
 
@@ -58,6 +60,9 @@ namespace Abraca {
 			set_column_types(types);
 
 			dynamic_columns = (owned) props;
+
+			requestor = resolver.register(on_resolver_complete);
+			requestor.set_attributes(dynamic_columns);
 
 			client.medialib_entry_changed.connect((client, res) => {
 					on_medialib_info(res);
@@ -129,22 +134,35 @@ namespace Abraca {
 
 				set(iter, Column.STATUS, Status.RESOLVING);
 
-				client.xmms.medialib_get_info(tmp2.get_uint()).notifier_set(
-					on_medialib_info
-				);
+				requestor.resolve((int) tmp2.get_uint());
 			}
 
 			base.get_value(iter, column, out val);
 		}
 
-		private bool on_medialib_info (Xmms.Value propdict)
+
+		private void on_resolver_complete(Xmms.Value value)
+		{
+			unowned Xmms.ListIter iter;
+			Xmms.Value entry;
+
+			value.get_list_iter(out iter);
+
+			GLib.print("s: %d\n", value.list_get_size());
+
+			while (iter.entry(out entry)) {
+				on_medialib_info(entry);
+				iter.next();
+			}
+		}
+
+
+		private bool on_medialib_info (Xmms.Value val)
 		{
 			Gtk.TreeRowReference row;
 			Gtk.TreePath path;
 			Gtk.TreeIter iter;
 			int mid;
-
-			Xmms.Value val = propdict.propdict_to_dict();
 
 			val.dict_entry_get_int("id", out mid);
 

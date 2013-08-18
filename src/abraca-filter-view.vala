@@ -51,11 +51,14 @@ namespace Abraca {
 		public Sorting sorting { get; set; }
 		public Xmms.Collection collection { get; private set; }
 
+		private MetadataResolver resolver;
 
-		public FilterView (Client c, Medialib m)
+
+		public FilterView (Client c, MetadataResolver r, Medialib m)
 		{
 			medialib = m;
 			client = c;
+			resolver = r;
 
 			//fixed_height_mode = true;
 			enable_search = false;
@@ -349,7 +352,7 @@ namespace Abraca {
 				ancestor.button_press_event.connect(on_header_clicked);
 			}
 
-			model = new FilterModel(client, props);
+			model = new FilterModel(client, resolver, props);
 
 			if (collection != null) {
 				query_collection(collection);

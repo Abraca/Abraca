@@ -25,7 +25,7 @@ public interface Abraca.Searchable : GLib.Object {
 public class Abraca.FilterWidget : Gtk.Paned {
 	private FilterSearchBox searchbox;
 
-	public FilterWidget (Client client, Config config, Medialib medialib,  Gtk.AccelGroup group)
+	public FilterWidget (Client client, MetadataResolver resolver, Config config, Medialib medialib,  Gtk.AccelGroup group)
 	{
 		Object (orientation: Gtk.Orientation.VERTICAL, position: 200);
 		var scrolled = new Gtk.ScrolledWindow(null, null);
@@ -35,7 +35,7 @@ public class Abraca.FilterWidget : Gtk.Paned {
 
 		scrolled.set_shadow_type(Gtk.ShadowType.IN);
 
-		var treeview = new FilterView(client, medialib);
+		var treeview = new FilterView(client, resolver, medialib);
 		scrolled.add(treeview);
 
 		Gdk.ModifierType accel_type;

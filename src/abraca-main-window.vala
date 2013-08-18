@@ -27,6 +27,7 @@ namespace Abraca {
 		private Gtk.Widget _main_ui;
 		private NowPlaying _now_playing;
 		private bool is_idle = false;
+		private MetadataResolver resolver;
 
 		private const ActionEntry[] actions = {
 			{ "connect", on_menu_connect },
@@ -198,12 +199,14 @@ namespace Abraca {
 			_right_hpaned.position = 430;
 			_right_hpaned.position_set = true;
 
+			resolver = new MetadataResolver(client);
+
 			var medialib = new Medialib (this, client);
 
-			var filter = new FilterWidget (client, _config, medialib, accel_group);
+			var filter = new FilterWidget (client, resolver, _config, medialib, accel_group);
 			var search = filter.get_searchable ();
 
-			var playlist = new PlaylistWidget (client, _config, medialib, search);
+			var playlist = new PlaylistWidget (client, resolver, _config, medialib, search);
 
 			_right_hpaned.pack1(filter, true, true);
 			_right_hpaned.pack2(playlist, false, true);
