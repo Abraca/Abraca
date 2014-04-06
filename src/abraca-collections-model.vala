@@ -86,6 +86,8 @@ namespace Abraca {
 				Column.Name, _("Playlists")
 			);
 
+			set_sort_column_id(Column.Name,0);
+
 			client.playlist_loaded.connect(on_playlist_loaded);
 			client.collection_add.connect(on_collection_add);
 			client.collection_rename.connect(on_collection_rename);
