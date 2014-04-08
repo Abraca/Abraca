@@ -329,8 +329,6 @@ namespace Abraca {
 
 			value.get_list_iter(out iter);
 
-			GLib.print("p: %d\n", value.list_get_size());
-
 			while (iter.entry(out entry)) {
 				on_medialib_info(entry);
 				iter.next();
