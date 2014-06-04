@@ -52,6 +52,9 @@ public class Abraca.ServerProber
 	private static async bool recv_cmd_reply (GLib.DataInputStream stream)
 		throws GLib.Error
 	{
+		unowned string msg;
+		bool success = false;
+
 		yield stream.fill_async(HEADER_SIZE);
 
 		var object = stream.read_int32();
@@ -59,18 +62,37 @@ public class Abraca.ServerProber
 			return false;
 
 		var reply = stream.read_int32();
-		if (reply != Xmms.IpcReply.OK)
-			return false;
+		if (reply == Xmms.IpcReply.OK)
+			success = true;
 
 		var reply_cookie = stream.read_int32();
 		if (reply_cookie != COOKIE)
 			return false;
 
 		var payload_length = stream.read_int32();
-		if (payload_length != 4) // XMMSV_TYPE_NONE();
+		if (payload_length > 1024) /* Arbitrary, but unplausible limit */
 			return false;
 
-		return true;
+		yield stream.fill_async(payload_length);
+
+		var data = new uchar[payload_length];
+		stream.read(data);
+
+		var payload = new Xmms.Value.from_bin(data).deserialize();
+		if (success) {
+			/* Before Service Clients, no response */
+			if (payload.is_type(Xmms.ValueType.NONE))
+				return true;
+
+			/* After Service Clients, client id */
+			if (payload.is_type(Xmms.ValueType.INT32))
+				return true;
+		}
+
+		if (payload.get_error(out msg))
+			GLib.warning("Could not connect: %s", msg);
+
+		return false;
 	}
 
 	public static async bool check_version (GLib.SocketConnectable address)
