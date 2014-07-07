@@ -26,12 +26,9 @@ namespace Abraca {
 
 		private unowned Gtk.TreeModel model;
 
-		private static bool compare_refs (void *a, void *b)
+		private static bool compare_refs (Gtk.TreeRowReference a, Gtk.TreeRowReference b)
 		{
-			unowned Gtk.TreeRowReference fst = (Gtk.TreeRowReference) a;
-			unowned Gtk.TreeRowReference snd = (Gtk.TreeRowReference) b;
-
-			return fst.get_path().compare(snd.get_path()) == 0;
+			return a.get_path().compare(b.get_path()) == 0;
 		}
 
 		public TreeRowMap (Gtk.TreeModel model)

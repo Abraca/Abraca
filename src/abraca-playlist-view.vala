@@ -372,7 +372,7 @@ namespace Abraca {
 				GLib.return_if_reached();
 			}
 
-			var values = new Gee.HashSet<string>(GLib.str_hash, GLib.str_equal);
+			var values = new Gee.HashSet<string>();
 
 			foreach_selected_row<string>(column, (pos, text) => {
 				if (text != "Unknown")
