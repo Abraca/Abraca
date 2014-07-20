@@ -52,5 +52,5 @@ bld.program(
     source       = sources,
     vapi_dirs    = '../vapi ../external',
     vala_defines = bld.env.VALADEFINES,
-    vala_target_glib = '2.34',
+    vala_target_glib = '2.40',
 )
