@@ -145,7 +145,7 @@ public class Abraca.FilterBrowserView : Abraca.TreeView {
 
 }
 
-public class Abraca.FilterBrowser : Gtk.HBox {
+public class Abraca.FilterBrowser : Gtk.Box {
 	private static FilterBrowserView add_treeview (FilterBrowserModel model, FilterBrowserView? previous = null)
 	{
 		var view = new FilterBrowserView (model, previous);

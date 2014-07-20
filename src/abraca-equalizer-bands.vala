@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public class EqualizerBands : Gtk.HBox {
+public class EqualizerBands : Gtk.Box {
 	public signal void band_changed(int band, double value);
 	private Gee.List<Gtk.Range> ranges = new Gee.ArrayList<Gtk.Scale>();
 	private int band_count = 0;
@@ -37,7 +37,7 @@ public class EqualizerBands : Gtk.HBox {
 
 	public EqualizerBands()
 	{
-		Object(spacing: 5);
+		Object(orientation: Gtk.Orientation.HORIZONTAL, spacing: 5);
 		create_bands();
 
 		for (var i=0; i < EqualizerBands.MAX_BANDS; i++) {

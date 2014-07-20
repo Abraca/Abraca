@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public class Abraca.Equalizer : Gtk.VBox {
+public class Abraca.Equalizer : Gtk.Box {
 	private EqualizerBands bands = new EqualizerBands();
 	private EqualizerModel model;
 
@@ -27,7 +27,7 @@ public class Abraca.Equalizer : Gtk.VBox {
 
 	public Equalizer(Client c)
 	{
-		Object(margin_left: 10, margin_right: 10);
+		Object(orientation: Gtk.Orientation.VERTICAL, margin_left: 10, margin_right: 10);
 
 		client = c;
 		model = new EqualizerModel(client);
