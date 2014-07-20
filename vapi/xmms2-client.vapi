@@ -277,8 +277,11 @@ namespace Xmms {
 		public Result medialib_entry_property_set_str_with_source(uint id, string source, string key, string val);
 		public Result medialib_entry_property_remove(uint id, string key);
 		public Result medialib_entry_property_remove_with_source(uint id, string source, string key);
-		public Result broadcast_medialib_entry_changed();
 		public Result broadcast_medialib_entry_added();
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode(cname="xmmsc_broadcast_medialib_entry_updated")]
+#endif
+		public Result broadcast_medialib_entry_changed();
 		public Result broadcast_mediainfo_reader_status();
 		public Result signal_mediainfo_reader_unindexed();
 
@@ -335,10 +338,19 @@ namespace Xmms {
 		public Result signal_visualisation_data ();
 	}
 
+
 	[Compact]
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+	[CCode(cname="xmmsv_t", cprefix="xmmsv_coll_", ref_function="xmmsv_ref", unref_function="xmmsv_unref")]
+#else
 	[CCode(cname="xmmsv_coll_t", cprefix="xmmsv_coll_", ref_function="xmmsv_coll_ref", unref_function="xmmsv_coll_unref")]
+#endif
 	public class Collection {
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode (cname = "xmmsv_new_coll")]
+#else
 		[CCode (cname = "xmmsc_coll_new")]
+#endif
 		public Collection(CollectionType type);
 		public void set_idlist([CCode (array_length = false)] int[] ids);
 		public void add_operand(Collection op);
@@ -369,8 +381,14 @@ namespace Xmms {
 		public bool attribute_list_valid();
 		public void attribute_list_entry(out unowned string key, out unowned string val);
 		public void attribute_list_next();
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode(cname="xmmsv_coll_attribute_set_string")]
+#endif
 		public void attribute_set(string key, string val);
 		public bool attribute_remove(string key);
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode(cname="xmmsv_coll_attribute_get_string")]
+#endif
 		public bool attribute_get(string key, out unowned string val);
 		public void attribute_foreach(CollectionAttributeForeachFunc func);
 
@@ -535,6 +553,9 @@ namespace Xmms {
 
 		public bool entry_int(out unowned string val);
 		public bool entry_string(out int val);
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode(cname="xmmsv_list_iter_entry")]
+#endif
 		public bool entry_coll(out unowned Xmms.Collection val);
 
 		public bool insert_int(int value);
