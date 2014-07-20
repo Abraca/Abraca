@@ -98,9 +98,9 @@ namespace Abraca {
 
 			dialog.resize (300, 200);
 
-			var table = new Gtk.Table(6, 2, false);
-			table.set_row_spacings(7);
-			table.set_col_spacings(5);
+			var table = new Gtk.Grid();
+			table.row_spacing = 7;
+			table.column_spacing = 5;
 			table.border_width = 5;
 
 			var entries = new Gtk.Entry[6];
@@ -115,11 +115,11 @@ namespace Abraca {
 				var label = new Gtk.Label("<b>" + _(_sort_keys[i]) + "</b>");
 				label.xalign = 0;
 				label.use_markup = true;
-				table.attach_defaults(label, 0, 1, i + 0, i + 1);
+				table.attach(label, 0, i, 1, 1);
 
 				entries[i] = new Gtk.Entry();
 				entries[i].text = values[i];
-				table.attach_defaults(entries[i], 1, 2, i + 0, i + 1);
+				table.attach(entries[i], 1, i, 1, 1);
 			}
 
 			var box = dialog.get_content_area () as Gtk.Box;
