@@ -17,67 +17,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-namespace Abraca {
-	public const string STOCK_EQUALIZER  = "abraca-equalizer";
-	public const string STOCK_COLLECTION = "abraca-collection";
-	public const string STOCK_PLAYLIST   = "abraca-playlist";
-	public const string STOCK_RATED      = "abraca-rated";
-	public const string STOCK_UNRATED    = "abraca-unrated";
-	public const string STOCK_FAVORITE   = "abraca-favorite";
+namespace Abraca.Icons {
+	private struct Icon {
+		string name;
+		int size;
+		string filename;
+	}
 
-	public static Gtk.IconFactory create_icon_factory() throws GLib.Error {
-		Gtk.IconFactory factory = new Gtk.IconFactory();
-		Gtk.IconSet set;
-		Gtk.IconSource source;
+	/**
+	 * GtkIconSize:
+	 * @GTK_ICON_SIZE_INVALID: Invalid size.
+	 * @GTK_ICON_SIZE_MENU: Size appropriate for menus (16px).
+	 * @GTK_ICON_SIZE_SMALL_TOOLBAR: Size appropriate for small toolbars (16px).
+	 * @GTK_ICON_SIZE_LARGE_TOOLBAR: Size appropriate for large toolbars (24px)
+	 * @GTK_ICON_SIZE_BUTTON: Size appropriate for buttons (16px)
+	 * @GTK_ICON_SIZE_DND: Size appropriate for drag and drop (32px)
+	 * @GTK_ICON_SIZE_DIALOG: Size appropriate for dialogs (48px)
+	 *
+	 * Built-in stock icon sizes.
+	 */
+	private static const int[] STOCK_SIZES = { -1, 16, 16, 24, 16, 32, 48 };
 
+	private static const Icon[] STOCK_ICONS = {
+		{ "abraca-icon",       32, "abraca-32.png"             },
+		{ "abraca-equalizer",  24, "abraca-equalizer.png"      },
+		{ "abraca-collection", 24, "abraca-collection-24.png"  },
+		{ "abraca-collection", 16, "abraca-collection-16.png"  },
+		{ "abraca-playlist",   24, "abraca-playlist-24.png"    },
+		{ "abraca-playlist",   16, "abraca-playlist-16.png"    },
+		{ "abraca-rated",      16, "abraca-rating-rated.png"   },
+		{ "abraca-unrated",    16, "abraca-rating-unrated.png" },
+		{ "abraca-favorite",   16, "abraca-favorite.png"       }
+	};
 
-		/* Equalizer icon */
-		set = new Gtk.IconSet();
+	public static void initialize() throws GLib.Error {
+		foreach (var icon in STOCK_ICONS) {
+			var pixbuf = new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/%s".printf(icon.filename));
+			Gtk.IconTheme.add_builtin_icon(icon.name, icon.size, pixbuf);
+		}
+	}
 
-		source = new Gtk.IconSource();
-		source.set_pixbuf(new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-equalizer.png"));
-		set.add_source(source);
-
-		factory.add(STOCK_EQUALIZER, set);
-
-		/* Collection icon */
-
-		set = new Gtk.IconSet();
-
-		source = new Gtk.IconSource();
-		source.set_pixbuf(new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-collection-24.png"));
-		set.add_source(source);
-
-		source = new Gtk.IconSource();
-		source.set_pixbuf(new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-collection-16.png"));
-		source.set_size(Gtk.IconSize.MENU);
-		source.set_size_wildcarded(false);
-		set.add_source(source);
-
-		factory.add(STOCK_COLLECTION, set);
-
-		/* Playlist icon */
-
-		set = new Gtk.IconSet();
-
-		source = new Gtk.IconSource();
-		source.set_pixbuf(new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-playlist-24.png"));
-		set.add_source(source);
-
-		source = new Gtk.IconSource();
-		source.set_pixbuf(new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-playlist-16.png"));
-		source.set_size(Gtk.IconSize.MENU);
-		source.set_size_wildcarded(false);
-		set.add_source(source);
-
-		factory.add(STOCK_PLAYLIST, set);
-
-		/* Other icons */
-
-		factory.add(STOCK_RATED,    new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-rating-rated.png")));
-		factory.add(STOCK_UNRATED,  new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-rating-unrated.png")));
-		factory.add(STOCK_FAVORITE, new Gtk.IconSet.from_pixbuf(new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-favorite.png")));
-
-		return factory;
+	public static Gdk.Pixbuf by_name(string name, Gtk.IconSize size)
+	{
+		try {
+			var theme = Gtk.IconTheme.get_default();
+			return theme.load_icon(name, STOCK_SIZES[size], Gtk.IconLookupFlags.GENERIC_FALLBACK);
+		} catch (GLib.Error e) {
+			GLib.error("Could not load icon. Programming error.");
+		}
 	}
 }

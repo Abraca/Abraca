@@ -456,11 +456,11 @@ namespace Abraca {
 
 			header_menu = new Gtk.Menu();
 
-			item = new Gtk.ImageMenuItem.from_stock(Gtk.Stock.EDIT, null);
+			item = new Gtk.MenuItem.with_label(_("Edit"));
 			item.activate.connect(on_header_edit);
 			header_menu.append(item);
 
-			item = new Gtk.ImageMenuItem.from_stock(Gtk.Stock.REMOVE, null);
+			item = new Gtk.MenuItem.with_label(_("Remove"));
 			item.activate.connect(on_header_remove);
 			header_menu.append(item);
 
@@ -477,7 +477,7 @@ namespace Abraca {
 
 			filter_menu = new Gtk.Menu();
 
-			item = new Gtk.ImageMenuItem.from_stock(Gtk.Stock.SELECT_ALL, null);
+			item = new Gtk.MenuItem.with_label(_("Select All"));
 			item.activate.connect(on_menu_select_all);
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
@@ -486,7 +486,7 @@ namespace Abraca {
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
-			item = new Gtk.ImageMenuItem.from_stock(Gtk.Stock.INFO, null);
+			item = new Gtk.MenuItem.with_label(_("Info"));
 			item.activate.connect(on_menu_info);
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
@@ -495,12 +495,12 @@ namespace Abraca {
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
-			item = new Gtk.ImageMenuItem.from_stock(Gtk.Stock.ADD, null);
+			item = new Gtk.MenuItem.with_label(_("Add"));
 			item.activate.connect(on_menu_add);
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);
 
-			item = new Gtk.MenuItem.with_mnemonic(_("_Replace"));
+			item = new Gtk.MenuItem.with_label(_("Replace"));
 			item.activate.connect(on_menu_replace);
 			filter_menu_item_when_some_selected.prepend(item);
 			filter_menu.append(item);

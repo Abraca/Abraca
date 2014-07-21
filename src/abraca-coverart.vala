@@ -199,12 +199,9 @@ namespace Abraca {
 		private bool get_pixbuf (out Gdk.Pixbuf pixbuf)
 		{
 			var dialog = new Gtk.FileChooserDialog (_("Select cover art image."),
-			                                        parent,
-			                                        Gtk.FileChooserAction.OPEN,
-			                                        Gtk.Stock.CANCEL,
-			                                        Gtk.ResponseType.CANCEL,
-			                                        Gtk.Stock.OK,
-			                                        Gtk.ResponseType.OK);
+			                                        parent, Gtk.FileChooserAction.OPEN,
+			                                        _("Cancel"), Gtk.ResponseType.CANCEL,
+			                                        _("Ok"), Gtk.ResponseType.OK);
 
 			dialog.preview_widget = new Gtk.Image ();
 			dialog.preview_widget_active = false;

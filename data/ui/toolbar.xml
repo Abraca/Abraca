@@ -221,32 +221,32 @@
   <object class="GtkImage" id="playback-img-prev">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-media-previous</property>
+    <property name="icon_name">media-skip-backward</property>
   </object>
   <object class="GtkImage" id="playback-img-play">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-media-play</property>
+    <property name="icon_name">media-playback-start</property>
   </object>
   <object class="GtkImage" id="playback-img-pause">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-media-pause</property>
+    <property name="icon_name">media-playback-pause</property>
   </object>
   <object class="GtkImage" id="playback-img-stop">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-media-stop</property>
+    <property name="icon_name">media-playback-stop</property>
   </object>
   <object class="GtkImage" id="playback-img-next">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-media-next</property>
+    <property name="icon_name">media-skip-forward</property>
   </object>
   <object class="GtkImage" id="equalizer-img">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">abraca-equalizer</property>
+    <property name="icon_name">abraca-equalizer</property>
   </object>
   <object class="GtkSizeGroup" id="toolbar-btn-sizegroup">
     <property name="mode">horizontal</property>

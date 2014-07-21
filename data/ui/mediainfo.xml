@@ -31,8 +31,7 @@
             <property name="spacing">0</property>
             <child>
               <object class="GtkButton" id="button_prev">
-                <property name="label">gtk-go-back</property>
-                <property name="use-stock">True</property>
+                <property name="label">Back</property>
                 <signal name="clicked" handler="abraca_medialib_info_dialog_on_prev_button_clicked"/>
               </object>
               <packing>
@@ -41,8 +40,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button_forward">
-                <property name="label">gtk-go-forward</property>
-                <property name="use-stock">True</property>
+                <property name="label">Forward</property>
                 <signal name="clicked" handler="abraca_medialib_info_dialog_on_next_button_clicked"/>
               </object>
               <packing>
@@ -51,8 +49,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button_ok">
-                <property name="label">gtk-close</property>
-                <property name="use-stock">True</property>
+                <property name="label">Close</property>
                 <signal name="clicked" handler="abraca_medialib_info_dialog_on_close_all_button_clicked"/>
               </object>
             </child>

@@ -147,7 +147,7 @@ public class Abraca.Application : Gtk.Application {
 		}
 
 		try {
-			create_icon_factory().add_default();
+			Abraca.Icons.initialize();
 		} catch (GLib.Error e) {
 			GLib.error(e.message);
 		}

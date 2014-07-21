@@ -5,14 +5,12 @@
     <child>
       <object class="GtkAction" id="cancel-action">
         <property name="label" translatable="yes">Cancel</property>
-        <property name="stock_id">gtk-cancel</property>
         <signal name="activate" handler="abraca_server_browser_on_cancel_activated" swapped="yes"/>
       </object>
     </child>
     <child>
       <object class="GtkAction" id="connect-action">
         <property name="label" translatable="yes">Connect</property>
-        <property name="stock_id">gtk-connect</property>
         <property name="sensitive">False</property>
         <signal name="activate" handler="abraca_server_browser_on_connect_activated" swapped="yes"/>
       </object>
@@ -60,7 +58,6 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="related_action">cancel-action</property>
-                <property name="use_stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -75,7 +72,6 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="related_action">connect-action</property>
-                <property name="use_stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>

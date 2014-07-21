@@ -60,12 +60,8 @@ namespace Abraca {
 			headers_visible = false;
 			fixed_height_mode = true;
 
-			model = store = new CollectionsModel(render_icon(STOCK_COLLECTION,
-			                                                 Gtk.IconSize.LARGE_TOOLBAR,
-			                                                 null),
-			                                     render_icon(STOCK_PLAYLIST,
-			                                                 Gtk.IconSize.LARGE_TOOLBAR,
-			                                                 null),
+			model = store = new CollectionsModel(Abraca.Icons.by_name("abraca-collection", Gtk.IconSize.LARGE_TOOLBAR),
+			                                     Abraca.Icons.by_name("abraca-playlist", Gtk.IconSize.LARGE_TOOLBAR),
 			                                     _client);
 
 			store.collection_loaded.connect((type) => {
@@ -480,32 +476,23 @@ namespace Abraca {
 		 */
 		private void create_context_menu ()
 		{
-			Gtk.ImageMenuItem item;
+			Gtk.MenuItem item;
 
 			_collection_menu = new Gtk.Menu();
 
-			item = new Gtk.ImageMenuItem.with_mnemonic(_("_Show"));
-			item.image = new Gtk.Image.from_stock(
-				Gtk.Stock.FIND, Gtk.IconSize.MENU
-			);
+			item = new Gtk.MenuItem.with_mnemonic(_("_Show"));
 			item.activate.connect(on_menu_collection_get);
 			_collection_menu_item_when_coll_selected.prepend(item);
 			_collection_menu.append(item);
 
-			item = new Gtk.ImageMenuItem.with_mnemonic(_("_Rename"));
-			item.image = new Gtk.Image.from_stock(
-				Gtk.Stock.EDIT, Gtk.IconSize.MENU
-			);
+			item = new Gtk.MenuItem.with_mnemonic(_("_Rename"));
 			item.activate.connect((menu) => {
 				selected_collection_rename();
 			});
 			_collection_menu_item_when_coll_selected.prepend(item);
 			_collection_menu.append(item);
 
-			item = new Gtk.ImageMenuItem.with_mnemonic(_("Delete"));
-			item.image = new Gtk.Image.from_stock(
-				Gtk.Stock.DELETE, Gtk.IconSize.MENU
-			);
+			item = new Gtk.MenuItem.with_mnemonic(_("Delete"));
 			item.activate.connect((menu) => {
 				selected_collection_delete();
 			});
