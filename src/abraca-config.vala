@@ -102,6 +102,8 @@ namespace Abraca {
 			table.row_spacing = 7;
 			table.column_spacing = 5;
 			table.border_width = 5;
+			table.hexpand = true;
+			table.valign = Gtk.Align.START;
 
 			var entries = new Gtk.Entry[6];
 
@@ -119,6 +121,7 @@ namespace Abraca {
 
 				entries[i] = new Gtk.Entry();
 				entries[i].text = values[i];
+				entries[i].expand = true;
 				table.attach(entries[i], 1, i, 1, 1);
 			}
 
