@@ -19,6 +19,9 @@
 
 public class Abraca.ServerBrowser : GLib.Object
 {
+	private static const string EXECUTABLE = "xmms2-launcher";
+	private static const string[] ARGS = { EXECUTABLE };
+
 	private const string DEFAULT_UNIX_PATH = "/tmp";
 
 	private enum Column {
@@ -40,6 +43,8 @@ public class Abraca.ServerBrowser : GLib.Object
 	private Gtk.Action connect_action;
 
 	private Client client;
+
+	private GLib.Subprocess launcher = null;
 
 	private static Gtk.Builder get_builder ()
 	{
@@ -79,7 +84,7 @@ public class Abraca.ServerBrowser : GLib.Object
 
 		this.client = client;
 
-		if (GLib.Environment.find_program_in_path("xmms2-launcher") != null) {
+		if (GLib.Environment.find_program_in_path(EXECUTABLE) != null) {
 			var launch_action = builder.get_object("launch-action") as Gtk.Action;
 			launch_action.sensitive = true;
 		}
@@ -92,6 +97,11 @@ public class Abraca.ServerBrowser : GLib.Object
 		dialog.run();
 		discover_network.stop();
 		discover_unix.stop();
+
+		if (launcher != null) {
+			launcher.force_exit();
+			launcher = null;
+		}
 	}
 
 	public void on_location_row_activated (Gtk.TreeView view, Gtk.TreePath path, Gtk.TreeViewColumn colunm)
@@ -239,7 +249,20 @@ public class Abraca.ServerBrowser : GLib.Object
 
 	public void on_launch_activated ()
 	{
-		GLib.warning ("launch");
+		if (launcher != null)
+			return;
+
+		try {
+			launcher = new GLib.Subprocess.newv(ARGS,
+			                                    GLib.SubprocessFlags.STDOUT_SILENCE |
+			                                    GLib.SubprocessFlags.STDERR_SILENCE);
+			launcher.wait_async.begin(null, (obj, res) => {
+				launcher = null;
+			});
+		}
+		catch (GLib.Error e) {
+			launcher = null;
+		}
 	}
 
 	private void on_service_added(string name, string path)
