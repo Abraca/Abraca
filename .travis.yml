@@ -4,8 +4,6 @@ before_script:
   - echo "deb http://archive.ubuntu.com/ubuntu/ utopic main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get -qq update
   - sudo apt-get -qq install pkg-config valac-0.24 libglib2.0-dev gobject-introspection libgirepository1.0-dev libxmmsclient-dev libxmmsclient-glib-dev intltool libgtk-3-dev libgee-0.8-dev
-  - pkg-config --list-all
-  - pkg-config --modversion gtk+-3.0
 
 script:
   - ./waf configure --prefix=/usr
