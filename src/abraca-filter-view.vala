@@ -383,7 +383,7 @@ namespace Abraca {
 				case 3:
 					foreach (var column in get_columns()) {
 						if (column.widget.get_ancestor(typeof(Gtk.Button)) == w) {
-							header_menu.set_title(column.title);
+							header_menu.tearoff_title = column.title;
 							break;
 						}
 					}
@@ -435,7 +435,7 @@ namespace Abraca {
 
 		private void on_header_remove (Gtk.MenuItem item)
 		{
-			var title = ((Gtk.Menu) item.parent).get_title();
+			var title = ((Gtk.Menu) item.parent).tearoff_title;
 			foreach (var column in get_columns()) {
 				if (column.title == title) {
 					remove_column(column);
