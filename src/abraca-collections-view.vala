@@ -119,7 +119,6 @@ namespace Abraca {
 		                               uint info, uint time)
 		{
 			unowned string coll_name, coll_ns;
-			unowned uchar[] data;
 			Gtk.TreeIter iter;
 			int type;
 
