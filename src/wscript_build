@@ -26,7 +26,6 @@ sources = """
     abraca-playlist-model.vala
     abraca-playlist-view.vala
     abraca-playlist-widget.vala
-    abraca-pretty-label.vala
     abraca-rating-entry.vala
     abraca-resolver.vala
     abraca-selected-rows-mixin.vala
