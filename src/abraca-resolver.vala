@@ -32,8 +32,8 @@ public class Abraca.MetadataResolver : GLib.Object {
 
 	private class MetadataRequestorImpl : GLib.Object, Abraca.MetadataRequestor
 	{
-		public MetadataResolverEnqueueFunc enqueue;
-		public MetadataResolvedFunc resolved;
+		public unowned MetadataResolverEnqueueFunc enqueue;
+		public unowned MetadataResolvedFunc resolved;
 		public int token;
 		public Xmms.Value attributes;
 
