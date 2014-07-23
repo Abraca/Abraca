@@ -56,31 +56,12 @@ namespace Abraca {
 
 			title = _("Select Columns");
 
-			resizable = false;
-
-			var notebook = new Gtk.Notebook();
-			notebook.show_tabs = false;
-
 			var child = create_child();
 
-			notebook.append_page(child, new Gtk.Label("Columns"));
-			notebook.border_width = 6;
-
-			var button = new Gtk.Button.with_label(_("Ok"));
-			button.clicked.connect((widget) => {
-				destroy();
-			});
-
-			var action_area = get_action_area() as Gtk.Box;
-			action_area.add(button);
-			action_area.border_width = 0;
-			action_area.spacing = 0;
+			add_button(_("Ok"), 0);
 
 			var box = get_content_area() as Gtk.Box;
-			box.border_width = 0;
-			box.pack_start(new PrettyLabel("Select Columns"), false, true, 0);
-			box.pack_start(notebook, true, true, 0);
-			box.set_child_packing(action_area, false, false, 0, Gtk.PackType.END);
+			box.pack_start(child, true, true, 0);
 
 			response.connect((widget,response) => {
 				destroy();
@@ -134,7 +115,7 @@ namespace Abraca {
 
 			column = new Gtk.TreeViewColumn.with_attributes(
 				"column", renderer, "active", Column.ACTIVE
-		  	);
+			);
 			column.resizable = false;
 			column.fixed_width = 30;
 			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
@@ -149,7 +130,7 @@ namespace Abraca {
 			_view.append_column(column);
 
 			var scrolled = new Gtk.ScrolledWindow(null, null);
-			scrolled.add_with_viewport(_view);
+			scrolled.add(_view);
 			scrolled.set_border_width(10);
 			scrolled.set_policy(
 				Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC
