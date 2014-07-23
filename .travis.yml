@@ -1,7 +1,7 @@
 language: c
 
 before_script:
-  - echo "deb http://archive.ubuntu.com/ubuntu/ saucy main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
+  - echo "deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get -qq update
   - sudo apt-get -qq install valac-0.24 libglib2.0-dev gobject-introspection libgirepository1.0-dev libxmmsclient-dev libxmmsclient-glib-dev intltool libgtk-3-dev libgee-0.8-dev
 
