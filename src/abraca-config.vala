@@ -123,7 +123,6 @@ namespace Abraca {
 			}
 
 			var box = dialog.get_content_area () as Gtk.Box;
-			box.pack_start(new PrettyLabel (_("Configure Sorting")), false, true, 0);
 			box.pack_start(table, true, true, 0);
 
 			dialog.show_all();
