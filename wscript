@@ -18,11 +18,11 @@ def configure(conf):
 
 	conf.env.append_unique("CFLAGS", ["-g", "-O0"])
 
-	conf.check_cfg(package='gio-2.0', atleast_version='2.40.0', args='--cflags --libs')
-	conf.check_cfg(package='gio-unix-2.0', atleast_version='2.40.0', args='--cflags --libs')
-	conf.check_cfg(package='glib-2.0', atleast_version='2.40.0', args='--cflags --libs')
-	conf.check_cfg(package='gmodule-2.0', atleast_version='2.40.0', args='--cflags --libs')
-	conf.check_cfg(package='gtk+-3.0', atleast_version='3.12.0', args='--cflags --libs')
+	conf.check_cfg(package='gio-2.0', atleast_version='2.40', args='--cflags --libs')
+	conf.check_cfg(package='gio-unix-2.0', atleast_version='2.40', args='--cflags --libs')
+	conf.check_cfg(package='glib-2.0', atleast_version='2.40', args='--cflags --libs')
+	conf.check_cfg(package='gmodule-2.0', atleast_version='2.40', args='--cflags --libs')
+	conf.check_cfg(package='gtk+-3.0', atleast_version='3.12', args='--cflags --libs')
 	conf.check_cfg(package='gee-0.8', atleast_version='0.10.5', args='--cflags --libs')
 	conf.check_cfg(package='xmms2-client', atleast_version='0.8', args='--cflags --libs')
 	conf.check_cfg(package='xmms2-client-glib', atleast_version='0.8', args='--cflags --libs')
