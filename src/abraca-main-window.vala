@@ -208,6 +208,7 @@ namespace Abraca {
 
 			Gtk.accelerator_parse(accel, out key, out modifier);
 			button.add_accelerator("activate", accel_group, key, modifier, 0);
+			button.set_tooltip_text(Gtk.accelerator_get_label(key, modifier));
 
 			return button;
 		}
