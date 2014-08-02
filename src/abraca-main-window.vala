@@ -57,7 +57,7 @@ namespace Abraca {
 			add(_main_ui);
 
 			try {
-				set_icon(new Gdk.Pixbuf.from_resource ("/org/xmms2/Abraca/abraca-32.png"));
+				set_icon(new Gdk.Pixbuf.from_resource ("/org/xmms2/Abraca/abraca-192.png"));
 			} catch (GLib.Error e) {
 				GLib.assert_not_reached ();
 			}
