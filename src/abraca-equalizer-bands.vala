@@ -35,6 +35,8 @@ public class EqualizerBands : Gtk.Box {
 
 	private bool defer_updates = false;
 
+	private bool need_resize = false;
+
 	public EqualizerBands()
 	{
 		Object(orientation: Gtk.Orientation.HORIZONTAL, spacing: 5);
@@ -98,7 +100,10 @@ public class EqualizerBands : Gtk.Box {
 			return;
 		}
 
-		band_count = next_band_count;
+		if (band_count != next_band_count) {
+			band_count = next_band_count;
+			need_resize = true;
+		}
 
 		for (var i=0; i < MAX_BANDS; i++) {
 			if (band_count <= i) {
@@ -112,10 +117,6 @@ public class EqualizerBands : Gtk.Box {
 				next_band_changes[i] = null;
 			}
 		}
-
-		var window = get_ancestor(typeof(Gtk.Window)) as Gtk.Window;
-		window.resize(100, 180);
-		queue_draw();
 	}
 
 	private double normalize(Gtk.Adjustment adjustment, double scale)
@@ -163,6 +164,15 @@ public class EqualizerBands : Gtk.Box {
 
 	public override bool draw(Cairo.Context cr)
 	{
+
+		if (need_resize) {
+			int min_width, natural_width;
+			ranges.get(0).get_preferred_width(out min_width, out natural_width);
+			var window = get_ancestor(typeof(Gtk.Window)) as Gtk.Window;
+			window.resize(min_width * band_count, min_width * 12);
+			need_resize = false;
+		}
+
 		var line = draw_line(cr);
 
 		var linear = new Cairo.Pattern.linear(0, 0, 0, get_allocated_height());
