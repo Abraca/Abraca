@@ -21,7 +21,6 @@
     <file preprocess="xml-stripblanks" compressed="true">ui/main_menu.xml</file>
     <file preprocess="xml-stripblanks" compressed="true">ui/mediainfo.xml</file>
     <file preprocess="xml-stripblanks" compressed="true">ui/server_browser.xml</file>
-    <file preprocess="xml-stripblanks" compressed="true">ui/toolbar.xml</file>
     <file compressed="true">ui/abraca.css</file>
   </gresource>
 </gresources>

@@ -35,7 +35,7 @@ sources = """
     abraca-server-discover.vala
     abraca-server-prober.vala
     abraca-stock.vala
-    abraca-toolbar.vala
+    abraca-time-slider.vala
     abraca-transform.vala
     abraca-treerow-map.vala
     abraca-treeview.vala

@@ -16,31 +16,26 @@
     </section>
   </menu>
   <menu id="win-menu">
+    <item>
+      <attribute name="label" translatable="yes">_Connect</attribute>
+      <attribute name='action'>win.connect</attribute>
+      <attribute name='accel'>&lt;Primary&gt;&lt;Shift&gt;c</attribute>
+    </item>
     <submenu>
-      <attribute name='label' translatable='yes'>_Music</attribute>
+      <attribute name='label' translatable='yes'>_Import</attribute>
       <section>
         <item>
-          <attribute name="label" translatable="yes">_Connect</attribute>
-          <attribute name='action'>win.connect</attribute>
-          <attribute name='accel'>&lt;Primary&gt;&lt;Shift&gt;c</attribute>
+          <attribute name='label' translatable="yes">_Files</attribute>
+          <attribute name='action'>win.add-files</attribute>
         </item>
-        <submenu>
-          <attribute name='label' translatable='yes'>_Add</attribute>
-          <section>
-            <item>
-              <attribute name='label' translatable="yes">_Files</attribute>
-              <attribute name='action'>win.add-files</attribute>
-            </item>
-            <item>
-              <attribute name='label' translatable="yes">_Directory</attribute>
-              <attribute name='action'>win.add-directories</attribute>
-            </item>
-            <item>
-              <attribute name='label' translatable="yes">_URL</attribute>
-              <attribute name='action'>win.add-url</attribute>
-            </item>
-          </section>
-        </submenu>
+        <item>
+          <attribute name='label' translatable="yes">_Directory</attribute>
+          <attribute name='action'>win.add-directories</attribute>
+        </item>
+        <item>
+          <attribute name='label' translatable="yes">_URL</attribute>
+          <attribute name='action'>win.add-url</attribute>
+        </item>
       </section>
     </submenu>
     <submenu>
@@ -80,5 +75,9 @@
         </item>
       </section>
     </submenu>
+    <item>
+      <attribute name="label" translatable="yes">_Equalizer</attribute>
+      <attribute name='action'>win.equalizer</attribute>
+    </item>
   </menu>
 </interface>
