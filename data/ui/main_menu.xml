@@ -19,7 +19,6 @@
     <item>
       <attribute name="label" translatable="yes">_Connect</attribute>
       <attribute name='action'>win.connect</attribute>
-      <attribute name='accel'>&lt;Primary&gt;&lt;Shift&gt;c</attribute>
     </item>
     <submenu>
       <attribute name='label' translatable='yes'>_Import</attribute>
