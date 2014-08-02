@@ -49,6 +49,7 @@ namespace Abraca {
 			{ "playback-skip-forward", on_playback_skip_forward },
 			{ "playback-skip-backward", on_playback_skip_backward },
 			{ "equalizer", on_open_equalizer },
+			{ "fullscreen", on_fullscreen }
 		};
 
 		public MainWindow (Gtk.Application app, Client client, GLib.MenuModel menu)
@@ -59,12 +60,15 @@ namespace Abraca {
 
 			add_action_entries (actions, this);
 
+			set_hide_titlebar_when_maximized(true);
+
 			var accel_group = new Gtk.AccelGroup();
 
 			_main_ui = create_widgets(client, accel_group, menu);
 
 			_now_playing = new NowPlaying(client);
-			_now_playing.hide_now_playing.connect (on_hide_now_playing);
+			_now_playing.hide_now_playing.connect (on_unfullscreen);
+
 
 			add(_main_ui);
 
@@ -89,25 +93,21 @@ namespace Abraca {
 			});
 		}
 
-		public void on_application_idle ()
+		public void on_fullscreen ()
 		{
-			GLib.warning("idle...");
-
-			if (!is_idle) {
-				is_idle = true;
-				remove(_main_ui);
-				show_menubar = false;
-				add(_now_playing);
-				_now_playing.grab_focus();
-				show_all();
-			}
+			remove(_main_ui);
+			show_menubar = false;
+			add(_now_playing);
+			_now_playing.grab_focus();
+			fullscreen();
+			_now_playing.show();
 		}
 
-		public void on_hide_now_playing ()
+		public void on_unfullscreen ()
 		{
-			is_idle = false;
 			remove(_now_playing);
 			show_menubar = true;
+			unfullscreen();
 			add(_main_ui);
 		}
 
@@ -228,7 +228,7 @@ namespace Abraca {
 			playback_btns.pack_start(playback_toggle_btn);
 
 			var playback_forward_btn = create_button("media-skip-forward", "win.playback-skip-forward",
-			                                         "<Primary>Left", accel_group);
+			                                         "<Primary>Right", accel_group);
 			playback_btns.pack_start(playback_forward_btn);
 
 			playback_label = new Gtk.Label("Start playback!");

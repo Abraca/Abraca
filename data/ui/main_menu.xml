@@ -76,6 +76,10 @@
       </section>
     </submenu>
     <item>
+      <attribute name="label" translatable="yes">_Fullscreen</attribute>
+      <attribute name='action'>win.fullscreen</attribute>
+    </item>
+    <item>
       <attribute name="label" translatable="yes">_Equalizer</attribute>
       <attribute name='action'>win.equalizer</attribute>
     </item>

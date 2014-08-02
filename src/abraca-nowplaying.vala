@@ -5,6 +5,7 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 	private Gdk.Pixbuf coverart;
 
 	private Client client;
+	private Gtk.AccelGroup accel_group;
 
 	private string artist;
 	private string album;
@@ -12,13 +13,12 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 
 	private bool fullscreen = false;
 
-	public NowPlaying(Client client)
+	public NowPlaying(Client c)
 	{
-		this.client = client;
+		client = c;
 
-		this.client.playback_current_info.connect(on_playback_current_info);
-		this.client.playback_current_coverart.connect(on_playback_current_coverart);
-		this.client.playback_playtime.connect(on_playback_playtime);
+		client.playback_current_info.connect(on_playback_current_info);
+		client.playback_current_coverart.connect(on_playback_current_coverart);
 
 		coverart = client.current_coverart;
 
@@ -28,10 +28,6 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 		events |= Gdk.EventMask.KEY_RELEASE_MASK;
 
 		can_focus = true;
-	}
-
-	private void on_playback_playtime(Client client, int id)
-	{
 	}
 
 	private void on_playback_current_info(Xmms.Value val)
@@ -48,46 +44,50 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 		queue_draw();
 	}
 
-	private static bool is_fullscreen_toggle_event (Gdk.EventKey ev)
+	private static bool match_event (string accel, Gdk.EventKey ev)
 	{
 		Gdk.ModifierType type;
 		uint key;
 
-		Gtk.accelerator_parse("<Primary>f", out key, out type);
+		Gtk.accelerator_parse(accel, out key, out type);
 
 		return ev.keyval == key && (ev.state & type) > 0;
 	}
 
 	public override bool key_press_event (Gdk.EventKey ev)
 	{
-		var parent = get_ancestor(typeof(Gtk.ApplicationWindow)) as Gtk.ApplicationWindow;
-
-		/* Need to press a real key/combo to modify fullscreen state or exit now-playing */
-		if (ev.is_modifier == 1)
+		if (match_event("<Primary>p", ev)) {
+			if (client.current_playback_status == Xmms.PlaybackStatus.PLAY) {
+				client.xmms.playback_pause();
+			} else {
+				client.xmms.playback_start();
+			}
 			return true;
-
-		if (is_fullscreen_toggle_event(ev)) {
-			if (fullscreen)
-				parent.unfullscreen();
-			else
-				parent.fullscreen();
-
-			fullscreen = !fullscreen;
-		} else {
-			hide_now_playing();
-			parent.unfullscreen();
 		}
 
-		return true;
+		if (match_event("<Primary>Left", ev)) {
+			client.xmms.playlist_set_next_rel(-1);
+			client.xmms.playback_tickle();
+			return true;
+		}
+
+		if (match_event("<Primary>Right", ev)) {
+			client.xmms.playlist_set_next_rel(1);
+			client.xmms.playback_tickle();
+			return true;
+		}
+
+		if (ev.is_modifier == 0) {
+			hide_now_playing();
+			return true;
+		}
+
+		return false;
 	}
 
 	public override bool button_release_event (Gdk.EventButton ev)
 	{
-		var parent = get_ancestor(typeof(Gtk.ApplicationWindow)) as Gtk.ApplicationWindow;
-		parent.unfullscreen();
-
 		hide_now_playing();
-
 		return true;
 	}
 
@@ -110,9 +110,9 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 
 	private void draw_metadata (Cairo.Context cr, int width, int height)
 	{
-		var text_size = width * 0.025;
-		var text_top = height * 0.37;
-		var text_left = width * 0.45;
+		var text_size = width * 0.020;
+		var text_top = height * 0.42;
+		var text_left = width * 0.40;
 
 		var layout = get_pango_layout (cr, text_size, (int)(width - text_left));
 
@@ -125,14 +125,14 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 
 		if (artist != null) {
 			cr.set_source_rgb(0.7, 0.7, 0.7);
-			cr.move_to(text_left, text_top + 1 * (text_size + text_size / 2.0));
+			cr.move_to(text_left, text_top + 2 * text_size);
 			layout.set_markup(_("<i><span size=\"xx-small\" foreground=\"#555\">by</span></i> ") + GLib.Markup.escape_text(artist), -1);
 			Pango.cairo_show_layout(cr, layout);
 		}
 
 		if (album != null) {
 			cr.set_source_rgb(0.7, 0.7, 0.7);
-			cr.move_to(text_left, text_top + 2 * (text_size + text_size / 2.0));
+			cr.move_to(text_left, text_top + 3.5 * text_size);
 			layout.set_markup(_("<i><span size=\"xx-small\" foreground=\"#555\">on</span></i> ") + GLib.Markup.escape_text(album), -1);
 			Pango.cairo_show_layout(cr, layout);
 		}
@@ -141,11 +141,11 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 	private void draw_coverart (Cairo.Context cr, int width, int height)
 	{
 		var text_size = width * 0.025;
-		var text_top = height * 0.37;
+		var text_top = height * 0.40;
 
 		var art_size = (int)(width * 0.3);
 		var art_top = text_top + (text_size + text_size / 2.0) * 3 - art_size;
-		var art_left = width * 0.12;
+		var art_left = width * 0.08;
 
 		var scaled = coverart.scale_simple(art_size, art_size, Gdk.InterpType.BILINEAR);
 		Gdk.cairo_set_source_pixbuf(cr, scaled, art_left, art_top);
@@ -164,18 +164,6 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 		cr.fill();
 	}
 
-	private void draw_hints (Cairo.Context cr, int height, int width)
-	{
-		var text_size = width * 0.010;
-
-		var layout = get_pango_layout (cr, text_size);
-
-		cr.move_to (text_size / 4, height - text_size * 2);
-		cr.set_source_rgb(0.25, 0.25, 0.25);
-		layout.set_text (_("Press [ESC] to close..."), -1);
-		Pango.cairo_show_layout(cr, layout);
-	}
-
 	public override bool draw (Cairo.Context cr)
 	{
 		var width = get_allocated_width();
@@ -189,9 +177,6 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 
 		if (coverart != null)
 			draw_coverart (cr, width, height);
-
-		draw_hints (cr, width, height);
-
 
 		return false;
 	}
