@@ -6,6 +6,7 @@ abraca (0.8.0-1) UNRELEASED; urgency=medium
   * Updated d/watch url pattern.
   * Explicitly disable colors in buildsystem.
   * Respect parallel=.. build options.
+  * Drop all patches (applied upstream).
 
  -- Daniel Svensson <dsvensson@gmail.com>  Sat, 23 Aug 2014 14:36:46 +0200
 
