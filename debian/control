@@ -2,7 +2,7 @@ Source: abraca
 Section: sound
 Priority: optional
 Maintainer: Fabrizio Regalli <fabreg@fabreg.it>
-Build-Depends: debhelper (>= 7.0.50~),
+Build-Depends: debhelper (>= 9),
                libgee-0.8-dev (>= 0.14.0),
                libgtk-3-dev,
                libxmmsclient-glib-dev (>= 0.8),
