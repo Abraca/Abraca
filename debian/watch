@@ -1,2 +1,2 @@
 version=3
-http://githubredir.debian.net/github/Abraca/Abraca/ (.*).tar.gz 
+http://sf.net/abraca/abraca-([0-9.]+).*\.tar\.bz2
