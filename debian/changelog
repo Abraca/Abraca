@@ -1,3 +1,9 @@
+abraca (0.8.0-1) UNRELEASED; urgency=medium
+
+  * Imported Upstream version 0.8.0
+
+ -- Daniel Svensson <dsvensson@gmail.com>  Sat, 23 Aug 2014 14:36:46 +0200
+
 abraca (0.7.0-1) unstable; urgency=low
 
   * Added DM-Upload-Allowed field
@@ -160,4 +166,3 @@ abraca (0.2-1) unstable; urgency=low
   * Initial release (Closes: #430729)
 
  -- Thomas Jollans <thomas@jollans.com>  Thu, 19 Jul 2007 22:58:21 +0200
-
