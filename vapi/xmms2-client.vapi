@@ -67,7 +67,7 @@ namespace Xmms {
 	}
 
 #if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
-	[CCode(cprefix="XMMS_COLLECTION_TYPE_")]
+	[CCode(cprefix="XMMS_COLLECTION_TYPE_", cname="xmmsv_coll_type_t")]
 	public enum CollectionType {
 		REFERENCE,
 		UNIVERSE,
@@ -85,6 +85,7 @@ namespace Xmms {
 		IDLIST
 	}
 #else
+	[CCode(cprefix="XMMS_COLLECTION_TYPE_", cname="xmmsv_coll_type_t")]
 	public enum CollectionType {
 		REFERENCE,
 		UNION,
@@ -276,8 +277,11 @@ namespace Xmms {
 		public Result medialib_entry_property_set_str_with_source(uint id, string source, string key, string val);
 		public Result medialib_entry_property_remove(uint id, string key);
 		public Result medialib_entry_property_remove_with_source(uint id, string source, string key);
-		public Result broadcast_medialib_entry_changed();
 		public Result broadcast_medialib_entry_added();
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode(cname="xmmsc_broadcast_medialib_entry_updated")]
+#endif
+		public Result broadcast_medialib_entry_changed();
 		public Result broadcast_mediainfo_reader_status();
 		public Result signal_mediainfo_reader_unindexed();
 
@@ -334,10 +338,19 @@ namespace Xmms {
 		public Result signal_visualisation_data ();
 	}
 
+
 	[Compact]
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+	[CCode(cname="xmmsv_t", cprefix="xmmsv_coll_", ref_function="xmmsv_ref", unref_function="xmmsv_unref")]
+#else
 	[CCode(cname="xmmsv_coll_t", cprefix="xmmsv_coll_", ref_function="xmmsv_coll_ref", unref_function="xmmsv_coll_unref")]
+#endif
 	public class Collection {
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode (cname = "xmmsv_new_coll")]
+#else
 		[CCode (cname = "xmmsc_coll_new")]
+#endif
 		public Collection(CollectionType type);
 		public void set_idlist([CCode (array_length = false)] int[] ids);
 		public void add_operand(Collection op);
@@ -355,6 +368,7 @@ namespace Xmms {
 		public CollectionType get_type();
 		public uint[] get_idlist();
 
+		public unowned Xmms.Value operands_get();
 		public bool operand_list_first();
 		public bool operand_list_valid();
 		public bool operand_list_entry(out Collection operand);
@@ -367,8 +381,14 @@ namespace Xmms {
 		public bool attribute_list_valid();
 		public void attribute_list_entry(out unowned string key, out unowned string val);
 		public void attribute_list_next();
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode(cname="xmmsv_coll_attribute_set_string")]
+#endif
 		public void attribute_set(string key, string val);
 		public bool attribute_remove(string key);
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode(cname="xmmsv_coll_attribute_get_string")]
+#endif
 		public bool attribute_get(string key, out unowned string val);
 		public void attribute_foreach(CollectionAttributeForeachFunc func);
 
@@ -377,6 +397,11 @@ namespace Xmms {
 		public static bool parse_custom(string pattern, CollectionParseTokensFunc tokens_func, CollectionParseBuildFunc build_func, out Collection coll);
 		public static Collection default_parse_build(CollectionToken[] tokens);
 		public static CollectionToken[] default_parse_tokens(string str, out unowned string newpos);
+
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode(cname="xmmsv_serialize")]
+		public Xmms.Value serialize();
+#endif
 	}
 
 
@@ -388,7 +413,7 @@ namespace Xmms {
 		public void disconnect();
 		public Xmms.Value get_value();
 		public void notifier_set(NotifierFunc func);
-		public void notifier_set_full(NotifierFunc func, UserDataFreeFunc free_func);
+		public void notifier_set_full(owned NotifierFunc func);
 		public void wait();
 	}
 
@@ -404,7 +429,11 @@ namespace Xmms {
 		[CCode(cname="xmmsv_new_string")]
 		public Value.from_string(string val);
 		[CCode(cname="xmmsv_new_coll")]
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		public Value.from_coll(Xmms.CollectionType val);
+#else
 		public Value.from_coll(Xmms.Collection val);
+#endif
 		[CCode(cname="xmmsv_new_bin")]
 		public Value.from_bin(uint8[] val);
 		[CCode(cname="xmmsv_new_list")]
@@ -426,10 +455,25 @@ namespace Xmms {
 		public bool get_list_iter (out unowned Xmms.ListIter iter);
 		public bool get_dict_iter (out unowned Xmms.DictIter iter);
 
-		public bool list_get(int pos, out Xmms.Value val);
+		public bool list_get(int pos, out unowned Xmms.Value val);
+		public bool list_get_int(int pos, out int val);
+		public bool list_get_string(int pos, out unowned string val);
+		public bool list_get_coll(int pos, out unowned Xmms.Collection val);
+
 		public bool list_set(Xmms.Value val);
+		public bool list_set_int(Xmms.Value val);
+		public bool list_set_string(Xmms.Value val);
+		public bool list_set_coll(Xmms.Value val);
+
 		public bool list_append(Xmms.Value val);
+		public bool list_append_int(int val);
+		public bool list_append_string(string val);
+		public bool list_append_coll(Xmms.Collection val);
+
 		public bool list_insert(int pos, Xmms.Value val);
+		public bool list_insert_int(int pos, int val);
+		public bool list_insert_string(int pos, string val);
+		public bool list_insert_coll(int pos, Xmms.Collection val);
 		public bool list_remove(int pos);
 		public bool list_clear();
 		public bool list_foreach(Xmms.ListForeachFunc func);
@@ -448,7 +492,47 @@ namespace Xmms {
 		public bool dict_entry_get_uint(string key, out uint val);
 		public bool dict_entry_get_collection(string key, out Xmms.Collection coll);
 
-		public Xmms.Value propdict_to_dict([CCode (array_length = false)] string[]? prefs=null);
+		public Xmms.Value propdict_to_dict([CCode (array_length = false, array_null_terminated = true)] string[]? prefs=null);
+
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		public void coll_set_idlist([CCode (array_length = false)] int[] ids);
+		public void coll_add_operand(Collection op);
+		public void coll_remove_operand(Collection op);
+
+		public bool coll_idlist_append(int id);
+		public bool coll_idlist_insert(int index, int id);
+		public bool coll_idlist_move(int index, int newindex);
+		public bool coll_idlist_remove(int index);
+		public bool coll_idlist_clear();
+		public bool coll_idlist_get_index(int index, out int val);
+		public bool coll_idlist_set_index(int index, int val);
+		public uint coll_idlist_get_size();
+
+		public CollectionType coll_get_type();
+		public uint[] coll_get_idlist();
+
+		public unowned Xmms.Value coll_operands_get();
+		public bool coll_operand_list_first();
+		public bool coll_operand_list_valid();
+		public bool coll_operand_list_entry(out Collection operand);
+		public bool coll_operand_list_next();
+		public bool coll_operand_list_save();
+		public bool coll_operand_list_restore();
+		public void coll_operand_list_clear();
+
+		public unowned Xmms.Value coll_attributes_get();
+		public void coll_attribute_list_first();
+		public bool coll_attribute_list_valid();
+		public void coll_attribute_list_entry(out unowned string key, out unowned string val);
+		public void coll_attribute_list_next();
+		public void coll_attribute_set(string key, string val);
+		public bool coll_attribute_remove(string key);
+		public bool coll_attribute_get(string key, out unowned string val);
+		public void coll_attribute_foreach(CollectionAttributeForeachFunc func);
+#endif
+
+		public Xmms.Value serialize();
+		public Xmms.Value deserialize();
 	}
 
 	[Compact]
@@ -457,10 +541,26 @@ namespace Xmms {
 		public bool entry(out unowned Xmms.Value val);
 		public bool valid();
 		public void first();
-		public bool next();
+		public void last();
+		public void next();
+		public void prev();
 		public bool seek(int pos);
+		public int tell();
+		public unowned Xmms.Value get_parent();
+
 		public bool insert(Xmms.Value val);
 		public bool remove();
+
+		public bool entry_int(out unowned string val);
+		public bool entry_string(out int val);
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode(cname="xmmsv_list_iter_entry")]
+#endif
+		public bool entry_coll(out unowned Xmms.Collection val);
+
+		public bool insert_int(int value);
+		public bool insert_string(string value);
+		public bool insert_coll(Xmms.Collection coll);
 	}
 
 	[Compact]
@@ -473,5 +573,23 @@ namespace Xmms {
 		public bool seek(string key);
 		public bool set(Xmms.Value val);
 		public bool remove();
+	}
+
+	/* Protocol details */
+	public const int IPC_PROTOCOL_VERSION;
+
+	public enum IpcObject {
+		MAIN
+	}
+
+	[CCode (cprefix="XMMS_IPC_CMD_")]
+	public enum IpcMainCommand {
+		HELLO
+	}
+
+	public enum IpcReply {
+		[CCode (cname="XMMS_IPC_CMD_REPLY")]
+		OK,
+		ERROR
 	}
 }

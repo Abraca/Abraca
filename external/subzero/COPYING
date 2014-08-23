@@ -1,0 +1,14 @@
+All the code is "Copyright (C) 2007-2012 Daniel Svensson" and is licensed
+under the GNU Lesser General Public License 2.1 (LGPL) except the files
+listed below. The full LGPL license text is available in COPYING.LGPL.
+
+-----
+
+This should be a complete list of exeptions to the "Daniel Svensson"
+copyright and/or LGPL license.
+
+README.markdown:
+        Licensed under GFDL without unmodifiable sections, by "Daniel Svensson".
+
+waf:
+		BSD 3-Clause License, https://code.google.com/p/waf/

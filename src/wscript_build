@@ -1,0 +1,55 @@
+sources = """
+    abraca-application.vala
+    abraca-album-view.vala
+    abraca-artist-grid.vala
+    abraca-client.vala
+    abraca-collections-cellrenderer.vala
+    abraca-collections-model.vala
+    abraca-collections-view.vala
+    abraca-config.vala
+    abraca-configurable.vala
+    abraca-coverart.vala
+    abraca-drag-and-drop.vala
+    abraca-equalizer-bands.vala
+    abraca-equalizer-model.vala
+    abraca-equalizer-widget.vala
+    abraca-filter-browser-model.vala
+    abraca-filter-browser.vala
+    abraca-filter-editor.vala
+    abraca-filter-model.vala
+    abraca-filter-searchbox.vala
+    abraca-filter-view.vala
+    abraca-filter-widget.vala
+    abraca-main-window.vala
+    abraca-medialib.vala
+    abraca-nowplaying.vala
+    abraca-playlist-model.vala
+    abraca-playlist-view.vala
+    abraca-playlist-widget.vala
+    abraca-rating-entry.vala
+    abraca-resolver.vala
+    abraca-selected-rows-mixin.vala
+    abraca-server-browser.vala
+    abraca-server-discover-tcp.vala
+    abraca-server-discover-unix.vala
+    abraca-server-discover.vala
+    abraca-server-prober.vala
+    abraca-stock.vala
+    abraca-time-slider.vala
+    abraca-transform.vala
+    abraca-treerow-map.vala
+    abraca-treeview.vala
+    abraca-volume-button.vala
+""".split()
+
+bld.program(
+    features     = 'c cprogram',
+    target       = 'abraca',
+    use          = 'subzero resources',
+    packages     = 'gtk+-3.0 gio-unix-2.0 gee-0.8 xmms2-client-glib subzero posix gdk-add-filter build-config',
+    uselib       = 'GTK+-3.0 GMODULE-2.0 GIO-2.0 GEE-0.8 XMMS2-CLIENT XMMS2-CLIENT-GLIB math',
+    source       = sources,
+    vapi_dirs    = '../vapi ../external',
+    vala_defines = bld.env.VALADEFINES,
+    vala_target_glib = '2.40',
+)

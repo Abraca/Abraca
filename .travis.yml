@@ -1,0 +1,24 @@
+language: c
+
+before_script:
+  - sudo rm -rf /etc/dpkg/dpkg.cfg.d/multiarch
+  - sudo mkdir -p /etc/apt/apt.conf.d
+  - sudo mkdir -p /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/
+  - gdk-pixbuf-query-loaders | sudo tee /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache
+  - echo -e 'Dpkg::Options {\n\t"--force-confold";\n}' | sudo tee /etc/apt/apt.conf.d/local
+  - echo "deb http://archive.ubuntu.com/ubuntu/ utopic main restricted universe multiverse" | sudo tee /etc/apt/sources.list
+  - sudo apt-get -qq update
+  - sudo apt-get -qq --force-yes dist-upgrade
+  - sudo apt-get -qq --force-yes install pkg-config valac-0.24 libglib2.0-dev gobject-introspection libgirepository1.0-dev libxmmsclient-dev libxmmsclient-glib-dev intltool libgtk-3-dev libgee-0.8-dev
+
+script:
+  - ./waf configure --prefix=/usr
+  - ./waf build
+  - sudo ./waf install
+
+notifications:
+  email:
+    recipients:
+      - dsvensson@gmail.com
+    on_success: change
+    on_failure: always

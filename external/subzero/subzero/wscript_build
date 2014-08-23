@@ -1,0 +1,22 @@
+bld.shlib(
+	packages         = 'gio-2.0',
+	packages_private = 'platform-socket posix',
+	features         = 'c cshlib',
+	target           = 'subzero',
+	uselib           = 'GIO-2.0',
+	source           = 'subzero-browser.vala subzero-dns.vala subzero-dns-record-visitor.vala subzero-util.vala',
+	gir              = 'SubZero-0.1',
+	vapi_dirs        = '../vapi',
+	vala_defines     = bld.env.VALADEFINES,
+	vala_target_glib = '2.34',
+)
+
+if bld.env.G_IR_COMPILER:
+	bld(
+		name = 'typelib',
+		after = 'subzero',
+		source = 'SubZero-0.1.gir',
+		target = 'SubZero-0.1.typelib',
+		rule = '${G_IR_COMPILER} --shared-library=libsubzero ${SRC} -o ${TGT}',
+		install_path = '${LIBDIR}/girepository-1.0'
+	)
