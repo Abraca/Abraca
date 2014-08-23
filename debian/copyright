@@ -325,7 +325,8 @@ License: CC-By-SA-2.0
 Files: debian/*
 Copyright: 2007, Thomas Jollans <thomas@jollans.com>
            2009-2010, Benjamin Drung <bdrung@ubuntu.com>
-	   2011-2012, Fabrizio Regalli <fabreg@fabreg.it>
+           2011-2012, Fabrizio Regalli <fabreg@fabreg.it>
+           2014, Daniel Svensson <dsvensson@gmail.com>
 License: GPL-2+
  On Debian systems the full text of the GNU General Public License
  can be found in the `/usr/share/common-licenses/GPL-2' file.
