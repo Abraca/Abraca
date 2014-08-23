@@ -2,6 +2,12 @@
 
 export NOCOLOR=1
 
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	NUMJOBS := $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+else
+	NUMJOBS := 1
+endif
+
 %:
 	dh $@
 
@@ -9,7 +15,7 @@ override_dh_auto_configure:
 	./waf configure --prefix=/usr -v
 
 override_dh_auto_build:
-	./waf build -v
+	./waf build -v -j $(NUMJOBS)
 
 override_dh_installchangelogs:
 	dh_installchangelogs $(CURDIR)/abraca-0.8.0.ChangeLog
