@@ -2,7 +2,7 @@ abraca (0.8.0-1) UNRELEASED; urgency=medium
 
   * Imported Upstream version 0.8.0
   * Bump debhelper compat to 9.
-  * Added myself to d/copyright and bumped year.
+  * Updated contact info and details in d/copyright.
 
  -- Daniel Svensson <dsvensson@gmail.com>  Sat, 23 Aug 2014 14:36:46 +0200
 
