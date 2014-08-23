@@ -1,0 +1,683 @@
+Changes between 0.7.1 and 0.8.0
+
+ Release date: 2014-08-03
+ Authors contributing to this release: 4
+ Number of changesets: 144
+ Number of files in this release: 104
+
+ Daniel Svensson:
+  * BUG(15): Fix server prober after Service Clients API bump.
+  * FEATURE(8): First working server browser.
+  * OTHER: Add 'Frank Duckhorn' to about dialog.
+  * OTHER: Add 'on' and 'by' in nowplaying view.
+  * OTHER: Add (empty) css stylesheet for GTK styling.
+  * OTHER: Add FilterBrowser, an way to filter media.
+  * OTHER: Add SelectedRowsMixin to AbracaTreeView.
+  * OTHER: Add Travis-CI description.
+  * OTHER: Add a GResource builder to SCons setup.
+  * OTHER: Add a base TreeView with sane drag-n-drop.
+  * OTHER: Add a default cover art used if no art set.
+  * OTHER: Add a dirty hack that finds latest gtk/cairo versions.
+  * OTHER: Add a jhbuild module definition suited for Mac OS X.
+  * OTHER: Add a resolver that dispatches multiple metadata requests.
+  * OTHER: Add a separator between about/quit menu items.
+  * OTHER: Add accelerators to playback button tooltips.
+  * OTHER: Add beginning of a pretty artist/album view.
+  * OTHER: Add compatibility with latest xmms2-devel API changes.
+  * OTHER: Add copyright year updating script.
+  * OTHER: Add platform independent shortcuts.
+  * OTHER: Add proper dist scripts.
+  * OTHER: Add shortcuts for playback manipulation.
+  * OTHER: Add some compat ifdefs for xmms2-devel.
+  * OTHER: Add some debug for travis not finding gtk.
+  * OTHER: Allow DnD from FilterBrowser.
+  * OTHER: Avoid deprecated VBox/HBox/VPaned/HPaned/HScale.
+  * OTHER: Avoid deprecated button pressed/released events.
+  * OTHER: Avoid deprecated widget.modify_base.
+  * OTHER: Bind Value.list_insert_* functions for xmmsclient.
+  * OTHER: Bump Gtk version dependency.
+  * OTHER: Bump Ubuntu repo again for Travis.
+  * OTHER: Bump Ubuntu repo for Travis.
+  * OTHER: Bump travis build dependencies.
+  * OTHER: Bump vala dependency.
+  * OTHER: Change 'from' to 'on' in metadata display in toolbar.
+  * OTHER: Change now-playing fullscreen key to <Primary>f.
+  * OTHER: Cleanup NowPlaying.
+  * OTHER: Cleanup metadata viewer.
+  * OTHER: Cleanup toolbar button fading css settings.
+  * OTHER: Coding style in FilterBrowser.
+  * OTHER: Default to build with debug enabled.
+  * OTHER: Delete playlist entry if backspace pressed.
+  * OTHER: Don't copy pango modules since they're built-in.
+  * OTHER: Don't crash update script if git module found.
+  * OTHER: Don't forget to initialize now-playing coverart.
+  * OTHER: Emit an event if idle for 20 sec.
+  * OTHER: Emit default cover art if missing or broken.
+  * OTHER: Enable fixed-height-mode again for playlist.
+  * OTHER: Enter the equalizer widget.
+  * OTHER: Fix equalizer size and fallback handling.
+  * OTHER: Fix layout for sorting config dialog.
+  * OTHER: Fix some unused warnings.
+  * OTHER: Fix typo in equalizer widget.
+  * OTHER: Fix typo in nowplaying widget.
+  * OTHER: Fix vala 0.20 incompatibilities.
+  * OTHER: Ignore Xmms.PlaylistChange.UPDATE broadcast.
+  * OTHER: Implement launching of local server.
+  * OTHER: Include vala in update-modules.py script.
+  * OTHER: Increase Icon size.
+  * OTHER: Increase toolbar fadeout delay.
+  * OTHER: Kill off useless helper function.
+  * OTHER: Make current_id a property in Client.
+  * OTHER: Make metadata resolver cb's unowned.
+  * OTHER: Make playlist-changed handler more future proof.
+  * OTHER: Make title a bit larger in now-playing view.
+  * OTHER: Make version checks less strict.
+  * OTHER: Migrate from SCons to waf.
+  * OTHER: Migrate to GtkApplication, GtkApplicationWindow and GMenu.
+  * OTHER: Migrate toolbar to GtkHeaderBar.
+  * OTHER: Move DnD code to helper class.
+  * OTHER: Move GdkAtoms into DnD helpers.
+  * OTHER: Normalize 'from' to 'on' for album in playlist.
+  * OTHER: Port Abraca to GResource for images/ui files.
+  * OTHER: Re-arrange source tree layout.
+  * OTHER: Refactor toolbar ui and to build from xml.
+  * OTHER: Remove BinaryBlob/GdkPixBufCSource SCons tools.
+  * OTHER: Remove PrettyLabel from build script.
+  * OTHER: Remove Travis gtk debug printouts.
+  * OTHER: Remove broken accelerator for connect dialog.
+  * OTHER: Remove dead code.
+  * OTHER: Remove gladeui, was never worth the effort.
+  * OTHER: Remove old mac-integration stuff.
+  * OTHER: Remove remaining uses of PrettyLabel.
+  * OTHER: Remove some lingering tool imports.
+  * OTHER: Remove unused avahi VAPI files.
+  * OTHER: Remove unused member in filtersearchbox.
+  * OTHER: Remove unused variable.
+  * OTHER: Remove use of GtkStock-related functionality.
+  * OTHER: Remove workaround for old Vala bug.
+  * OTHER: Rename some variables.
+  * OTHER: Replace GtkTable with GtkGrid.
+  * OTHER: Replace GtkVBox/GtkHBox with GtkBox.
+  * OTHER: Replace x-xmmsclient-track-id with x-xmmsclient-collection drag data.
+  * OTHER: Run module update script.
+  * OTHER: Save config at the right shutdown code paths.
+  * OTHER: See if adding pkg-config to travis helps.
+  * OTHER: Set tooltip column for playlist view.
+  * OTHER: Show now playing in full window on 20s idle.
+  * OTHER: Simplify FilterView column editor.
+  * OTHER: Store non-escaped text for FilterBrowser.
+  * OTHER: Tighten gee version constraint.
+  * OTHER: Tighten up some build dependencies.
+  * OTHER: Try to fix travis, still no gtk found.
+  * OTHER: Update AUTHORS a bit.
+  * OTHER: Update DnD related naming.
+  * OTHER: Update README with travis-ci image.
+  * OTHER: Update README.
+  * OTHER: Update Travis config.
+  * OTHER: Update copyright year.
+  * OTHER: Update copyright year.
+  * OTHER: Update documentation a bit.
+  * OTHER: Update jhbuild modules description.
+  * OTHER: Update stock-icon names for volume icons.
+  * OTHER: Update subzero with BSD setsockopt workaround.
+  * OTHER: Update the Mac OS X bundling settings.
+  * OTHER: Update theme for Mac OS X bundle.
+  * OTHER: Update theme for Mac OS X settings.ini.
+  * OTHER: Update to latest version of gtk/cairo.
+  * OTHER: Update to libgee 0.8.
+  * OTHER: Update travis config for gee 0.8.
+  * OTHER: Update xmms2-client.vapi to bind more functions.
+  * OTHER: Use Abraca.TreeView in filter-, and playlist-view.
+  * OTHER: Use Xmms.Value (de)serialization for drag-n-drop.
+  * OTHER: Use Xmms.ValueType.LIST for row drag data.
+  * OTHER: Use callback supplied status variable instead of global.
+  * OTHER: Use playback_current_* in toolbar.
+  * OTHER: Use png instead of svg for GNOME icon.
+  * OTHER: Use shared constants for DnD sources/targets.
+  * OTHER: Use tearoff_title instead of title in FilterView.
+  * OTHER: _current_info and _current_coverart in Client.
+  * OTHER: propdict_to_dict VAPI-indication for null terminated array.
+  * OTHER: valac 0.18 compatibility.
+  * Update XMMS2 vapi file.
+  * Use GtkCellRendererText's builtin height setting.
+
+ Erik Massop:
+  * OTHER: Add POT
+  * OTHER: Add POT generation script
+  * OTHER: Make more text translatable
+  * OTHER: Replace some weird text
+  * OTHER: Update Dutch translation
+  * OTHER: add libm
+
+ Frank Duckhorn:
+  * OTHER: Clear playlist bevore add on replace.
+  * OTHER: Remove debug printf's.
+  * OTHER: sort collections
+
+ dsvensson:
+  * Update README.markdown
+
+
+
+Changes between 0.7.0 and 0.7.1
+
+ Release date: 2012-06-17
+ Authors contributing to this release: 2
+ Number of changesets: 6
+ Number of files in this release: 111
+
+ Daniel Svensson:
+  * OTHER: Bump copyright year to 2012.
+  * OTHER: Update my email-address.
+  * OTHER: Update web-page url.
+
+ Erik Massop:
+  * BUG(1): check _volatile_rating for null
+  * BUG(4): Fix dropping within playlist after last entry
+  * OTHER: Gdk.Pixbuf.from_inline no longer takes length
+
+
+
+Changes between 0.6.0 and 0.7.0
+
+ Release date: 2012-03-19
+ Authors contributing to this release: 1
+ Number of changesets: 28
+ Number of files in this release: 111
+
+ Daniel Svensson:
+  * BUG(250): Migrate to Gtk+ 3.0.
+  * OTHER: Add a script that shrinks Abraca.app a bit.
+  * OTHER: Add equalizer.
+  * OTHER: Add exception handling in coverart manager.
+  * OTHER: Add support for Mac menu bar.
+  * OTHER: Add support for creating an Abraca.app on OS X.
+  * OTHER: Always create a new ServerBrowser.
+  * OTHER: Change some GLib.error to GLib.warning.
+  * OTHER: Compatibility for Vala 0.14.
+  * OTHER: Compile fixes for valac 0.12 track.
+  * OTHER: Copy the svg versions of the tango theme and the adwaita theme engine.
+  * OTHER: Don't show two Quit menu items on OS X.
+  * OTHER: More Gtk3 work on server-browser UIBuilder.
+  * OTHER: More work on the server browser.
+  * OTHER: NUL-terminate embedded resources.
+  * OTHER: Pass xmmsc_conn_t ref to mainloop shutdown.
+  * OTHER: Replace some deprecated libgee calls.
+  * OTHER: Replace some deprecated methods.
+  * OTHER: Revert "Disable the server browser."
+  * OTHER: Revert "Quit when dropping connection to XMMS2."
+  * OTHER: Update Copyright year.
+  * OTHER: Update GTK3 theme settings for Mac OS X.
+  * OTHER: Update dependency checks/docs.
+  * OTHER: Update server browser ui to gtk3.
+  * OTHER: Update widget palettes from gladeui-1.0 to gladeui-2.0.
+  * OTHER: Use the stock property for stock icons.
+  * OTHER: Vala 0.16 compatibility.
+  * OTHER: s/Gtk.STOCK_/Gtk.Stock./g
+
+
+
+Changes between 0.5.0 and 0.6.0
+
+ Release date: 2011-01-22
+ Authors contributing to this release: 3
+ Number of changesets: 91
+ Number of files in this release: 98
+
+ Daniel Svensson:
+  * BUG(179): Seek with mouse wheel.
+  * BUG(216): Make volume more robust.
+  * BUG(242): Respect partofset when sorting filterview.
+  * BUG(244): Update CellRendererCollection to use Cairo for rendering.
+  * BUG(244): Update RatingEntry to use Cairo for rendering.
+  * BUG(248): Add more guards for non-active-playlist modifications.
+  * OTHER: Add a default command line parser.
+  * OTHER: Add a define checker to build system.
+  * OTHER: Add a return value for volume callback.
+  * OTHER: Add avahi-client pkg-config.
+  * OTHER: Add generic delegate support to selected rows util.
+  * OTHER: Add gradient header to configure columns dlg.
+  * OTHER: Add gradient header to connect dlg.
+  * OTHER: Add gradient header to metadata dlg.
+  * OTHER: Add gradient header to sorting dlg.
+  * OTHER: Add icons to search field.
+  * OTHER: Add release script.
+  * OTHER: Add support for updating cover art.
+  * OTHER: Break out Client singleton usage from toolbar.
+  * OTHER: Break out gradient header to a widget.
+  * OTHER: Bring clarity and correctness to RatingEntry.
+  * OTHER: Bump required vala version.
+  * OTHER: Bump some version numbers.
+  * OTHER: Bump vala version to 0.8.0
+  * OTHER: Bump vala version to 0.9.4
+  * OTHER: Change Avahi.Protocol from struct to enum.
+  * OTHER: Check for Collections 2.0.
+  * OTHER: Clean up SCons handling of pkg-config deps.
+  * OTHER: Cleanup try_connect logic.
+  * OTHER: Code cleanup.
+  * OTHER: Code cleanup.
+  * OTHER: Code style cleanup.
+  * OTHER: Coding style cleanup.
+  * OTHER: Coding style cleanup.
+  * OTHER: Coding style cleanup.
+  * OTHER: Coding style cleanups in Toolbar.
+  * OTHER: Coding style cleanups.
+  * OTHER: Coding style updates in Config.
+  * OTHER: Combine config conditions.
+  * OTHER: Decrease coupling.
+  * OTHER: Disable the server browser.
+  * OTHER: Downgrade avahi connection errors to warnings.
+  * OTHER: Drop singleton from Client class.
+  * OTHER: Finally remove the Abraca class.
+  * OTHER: Fix CollView.on_row_activated parameter type.
+  * OTHER: Fix CollView.ont_cell_edited parameter type.
+  * OTHER: Fix FTBFS with Vala 0.8.0
+  * OTHER: Fix avahi resolve method, probably needs more cleanup.
+  * OTHER: Fix build with valac 0.9.1
+  * OTHER: Fix coding style in server browser.
+  * OTHER: Get rid of medialib singletonisch access.
+  * OTHER: Handle invalid parameters.
+  * OTHER: Ignore IPv6 for now as it's not reliable with DrN mdns
+  * OTHER: Improve shadow drawing in header labels.
+  * OTHER: Make Sorting.field constant.
+  * OTHER: Make Toolbar.on_bindata_retrieve more roboust.
+  * OTHER: Make it easier to use snapshots of vala.
+  * OTHER: Make iter in on_playlist_move non-nullable, fixes gcc warning.
+  * OTHER: More code cleanup.
+  * OTHER: Move connected state sensitivity updates.
+  * OTHER: Only update volume when mixer available.
+  * OTHER: Properly rebase absolute path names too.
+  * OTHER: Quit when dropping connection to XMMS2.
+  * OTHER: Random code cleanups in server browser.
+  * OTHER: Remove MainHPaned class.
+  * OTHER: Remove RightHPaned class.
+  * OTHER: Remove singleton access to main_window.
+  * OTHER: Remove singleton access to sorting config.
+  * OTHER: Remove unused member variable.
+  * OTHER: Remove unused property from server browser ui.
+  * OTHER: Remove useless braces introduced earlier.
+  * OTHER: Replace connected/disconnected signals with connection_state_changed.
+  * OTHER: Set correct array type for xmmsv_get_bin.
+  * OTHER: Simplify play/pause icon update.
+  * OTHER: Temporarily disable server browser on startup.
+  * OTHER: Update idlist to use int instead of uint.
+  * OTHER: Update signal connection to non-deprecated version.
+  * OTHER: Update xmmsv bin to uint8 according to rest of Vala bindings.
+  * OTHER: Use GdkKeysym define in playlist key event.
+  * OTHER: Use collections to insert list of ids.
+  * OTHER: Use foreach_selected_row in FilterView.on_menu_info.
+  * OTHER: Use foreach_selected_row in PlaylistView.delete_selected.
+  * OTHER: Use get_selected_rows when dragging from FilterView.
+  * OTHER: Use string.length everywhere.
+  * OTHER: enable/disable volume based on channel count.
+  * OTHER: use non-deprecated signal attachment.
+
+ Erik Massop:
+  * BUG(245): Apply config before showing widgets
+  * BUG(246): Fix typo
+  * BUG(247): More accurate dropping
+
+ Sebastian Noack:
+  * BUG(225): Added server browser with avahi integration.
+  * OTHER: Added os detection to scons.
+
+
+
+Changes between 0.4.1 and 0.5.0
+
+ Release date: 2010-04-03
+ Authors contributing to this release: 3
+ Number of changesets: 100
+ Number of files in this release: 85
+
+ Daniel Svensson:
+  * BUG(210): Replace C version of playlist_map with a Vala version.
+  * BUG(210): Use Gee.HashMap in filter_model.
+  * BUG(220): Don't overwrite unsaved metadata.
+  * BUG(222): disconnect broadcasts/signals on disconnects.
+  * BUG(226): Support Return-key for adding/replacing ids from FilterView.
+  * BUG(229): s/weak/unowned/g in client.vala
+  * BUG(229): s/weak/unowned/g in collection_cellrenderer.vala
+  * BUG(229): s/weak/unowned/g in collections_model.vala
+  * BUG(229): s/weak/unowned/g in collections_view.vala
+  * BUG(229): s/weak/unowned/g in configurable.vala
+  * BUG(229): s/weak/unowned/g in filter_editor.vala
+  * BUG(229): s/weak/unowned/g in filter_model.vala
+  * BUG(229): s/weak/unowned/g in filter_view.vala
+  * BUG(229): s/weak/unowned/g in medialib.vala
+  * BUG(229): s/weak/unowned/g in playlist-map.vapi
+  * BUG(229): s/weak/unowned/g in playlist_model.vala
+  * BUG(229): s/weak/unowned/g in playlist_view.vala
+  * BUG(229): s/weak/unowned/g in right_hpaned.vala
+  * BUG(229): s/weak/unowned/g in toolbar.vala
+  * BUG(229): s/weak/unowned/g in transform.vala
+  * BUG(229): s/weak/unowned/g in volume_button.vala
+  * FEATURE(218): Try to launch xmms2d if unable to connect.
+  * OTHER: Add Dutch translations.
+  * OTHER: Add PlaylistWidget and drop singleton use in playlist classes.
+  * OTHER: Add Sebastian Noack to AUTHORS.
+  * OTHER: Add generated vapi-files as dependencies in vala builder.
+  * OTHER: Add libgee to INSTALL document.
+  * OTHER: Add pretty-print to SHCCCOMSTR.
+  * OTHER: Add some long needed directory structure to src/
+  * OTHER: Bump valac version dependency.
+  * OTHER: Bump version to 0.5.0
+  * OTHER: Clean up Client access in main_window.
+  * OTHER: Connect activate/changed signals to genre combobox.
+  * OTHER: Control + l makes the search box grab focus.
+  * OTHER: Emit all config values on connect.
+  * OTHER: Enforce the version deps found in INSTALL.
+  * OTHER: Fix a FTBFS caused by new GDK vapi file.
+  * OTHER: Fix a syntax error when building resources bundles on ARM.
+  * OTHER: Fix bug exposed by Vala 0.7.8.
+  * OTHER: Fix bug in playlist_insert.
+  * OTHER: Fix indentation issue.
+  * OTHER: Fix inserts beyond the last entry of the playlist.
+  * OTHER: Fix some stupid naming.
+  * OTHER: Generate a C-file for the embedding stuff.
+  * OTHER: Grab version from git if available.
+  * OTHER: Hey, it's 2010 now \o/
+  * OTHER: Hook up repeat menu items to xmms2 config.
+  * OTHER: Hook up the menubar's AccelGroup to the window.
+  * OTHER: Import PATH into SCons.
+  * OTHER: Indentation issues in gladeui SConscript.
+  * OTHER: Introduce a Run method in site_init.py.
+  * OTHER: It might make sense to actually *use* the config too.
+  * OTHER: Make on_menu_playlist_filter more readable.
+  * OTHER: Make the target depend on vapi files, not the sources.
+  * OTHER: Migrate all += signal hookups to the new .connect() syntax.
+  * OTHER: Move git version check to configure.
+  * OTHER: Move rating_entry.vala to widgets/rating_entry.vala.
+  * OTHER: Select text when focusing the search box.
+  * OTHER: Skip GTK cleanup on shotdown.
+  * OTHER: Straighten out PlaylistView constructor a bit.
+  * OTHER: Throttle collection queries in search-as-you-type.
+  * OTHER: Update playlist context-menu to use new style vala signal connects.
+  * OTHER: Update xmms2-client.vapi to new syntax.
+  * OTHER: Use .casefold() instead of .down().
+  * OTHER: Use SelectedRowsMixin in PlaylistView too.
+  * OTHER: Use more jobs on multi-core systems.
+
+ Erik Massop:
+  * BUG(240): Valac version check fails for 0.7.10
+  * FEATURE(232): Show cover art for current song in tooltip.
+
+ Sebastian Noack:
+  * BUG(224): Added german translations.
+  * BUG(227): Check for Vala 0.7.7 in SConstruct.
+  * BUG(228): Set the textdomain for gettext
+  * BUG(230): Add LOCALEDIR to build-config.h and bind it.
+  * BUG(233): Only show VolumeButton if volume control is available.
+  * BUG(234): Added "date" to the list of available properties.
+  * BUG(235): Update dynamic columns on columns-changed signal in FilterTreeView.
+  * OTHER: Added CellRendererTogglePixbuf.
+  * OTHER: Added plugin for glade-3.
+  * OTHER: Bind textdomain codeset to make non-ascii translation strings work.
+  * OTHER: Do not query collection from PlaylistView and CollectionsView.
+  * OTHER: Fixed some translated multiline strings.
+  * OTHER: Fixed typo in log message, when configuration file is corrupted.
+  * OTHER: Got rid of FilterModel.create factory function. It is not needed anymore.
+  * OTHER: Got rid of enum FilterColumn in order to FilterModel.Column.
+  * OTHER: Identify columns by their title instead of by their Gtk.Label's title.
+  * OTHER: Made columns of FilterTreeView sortable.
+  * OTHER: Manage custom icons as stock icons.
+  * OTHER: Prevent user from removing all columns from FilterTreeView.
+  * OTHER: Removed incomplete, unneeded first sentence of the license text in the about dialog.
+  * OTHER: Removed obsolete Widget.CheckMenuItem.
+  * OTHER: Removed unneeded cast.
+  * OTHER: Renamed CollectionCellRenderer to CellRendererCollection to follow official naming schema.
+  * OTHER: Search instantly while the user is typing.
+  * OTHER: Sort descending by default and fixed the direction of sort indicators.
+  * OTHER: Strip duplicates when filtering by metadata from the playlist's contextmenu.
+  * OTHER: Update to latesta API (as of DrN-TEST1).
+  * OTHER: Updated translation files.
+  * OTHER: Use GLib.return_if_reached(), to generate also a log message.
+  * OTHER: Use Object (property: value) constructor chain up.
+  * OTHER: Use glib's error logging facilities instead of GLib.stdout and GLib.stderr.
+  * OTHER: Use utf-8 instead of xml entities in data/ui/about.xml.
+
+
+
+Changes between 0.4 and 0.4.1
+
+ Release date: 2009-10-13
+ Authors contributing to this release: 3
+ Number of changesets: 12
+ Number of files in this release: 67
+
+ Daniel Svensson:
+  * OTHER: Add Finn Thain to contributers.
+  * OTHER: Bump Vala dependency in INSTALL.
+  * OTHER: Bump version to 0.4.1-WiP.
+  * OTHER: Don't need custom vapi-files any longer.
+  * OTHER: Fix Slowlaris crash.
+  * OTHER: Fix binaryblob comment.
+  * OTHER: Fix memory management bug.
+  * OTHER: Fix xmmsv_get_coll owner issue in .vapi-file.
+  * OTHER: Sort source files.
+  * OTHER: s/weak/unowned/g in xmms2-client.vapi.
+
+ Erik Massop:
+  * BUG(221): Make sure metadata dialog gets closed.
+
+ Finn Thain:
+  * OTHER: Make SCons listen to AS environment.
+
+
+
+Changes between 0.3 and 0.4
+
+ Release date: 2009-08-22
+ Authors contributing to this release: 5
+ Number of changesets: 197
+ Number of files in this release: 70
+
+ Carl-Emil Kjellstrand:
+  * OTHER: Show 'Today' and 'Yesterday' in datefields.
+
+ Christopher Rosell:
+  * BUG(139): Remember last used folder/url from file dialogs.
+  * BUG(165): Allow for late config retrieval/early saving
+  * BUG(171): Change add url/filter Entry into ComboBoxEntry with auto completion of 25 last entries.
+  * BUG(187): Collections tree should be more keyboard friendly
+  * BUG(199): Add repeat options to playlist menu
+  * BUG(202): Handle the exception when no vala compiler is found.
+  * OTHER: Add configval_changed signal to Client class
+  * OTHER: Add license header to configurable.vala
+  * OTHER: Change add file/url dialogs into subclasses
+  * OTHER: Update to Vala 0.3.4 vapi.
+  * OTHER: Use file.has_key() instead of temp variable when loading strings from config.
+
+ Daniel Svensson:
+  * BUG(110): Load FilterView columns from config file.
+  * BUG(110): Rudimentary support for dynamic columns.
+  * BUG(110): Yey! Got rid of the C hack! \o/ By using a static factory method the C hack could be removed.
+  * BUG(131): Drag any collection/playlist to any playlist.
+  * BUG(140): Grab playlist name from playlist changed dict.
+  * BUG(141): Change the name of the SCons options to be more intuitive to theefer.
+  * BUG(143): Make cross-compilation a bit easier. To compile for win32: ./scons -j3 CC=/usr/bin/i586-mingw32msvc-gcc \  PKG_CONFIG_FLAGS="--define-variable=prefix=/path/to/gtkwin32/" \  PKG_CONFIG_LIBDIR="/path/to/gtkwin32/lib/pkgconfig" \  LINKFLAGS="-Wl,--subsystem,windows" \  PROGSUFFIX=".exe"
+  * BUG(144): Make abraca build with Vala trunk (very soon to be 0.2.0). This should be backwards compatible, only stricter use of the language. I also threw in new .vapi-files which happened to be compatible with our current code, but should also provide working bindings for stuff that we will use in the future. Hopefully we can drop distribution of .vapi-files after 0.2.0 (if not earlier), but a nice convenience for the moment.
+  * BUG(146): Add translation support.
+  * BUG(148): Use the new upper case PREFIX in the SConscript files. (doh)
+  * BUG(149): Add PKG_CONFIG_PATH variable import again.
+  * BUG(151): Let SCons Configure-stuff generate a config.h for us. This also upgrades to SCons 0.98 as conf.Define didn't exist before.
+  * BUG(153): Make exception handling work in CollectionsTree:create_columns. This is really a bug in Vala currently, but as it hasn't been fixed we have to hack around it like this for the moment.
+  * BUG(154): s/GLib._/_/g, not that GLib prefix should be used everywhere else.
+  * BUG(155): Use the correct path variables when installing stuff.
+  * BUG(156): Prevent unneeded rebuilds.
+  * BUG(157): Scroll to active playlist position when loading a playlist.
+  * BUG(159): Ignore translations if msgfmt isn't found. Also adds some other changes to keep consistency up, puls a configure check to give some visual feedback.
+  * BUG(162): Make Config class just a dispatcher.
+  * BUG(163): Make toolbar listen to entry updates. This also kills off the whole attempt att introducing a cache. A cache is more work than benefit, so probably never going to happen anyway, getting info is fast, and with lazy loading getting info shouldn't happen that often anyways...
+  * BUG(164): Set the default sizes of the panes to something sane.
+  * BUG(167): Turn off sensitivity on unavailable entries in playlist.
+  * BUG(169): Keep track of playlist renames in playlist widget.
+  * BUG(172): Upgrade to latest stable Vala, version 0.3.1.
+  * BUG(177): Disable treeview search in playlist/filter widgets. Should be enabled again in the future, but as they do nothing in the current state, it's better to disable to reduce confusion.
+  * BUG(185): Link images into the abraca executable.
+  * BUG(19): Show filename in playlist/toolbar if title not found.
+  * BUG(198): Remove occurances of [InstanceLast].
+  * BUG(201): Add some error handling to config file load/save.
+  * BUG(203): Add a volume control widget.
+  * BUG(203): Simplify and improve the VolumeButton.
+  * BUG(204): Clean SCons install of the various types.
+  * BUG(207): Delete FilterView columns works \o/.
+  * BUG(208): Add transformers for bitrate and date.
+  * BUG(211): Don't crash when no config found
+  * BUG(212): Drop Encoding from .desktop entry.
+  * BUG(213): Add a Man-page.
+  * BUG(215): Volume button now kind of works.
+  * BUG(38): Add rating widget and use it in medialib info dialog.
+  * BUG(44): Add support for local filesystem DnD.
+  * BUG(51): Add lazy loading to FilterTree.
+  * BUG(51): Add lazy loading to PlaylistTree.
+  * Make about dialog pop up at the center of parent.
+  * OTHER: Abolish uint accirding to latest xmms2-devel.
+  * OTHER: Actually use the VALAC passed on cmdline or set in env.
+  * OTHER: Add --quiet to VALACOM. This has a nice side effect as it depends on Vala 0.1.7 which is the oldest version Abraca can be compiled with.
+  * OTHER: Add Carl-Emil to contributers.
+  * OTHER: Add border to detailed mediainfo view.
+  * OTHER: Add build-system support for embedding XML-files into executable.
+  * OTHER: Add chrippa to AboutDialog authers too.
+  * OTHER: Add license header to playlist_model.vala and filter_list_model.vala.
+  * OTHER: Add mediainfo dialog to playlist submenu too.
+  * OTHER: Add some documentation to configurable class.
+  * OTHER: Add some more patterns to .gitignore.
+  * OTHER: Add support for DESTDIR.
+  * OTHER: Add tooltip to the entries/table in Mediainfo dialog.
+  * OTHER: Add uninstall help to INSTALL file.
+  * OTHER: Add version to AboutDialog.
+  * OTHER: Allow attempt of starting playback for unavailable items.
+  * OTHER: Be extra extra paranoid when issuing a playlist jump.
+  * OTHER: Break out transformer operations to separate class.
+  * OTHER: Bump dependencies.
+  * OTHER: Bump the Vala version requirement.
+  * OTHER: Check vala version from SCons.
+  * OTHER: Clean up some nasty one-liners.
+  * OTHER: Cleanup Metadata info dialog a bit.
+  * OTHER: Cleanup collection tree a bit.
+  * OTHER: Cleanup icon loading in main_window.
+  * OTHER: Convert the Mediainfo dialog to GtkBuilder.
+  * OTHER: Disable mediainfo dialog resize, and enable ellipsize in details.
+  * OTHER: Display unplayed songs as "Never".
+  * OTHER: Ditch deprecated pack_start_defaults method.
+  * OTHER: Don't add dependencies on vala-generated headers.
+  * OTHER: Don't fail if paths are missing.
+  * OTHER: Don't leak like a madman
+  * OTHER: Don't run Configure checks when doing clean (-c) or showing help (-h).
+  * OTHER: Don't use g_hash_table_get_keys in playlist_map. This does only exist in GLib 2.14 and newer, thus not in Maemo Chinook.
+  * OTHER: DrL has been released, better depend on it instead of oldwarez.
+  * OTHER: Drop MenuBar class in favour of GtkUIManager
+  * OTHER: Drop Python 2.5 dependency from abracaenv.py
+  * OTHER: Drop _have_scrolled from playlist_model.
+  * OTHER: Ellipsize playback label.
+  * OTHER: Ellipsize the playlist view.
+  * OTHER: Emit signal when collections added, and expand tree accordingly.
+  * OTHER: Enable GtkTreeViewColumn dnd in FilterView.
+  * OTHER: Enable debug builds by default
+  * OTHER: Fix a bug in the gtk+-2.0 vapi file.
+  * OTHER: Fix alignment of the track label widget.
+  * OTHER: Fix toolbar metadata display when playback is not playing.
+  * OTHER: Handle DESTDIR correctly. Temporary hack until I find out how to properly override env.Install in SConsEnvironment.
+  * OTHER: INSTALL should show use of ./scons, not scons
+  * OTHER: Install icon and .desktop file.
+  * OTHER: MainWindow don't need to know Toolbar
+  * OTHER: Make 'by' and 'from' in playback label gray.
+  * OTHER: Make Configure Sorting a tiny bit prettier.
+  * OTHER: Make Repeat menu items disabled checkboxes.
+  * OTHER: Make date transformer output yyyy-mm-dd.
+  * OTHER: Make metadata column in playlist tree FIXED width.
+  * OTHER: Make non-verbose output default.
+  * OTHER: Make on_quit a anon method.
+  * OTHER: Make result value transformer methods more generic.
+  * OTHER: Make sure tickle has finished before starting playback.
+  * OTHER: Minor man-page updates.
+  * OTHER: Move abracaenv.py to site_scons/site_init.py.
+  * OTHER: Move get_string_from_dict to Client class.
+  * OTHER: Move more stuff from playlist model into client class.
+  * OTHER: Move var declaration to fit Vala 0.5.1 better.
+  * OTHER: Only create DESTDIR if it's actually set to something.
+  * OTHER: Only keep combobox as member in right_hpaned.
+  * OTHER: Only update toolbar metadata with active metadata.
+  * OTHER: Ops, forgot to register the Config class as listener.
+  * OTHER: Override env.Install and env.InstallAs to use $DESTDIR.
+  * OTHER: Panes should be able to start on any position.
+  * OTHER: PlaylistModel's types should be const.
+  * OTHER: Propagate column title to context menu item.
+  * OTHER: Re-enable playlist position indicator.
+  * OTHER: Refactor setup and breakdown of MedialibInfoDialog.
+  * OTHER: Refactor volume update handling.
+  * OTHER: Remove TODO file as we have a nice bugtracker.
+  * OTHER: Remove some unused crap.
+  * OTHER: Remove strange HSeparator.
+  * OTHER: Remove unused code.
+  * OTHER: Remove unused vapi files.
+  * OTHER: Remove unused variable in vala SCons tool.
+  * OTHER: Rename *Tree -> *View
+  * OTHER: Rename filter_list_model.vala -> filter_model.vala.
+  * OTHER: Rename stupid variable
+  * OTHER: Rename variable to not conflict with vala internals.
+  * OTHER: Revert emiting cur pos when paused, only works when stopped.
+  * OTHER: Rip out About dialog to embedded xml file
+  * OTHER: Sometimes it's good that Install/InstallAs works.
+  * OTHER: Split collections tree into mvc. More to do.. but at least a start.
+  * OTHER: Start using site_scons stuff for custom tools.
+  * OTHER: Strip abraca after linking.
+  * OTHER: Stub out column context menu support. Time to manipulate those columns!
+  * OTHER: Stupid use of stupid uninitialized variable. Should get rid of this C hack anyway now that I know how to come around the problem in pure Vala code.
+  * OTHER: Tell vala that xmmsc_result_get_bin length parameter is uint. This doesn't work with current vala versions, but will in the future.
+  * OTHER: Unbreak dragndrop a bit.
+  * OTHER: Update .vapi files for glib and gtk+. This hopefully puts an end to the need of having to maintain copies of these VAPI files as all changes have found their way back to the Vala projects BTS, and entered the codebase. \o/
+  * OTHER: Update INSTALL
+  * OTHER: Update INSTALL file with latest dependencies.
+  * OTHER: Update Vala check and INSTALL doc to match req Vala version (0.3.5).
+  * OTHER: Update homepage url in about dialog.
+  * OTHER: Update my email.
+  * OTHER: Update required xmms2 version to 1ac9a98c39cdb684a7bc318c5d5a2c5316cded72
+  * OTHER: Update the default size of the mediainfo dlg.
+  * OTHER: Update to Vala 0.3.5+WiP vapi.
+  * OTHER: Update to Vala 0.3.5+WiP vapi.
+  * OTHER: Update to Vala 0.4.0.
+  * OTHER: Update to Vala 0.5.1.
+  * OTHER: Update to Vala 0.5.3 and XMMS2 RV-Split.
+  * OTHER: Update to Vala 0.5.6.
+  * OTHER: Update to Vala 0.7.0.
+  * OTHER: Update to Vala 0.7.4.
+  * OTHER: Update to Vala 0.7.5.
+  * OTHER: Update to the latest and greatest xmmsclient API.
+  * OTHER: Update to vala 0.3.3 again again again.
+  * OTHER: Update to vala 0.3.3 again again.
+  * OTHER: Update to vala 0.3.3 again.
+  * OTHER: Upgrade to SCons 1.1.0 + single-file-scons.
+  * OTHER: Upgrade to Vala 0.3.3
+  * OTHER: Use $VALAC in configure check too.
+  * OTHER: Use .png-files instead of the .svg file for icon and about-logo.
+  * OTHER: Use duration transformer in PlaylistModel.
+  * OTHER: add Erik Massop to AUTHORS and About dialog.
+  * OTHER: playlist_pos broadcast changed in 0.4DrKosmos-205-g965b877, works now.
+  * OTHER: s/PathIsDirCreate/PathAccept/g
+  * OTHER: uint -> guint to make Abraca build on Windows.
+
+ Erik Massop:
+  * BUG(188): Make metadata-window resizable
+  * BUG(189): Also quote purely numerical collection-labels
+  * BUG(190): Allow playlist to be displayed as mediasets This adds a "show"-entry to the collection tree's context-menu.
+  * BUG(191): Enable selection when right-clicking In collection_tree, filter_tree and playlist_tree Prevent selection-handling when clicking on an already selected entry though
+  * BUG(192): Update filter textbox when search by artist/album/genre from playlist
+  * BUG(193): Separation in and reordering of playlist tree context-menu
+  * BUG(194): Add delete to playlist_tree context-menu
+  * BUG(195): Add jump, disable impossible menu-items, always show context-menu
+
+ Martin Salzer:
+  * BUG(121): only show collections context menu when useful
+  * BUG(137): improved resizing of main window
+  * BUG(14): Medialib-Info-Dialog
+  * BUG(158): playback bar and total time correctly updated when starting paused
+  * BUG(160): retry to connect even when connect on startup failed
+  * BUG(181): mainwindow geometry saved (now listening to on_delete_event)
+  * BUG(186): collections_treeview doesn't mess with markup-code anymore
+  * BUG(196): Remove add/replace filter results menu item in main menu
+  * OTHER: fix broken filter/playlist drag'n'drop
+
+
+

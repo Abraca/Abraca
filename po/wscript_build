@@ -1,0 +1,6 @@
+bld(
+    features='intltool_po',
+    appname='Abraca',
+    podir='.',
+    install_path="${LOCALEDIR}"
+)

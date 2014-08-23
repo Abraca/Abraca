@@ -5,11 +5,12 @@
 
     <property name="program_name">Abraca</property>
 
-    <property name="copyright" translatable="yes">Copyright © 2007-2011 Abraca Developers</property>
+    <property name="copyright" translatable="yes">Copyright © 2007-2013 Abraca Developers</property>
 
-    <property name="website">http://abraca.xmms.se</property>
+    <property name="website">http://abraca.github.com/Abraca</property>
 
     <property name="authors">
+Frank Duckhorn &lt;git@bitboulder.net&gt;
 Carl-Emil Kjellstrand &lt;carl-emil.kjellstrand@purplescout.se&gt;
 Erik Massop &lt;e.massop@hccnet.nl&gt;
 Sebastian Noack &lt;sebastian.noack@gmail.com&gt;
@@ -17,12 +18,12 @@ Christopher Rosell &lt;chrippa@tanuki.se&gt;
 Martin Salzer &lt;stoky@gmx.net&gt;
 Sebastian Sareyko &lt;smoon@nooms.de&gt;
 Tilman Sauerbeck &lt;tilman@xmms.org&gt;
-Daniel Svensson &lt;daniel.svensson@purplescout.se&gt;
+Daniel Svensson &lt;dsvensson@gmail.com&gt;
 Finn Thain &lt;fthain@telegraphics.com.au&gt;
     </property>
 
     <property name="translator-credits">
-Daniel Svensson &lt;daniel.svensson@purplescout.se&gt;
+Daniel Svensson &lt;dsvensson@gmail.com&gt;
 Foppe Benedictus &lt;foppe.benedictus@gmail.com&gt;
 Sebastian Noack &lt;sebastian.noack@gmail.com&gt;
     </property>
@@ -32,11 +33,12 @@ Sebastian Noack &lt;sebastian.noack@gmail.com&gt;
 Yusuke Kamiyamane &lt;p@yusukekamiyamane.com&gt;
 Johan Slikkie van der Slikke &lt;johan@slikkie.nl&gt;
 Jakub Steiner &lt;jimmac@ximian.com&gt;
+Piratbyrån
     </property>
 
     <property name="license" translatable="yes">
 Abraca, an XMMS2 client.
-Copyright (C) 2007-2011  Abraca Team
+Copyright (C) 2007-2014 Abraca Team
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the

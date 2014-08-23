@@ -1,0 +1,9 @@
+build
+*.swp
+*.pyc
+config.log
+*.rej
+*~
+*.orig
+.waf*
+.lock-waf*

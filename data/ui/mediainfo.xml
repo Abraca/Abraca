@@ -19,8 +19,7 @@
   <object class="AbracaMedialibInfoDialog" id="mediainfo_dialog">
     <property name="default-height">310</property>
     <property name="default_width">350</property>
-    <property name="border-width">0</property>
-    <property name="has-separator">False</property>
+    <property name="border-width">5</property>
     <property name="title">Info</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="vbox">
@@ -28,11 +27,10 @@
         <child internal-child="action_area">
           <object class="GtkHButtonBox" id="button_box">
             <property name="border-width">0</property>
-            <property name="spacing">0</property>
+            <property name="spacing">5</property>
             <child>
               <object class="GtkButton" id="button_prev">
-                <property name="label">gtk-go-back</property>
-                <property name="use-stock">True</property>
+                <property name="label">Back</property>
                 <signal name="clicked" handler="abraca_medialib_info_dialog_on_prev_button_clicked"/>
               </object>
               <packing>
@@ -41,8 +39,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button_forward">
-                <property name="label">gtk-go-forward</property>
-                <property name="use-stock">True</property>
+                <property name="label">Forward</property>
                 <signal name="clicked" handler="abraca_medialib_info_dialog_on_next_button_clicked"/>
               </object>
               <packing>
@@ -51,34 +48,25 @@
             </child>
             <child>
               <object class="GtkButton" id="button_ok">
-                <property name="label">gtk-close</property>
-                <property name="use-stock">True</property>
+                <property name="label">Close</property>
                 <signal name="clicked" handler="abraca_medialib_info_dialog_on_close_all_button_clicked"/>
               </object>
             </child>
           </object>
         </child>
         <child>
-          <object class="AbracaPrettyLabel" id="label1">
-            <property name="visible">True</property>
-            <property name="label" translatable="yes">Song Details</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-			<property name="padding">0</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkNotebook" id="notebook_mediainfo">
             <property name="border_width">6</property>
+            <property name="expand">True</property>
             <child>
               <object class="GtkTable" id="tbl_mediainfo">
+                <property name="expand">False</property>
+                <property name="valign">start</property>
                 <property name="row_spacing">7</property>
                 <property name="border_width">10</property>
                 <child>
                   <object class="GtkLabel" id="lbl_title">
-                    <property name="label">Title:</property>
+                    <property name="label" translatable="yes">Title:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -102,7 +90,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_artist">
-                    <property name="label">Artist:</property>
+                    <property name="label" translatable="yes">Artist:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -126,7 +114,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_album">
-                    <property name="label">Album:</property>
+                    <property name="label" translatable="yes">Album:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -150,7 +138,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_tracknr">
-                    <property name="label">Track number:</property>
+                    <property name="label" translatable="yes">Track number:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -178,7 +166,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_year">
-                    <property name="label">Date:</property>
+                    <property name="label" translatable="yes">Date:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -202,7 +190,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_genre">
-                    <property name="label">Genre:</property>
+                    <property name="label" translatable="yes">Genre:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -228,7 +216,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbl_rating">
-                    <property name="label">Rating:</property>
+                    <property name="label" translatable="yes">Rating:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
@@ -256,7 +244,7 @@
             </child>
             <child type="tab">
               <object class="GtkLabel" id="lbl_overview">
-                <property name="label">Overview</property>
+                <property name="label" translatable="yes">Overview</property>
               </object>
             </child>
             <child>
@@ -306,7 +294,7 @@
             </child>
             <child type="tab">
               <object class="GtkLabel" id="lbl_details">
-                <property name="label">Details</property>
+                <property name="label" translatable="yes">Details</property>
               </object>
             </child>
           </object>

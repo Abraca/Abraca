@@ -1,0 +1,3 @@
+[submodule "external/subzero"]
+	path = external/subzero
+	url = git://github.com/dsvensson/subzero.git
