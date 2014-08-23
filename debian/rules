@@ -3,18 +3,18 @@
 %:
 	dh $@
 
+override_dh_auto_configure:
+	./waf configure --prefix=/usr -v
+
 override_dh_auto_build:
-	./scons DESTDIR=$(CURDIR)/debian/abraca PREFIX=/usr verbose=yes
+	./waf build -v
 
 override_dh_installchangelogs:
-	dh_installchangelogs $(CURDIR)/debian/abraca.changelog-upstream
+	dh_installchangelogs $(CURDIR)/abraca-0.8.0.ChangeLog
 
 override_dh_auto_install:
-	./scons install
+	./waf install --destdir=$(CURDIR)/debian/abraca
 
 override_dh_auto_clean:
-	./scons -c
-	# Cleanup behind scons
-	rm -rf build .sconf_temp
-	rm -f config.log .sconsign.dblite .scons_options
-	find site_scons -name '*.pyc' -type f -delete
+	rm -rf build .waf* .lock*
+	find . -name '*.pyc' -delete
