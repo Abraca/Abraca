@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+export NOCOLOR=1
+
 %:
 	dh $@
 
