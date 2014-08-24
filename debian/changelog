@@ -1,4 +1,4 @@
-abraca (0.8.0-1) UNRELEASED; urgency=medium
+abraca (0.8.0+dfsg-1) UNRELEASED; urgency=medium
 
   * Imported Upstream version 0.8.0
   * Bump debhelper compat to 9.
