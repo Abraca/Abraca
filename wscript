@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 # encoding: utf-8
+import os
 
 VERSION = '0.8.0'
 APPNAME = 'Abraca'
@@ -16,7 +17,8 @@ def configure(conf):
 
 	conf.check_vala((0, 24, 0))
 
-	conf.env.append_unique("CFLAGS", ["-g", "-O0"])
+	if 'CFLAGS' not in os.environ:
+		conf.env.append_unique("CFLAGS", ["-g", "-O0"])
 
 	conf.check_cfg(package='gio-2.0', atleast_version='2.40', args='--cflags --libs')
 	conf.check_cfg(package='gio-unix-2.0', atleast_version='2.40', args='--cflags --libs')
