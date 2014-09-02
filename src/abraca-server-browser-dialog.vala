@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-[GtkTemplate(ui = "/org/xmms2/Abraca/ui/server_browser.xml")]
+[GtkTemplate(ui = "/org/xmms2/Abraca/ui/abraca-server-browser.ui")]
 public class Abraca.ServerBrowserDialog : Gtk.Dialog
 {
 	public signal void launch ();

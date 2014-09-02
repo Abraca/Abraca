@@ -28,6 +28,7 @@ def add_gresource_file(self, node):
     c_node = node.change_ext('.c', EXTENSION)
     task = self.create_task('gresource', node, [c_node])
     self.source += task.outputs
+    self.env.VALAFLAGS += ["--gresources=%s" % node.abspath()]
 
 def configure(ctx):
     if not ctx.env.CC and not ctx.env.CXX:

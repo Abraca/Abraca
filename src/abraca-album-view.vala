@@ -112,7 +112,7 @@ public class Abraca.AlbumView : Gtk.Grid, Gtk.Buildable {
 		var builder = new Gtk.Builder ();
 
 		try {
-			builder.add_from_resource ("/org/xmms2/Abraca/ui/album-view.xml");
+			builder.add_from_resource ("/org/xmms2/Abraca/ui/abraca-album-view.ui");
 		} catch (GLib.Error e) {
 			GLib.error (e.message);
 		}

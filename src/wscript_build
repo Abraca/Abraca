@@ -43,12 +43,17 @@ sources = """
     abraca-volume-button.vala
 """.split()
 
-bld.env.VALAFLAGS += ["--gresources=../../data/resources.gresource.xml"]
+bld.objects(
+    features = 'c',
+    uselib = 'GIO-2.0',
+    source='resources/abraca-ui.gresource.xml',
+    target='abraca-ui-resources',
+)
 
 bld.program(
     features     = 'c cprogram',
     target       = 'abraca',
-    use          = 'subzero resources',
+    use          = 'subzero abraca-img-resources abraca-ui-resources',
     packages     = 'gtk+-3.0 gio-unix-2.0 gee-0.8 xmms2-client-glib subzero posix gdk-add-filter build-config',
     uselib       = 'GTK+-3.0 GMODULE-2.0 GIO-2.0 GEE-0.8 XMMS2-CLIENT XMMS2-CLIENT-GLIB math',
     source       = sources,

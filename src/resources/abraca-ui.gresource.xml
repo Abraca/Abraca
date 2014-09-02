@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+ <gresource prefix="/org/xmms2/Abraca">
+    <file compressed="true" preprocess="xml-stripblanks">ui/abraca-about.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/abraca-album-view.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/abraca-coverart.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/abraca-main-menu.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/abraca-mediainfo.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/abraca-server-browser.ui</file>
+    <file compressed="true">ui/style.css</file>
+  </gresource>
+</gresources>

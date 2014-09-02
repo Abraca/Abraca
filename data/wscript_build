@@ -1,8 +1,8 @@
 bld.objects(
     features = 'c',
     uselib = 'GIO-2.0',
-    source='resources.gresource.xml',
-    target='resources',
+    source='abraca-img.gresource.xml',
+    target='abraca-img-resources',
 )
 
 bld(

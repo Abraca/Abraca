@@ -36,7 +36,7 @@ public class Abraca.Application : Gtk.Application {
 		try {
 			var builder = new Gtk.Builder();
 
-			builder.add_from_resource("/org/xmms2/Abraca/ui/about.xml");
+			builder.add_from_resource("/org/xmms2/Abraca/ui/abraca-about.ui");
 
 			var about = builder.get_object("abraca_about") as Gtk.AboutDialog;
 
@@ -70,7 +70,7 @@ public class Abraca.Application : Gtk.Application {
 		var builder = new Gtk.Builder ();
 
 		try {
-			builder.add_from_resource("/org/xmms2/Abraca/ui/main_menu.xml");
+			builder.add_from_resource("/org/xmms2/Abraca/ui/abraca-main-menu.ui");
 
 			app_menu = builder.get_object ("app-menu") as MenuModel;
 			var menu = builder.get_object("win-menu") as MenuModel;
@@ -80,7 +80,7 @@ public class Abraca.Application : Gtk.Application {
 			Configurable.load();
 
 			var provider = new Gtk.CssProvider();
-			provider.load_from_file(GLib.File.new_for_uri("resource:///org/xmms2/Abraca/ui/abraca.css"));
+			provider.load_from_file(GLib.File.new_for_uri("resource:///org/xmms2/Abraca/ui/style.css"));
 
 			Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), provider,
 			                                         Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
