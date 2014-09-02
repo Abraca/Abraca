@@ -30,6 +30,7 @@ sources = """
     abraca-resolver.vala
     abraca-selected-rows-mixin.vala
     abraca-server-browser.vala
+    abraca-server-browser-dialog.vala
     abraca-server-discover-tcp.vala
     abraca-server-discover-unix.vala
     abraca-server-discover.vala
@@ -41,6 +42,8 @@ sources = """
     abraca-treeview.vala
     abraca-volume-button.vala
 """.split()
+
+bld.env.VALAFLAGS += ["--gresources=../../data/resources.gresource.xml"]
 
 bld.program(
     features     = 'c cprogram',
