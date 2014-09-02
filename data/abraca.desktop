@@ -3,6 +3,7 @@ Name=Abraca XMMS2 Client
 Comment=Manage Music
 Comment[de]=Musik verwalten
 Categories=GNOME;Application;AudioVideo;
+Keywords=Audio;Song;Playlist;Music;
 Exec=abraca
 Icon=abraca-192
 Terminal=false
