@@ -208,21 +208,16 @@ namespace Abraca {
 		 * Insert a row when a new entry has been inserted in the playlist.
 		 */
 		private void on_playlist_insert(Client c, string playlist, uint mid, int pos) {
-			Gtk.TreeIter iter, sibling;
+			Gtk.TreeIter iter;
 
 			if (playlist != client.current_playlist) {
 				return;
 			}
 
-			var path = new Gtk.TreePath.from_indices(pos, -1);
-			if (get_iter(out sibling, path)) {
-				insert_before (out iter, sibling);
-			} else {
-				// Insert occurred after the last entry, lets append.
-				append(out iter);
-			}
-
-			set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid, Column.INFO, "\n");
+			insert_with_values (out iter, pos,
+			                    Column.STATUS, Status.UNRESOLVED,
+			                    Column.ID, mid,
+			                    Column.INFO, "\n");
 
 			playlist_map.add_iter((int) mid, iter);
 		}
@@ -263,8 +258,10 @@ namespace Abraca {
 				return;
 			}
 
-			append(out iter);
-			set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid, Column.INFO, "\n");
+			insert_with_values(out iter, -1,
+			                   Column.STATUS, Status.UNRESOLVED,
+			                   Column.ID, mid,
+			                   Column.INFO, "\n");
 
 			playlist_map.add_iter((int) mid, iter);
 		}
@@ -274,8 +271,7 @@ namespace Abraca {
 		 * Refresh the whole playlist.
 		 */
 		private bool on_playlist_list_entries(Xmms.Value val) {
-			Gtk.TreeIter? iter, sibling = null;
-			bool first = true;
+			Gtk.TreeIter? iter;
 
 			playlist_map.clear();
 			clear();
@@ -295,16 +291,10 @@ namespace Abraca {
 				if (!(list_iter.entry(out entry) && entry.get_int(out mid)))
 					continue;
 
-				if (first) {
-					insert_after(out iter, null);
-					first = !first;
-				} else {
-					insert_after(out iter, sibling);
-				}
-
-				set(iter, Column.STATUS, Status.UNRESOLVED, Column.ID, mid, Column.INFO, "\n");
-
-				sibling = iter;
+				insert_with_values (out iter, -1,
+				                    Column.STATUS, Status.UNRESOLVED,
+				                    Column.ID, mid,
+				                    Column.INFO, "\n");
 
 				playlist_map.add_iter(mid, iter);
 			}
