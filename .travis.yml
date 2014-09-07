@@ -3,19 +3,17 @@ language: c
 before_script:
   - sudo rm -rf /etc/dpkg/dpkg.cfg.d/multiarch
   - sudo mkdir -p /etc/apt/apt.conf.d
-  - sudo mkdir -p /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/
-  - gdk-pixbuf-query-loaders | sudo tee /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache
   - echo -e 'Dpkg::Options {\n\t"--force-confold";\n\t"--force-overwrite";\n}' | sudo tee /etc/apt/apt.conf.d/local
   - echo "deb http://archive.ubuntu.com/ubuntu/ utopic main restricted universe multiverse" | sudo tee /etc/apt/sources.list
+  - sudo apt-get --force-yes purge postgresql-9.1 postgresql-9.2 postgresql-9.3 postgresql-common openjdk-6-jdk openjdk-7-jdk erlang-base-hipe mysql-common libx11-6 oracle-java8-installer oracle-java7-installer
+  - sudo apt-get -qq autoremove
   - sudo apt-get -qq update
-  - dpkg -l
-  - sudo apt-get --force-yes purge libblas3gf libarmadillo2 postgresql-9.1 postgresql-9.2 postgresql-9.3 postgresql-common liblapack3 liblapack3gf
   - sudo apt-get -qq --force-yes dist-upgrade
   - sudo apt-get -qq --force-yes install pkg-config valac-0.24 libglib2.0-dev gobject-introspection libgirepository1.0-dev libxmmsclient-dev libxmmsclient-glib-dev intltool libgtk-3-dev libgee-0.8-dev clang-3.6
 
 script:
   - CC=clang-3.6 ./waf configure --prefix=/usr
-  - ./waf build
+  - ./waf build -v
   - sudo ./waf install
 
 notifications:
