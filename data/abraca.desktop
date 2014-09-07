@@ -1,9 +1,9 @@
 [Desktop Entry]
-Name=Abraca XMMS2 Client
+Name=Abraca
 Comment=Manage Music
 Comment[de]=Musik verwalten
 Categories=GNOME;Application;AudioVideo;
-Keywords=Audio;Song;Playlist;Music;
+Keywords=Audio;Song;Playlist;Music;xmms2
 Exec=abraca
 Icon=abraca-192
 Terminal=false
