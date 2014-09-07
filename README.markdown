@@ -14,7 +14,7 @@ Goals
 
 Build Status
 ------------
-* Ubuntu 12.10
+* Ubuntu 14.10
     * [![Build Status](https://travis-ci.org/Abraca/Abraca.png)](https://travis-ci.org/Abraca/Abraca)
 
 Download
@@ -24,7 +24,7 @@ Release tarballs can be downloaded at [GitHub](https://github.com/Abraca/Abraca/
 For the more adventurous, snapshots can be checked out via Git:
 
     git clone --recursive git://github.com/Abraca/Abraca.git
-    
+
 The `--recursive` flag is needed to configure the submodule(s).
 
 Future updates of the source code can be fetched via:
