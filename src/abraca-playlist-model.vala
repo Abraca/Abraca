@@ -356,12 +356,12 @@ namespace Abraca {
 
 				if (Transform.normalize_dict(val, "duration", out duration)) {
 					info = GLib.Markup.printf_escaped(
-						"<b>%s</b> - <small>%s</small>\n" + _("<small>by</small> %s <small>on</small> %s"),
+						"<b>%s</b> - <small>%s</small>\n" + _("<span size=\"small\" foreground=\"#666666\">by</span> %s <span size=\"small\" foreground=\"#666666\">on</span> %s"),
 						title, duration, artist, album
 					);
 				} else {
 					info = GLib.Markup.printf_escaped(
-						"<b>%s</b>\n" + _("<small>by</small> %s <small>from</small> %s"),
+						"<b>%s</b>\n" + _("<span size=\"small\" foreground=\"#666666\">by</span> %s <span size=\"small\" foreground=\"#666666\">on</span> %s"),
 						title, artist, album
 					);
 				}
