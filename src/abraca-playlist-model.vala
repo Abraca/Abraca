@@ -92,7 +92,7 @@ namespace Abraca {
 			client.playback_status.connect(on_playback_status);
 
 			client.medialib_entry_changed.connect((c, res) => {
-				on_medialib_info(res);
+				on_medialib_info(res.propdict_to_dict());
 			});
 		}
 
