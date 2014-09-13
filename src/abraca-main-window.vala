@@ -231,7 +231,7 @@ namespace Abraca {
 			                                         "<Primary>Right", accel_group);
 			playback_btns.pack_start(playback_forward_btn);
 
-			playback_label = new Gtk.Label("Start playback!");
+			playback_label = new Gtk.Label("Abraca");
 			playback_label.get_style_context().add_class("abraca-playback-label");
 
 			var headerbar = new Gtk.HeaderBar();
