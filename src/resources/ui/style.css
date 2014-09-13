@@ -24,3 +24,23 @@
 .abraca-coverart {
 	border: 1px solid rgba(80, 80, 80, 1);
 }
+
+.abraca-playback-label:link:backdrop {
+    color: @theme_unfocused_fg_color;
+}
+
+.abraca-playback-label:link {
+	color: @theme_fg_color;
+}
+
+.abraca-playback-label:visited {
+	color: @theme_fg_color;
+}
+
+.abraca-playback-label:hover {
+	color: @theme_selected_bg_color;
+}
+
+.abraca-playback-label:active {
+	color: @theme_selected_bg_color;
+}

@@ -31,6 +31,7 @@ namespace Abraca {
 		private NowPlaying now_playing;
 		private bool is_idle = false;
 		private MetadataResolver resolver;
+		private Searchable search;
 		private Gtk.Dialog equalizer_dialog;
 		private Gtk.Button playback_toggle_btn;
 		private Gtk.Label playback_label;
@@ -233,11 +234,14 @@ namespace Abraca {
 			playback_btns.pack_start(playback_forward_btn);
 
 			playback_label = new Gtk.Label("Start playback!");
+			playback_label.get_style_context().add_class("abraca-playback-label");
 
 			var headerbar = new Gtk.HeaderBar();
 			headerbar.show_close_button = true;
 			headerbar.custom_title = playback_label;
 			headerbar.pack_start(playback_btns);
+
+			playback_label.activate_link.connect(on_playback_label_link_activated);
 
 			var menu = new Gtk.MenuButton();
 			menu.image = new Gtk.Image.from_icon_name("emblem-system-symbolic", Gtk.IconSize.BUTTON);
@@ -271,7 +275,7 @@ namespace Abraca {
 			var medialib = new Medialib (this, client);
 
 			var filter = new FilterWidget (client, resolver, config, medialib, accel_group);
-			var search = filter.get_searchable ();
+			search = filter.get_searchable ();
 
 			var playlist = new PlaylistWidget (client, resolver, config, medialib, search);
 
@@ -402,6 +406,21 @@ namespace Abraca {
 			}
 		}
 
+		private bool on_playback_label_link_activated(string uri) {
+			search.search(uri);
+			return true;
+		}
+
+		private string format_separator(string separator)
+		{
+			return GLib.Markup.printf_escaped(" <span size=\"smaller\" foreground=\"#666666\"><i>%s</i></span>", separator);
+		}
+
+		private string format_link(string query, string text)
+		{
+			return GLib.Markup.printf_escaped(" <b><span underline=\"none\"><a href=\"%s\">%s</a></span></b>", query, text);
+		}
+
 		private void on_playback_current_info (Xmms.Value val)
 		{
 			string title, info, url;
@@ -412,15 +431,21 @@ namespace Abraca {
 				info = GLib.Markup.printf_escaped("<b>%s</b>", title);
 
 				if (val.dict_entry_get_string("artist", out artist)) {
-					info += GLib.Markup.printf_escaped(" <span size=\"smaller\" foreground=\"#666666\"><i>" + _("by") + "</i></span> <b>%s</b>", artist);
+					info += format_separator(_("by"));
+					info += format_link("artist:\"%s\"".printf(artist), artist);
 				}
 
 				if (val.dict_entry_get_string("album", out album)) {
-					info += GLib.Markup.printf_escaped(" <span size=\"smaller\" foreground=\"#666666\"><i>" + _("on") + "</i></span> <b>%s</b>", album);
+					info += format_separator(_("on"));
+					if (artist != null)
+						info += format_link("artist:\"%s\" AND album:\"%s\"".printf(artist, album), album);
+					else
+						info += format_link("album:\"%s\"".printf(album), album);
 				}
 
 				if (val.dict_entry_get_string("channel", out channel)) {
-					info += GLib.Markup.printf_escaped(" <span size=\"smaller\" foreground=\"#666666\"><i>" + _("from") + "</i></span> <b>%s</b>", channel);
+					info += format_separator(_("from"));
+					info += GLib.Markup.printf_escaped(" <b>%s</b>", channel);
 				}
 			} else if (val.dict_entry_get_string("channel", out title)) {
 				info = GLib.Markup.printf_escaped("<b>%s</b>", title);
