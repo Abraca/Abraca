@@ -19,9 +19,9 @@
 
 namespace Abraca.Icons {
 	private struct Icon {
-		string name;
+		unowned string name;
 		int size;
-		string filename;
+		unowned string filename;
 	}
 
 	/**
@@ -51,9 +51,9 @@ namespace Abraca.Icons {
 	};
 
 	public static void initialize() throws GLib.Error {
-		foreach (var icon in STOCK_ICONS) {
-			var pixbuf = new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/%s".printf(icon.filename));
-			Gtk.IconTheme.add_builtin_icon(icon.name, icon.size, pixbuf);
+		for (var i = 0; i < STOCK_ICONS.length; i++) {
+			var pixbuf = new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/%s".printf(STOCK_ICONS[i].filename));
+			Gtk.IconTheme.add_builtin_icon(STOCK_ICONS[i].name, STOCK_ICONS[i].size, pixbuf);
 		}
 	}
 
