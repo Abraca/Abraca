@@ -22,18 +22,15 @@ using GLib;
 namespace Abraca {
 	public class PlaylistView : Abraca.TreeView {
 		/** context menu */
-		private Gtk.Menu _playlist_menu;
+		private Gtk.Menu playlist_menu;
 
-		/* sensitivity conditions of _playlist_menu-items */
-		private GLib.List<Gtk.MenuItem>
-			_playlist_menu_item_when_one_selected = null;
-		private GLib.List<Gtk.MenuItem>
-			_playlist_menu_item_when_some_selected = null;
-		private GLib.List<Gtk.MenuItem>
-			_playlist_menu_item_when_none_selected = null;
+		/* sensitivity conditions of playlist_menu-items */
+		private GLib.List<Gtk.MenuItem> playlist_menu_item_when_one_selected = null;
+		private GLib.List<Gtk.MenuItem> playlist_menu_item_when_some_selected = null;
+		private GLib.List<Gtk.MenuItem> playlist_menu_item_when_none_selected = null;
 
 		/** drag-n-drop targets */
-		private Gtk.TargetEntry[] _target_entries = {
+		private Gtk.TargetEntry[] target_entries = {
 			Abraca.TargetEntry.PlaylistEntries,
 			Abraca.TargetEntry.Collection,
 			Abraca.TargetEntry.UriList,
@@ -41,27 +38,27 @@ namespace Abraca {
 		};
 
 		/** drag-n-drop sources */
-		private Gtk.TargetEntry[] _source_entries = {
+		private Gtk.TargetEntry[] source_entries = {
 			Abraca.TargetEntry.PlaylistEntries,
 			Abraca.TargetEntry.Collection,
 		};
 
 		/** current playlist sort order */
-		private Xmms.Value _sort;
+		private Xmms.Value sort;
 
 		private Client client;
 		private Config config;
 		private Medialib medialib;
 		private Searchable search;
 
-		public PlaylistView (PlaylistModel _model, Client _client,
-		                     Medialib m, Config _config, Searchable _search)
+		public PlaylistView (PlaylistModel mdl, Client c,
+		                     Medialib m, Config cfg, Searchable s)
 		{
-			model = _model;
-			client = _client;
-			config = _config;
+			model = mdl;
+			client = c;
+			config = cfg;
 			medialib = m;
-			search = _search;
+			search = s;
 
 			enable_search = false;
 			search_column = 1;
@@ -84,9 +81,9 @@ namespace Abraca {
 
 			on_selection_changed_update_menu(selection);
 
-			_sort = new Xmms.Value.from_list();
-			_sort.list_append (new Xmms.Value.from_string("album"));
-			_sort.list_append (new Xmms.Value.from_string("tracknr"));
+			sort = new Xmms.Value.from_list();
+			sort.list_append (new Xmms.Value.from_string("album"));
+			sort.list_append (new Xmms.Value.from_string("tracknr"));
 
 			show_all();
 		}
@@ -96,15 +93,15 @@ namespace Abraca {
 		{
 			int n = s.count_selected_rows();
 
-			foreach (var i in _playlist_menu_item_when_none_selected) {
+			foreach (var i in playlist_menu_item_when_none_selected) {
 				i.sensitive = (n == 0);
 			}
 
-			foreach (var i in _playlist_menu_item_when_one_selected) {
+			foreach (var i in playlist_menu_item_when_one_selected) {
 				i.sensitive = (n == 1);
 			}
 
-			foreach (var i in _playlist_menu_item_when_some_selected) {
+			foreach (var i in playlist_menu_item_when_some_selected) {
 				i.sensitive = (n > 0);
 			}
 		}
@@ -120,10 +117,7 @@ namespace Abraca {
 				return false;
 			}
 
-			_playlist_menu.popup(
-				null, null, null, button.button,
-				Gtk.get_current_event_time()
-			);
+			playlist_menu.popup(null, null, null, button.button, Gtk.get_current_event_time());
 
 			x = (int) button.x;
 			y = (int) button.y;
@@ -216,23 +210,23 @@ namespace Abraca {
 			Gtk.MenuItem item;
 			Gtk.Menu submenu;
 
-			_playlist_menu = new Gtk.Menu();
+			playlist_menu = new Gtk.Menu();
 
 			/* Jump */
 			item = new Gtk.MenuItem.with_label(_("Jump"));
 			item.activate.connect(jump_to_selected);
-			_playlist_menu_item_when_one_selected.prepend(item);
-			_playlist_menu.append(item);
+			playlist_menu_item_when_one_selected.prepend(item);
+			playlist_menu.append(item);
 
 			/* Separator */
 			item = new Gtk.SeparatorMenuItem();
-			_playlist_menu.append(item);
+			playlist_menu.append(item);
 
 			/* Information */
 			item = new Gtk.MenuItem.with_label(_("Info"));
 			item.activate.connect(on_menu_playlist_info);
-			_playlist_menu_item_when_some_selected.prepend(item);
-			_playlist_menu.append(item);
+			playlist_menu_item_when_some_selected.prepend(item);
+			playlist_menu.append(item);
 
 			/* Filter submenu */
 			submenu = new Gtk.Menu();
@@ -257,18 +251,18 @@ namespace Abraca {
 
 			item = new Gtk.MenuItem.with_label(_("Find"));
 			item.set_submenu(submenu);
-			_playlist_menu_item_when_some_selected.prepend(item);
-			_playlist_menu.append(item);
+			playlist_menu_item_when_some_selected.prepend(item);
+			playlist_menu.append(item);
 
 			/* Delete */
 			item = new Gtk.MenuItem.with_label(_("Delete"));
 			item.activate.connect(delete_selected);
-			_playlist_menu_item_when_some_selected.prepend(item);
-			_playlist_menu.append(item);
+			playlist_menu_item_when_some_selected.prepend(item);
+			playlist_menu.append(item);
 
 			/* Separator */
 			item = new Gtk.SeparatorMenuItem();
-			_playlist_menu.append(item);
+			playlist_menu.append(item);
 
 			/* Sorting submenu */
 			submenu = new Gtk.Menu();
@@ -310,35 +304,34 @@ namespace Abraca {
 
 			item = new Gtk.MenuItem.with_label(_("Sort"));
 			item.set_submenu(submenu);
-			_playlist_menu.append(item);
+			playlist_menu.append(item);
 
 			/* Shuffle */
 			item = new Gtk.MenuItem.with_label(_("Shuffle"));
 			item.activate.connect(i => {
 				client.xmms.playlist_shuffle(Xmms.ACTIVE_PLAYLIST);
 			});
-			_playlist_menu.append(item);
+			playlist_menu.append(item);
 
 			/* Clear */
 			item = new Gtk.MenuItem.with_label(_("Clear"));
 			item.activate.connect(i => {
 				client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
 			});
-			_playlist_menu.append(item);
+			playlist_menu.append(item);
 
-			_playlist_menu.show_all();
+			playlist_menu.show_all();
 		}
 
 
 		private void on_menu_playlist_sort(string type)
 		{
-			_sort = new Xmms.Value.from_list();
+			sort = new Xmms.Value.from_list();
 
-			foreach (string s in type.split(",")) {
-				_sort.list_append(new Xmms.Value.from_string(s));
-			}
+			foreach (string s in type.split(","))
+				sort.list_append(new Xmms.Value.from_string(s));
 
-			client.xmms.playlist_sort(Xmms.ACTIVE_PLAYLIST, _sort);
+			client.xmms.playlist_sort(Xmms.ACTIVE_PLAYLIST, sort);
 		}
 
 
@@ -394,12 +387,10 @@ namespace Abraca {
 		 */
 		private void create_dragndrop()
 		{
-			enable_model_drag_dest(_target_entries,
-			                       Gdk.DragAction.MOVE);
+			enable_model_drag_dest(target_entries, Gdk.DragAction.MOVE);
 
 			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-			                         _source_entries,
-			                         Gdk.DragAction.MOVE);
+			                         source_entries, Gdk.DragAction.MOVE);
 
 			drag_data_received.connect(on_drag_data_receive);
 			drag_data_get.connect(on_drag_data_get);
@@ -509,9 +500,9 @@ namespace Abraca {
 			var coll = DragDropUtil.receive_collection(sel);
 
 			if (get_drop_destination(x, y, out pos)) {
-				client.xmms.playlist_insert_collection(Xmms.ACTIVE_PLAYLIST, pos, coll, _sort);
+				client.xmms.playlist_insert_collection(Xmms.ACTIVE_PLAYLIST, pos, coll, sort);
 			} else {
-				client.xmms.playlist_add_collection(Xmms.ACTIVE_PLAYLIST, coll, _sort);
+				client.xmms.playlist_add_collection(Xmms.ACTIVE_PLAYLIST, coll, sort);
 			}
 
 			return true;

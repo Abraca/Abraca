@@ -20,19 +20,11 @@
 public class Abraca.VolumeButton : Gtk.ScaleButton, Gtk.Buildable {
 	private const int GRACE_PERIOD_USEC = 250 * 1000;
 
-	private const string[] _icons = {
-		"audio-volume-muted",
-		"audio-volume-high",
-		"audio-volume-medium",
-		"audio-volume-low",
-		null
-	};
+	private bool accept_updates = true;
 
-	private bool _accept_updates = true;
-
-	private int _requested_volume = 0;
-	private uint _event_source = 0;
-	private GLib.TimeVal _request_volume_updated;
+	private int requested_volume = 0;
+	private uint event_source = 0;
+	private GLib.TimeVal request_volume_updated;
 
 	private Client client;
 
@@ -50,15 +42,21 @@ public class Abraca.VolumeButton : Gtk.ScaleButton, Gtk.Buildable {
 
 		sensitive = false;
 
-		set_icons(_icons);
+		set_icons({
+			"audio-volume-muted",
+			"audio-volume-high",
+			"audio-volume-medium",
+			"audio-volume-low",
+			null
+		});
 
 		button_press_event.connect((w) => {
-			_accept_updates = false;
+			accept_updates = false;
 			return false;
 		});
 
 		button_release_event.connect((w) => {
-			_accept_updates = true ;
+			accept_updates = true ;
 			return false;
 		});
 
@@ -74,21 +72,21 @@ public class Abraca.VolumeButton : Gtk.ScaleButton, Gtk.Buildable {
 
 	private void request_volume (double volume)
 	{
-		_request_volume_updated = GLib.TimeVal ();
-		_request_volume_updated.add (GRACE_PERIOD_USEC);
+		request_volume_updated = GLib.TimeVal ();
+		request_volume_updated.add (GRACE_PERIOD_USEC);
 
-		_requested_volume = (int) volume;
+		requested_volume = (int) volume;
 
-		if (_event_source == 0)
-			_event_source = GLib.Timeout.add (125, apply_volume);
+		if (event_source == 0)
+			event_source = GLib.Timeout.add (125, apply_volume);
 	}
 
 
 	private bool apply_volume () {
 		var now = GLib.TimeVal ();
 
-		var d_sec = now.tv_sec - _request_volume_updated.tv_sec;
-		var d_usec = now.tv_usec - _request_volume_updated.tv_usec;
+		var d_sec = now.tv_sec - request_volume_updated.tv_sec;
+		var d_usec = now.tv_usec - request_volume_updated.tv_usec;
 
 		if (!(d_sec > 0 || (d_sec == 0 && d_usec > 0))) {
 			/* Too soon since last volume request was performed */
@@ -98,7 +96,7 @@ public class Abraca.VolumeButton : Gtk.ScaleButton, Gtk.Buildable {
 		client.xmms.playback_volume_get().notifier_set((val) => {
 			if (!val.is_error ()) {
 				val.dict_foreach((key, val) => {
-					client.xmms.playback_volume_set (key, _requested_volume);
+					client.xmms.playback_volume_set (key, requested_volume);
 				});
 			}
 			return true;
@@ -106,7 +104,7 @@ public class Abraca.VolumeButton : Gtk.ScaleButton, Gtk.Buildable {
 
 		tooltip_text = "%d%%".printf((int) value);
 
-		_event_source = 0;
+		event_source = 0;
 
 		return false;
 	}
@@ -132,7 +130,7 @@ public class Abraca.VolumeButton : Gtk.ScaleButton, Gtk.Buildable {
 		unowned Xmms.DictIter iter;
 		int total_volume, channels;
 
-		if (!_accept_updates) {
+		if (!accept_updates) {
 			return;
 		}
 

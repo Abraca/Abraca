@@ -36,7 +36,7 @@ namespace Abraca {
 			Total
 		}
 
-		private Gtk.TreeIter _temporary_playlist_iter;
+		private Gtk.TreeIter temporary_playlist_iter;
 
 		/* TODO: Is this required? */
 		public bool has_temporary_playlist {
@@ -142,9 +142,9 @@ namespace Abraca {
 		 */
 		public void append_temporary_playlist ()
 		{
-			append(out _temporary_playlist_iter, _playlist_iter);
+			append(out temporary_playlist_iter, _playlist_iter);
 
-			set(_temporary_playlist_iter,
+			set(temporary_playlist_iter,
 				Column.Type, CollectionType.Playlist,
 				Column.Icon, playlist_pixbuf,
 				Column.Name, get_new_playlist_name()
@@ -159,7 +159,7 @@ namespace Abraca {
 		 */
 		public void remove_temporary_playlist ()
 		{
-			remove(ref _temporary_playlist_iter);
+			remove(ref temporary_playlist_iter);
 			has_temporary_playlist = false;
 		}
 
@@ -442,4 +442,3 @@ namespace Abraca {
 		}
 	}
 }
-

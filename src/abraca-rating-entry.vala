@@ -19,54 +19,16 @@
 
 namespace Abraca {
 	public class RatingEntry : Gtk.DrawingArea, Gtk.Buildable {
-		private Gdk.Pixbuf _unrated_icon = null;
-		private Gdk.Pixbuf _rated_icon = null;
+		private static Gdk.Pixbuf unrated_icon = Abraca.Icons.by_name("abraca-unrated", Gtk.IconSize.MENU);
+		private static Gdk.Pixbuf rated_icon = Abraca.Icons.by_name("abraca-rated", Gtk.IconSize.MENU);
 
-		private int _rating = 0;
-		private int? _volatile_rating = null;
+		private int? volatile_rating = null;
 
 		public int min_rating { get; set; default = 0; }
 		public int max_rating { get; set; default = 5; }
-
-		public int rating {
-			get {
-				return _rating;
-			}
-			set {
-				if (_rating != value) {
-					_rating = value;
-					update_size_request();
-					changed ();
-				}
-			}
-		}
-
-		public Gdk.Pixbuf unrated_icon {
-			get {
-				if (_unrated_icon == null)
-					_unrated_icon = Abraca.Icons.by_name("abraca-unrated", Gtk.IconSize.MENU);
-				return _unrated_icon;
-			}
-			set {
-				_unrated_icon = value;
-				update_size_request();
-			}
-		}
-
-		public Gdk.Pixbuf rated_icon {
-			get {
-				if (_rated_icon == null)
-					_rated_icon = Abraca.Icons.by_name("abraca-rated", Gtk.IconSize.MENU);
-				return _rated_icon;
-			}
-			set {
-				_rated_icon = value;
-				update_size_request();
-			}
-		}
+		public int rating { get; set; }
 
 		public signal void changed();
-
 
 		construct
 		{
@@ -89,11 +51,11 @@ namespace Abraca {
 			var val = (ev.x / (double) rated_icon.width) + 0.75;
 			var tmp = (int) Math.fmin (max_rating, Math.fmax (min_rating, val));
 
-			if (_volatile_rating == null || tmp != _volatile_rating) {
-				_volatile_rating = tmp;
+			if (volatile_rating == null || tmp != volatile_rating) {
+				volatile_rating = tmp;
 				queue_draw ();
 			} else {
-				_volatile_rating = tmp;
+				volatile_rating = tmp;
 			}
 
 			return false;
@@ -102,7 +64,7 @@ namespace Abraca {
 
 		public override bool leave_notify_event (Gdk.EventCrossing ev)
 		{
-			_volatile_rating = null;
+			volatile_rating = null;
 			queue_draw ();
 			return false;
 		}
@@ -110,9 +72,10 @@ namespace Abraca {
 
 		public override bool button_press_event (Gdk.EventButton ev)
 		{
-			if (_volatile_rating != null) {
-				rating = _volatile_rating;
-				_volatile_rating = null;
+			if (volatile_rating != null) {
+				rating = volatile_rating;
+				volatile_rating = null;
+				changed();
 			}
 
 			return false;
@@ -121,7 +84,7 @@ namespace Abraca {
 
 		public override bool draw (Cairo.Context cr)
 		{
-			var value = (_volatile_rating == null) ? _rating : _volatile_rating;
+			var value = (volatile_rating == null) ? rating : volatile_rating;
 
 			for (var i = min_rating; i < max_rating; i++) {
 				if (i < (value - min_rating)) {

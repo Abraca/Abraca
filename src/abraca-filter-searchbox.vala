@@ -1,8 +1,8 @@
 public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
-	private Gee.Queue<string> _pending_queries = new Gee.LinkedList<string>();
-	private string _unsaved_query;
-	private string _current_query;
-	private uint _timer = 0;
+	private Gee.Queue<string> pending_queries = new Gee.LinkedList<string>();
+	private string unsaved_query;
+	private string current_query;
+	private uint timer = 0;
 
 	/* TODO: this is a hack, remove me */
 	private FilterView treeview;
@@ -68,7 +68,7 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 	}
 
 
-	private void _filter_save (string pattern)
+	private void filter_save (string pattern)
 	{
 		Gtk.ListStore store = (Gtk.ListStore) model;
 		Gtk.TreeIter iter;
@@ -107,11 +107,11 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 
 		if (text.length > 0) {
 			if (Xmms.Collection.parse(text, out coll)) {
-				_current_query = text;
+				current_query = text;
 
 				// Throttle collection querying
-				if (_timer == 0) {
-					_timer = GLib.Timeout.add(450, on_collection_query_timeout);
+				if (timer == 0) {
+					timer = GLib.Timeout.add(450, on_collection_query_timeout);
 				}
 			} else {
 				color = Gdk.RGBA();
@@ -127,32 +127,32 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 	{
 		Xmms.Collection coll;
 
-		if (_current_query == null) {
-			_timer = 0;
+		if (current_query == null) {
+			timer = 0;
 			return false;
 		}
 
-		if (!Xmms.Collection.parse(_current_query, out coll)) {
-			_current_query = null;
-			_timer = 0;
+		if (!Xmms.Collection.parse(current_query, out coll)) {
+			current_query = null;
+			timer = 0;
 			return false;
 		}
 
-		_pending_queries.offer(_current_query);
+		pending_queries.offer(current_query);
 
 		treeview.query_collection(coll, (val) => {
-			var s = _pending_queries.poll();
+			var s = pending_queries.poll();
 			if (s != null && val.list_get_size() > 0) {
 				if (get_child().has_focus) {
-					_unsaved_query = s;
-				} else if (_pending_queries.is_empty) {
-					_filter_save(s);
+					unsaved_query = s;
+				} else if (pending_queries.is_empty) {
+					filter_save(s);
 				}
 			}
 			return true;
 		});
 
-		_current_query = null;
+		current_query = null;
 
 		return true;
 	}
@@ -160,11 +160,11 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 
 	private bool on_filter_entry_focus_out_event (Gtk.Widget w, Gdk.EventFocus e)
 	{
-		if (_unsaved_query != null && _unsaved_query == (w as Gtk.Entry).text) {
-			_filter_save(_unsaved_query);
+		if (unsaved_query != null && unsaved_query == (w as Gtk.Entry).text) {
+			filter_save(unsaved_query);
 		}
 
-		_unsaved_query = null;
+		unsaved_query = null;
 
 		return false;
 	}

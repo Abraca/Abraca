@@ -24,36 +24,34 @@ namespace Abraca {
 	public class CollectionsView : Gtk.TreeView {
 
 		/** drag-n-drop targets */
-		private Gtk.TargetEntry[] _target_entries = {
+		private Gtk.TargetEntry[] target_entries = {
 			Abraca.TargetEntry.Collection
 		};
 
 		/** drag-n-drop sources */
-		private Gtk.TargetEntry[] _source_entries = {
+		private Gtk.TargetEntry[] source_entries = {
 			Abraca.TargetEntry.Collection
 		};
 
 		/** context menu */
-		private Gtk.Menu _collection_menu;
+		private Gtk.Menu collection_menu;
 
-		/* sensitivity conditions of _collection_menu-items */
-		private GLib.List<Gtk.MenuItem>
-			_collection_menu_item_when_coll_selected = null;
-		private GLib.List<Gtk.MenuItem>
-			_collection_menu_item_when_ns_selected = null;
+		/* sensitivity conditions of collection_menu-items */
+		private GLib.List<Gtk.MenuItem> collection_menu_item_when_coll_selected = null;
+		private GLib.List<Gtk.MenuItem> collection_menu_item_when_ns_selected = null;
 
 		/** to keep track of our last drop target */
-		private Gtk.TreePath _drop_path = null;
+		private Gtk.TreePath drop_path = null;
 
 		private Client client;
 		private Searchable search;
 
-		public CollectionsView (Client _client, Searchable _search)
+		public CollectionsView (Client c, Searchable s)
 		{
 			CollectionsModel store;
 
-			client = _client;
-			search = _search;
+			client = c;
+			search = s;
 
 			search_column = 0;
 			enable_search = true;
@@ -62,7 +60,7 @@ namespace Abraca {
 
 			model = store = new CollectionsModel(Abraca.Icons.by_name("abraca-collection", Gtk.IconSize.LARGE_TOOLBAR),
 			                                     Abraca.Icons.by_name("abraca-playlist", Gtk.IconSize.LARGE_TOOLBAR),
-			                                     _client);
+			                                     client);
 
 			store.collection_loaded.connect((type) => {
 				expand_all();
@@ -72,12 +70,10 @@ namespace Abraca {
 
 			row_activated.connect(on_row_activated);
 
-			enable_model_drag_dest(_target_entries,
-			                       Gdk.DragAction.COPY);
+			enable_model_drag_dest(target_entries, Gdk.DragAction.COPY);
 
 			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-			                         _source_entries,
-			                         Gdk.DragAction.MOVE);
+			                         source_entries, Gdk.DragAction.MOVE);
 
 			create_context_menu();
 			get_selection().changed.connect(on_selection_changed_update_menu);
@@ -104,11 +100,11 @@ namespace Abraca {
 				n = model.get_path(iter).get_depth();
 			}
 
-			foreach (var i in _collection_menu_item_when_coll_selected) {
+			foreach (var i in collection_menu_item_when_coll_selected) {
 				i.sensitive = (n == 2);
 			}
 
-			foreach (var i in _collection_menu_item_when_ns_selected) {
+			foreach (var i in collection_menu_item_when_ns_selected) {
 				i.sensitive = (n == 1);
 			}
 		}
@@ -156,10 +152,7 @@ namespace Abraca {
 				return false;
 			}
 
-			_collection_menu.popup(
-				null, null, null, button.button,
-				Gtk.get_current_event_time()
-			);
+			collection_menu.popup(null, null, null, button.button, Gtk.get_current_event_time());
 
 			x = (int) button.x;
 			y = (int) button.y;
@@ -277,7 +270,7 @@ namespace Abraca {
 			Gtk.TreeViewDropPosition pos;
 
 			/* save to handle */
-			get_drag_dest_row(out _drop_path, out pos);
+			get_drag_dest_row(out drop_path, out pos);
 
 			if (store.has_temporary_playlist) {
 				store.remove_temporary_playlist();
@@ -296,25 +289,25 @@ namespace Abraca {
 		{
 			CollectionsModel store = (CollectionsModel) model;
 
-			if (_drop_path != null) {
+			if (drop_path != null) {
 				CollectionsModel.CollectionType type;
 				string name = "Unknown";
 				Gtk.TreeIter iter;
 
-				store.get_iter(out iter, _drop_path);
+				store.get_iter(out iter, drop_path);
 
-				if (!store.get_iter(out iter, _drop_path)) {
+				if (!store.get_iter(out iter, drop_path)) {
 					name = store.realize_temporary_playlist();
 				} else {
 					type = CollectionsModel.CollectionType.Playlist;
-					if (store.path_is_child_of_type(_drop_path, type)) {
+					if (store.path_is_child_of_type(drop_path, type)) {
 						store.get(iter, CollectionsModel.Column.Name, out name);
 					}
 				}
 
 				playlist_insert_drop_data(info, name, data);
 
-				_drop_path = null;
+				drop_path = null;
 			}
 
 			if (store.has_temporary_playlist) {
@@ -477,28 +470,28 @@ namespace Abraca {
 		{
 			Gtk.MenuItem item;
 
-			_collection_menu = new Gtk.Menu();
+			collection_menu = new Gtk.Menu();
 
 			item = new Gtk.MenuItem.with_mnemonic(_("_Show"));
 			item.activate.connect(on_menu_collection_get);
-			_collection_menu_item_when_coll_selected.prepend(item);
-			_collection_menu.append(item);
+			collection_menu_item_when_coll_selected.prepend(item);
+			collection_menu.append(item);
 
 			item = new Gtk.MenuItem.with_mnemonic(_("_Rename"));
 			item.activate.connect((menu) => {
 				selected_collection_rename();
 			});
-			_collection_menu_item_when_coll_selected.prepend(item);
-			_collection_menu.append(item);
+			collection_menu_item_when_coll_selected.prepend(item);
+			collection_menu.append(item);
 
 			item = new Gtk.MenuItem.with_mnemonic(_("Delete"));
 			item.activate.connect((menu) => {
 				selected_collection_delete();
 			});
-			_collection_menu_item_when_coll_selected.prepend(item);
-			_collection_menu.append(item);
+			collection_menu_item_when_coll_selected.prepend(item);
+			collection_menu.append(item);
 
-			_collection_menu.show_all();
+			collection_menu.show_all();
 		}
 	}
 }
