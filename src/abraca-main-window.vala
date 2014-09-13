@@ -24,12 +24,10 @@ namespace Abraca {
 
 		private Client client;
 		private Config config;
-		private Gtk.Widget toolbar;
 		private Gtk.Paned main_hpaned;
 		private Gtk.Paned right_hpaned;
 		private Gtk.Widget main_ui;
 		private NowPlaying now_playing;
-		private bool is_idle = false;
 		private MetadataResolver resolver;
 		private Searchable search;
 		private Gtk.Dialog equalizer_dialog;

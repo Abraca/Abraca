@@ -5,13 +5,10 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 	private Gdk.Pixbuf coverart;
 
 	private Client client;
-	private Gtk.AccelGroup accel_group;
 
 	private string artist;
 	private string album;
 	private string title;
-
-	private bool fullscreen = false;
 
 	public NowPlaying(Client c)
 	{
