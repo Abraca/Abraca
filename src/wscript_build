@@ -40,7 +40,6 @@ sources = """
     abraca-transform.vala
     abraca-treerow-map.vala
     abraca-treeview.vala
-    abraca-volume-button.vala
 """.split()
 
 bld.objects(
