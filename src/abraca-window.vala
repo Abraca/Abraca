@@ -18,7 +18,7 @@
  */
 
 namespace Abraca {
-	public class MainWindow : Gtk.ApplicationWindow, IConfigurable {
+	public class Window : Gtk.ApplicationWindow, IConfigurable {
 		private static Gtk.Image PLAYBACK_PAUSE_IMAGE = new Gtk.Image.from_icon_name("media-playback-pause", Gtk.IconSize.BUTTON);
 		private static Gtk.Image PLAYBACK_PLAY_IMAGE = new Gtk.Image.from_icon_name("media-playback-start", Gtk.IconSize.BUTTON);
 
@@ -51,7 +51,7 @@ namespace Abraca {
 			{ "fullscreen", on_fullscreen }
 		};
 
-		public MainWindow (Gtk.Application app, Client c, GLib.MenuModel menu)
+		public Window (Gtk.Application app, Client c, GLib.MenuModel menu)
 		{
 			Object(application: app);
 
