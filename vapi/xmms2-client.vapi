@@ -564,14 +564,21 @@ namespace Xmms {
 	}
 
 	[Compact]
-	[CCode(cname = "xmmsv_dict_iter_t",	cprefix = "xmmsv_dict_iter_", free_function="")]
+	[CCode(cname = "xmmsv_dict_iter_t", cprefix = "xmmsv_dict_iter_")]
 	public class DictIter {
-		public bool pair(out unowned string key, out unowned Xmms.Value val);
+		public bool pair(out unowned string key, out unowned Xmms.Value value);
+		public bool pair_string (out unowned string key, out unowned string value);
+		public bool pair_int (out unowned string key, out int value);
+		public bool pair_float (out unowned string key, out float value);
 		public bool valid();
 		public void first();
 		public void next();
+		public bool find (string key);
 		public bool seek(string key);
 		public bool set(Xmms.Value val);
+		public bool set_string (string value);
+		public bool set_int (int value);
+		public bool set_float (float value);
 		public bool remove();
 	}
 
