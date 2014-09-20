@@ -275,6 +275,14 @@ namespace Abraca {
 				current_playback_status = status;
 			}
 
+			/* Some outputs don't provide their channels
+			 * until playback has actually started, and may
+			 * actually have changed their mixer since last
+			 * playback, so lets refresh here.
+			 */
+			if (status == Xmms.PlaybackStatus.PLAY)
+				xmms.playback_volume_get().notifier_set(on_playback_volume);
+
 			return true;
 		}
 
@@ -306,8 +314,10 @@ namespace Abraca {
 		}
 
 		private bool on_playback_volume(Xmms.Value val) {
-			playback_volume(val);
-
+			if (val.is_type(Xmms.ValueType.DICT))
+				playback_volume(val);
+			else
+				playback_volume(new Xmms.Value.from_dict());
 			return true;
 		}
 
