@@ -115,7 +115,7 @@ namespace Abraca {
 
 			for (var i = 0; i < 6; i++) {
 				var label = new Gtk.Label("<b>" + _(_sort_keys[i]) + "</b>");
-				label.xalign = 0;
+				label.halign = Gtk.Align.START;
 				label.use_markup = true;
 				table.attach(label, 0, i, 1, 1);
 
