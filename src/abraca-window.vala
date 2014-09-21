@@ -300,18 +300,13 @@ namespace Abraca {
 
 			add_accel_group(accel_group);
 
-			equalizer_dialog = new Gtk.Dialog.with_buttons(
-				"Equalizer", this, Gtk.DialogFlags.DESTROY_WITH_PARENT
-			);
+			equalizer_dialog = new Equalizer(client);
 			equalizer_dialog.window_position = Gtk.WindowPosition.CENTER_ON_PARENT;
-
-			var box = equalizer_dialog.get_content_area () as Gtk.Box;
-			box.pack_start (new Equalizer (client));
-			box.expand = true;
-			box.halign = Gtk.Align.FILL;
+			equalizer_dialog.transient_for = this;
 
 			return vbox;
 		}
+
 		private void on_menu_connect(GLib.SimpleAction action, GLib.Variant? state)
 		{
 			GLib.Idle.add(() => {

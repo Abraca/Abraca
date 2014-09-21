@@ -4,6 +4,7 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/abraca-about.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/abraca-album-view.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/abraca-coverart.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/abraca-equalizer.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/abraca-main-menu.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/abraca-mediainfo.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/abraca-server-browser.ui</file>

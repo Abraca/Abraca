@@ -10,7 +10,6 @@ sources = """
     abraca-configurable.vala
     abraca-coverart.vala
     abraca-drag-and-drop.vala
-    abraca-equalizer-bands.vala
     abraca-equalizer-model.vala
     abraca-equalizer-widget.vala
     abraca-filter-browser-model.vala
