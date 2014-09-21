@@ -1,0 +1,1561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.12"/>
+  <object class="GtkAdjustment" id="adjustment_gain00">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain01">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain02">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain03">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain04">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain05">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain06">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain07">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain08">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain09">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain10">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain11">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain12">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain13">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain14">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain15">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain16">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain17">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain18">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain19">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain20">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain21">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain22">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain23">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain24">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain25">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain26">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain27">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain28">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain29">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_gain30">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_preamp">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">2.5</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment_volume">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
+  </object>
+  <object class="GtkListStore" id="liststore_bands">
+    <columns>
+      <!-- column-name text -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Disabled</col>
+        <col id="1" translatable="yes">disabled</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">10 (legacy)</col>
+        <col id="1" translatable="yes">legacy</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">10</col>
+        <col id="1" translatable="yes">10</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">15</col>
+        <col id="1" translatable="yes">15</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">25</col>
+        <col id="1" translatable="yes">25</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">31</col>
+        <col id="1" translatable="yes">31</col>
+      </row>
+    </data>
+  </object>
+  <template class="AbracaEqualizer" parent="GtkDialog">
+    <property name="width_request">400</property>
+    <property name="height_request">300</property>
+    <property name="border_width">5</property>
+    <property name="title">Equalizer</property>
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <property name="window_position">center-always</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="skip_pager_hint">True</property>
+    <child internal-child="headerbar">
+      <object class="GtkHeaderBar" id="dialog-header_bar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="show_close_button">True</property>
+        <child>
+          <object class="GtkComboBox" id="combobox_bands">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="model">liststore_bands</property>
+            <property name="id_column">1</property>
+            <signal name="changed" handler="on_combobox_changed" swapped="no"/>
+            <child>
+              <object class="GtkCellRendererText" id="cellrenderertext1"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+          <packing>
+            <property name="pack_type">start</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_reset">
+            <property name="label">Reset</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="use_stock">True</property>
+            <signal name="clicked" handler="on_reset" swapped="no"/>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="dialog-vbox1">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child>
+          <object class="GtkBox" id="box1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkGrid" id="grid1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkAlignment" id="alignment_scale_volume">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="right_padding">10</property>
+                    <child>
+                      <object class="GtkScale" id="volume_scale">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_volume</property>
+                        <property name="inverted">True</property>
+                        <property name="round_digits">1</property>
+                        <property name="draw_value">False</property>
+                        <signal name="value-changed" handler="on_volume_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkAlignment" id="alignment_label_volume">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="right_padding">10</property>
+                    <child>
+                      <object class="GtkLabel" id="label_volume">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Volume</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkAlignment" id="alignment_scale_preamp">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="right_padding">10</property>
+                    <child>
+                      <object class="GtkScale" id="preamp_scale">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_preamp</property>
+                        <property name="inverted">True</property>
+                        <property name="restrict_to_fill_level">False</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <signal name="value-changed" handler="on_preamp_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkAlignment" id="alignment_label_preamp">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="right_padding">10</property>
+                    <child>
+                      <object class="GtkLabel" id="label_preamp">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Pre-Amp</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="box2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkBox" id="box_bands">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="vexpand">True</property>
+                    <child>
+                      <object class="GtkScale" id="scale_gain00">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain00</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain01">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain01</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain02">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain02</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain03">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain03</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain04">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain04</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain05">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain05</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain06">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain06</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain07">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain07</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">7</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain08">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain08</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">8</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain09">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain09</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">9</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain10">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain10</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">10</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain11">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain11</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">11</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain12">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain12</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">12</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain13">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain13</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">13</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain14">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain14</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">14</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain15">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain15</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">15</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain16">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain16</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">16</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain17">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain17</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">17</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain18">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain18</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">18</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain19">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain19</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">19</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain20">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain20</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">20</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain21">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain21</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">21</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain22">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain22</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">22</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain23">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain23</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">23</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain24">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain24</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">24</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain25">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain25</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">25</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain26">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain26</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">26</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain27">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain27</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">27</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain28">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain28</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">28</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain29">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain29</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">29</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale_gain30">
+                        <property name="visible">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">adjustment_gain30</property>
+                        <property name="round_digits">2</property>
+                        <property name="draw_value">False</property>
+                        <property name="has_origin">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="inverted">True</property>
+                        <signal name="value-changed" handler="on_band_changed" swapped="no"/>
+                        <signal name="button-press-event" handler="on_scale_pressed" swapped="no"/>
+                        <signal name="button-release-event" handler="on_scale_released" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">30</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="box_labels">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkLabel" id="label_gain00">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain01">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain02">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain03">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain04">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain05">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain06">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain07">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">7</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain08">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">8</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain09">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">9</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain10">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">10</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain11">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">11</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain12">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">12</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain13">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">13</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain14">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">14</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain15">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">15</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain16">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">16</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain17">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">17</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain18">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">18</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain19">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">19</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain20">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">20</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain21">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">21</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain22">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">22</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain23">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">23</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain24">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">24</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain25">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">25</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain26">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">26</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain27">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">27</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain28">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">28</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain29">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">29</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gain30">
+                        <property name="visible">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">30</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </template>
+  <object class="GtkSizeGroup" id="sizegroup2">
+    <property name="ignore-hidden">True</property>
+    <widgets>
+      <widget name="scale_gain00"/>
+      <widget name="scale_gain01"/>
+      <widget name="scale_gain02"/>
+      <widget name="scale_gain03"/>
+      <widget name="scale_gain04"/>
+      <widget name="scale_gain05"/>
+      <widget name="scale_gain06"/>
+      <widget name="scale_gain07"/>
+      <widget name="scale_gain08"/>
+      <widget name="scale_gain09"/>
+      <widget name="scale_gain10"/>
+      <widget name="scale_gain11"/>
+      <widget name="scale_gain12"/>
+      <widget name="scale_gain13"/>
+      <widget name="scale_gain14"/>
+      <widget name="scale_gain15"/>
+      <widget name="scale_gain16"/>
+      <widget name="scale_gain17"/>
+      <widget name="scale_gain18"/>
+      <widget name="scale_gain19"/>
+      <widget name="scale_gain20"/>
+      <widget name="scale_gain21"/>
+      <widget name="scale_gain22"/>
+      <widget name="scale_gain23"/>
+      <widget name="scale_gain24"/>
+      <widget name="scale_gain25"/>
+      <widget name="scale_gain26"/>
+      <widget name="scale_gain27"/>
+      <widget name="scale_gain28"/>
+      <widget name="scale_gain29"/>
+      <widget name="scale_gain30"/>
+      <widget name="label_gain00"/>
+      <widget name="label_gain01"/>
+      <widget name="label_gain02"/>
+      <widget name="label_gain03"/>
+      <widget name="label_gain04"/>
+      <widget name="label_gain05"/>
+      <widget name="label_gain06"/>
+      <widget name="label_gain07"/>
+      <widget name="label_gain08"/>
+      <widget name="label_gain09"/>
+      <widget name="label_gain10"/>
+      <widget name="label_gain11"/>
+      <widget name="label_gain12"/>
+      <widget name="label_gain13"/>
+      <widget name="label_gain14"/>
+      <widget name="label_gain15"/>
+      <widget name="label_gain16"/>
+      <widget name="label_gain17"/>
+      <widget name="label_gain18"/>
+      <widget name="label_gain19"/>
+      <widget name="label_gain20"/>
+      <widget name="label_gain21"/>
+      <widget name="label_gain22"/>
+      <widget name="label_gain23"/>
+      <widget name="label_gain24"/>
+      <widget name="label_gain25"/>
+      <widget name="label_gain26"/>
+      <widget name="label_gain27"/>
+      <widget name="label_gain28"/>
+      <widget name="label_gain29"/>
+      <widget name="label_gain30"/>
+    </widgets>
+  </object>
+  <object class="GtkSizeGroup" id="sizegroup1">
+  </object>
+</interface>
