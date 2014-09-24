@@ -1,3 +1,12 @@
+bld(features = 'authors',
+    authors = '../AUTHORS',
+    template = 'resources/ui/abraca-about.ui.in',
+    categories = {
+      'authors': ['Original Abraca design', 'Developers', 'Code Contributions'],
+      'translators': ['Translators'],
+      'artists': ['Logo', 'Additional art']
+})
+
 sources = """
     abraca-application.vala
     abraca-album-view.vala

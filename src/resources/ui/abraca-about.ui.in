@@ -10,31 +10,15 @@
     <property name="website">http://abraca.github.com/Abraca</property>
 
     <property name="authors">
-Frank Duckhorn &lt;git@bitboulder.net&gt;
-Dominik Fischer &lt;d.f.fischer@web.de&gt;
-Carl-Emil Kjellstrand &lt;carl-emil.kjellstrand@purplescout.se&gt;
-Erik Massop &lt;e.massop@hccnet.nl&gt;
-Sebastian Noack &lt;sebastian.noack@gmail.com&gt;
-Christopher Rosell &lt;chrippa@tanuki.se&gt;
-Martin Salzer &lt;stoky@gmx.net&gt;
-Sebastian Sareyko &lt;smoon@nooms.de&gt;
-Tilman Sauerbeck &lt;tilman@xmms.org&gt;
-Daniel Svensson &lt;dsvensson@gmail.com&gt;
-Finn Thain &lt;fthain@telegraphics.com.au&gt;
+      $authors
     </property>
 
     <property name="translator-credits">
-Daniel Svensson &lt;dsvensson@gmail.com&gt;
-Foppe Benedictus &lt;foppe.benedictus@gmail.com&gt;
-Sebastian Noack &lt;sebastian.noack@gmail.com&gt;
+      $translators
     </property>
 
-
     <property name="artists">
-Yusuke Kamiyamane &lt;p@yusukekamiyamane.com&gt;
-Johan Slikkie van der Slikke &lt;johan@slikkie.nl&gt;
-Jakub Steiner &lt;jimmac@ximian.com&gt;
-Piratbyrån
+      $artists
     </property>
 
     <property name="license" translatable="yes">
