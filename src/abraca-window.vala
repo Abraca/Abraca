@@ -19,8 +19,8 @@
 
 namespace Abraca {
 	public class Window : Gtk.ApplicationWindow, IConfigurable {
-		private static Gtk.Image PLAYBACK_PAUSE_IMAGE = new Gtk.Image.from_icon_name("media-playback-pause", Gtk.IconSize.BUTTON);
-		private static Gtk.Image PLAYBACK_PLAY_IMAGE = new Gtk.Image.from_icon_name("media-playback-start", Gtk.IconSize.BUTTON);
+		private static Gtk.Image PLAYBACK_PAUSE_IMAGE = new Gtk.Image.from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.BUTTON);
+		private static Gtk.Image PLAYBACK_PLAY_IMAGE = new Gtk.Image.from_icon_name("media-playback-start-symbolic", Gtk.IconSize.BUTTON);
 
 		private Client client;
 		private Config config;
@@ -218,17 +218,20 @@ namespace Abraca {
 			var playback_btns = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 			playback_btns.get_style_context().add_class("linked");
 
-			var playback_backward_btn = create_button("media-skip-backward", "win.playback-skip-backward",
+			var playback_backward_btn = create_button("media-skip-backward-symbolic", "win.playback-skip-backward",
 			                                          "<Primary>Left", accel_group);
 			playback_btns.pack_start(playback_backward_btn);
+			playback_backward_btn.width_request = 42;
 
-			playback_toggle_btn = create_button("media-playback-start", "win.playback-toggle",
+			playback_toggle_btn = create_button("media-playback-start-symbolic", "win.playback-toggle",
 			                                    "<Primary>p", accel_group);
 			playback_btns.pack_start(playback_toggle_btn);
+			playback_toggle_btn.width_request = 60;
 
-			var playback_forward_btn = create_button("media-skip-forward", "win.playback-skip-forward",
+			var playback_forward_btn = create_button("media-skip-forward-symbolic", "win.playback-skip-forward",
 			                                         "<Primary>Right", accel_group);
 			playback_btns.pack_start(playback_forward_btn);
+			playback_forward_btn.width_request = 42;
 
 			playback_label = new Gtk.Label("Abraca");
 			playback_label.get_style_context().add_class("abraca-playback-label");
