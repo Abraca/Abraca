@@ -7,7 +7,7 @@ EXTENSION = '.gresource.xml'
 
 class gresource(Task.Task):
     name    = 'gresource'
-    run_str = '${GLIB_COMPILE_RESOURCES} --generate-source --sourcedir=${SRC[0].parent.abspath()} --target=${TGT} ${SRC}'
+    run_str = '${GLIB_COMPILE_RESOURCES} --generate-source --sourcedir=${SRC[0].parent.get_src().abspath()} --sourcedir=${SRC[0].parent.get_bld().abspath()} --target=${TGT} ${SRC}'
     color   = 'BLUE'
     ext_out = '.c'
     shell   = True
