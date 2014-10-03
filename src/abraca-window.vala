@@ -417,6 +417,7 @@ namespace Abraca {
 		private void on_playback_current_info (Xmms.Value val)
 		{
 			string title, info, url;
+			int is_compilation;
 
 			if (val.dict_entry_get_string("title", out title)) {
 				string artist, album, channel;
@@ -429,9 +430,14 @@ namespace Abraca {
 				}
 
 				if (val.dict_entry_get_string("album", out album)) {
+					if (!val.dict_entry_get_int("compilation", out is_compilation))
+						is_compilation = 0;
+
 					info += format_separator(_("on"));
-					if (artist != null)
+					if (artist != null && is_compilation == 0)
 						info += format_link("artist:\"%s\" AND album:\"%s\"".printf(artist, album), album);
+					else if (artist != null && is_compilation == 1)
+						info += format_link("album:\"%s\" AND compilation:1".printf(album), album);
 					else
 						info += format_link("album:\"%s\"".printf(album), album);
 				}
