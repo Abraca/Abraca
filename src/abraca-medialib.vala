@@ -181,7 +181,7 @@ namespace Abraca {
 
 		private void set_str(Gtk.Editable editable, string key)
 		{
-			unowned string val = editable.get_chars(0, -1);
+			var val = editable.get_chars(0, -1);
 
 			client.xmms.medialib_entry_property_set_str(
 				current.data, key, val
