@@ -152,11 +152,12 @@ public class Abraca.Equalizer : Gtk.Dialog {
 		model.reset();
 	}
 
-	private void on_equalizer_mode_changed(EqualizerModel model, EqualizerMode mode)
+	private void on_equalizer_mode_changed(EqualizerModel model, EqualizerMode mode, bool initial)
 	{
 		next_band_names = BAND_NAMES_10_LEGACY;
 
-		model.reset();
+		if (!initial)
+			model.reset();
 
 		switch (mode) {
 		case EqualizerMode.LEGACY:

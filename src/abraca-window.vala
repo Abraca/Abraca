@@ -109,7 +109,7 @@ namespace Abraca {
 			add(main_ui);
 		}
 
-		private void on_config_changed (Client c, string key, string value)
+		private void on_config_changed (Client c, string key, string value, bool initial)
 		{
 			if ("playlist.repeat_all" == key) {
 				change_action_state("playlist-repeat-all", int.parse(value) > 0);

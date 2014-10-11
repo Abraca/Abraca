@@ -58,7 +58,7 @@ namespace Abraca {
 
 		public signal void medialib_entry_changed(Xmms.Value res);
 
-		public signal void configval_changed(string key, string val);
+		public signal void configval_changed(string key, string val, bool initial);
 
 		private Gee.List<Xmms.Result> recallable_references = new LinkedList<Xmms.Result>();
 
@@ -258,7 +258,7 @@ namespace Abraca {
 			recallable_references.add(recallable);
 
 			xmms.config_list_values().notifier_set(
-				on_configval_changed
+				on_configval_initial
 			);
 
 			recallable = xmms.broadcast_config_value_changed();
@@ -531,15 +531,29 @@ namespace Abraca {
 			return ret || numeric;
 		}
 
-		private void on_configval_changed_foreach(string key, Xmms.Value val) {
-			string cfg_value;
-			if (val.get_string(out cfg_value)) {
-				configval_changed(key, cfg_value);
+		private bool on_configval_changed(Xmms.Value dict) {
+			unowned Xmms.DictIter iter;
+			unowned string value, key;
+
+			dict.get_dict_iter(out iter);
+			while (iter.pair_string(out key, out value)) {
+				configval_changed(key, value, false);
+				iter.next();
 			}
+
+			return true;
 		}
 
-		private bool on_configval_changed(Xmms.Value val) {
-			val.dict_foreach(on_configval_changed_foreach);
+		private bool on_configval_initial(Xmms.Value dict) {
+			unowned Xmms.DictIter iter;
+			unowned string value, key;
+
+			dict.get_dict_iter(out iter);
+			while (iter.pair_string(out key, out value)) {
+				configval_changed(key, value, true);
+				iter.next();
+			}
+
 			return true;
 		}
 	}

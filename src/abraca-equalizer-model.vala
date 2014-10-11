@@ -89,7 +89,7 @@ public class Abraca.EqualizerModel : GLib.Object {
 	private static int PREAMP_INDEX = 1;
 	private static int GAIN_OFFSET = 2;
 
-	public signal void mode_changed(EqualizerMode mode);
+	public signal void mode_changed(EqualizerMode mode, bool initial);
 	public signal void band_list_changed(Gee.List<double?> bands);
 	public signal void band_changed(int band, double gain);
 	public signal void preamp_changed(double gain);
@@ -99,6 +99,8 @@ public class Abraca.EqualizerModel : GLib.Object {
 	private GLib.TimeVal updater_timestamp;
 
 	private Client client;
+
+	private bool initialized = false;
 
 	public EqualizerMode mode {
 		get; private set; default = EqualizerMode.DISABLED;
@@ -232,10 +234,12 @@ public class Abraca.EqualizerModel : GLib.Object {
 	{
 		if (state == Client.ConnectionState.Connected) {
 			refresh();
+		} else {
+			initialized = false;
 		}
 	}
 
-	private void on_config_changed(Client c, string key, string value)
+	private void on_config_changed(Client c, string key, string value, bool initial)
 	{
 		int band = 0;
 
@@ -244,7 +248,8 @@ public class Abraca.EqualizerModel : GLib.Object {
 		}
 
 		if (key == "equalizer.use_legacy" || key == "equalizer.bands" || key == "equalizer.enabled") {
-			refresh();
+			if (!initial)
+				refresh();
 		} else if ((mode.is_legacy() && (key.scanf(CONFIG_FORMAT_LEGACY, out band) == 1)) ||
 		           (!mode.is_legacy() && (key.scanf(CONFIG_FORMAT_NORMAL, out band) == 1))) {
 			try {
@@ -323,13 +328,15 @@ public class Abraca.EqualizerModel : GLib.Object {
 			var bands = use_legacy ? get_legacy_bands(dict) : get_bands(dict);
 
 			mode = EqualizerMode.from_settings(bands.size, use_legacy, enabled);
-			mode_changed(mode);
+			mode_changed(mode, initialized == false);
+			initialized = true;
 
 			band_list_changed(bands);
+
 		} catch (ConfigError e) {
 			GLib.warning(e.message);
 			mode = EqualizerMode.DISABLED;
-			mode_changed(mode);
+			mode_changed(mode, false);
 			band_list_changed(get_dummy_bands(mode.band_count()));
 		}
 
