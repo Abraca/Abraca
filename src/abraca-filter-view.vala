@@ -388,36 +388,28 @@ namespace Abraca {
 
 		private void on_header_edit (Gtk.MenuItem item)
 		{
-			var store = (FilterModel) model;
 			var edit = new FilterEditor();
 
 			edit.transient_for = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
 
 			edit.column_changed.connect((editor, prop, enabled) => {
-				string[] modified;
-				int i = 0;
+				var columns = (model as FilterModel).dynamic_columns;
+				var i = 0;
 
-				if (enabled) {
-					modified = new string[store.dynamic_columns.length + 1];
-				} else {
-					modified = new string[store.dynamic_columns.length - 1];
-				}
-
-				foreach (unowned string s in store.dynamic_columns) {
-					if (!enabled && s == prop) {
+				var modified = new string[columns.length + (enabled ? 1 : -1)];
+				foreach (unowned string s in columns) {
+					if (!enabled && s == prop)
 						continue;
-					}
 					modified[i++] = s;
 				}
 
-				if (enabled) {
+				if (enabled)
 					modified[i] = prop;
-				}
 
 				set_dynamic_columns(modified);
 			});
 
-			edit.set_active(store.dynamic_columns);
+			edit.set_active((model as FilterModel).dynamic_columns);
 			edit.run();
 		}
 
