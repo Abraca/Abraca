@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2014 Daniel Svensson <dsvensson@email.com> -->
+<application>
+ <id type="desktop">abraca.desktop</id>
+ <metadata_license>CC-BY-SA-3.0</metadata_license>
+ <project_license>GPL-2.0+</project_license>
+ <name>Abraca</name>
+ <summary>A graphical interface for controlling XMMS2</summary>
+ <description>
+  <p>
+   Abraca is a client for the XMMS2 music player which is capable of
+   working with large media libraries in a swift fashion. It strives
+   to have a minimalistic interface while providing powerful features.
+  </p>
+  <p>Some of the noteworthy features includes:</p>
+  <ul>
+	<li>Automatic discovery of local and remote XMMS2 servers</li>
+	<li>Collection pattern style exploration of the media library</li>
+	<li>Fullscreen view with cover art for use on large displays</li>
+	<li>Equalizer configuration</li>
+  </ul>
+ </description>
+ <screenshots>
+  <screenshot type="default">https://raw.githubusercontent.com/Abraca/Abraca/appdata/abraca.png</screenshot>
+ </screenshots>
+ <url type="homepage">https://github.com/Abraca/Abraca</url>
+ <updatecontact>dsvensson@gmail.com</updatecontact>
+</application>
