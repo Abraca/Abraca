@@ -76,7 +76,6 @@ namespace Abraca {
 			button_press_event.connect(on_button_press_event);
 			row_activated.connect(on_row_activated);
 			key_press_event.connect(on_key_press_event);
-			columns_changed.connect(on_columns_changed);
 
 			notify["sorting"].connect(on_sorting_changed);
 
@@ -87,7 +86,15 @@ namespace Abraca {
 		public void get_configuration (GLib.KeyFile file)
 		{
 			FilterModel store = (FilterModel) model;
-			file.set_string_list("filter", "columns", store.dynamic_columns);
+
+			var columns = get_columns();
+			var names = new string[columns.length()];
+			var i = 0;
+
+			foreach (var column in columns)
+				names[i++] = column.title;
+
+			file.set_string_list("filter", "columns", names);
 		}
 
 
@@ -261,22 +268,6 @@ namespace Abraca {
 		}
 
 
-		private void on_columns_changed ()
-		{
-			if (model != null) {
-				var columns = get_columns();
-				var modified = new string[columns.length()];
-				int i = 0;
-
-				foreach (var column in columns) {
-					modified[i++] = column.title;
-				}
-
-				set_dynamic_columns(modified);
-			}
-		}
-
-
 		private void on_row_activated (Gtk.TreeView tree, Gtk.TreePath path,
 		                               Gtk.TreeViewColumn column)
 		{
@@ -433,13 +424,22 @@ namespace Abraca {
 
 		private void on_header_remove (Gtk.MenuItem item)
 		{
+			var columns = get_columns();
+			if (columns.length() == 1)
+				return;
+
+			var modified = new string[columns.length() - 1];
+			var i = 0;
+
 			var title = ((Gtk.Menu) item.parent).tearoff_title;
-			foreach (var column in get_columns()) {
-				if (column.title == title) {
+			foreach (var column in columns) {
+				if (column.title == title)
 					remove_column(column);
-					break;
-				}
+				else
+					modified[i++] = column.title;
 			}
+
+			set_dynamic_columns(modified);
 		}
 
 
