@@ -101,13 +101,13 @@ namespace Abraca {
 		public void set_configuration (GLib.KeyFile file)
 			throws GLib.KeyFileError
 		{
-			string[] list;
+			string[] list = new string[0];
 
-			if (file.has_group("filter") && file.has_key("filter", "columns")) {
+			if (file.has_group("filter") && file.has_key("filter", "columns"))
 				list = file.get_string_list("filter", "columns");
-			} else {
+
+			if (list.length == 0)
 				list = new string[] {"artist", "title", "album"};
-			}
 
 			set_dynamic_columns(list);
 		}
