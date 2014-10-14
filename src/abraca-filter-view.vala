@@ -327,7 +327,7 @@ namespace Abraca {
 				);
 				column.resizable = true;
 				column.reorderable = true;
-				column.fixed_width = 120;
+				column.expand = true;
 				column.sizing = Gtk.TreeViewColumnSizing.FIXED;
 				column.clickable = true;
 				column.widget = new Gtk.Label(key);
