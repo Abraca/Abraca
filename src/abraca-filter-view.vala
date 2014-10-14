@@ -53,7 +53,6 @@ namespace Abraca {
 
 		private MetadataResolver resolver;
 
-
 		public FilterView (Client c, MetadataResolver r, Medialib m)
 		{
 			medialib = m;
@@ -107,7 +106,7 @@ namespace Abraca {
 				list = file.get_string_list("filter", "columns");
 
 			if (list.length == 0)
-				list = new string[] {"artist", "album", "title"};
+				list = new string[] {"artist", "album", "tracknr", "title", "duration"};
 
 			set_dynamic_columns(list);
 		}
