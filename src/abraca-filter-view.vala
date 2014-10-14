@@ -59,7 +59,7 @@ namespace Abraca {
 			client = c;
 			resolver = r;
 
-			//fixed_height_mode = true;
+			fixed_height_mode = true;
 			enable_search = false;
 			headers_clickable = true;
 
@@ -318,6 +318,7 @@ namespace Abraca {
 
 			var cell = new Gtk.CellRendererText();
 			cell.ellipsize = Pango.EllipsizeMode.END;
+			cell.set_fixed_height_from_font(1);
 
 			int pos = 2;
 			foreach (var key in props) {
