@@ -107,7 +107,7 @@ namespace Abraca {
 				list = file.get_string_list("filter", "columns");
 
 			if (list.length == 0)
-				list = new string[] {"artist", "title", "album"};
+				list = new string[] {"artist", "album", "title"};
 
 			set_dynamic_columns(list);
 		}
