@@ -76,9 +76,6 @@ namespace Abraca {
 				GLib.assert_not_reached ();
 			}
 
-			width_request = 800;
-			height_request = 600;
-
 			Configurable.register(this);
 
 			client.configval_changed.connect(on_config_changed);
@@ -119,59 +116,42 @@ namespace Abraca {
 			}
 		}
 
+		private static int get_key(GLib.KeyFile file, string group, string key, double fallback)
+		{
+			try {
+				return file.get_integer(group, key);
+			}
+			catch (GLib.KeyFileError e) {
+				return (int) fallback;
+			}
+		}
+
 		public void set_configuration (GLib.KeyFile file)
 			throws GLib.KeyFileError
 		{
-			int xpos, ypos, width, height;
+			int xpos, ypos, width, height, pos;
 
-			if (!file.has_group("main_win")) {
-				return;
-			}
+			gravity = (Gdk.Gravity) get_key(file, "main_win", "gravity", 0);
 
-			if (file.has_key("main_win", "gravity")) {
-				gravity = (Gdk.Gravity) file.get_integer("main_win", "gravity");
-			}
+			var root = Gdk.get_default_root_window();
+
+			width = get_key(file, "main_win", "width", root.get_width() * 0.8);
+			height = get_key(file, "main_win", "height", root.get_height() * 0.8);
+
+			resize(width, height);
 
 			get_position(out xpos, out ypos);
 
-			if (file.has_key("main_win", "x")) {
-				xpos = file.get_integer("main_win", "x");
-			}
+			xpos = get_key(file, "main_win", "x", -1);
+			ypos = get_key(file, "main_win", "y", -1);
 
-			if (file.has_key("main_win", "y")) {
-				ypos = file.get_integer("main_win", "y");
-			}
+			if (xpos < 0 || ypos < 0)
+				set_position(Gtk.WindowPosition.CENTER);
+			else
+				move(xpos, ypos);
 
-			move(xpos, ypos);
-
-			get_size(out width, out height);
-
-			if (file.has_key("main_win", "width")) {
-				width =  file.get_integer("main_win", "width");
-			}
-
-			if (file.has_key("main_win", "height")) {
-				height = file.get_integer("main_win", "height");
-			}
-
-			if (width > 0 && height > 0) {
-				resize(width, height);
-			}
-
-			if (file.has_group("panes")) {
-				if (file.has_key("panes", "pos1")) {
-					var pos = file.get_integer("panes", "pos1");
-					if (pos >= 0) {
-						main_hpaned.position = pos;
-					}
-				}
-				if (file.has_key("panes", "pos2")) {
-					var pos = file.get_integer ("panes", "pos2");
-					if (pos >= 0) {
-						right_hpaned.position = pos;
-					}
-				}
-			}
+			main_hpaned.position = get_key(file, "panes", "pos1", width * 0.1);
+			right_hpaned.position = get_key(file, "panes", "pos2", width * 0.6);
 		}
 
 		public void get_configuration (GLib.KeyFile file)
