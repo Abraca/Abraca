@@ -307,6 +307,56 @@ namespace Abraca {
 			on_menu_add(item);
 		}
 
+		private static bool should_expand (string property)
+		{
+			switch (property) {
+				case "id":
+				case "added":
+				case "bitrate":
+				case "date":
+				case "duration":
+				case "genre":
+				case "laststarted":
+				case "lmod":
+				case "mime":
+				case "size":
+				case "status":
+				case "timesplayed":
+				case "tracknr":
+					return false;
+				default:
+					return true;
+			}
+		}
+
+		/* Best effort width guesstimation */
+		private static int min_chars (string property)
+		{
+			switch (property) {
+			case "id":
+				return 5; // "00000"
+			case "date":
+			case "lmod":
+			case "added":
+			case "laststarted":
+				return 10; // "1970-01-01"
+			case "bitrate":
+				return 10; // "192.0 kbps"
+			case "duration":
+				return 5; // "60:00"
+			case "mime":
+				return 10; // "audio/mpeg"
+			case "size":
+				return 7; // "31337kB"
+			case "status":
+			case "timesplayed":
+				return 3; // "192"
+			case "tracknr":
+				return 4; // "23"
+			default:
+				return -1;
+			}
+		}
 
 		private void set_dynamic_columns (string[] props)
 		{
@@ -316,19 +366,20 @@ namespace Abraca {
 				remove_column(column);
 			}
 
-			var cell = new Gtk.CellRendererText();
-			cell.ellipsize = Pango.EllipsizeMode.END;
-			cell.set_fixed_height_from_font(1);
-
 			int pos = 2;
 			foreach (var key in props) {
+				var cell = new Gtk.CellRendererText();
+				cell.ellipsize = Pango.EllipsizeMode.END;
+				cell.set_fixed_height_from_font(1);
+				cell.width_chars = min_chars(key) + 4; // TODO: Why 4? o_O
+
 				var column = new Gtk.TreeViewColumn.with_attributes(
 					key, cell, "text", pos++, null
 				);
 				column.resizable = true;
 				column.reorderable = true;
-				column.expand = true;
 				column.sizing = Gtk.TreeViewColumnSizing.FIXED;
+				column.expand = should_expand(key);
 				column.clickable = true;
 				column.widget = new Gtk.Label(key);
 				column.widget.show();
@@ -340,6 +391,12 @@ namespace Abraca {
 				GLib.assert(ancestor != null);
 
 				ancestor.button_press_event.connect(on_header_clicked);
+
+				if (!column.expand) {
+					int min_width, natural_width;
+					cell.get_preferred_width(column.widget, out min_width, out natural_width);
+					column.fixed_width = natural_width;
+				}
 			}
 
 			model = new FilterModel(client, resolver, props);
