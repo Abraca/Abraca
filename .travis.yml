@@ -4,7 +4,7 @@ before_script:
   - sudo rm -rf /etc/dpkg/dpkg.cfg.d/multiarch
   - sudo mkdir -p /etc/apt/apt.conf.d
   - echo -e 'Dpkg::Options {\n\t"--force-confold";\n\t"--force-overwrite";\n}' | sudo tee /etc/apt/apt.conf.d/local
-  - echo "deb http://archive.ubuntu.com/ubuntu/ utopic main restricted universe multiverse" | sudo tee /etc/apt/sources.list
+  - echo "deb http://us.archive.ubuntu.com/ubuntu/ utopic main restricted universe multiverse" | sudo tee /etc/apt/sources.list
   - sudo apt-get --force-yes purge postgresql-9.1 postgresql-9.2 postgresql-9.3 postgresql-common openjdk-6-jdk openjdk-7-jdk erlang-base-hipe mysql-common libx11-6 oracle-java8-installer oracle-java7-installer
   - sudo apt-get -q autoremove
   - sudo apt-get -q update
