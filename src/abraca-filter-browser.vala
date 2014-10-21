@@ -176,7 +176,7 @@ public class Abraca.FilterBrowser : Gtk.Box {
 
 	public FilterBrowser (Client client, Config config, Searchable searchable)
 	{
-		var properties = new string[] { "publisher", "catalognumber", "artist", "album" };
+		var properties = new string[] { "publisher", "artist", "album" };
 
 		FilterBrowserView previous = null;
 
