@@ -75,7 +75,7 @@ public class Abraca.FilterBrowserView : Abraca.TreeView {
 	private void on_selection_changed(Gtk.TreeSelection selection)
 	{
 		var intersection = new Xmms.Collection(Xmms.CollectionType.INTERSECTION);
-		if (previous != null) {
+		if (previous != null && previous.filter != null) {
 			intersection.add_operand(previous.filter);
 		} else {
 			intersection.add_operand(Xmms.Collection.universe());
@@ -106,7 +106,7 @@ public class Abraca.FilterBrowserView : Abraca.TreeView {
 	{
 		var sb = new GLib.StringBuilder();
 
-		if (previous != null)
+		if (previous != null && previous.query != null)
 			sb.append(previous.query);
 
 		if (union != null) {
