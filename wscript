@@ -2,7 +2,7 @@
 # encoding: utf-8
 import os
 
-VERSION = '0.8.0'
+VERSION = '0.8.1'
 APPNAME = 'Abraca'
 
 top = '.'
