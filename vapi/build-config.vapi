@@ -4,7 +4,6 @@ namespace Build {
 	public class Config {
 		public const string APPNAME;
 		public const string VERSION;
-		public const string DATADIR;
 		public const string LOCALEDIR;
 	}
 }

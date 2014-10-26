@@ -41,6 +41,7 @@ def configure(conf):
 
 	conf.define('APPNAME', APPNAME)
 	conf.define('VERSION', VERSION)
+	conf.define('LOCALEDIR', '${LOCALEDIR}')
 
 	conf.write_config_header('build-config.h')
 
