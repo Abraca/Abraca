@@ -16,6 +16,7 @@ def configure(conf):
 	conf.load('gresource man about-generator', tooldir='waftools')
 	conf.load('vala', funs='')
 	conf.check_vala((0, 24, 0))
+	conf.env.VALAFLAGS = ['-C', '--quiet']
 
 	if 'CFLAGS' not in os.environ:
 		conf.env.append_unique("CFLAGS", ["-g", "-O0", "-fdiagnostics-show-option"])
