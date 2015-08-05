@@ -12,7 +12,7 @@ def options(opt):
 	opt.load('compiler_c vala intltool')
 
 def configure(conf):
-	conf.load('compiler_c intltool')
+	conf.load('gnu_dirs compiler_c intltool')
 	conf.load('gresource man about-generator', tooldir='waftools')
 	conf.load('vala', funs='')
 	conf.check_vala((0, 24, 0))
