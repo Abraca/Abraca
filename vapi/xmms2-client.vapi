@@ -589,13 +589,13 @@ namespace Xmms {
 		MAIN
 	}
 
-	[CCode (cprefix="XMMS_IPC_CMD_")]
+	[CCode (cprefix="XMMS_IPC_COMMAND_MAIN_")]
 	public enum IpcMainCommand {
 		HELLO
 	}
 
 	public enum IpcReply {
-		[CCode (cname="XMMS_IPC_CMD_REPLY")]
+		[CCode (cname="XMMS_IPC_COMMAND_REPLY")]
 		OK,
 		ERROR
 	}
