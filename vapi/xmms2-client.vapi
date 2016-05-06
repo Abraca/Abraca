@@ -589,13 +589,21 @@ namespace Xmms {
 		MAIN
 	}
 
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+	[CCode (cprefix="XMMS_IPC_COMMAND_MAIN_")]
+#else
 	[CCode (cprefix="XMMS_IPC_CMD_")]
+#endif
 	public enum IpcMainCommand {
 		HELLO
 	}
 
 	public enum IpcReply {
+#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
+		[CCode (cname="XMMS_IPC_COMMAND_REPLY")]
+#else
 		[CCode (cname="XMMS_IPC_CMD_REPLY")]
+#endif
 		OK,
 		ERROR
 	}
