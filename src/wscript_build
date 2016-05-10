@@ -63,6 +63,7 @@ bld.program(
     use          = 'subzero abraca-img-resources abraca-ui-resources',
     packages     = 'gtk+-3.0 gio-unix-2.0 gee-0.8 xmms2-client-glib subzero posix gdk-add-filter build-config',
     uselib       = 'GTK+-3.0 GMODULE-2.0 GIO-2.0 GEE-0.8 XMMS2-CLIENT XMMS2-CLIENT-GLIB math',
+    includes     = [bld.bldnode.abspath()],
     source       = sources,
     vapi_dirs    = '../vapi ../external',
     vala_defines = bld.env.VALADEFINES,
