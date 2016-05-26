@@ -410,11 +410,15 @@ namespace Abraca {
 				}
 
 				if (val.dict_entry_get_string("album", out album)) {
+					string album_artist;
+
 					if (!val.dict_entry_get_int("compilation", out is_compilation))
 						is_compilation = 0;
 
 					info += format_separator(_("on"));
-					if (artist != null && is_compilation == 0)
+					if (val.dict_entry_get_string ("album_artist", out album_artist) && is_compilation == 0)
+						info += format_link("album_artist:\"%s\" AND album:\"%s\"".printf(album_artist, album), album);
+					else if (artist != null && is_compilation == 0)
 						info += format_link("artist:\"%s\" AND album:\"%s\"".printf(artist, album), album);
 					else if (artist != null && is_compilation == 1)
 						info += format_link("album:\"%s\" AND compilation:1".printf(album), album);
