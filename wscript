@@ -12,10 +12,11 @@ def options(opt):
 	opt.load('compiler_c vala intltool')
 
 def configure(conf):
-	conf.load('compiler_c intltool')
+	conf.load('gnu_dirs compiler_c intltool')
 	conf.load('gresource man about-generator', tooldir='waftools')
 	conf.load('vala')
 	conf.check_vala((0, 24, 0))
+	conf.env.VALAFLAGS = ['-C', '--quiet']
 
 	if 'CFLAGS' not in os.environ:
 		conf.env.append_unique("CFLAGS", ["-g", "-O0", "-fdiagnostics-show-option"])
