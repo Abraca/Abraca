@@ -14,7 +14,7 @@ def gzip_func(task):
     try:
         input = open(infile, 'rb')
         outf = open(outfile, 'wb')
-        output = gzip.GzipFile(os.path.basename(infile), fileobj=outf)
+        output = gzip.GzipFile(os.path.basename(infile), fileobj=outf, mtime=0)
         output.write(input.read())
     finally:
         if input:
