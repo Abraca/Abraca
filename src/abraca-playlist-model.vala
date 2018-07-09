@@ -136,7 +136,7 @@ namespace Abraca {
 				get(iter, Column.ID, out mid);
 
 				playlist_map.remove_path((int) mid, path);
-				remove(iter);
+				remove(ref iter);
 			}
 		}
 
