@@ -166,7 +166,7 @@ public class Abraca.TreeView : Gtk.TreeView, SelectedRowsMixin
 	{
 		int width, row_height;
 
-		GLib.List<unowned Gtk.TreePath> paths = selection.get_selected_rows(null);
+		GLib.List<Gtk.TreePath> paths = selection.get_selected_rows(null);
 
 		var surfaces = new GLib.List<Cairo.Surface>();
 		foreach (unowned Gtk.TreePath path in paths)

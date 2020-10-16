@@ -19,26 +19,26 @@
 
 [GtkTemplate(ui = "/org/xmms2/Abraca/ui/abraca-equalizer.ui")]
 public class Abraca.Equalizer : Gtk.Dialog {
-	private static const string[] BAND_NAMES_10_LEGACY = {
+	private const string[] BAND_NAMES_10_LEGACY = {
 		"60Hz", "170Hz", "310Hz", "600Hz", "1kHz", "3kHz", "6kHz", "12kHz", "14kHz", "16kHz"
 	};
 
-	private static const string[] BAND_NAMES_10 = {
+	private const string[] BAND_NAMES_10 = {
 		"31Hz", "62Hz", "125Hz", "250Hz", "500Hz", "1kHz", "2kHz", "4kHz", "8kHz", "16kHz"
 	};
 
-	private static const string[] BAND_NAMES_15 = {
+	private const string[] BAND_NAMES_15 = {
 		"25Hz", "40Hz", "63Hz", "100Hz", "160Hz", "250Hz", "400Hz", "630Hz", "1kHz", "1.6kHz",
 		"2.5kHz", "4kHz", "6.3kHz", "10kHz", "16kHz"
 	};
 
-	private static const string[] BAND_NAMES_25 =  {
+	private const string[] BAND_NAMES_25 =  {
 		"20Hz", "31.5Hz", "40Hz", "50Hz", "80Hz", "100Hz", "125Hz", "160Hz", "250Hz", "315Hz",
 		"400Hz", "500Hz", "800Hz", "1kHz", "1.25kHz", "1.6kHz", "2.5kHz", "3.15kHz", "4kHz",
 		"5kHz", "8kHz", "10kHz", "12.5kHz", "16kHz", "20kHz"
 	};
 
-	private static const string[] BAND_NAMES_31 =  {
+	private const string[] BAND_NAMES_31 =  {
 		"20Hz", "25Hz", "31.5Hz", "40Hz", "50Hz", "63Hz", "80Hz", "100Hz", "125Hz", "160Hz",
 		"200Hz", "250Hz", "315Hz", "400Hz", "500Hz", "630Hz", "800Hz", "1kHz", "1.25kHz", "1.6kHz",
 		"2kHz", "2.5kHz", "3.15kHz", "4kHz", "5kHz", "6.3kHz", "8kHz", "10kHz", "12.5kHz", "16kHz", "20kHz"

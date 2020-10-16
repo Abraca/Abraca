@@ -78,7 +78,7 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 			do {
 				store.get(iter, 0, out current);
 				if (current == pattern) {
-					store.remove(iter);
+					store.remove(ref iter);
 					break;
 				}
 			} while (store.iter_next(ref iter));

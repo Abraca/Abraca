@@ -36,9 +36,9 @@ namespace Abraca.Icons {
 	 *
 	 * Built-in stock icon sizes.
 	 */
-	private static const int[] STOCK_SIZES = { -1, 16, 16, 24, 16, 32, 48 };
+	private const int[] STOCK_SIZES = { -1, 16, 16, 24, 16, 32, 48 };
 
-	private static const Icon[] STOCK_ICONS = {
+	private const Icon[] STOCK_ICONS = {
 		{ "abraca-icon",       32, "abraca-32.png"             },
 		{ "abraca-equalizer",  24, "abraca-equalizer.png"      },
 		{ "abraca-collection", 24, "abraca-collection-24.png"  },

@@ -19,8 +19,8 @@
 
 public class Abraca.ServerBrowser
 {
-	private static const string EXECUTABLE = "xmms2-launcher";
-	private static const string[] ARGS = { EXECUTABLE };
+	private const string EXECUTABLE = "xmms2-launcher";
+	private const string[] ARGS = { EXECUTABLE };
 
 	private const string DEFAULT_UNIX_PATH = "/tmp";
 

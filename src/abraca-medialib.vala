@@ -505,7 +505,7 @@ namespace Abraca {
 				do {
 					urls.get(iter, 0, out current);
 					if (current == url) {
-						urls.remove(iter);
+						urls.remove(ref iter);
 						break;
 					}
 				} while (urls.iter_next(ref iter));
