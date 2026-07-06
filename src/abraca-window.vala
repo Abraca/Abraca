@@ -181,17 +181,15 @@ namespace Abraca {
 			playback_label.use_markup = true;
 			playback_label.add_css_class("abraca-playback-label");
 
-			var header_cover = new Gtk.Picture() {
-				content_fit = Gtk.ContentFit.CONTAIN,
-				can_shrink = true,
-				width_request = 28,
-				height_request = 28,
-				valign = Gtk.Align.CENTER
+			var header_cover = new Gtk.Image() {
+				pixel_size = 28,
+				valign = Gtk.Align.CENTER,
+				halign = Gtk.Align.CENTER
 			};
 			header_cover.add_css_class("abraca-header-cover");
-			header_cover.set_paintable(client.current_coverart_paintable);
+			header_cover.set_from_paintable(client.current_coverart_paintable);
 			client.playback_current_coverart_paintable.connect((paintable) => {
-				header_cover.set_paintable(paintable);
+				header_cover.set_from_paintable(paintable);
 			});
 
 			var title_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 8) {
