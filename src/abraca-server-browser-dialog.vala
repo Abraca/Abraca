@@ -18,23 +18,33 @@
  */
 
 [GtkTemplate(ui = "/org/xmms2/Abraca/ui/abraca-server-browser.ui")]
-public class Abraca.ServerBrowserDialog : Gtk.Dialog
+public class Abraca.ServerBrowserDialog : Gtk.Window
 {
 	public signal void launch ();
 	public signal void remote_selected (string name, string path);
 
-	private enum Column {
-		NAME, PATH
+	/* Emitted when the dialog is done (selection made or cancelled) so the
+	 * ServerBrowser can stop discovery; replaces the deprecated Gtk.Dialog
+	 * response signal. */
+	public signal void response (int id);
+
+	private class ServerItem : GLib.Object {
+		public string name { get; construct; }
+		public string path { get; construct; }
+		public ServerItem (string name, string path) {
+			Object (name: name, path: path);
+		}
 	}
 
 	private bool location_entry_valid = false;
 
+	private GLib.ListStore location_store;
+	private Gtk.SingleSelection selection;
+
 	[GtkChild]
 	private Gtk.Entry location_entry;
 	[GtkChild]
-	private Gtk.ListStore location_store;
-	[GtkChild]
-	private Gtk.TreeView location_tree;
+	private Gtk.ColumnView location_view;
 	[GtkChild]
 	private Gtk.Button connect_button;
 	[GtkChild]
@@ -42,45 +52,48 @@ public class Abraca.ServerBrowserDialog : Gtk.Dialog
 
 	public ServerBrowserDialog(bool may_launch)
 	{
-		Object(use_header_bar: 1);
 		expander.visible = may_launch;
+
+		location_store = new GLib.ListStore (typeof (ServerItem));
+		selection = new Gtk.SingleSelection (location_store) {
+			autoselect = false,
+			can_unselect = true
+		};
+		selection.notify["selected"].connect (on_selection_changed);
+		location_view.set_model (selection);
+
+		var factory = new Gtk.SignalListItemFactory ();
+		factory.setup.connect (li => {
+			((Gtk.ListItem) li).set_child (new Gtk.Label (null) { xalign = 0 });
+		});
+		factory.bind.connect (li => {
+			var item = (ServerItem) ((Gtk.ListItem) li).get_item ();
+			var label = (Gtk.Label) ((Gtk.ListItem) li).get_child ();
+			label.label = item.name;
+			label.tooltip_text = item.path;
+		});
+		location_view.append_column (new Gtk.ColumnViewColumn (null, factory));
+
+		location_view.activate.connect (on_activate);
 	}
 
-	private void emit_remote_selected(Gtk.TreeIter iter)
+	private void on_activate (uint position)
 	{
-		unowned string name, connection_path;
-		location_store.get(iter,
-		                   Column.NAME, out name,
-		                   Column.PATH, out connection_path);
-
-		remote_selected(name, connection_path);
-
-		response(Gtk.ResponseType.OK);
-		destroy();
+		var item = selection.get_item (position) as ServerItem;
+		if (item != null)
+			emit_remote_selected (item);
 	}
 
-	[GtkCallback]
-	private void on_location_row_activated(Gtk.TreeView view, Gtk.TreePath path, Gtk.TreeViewColumn? colunm)
+	private void emit_remote_selected (ServerItem item)
 	{
-		Gtk.TreeIter iter;
-		location_store.get_iter(out iter, path);
-		emit_remote_selected(iter);
+		remote_selected (item.name, item.path);
+		response (0);
+		close ();
 	}
 
-	[GtkCallback]
-	private void on_location_entry_activated(Gtk.Entry entry)
+	private void on_selection_changed ()
 	{
-		if (location_entry_valid) {
-			remote_selected(location_entry.text, location_entry.text);
-			response(Gtk.ResponseType.OK);
-			destroy();
-		}
-	}
-
-	[GtkCallback]
-	private void on_location_row_selected(Gtk.TreeSelection selection)
-	{
-		if (selection.count_selected_rows() > 0) {
+		if (selection.selected != Gtk.INVALID_LIST_POSITION) {
 			connect_button.sensitive = true;
 			location_entry.text = "";
 		} else {
@@ -89,10 +102,20 @@ public class Abraca.ServerBrowserDialog : Gtk.Dialog
 	}
 
 	[GtkCallback]
+	private void on_location_entry_activated(Gtk.Entry entry)
+	{
+		if (location_entry_valid) {
+			remote_selected(location_entry.text, location_entry.text);
+			response(0);
+			close();
+		}
+	}
+
+	[GtkCallback]
 	private void on_location_entry_changed(Gtk.Editable entry)
 	{
 		if (location_entry.text.length > 0) {
-			location_tree.get_selection().unselect_all();
+			selection.unselect_all();
 			connect_button.sensitive = false;
 			check_location.begin(location_entry.text, (obj, res) => {
 				var success = check_location.end(res);
@@ -107,18 +130,16 @@ public class Abraca.ServerBrowserDialog : Gtk.Dialog
 	{
 		if (location_entry.text.length > 0) {
 			on_location_entry_activated(location_entry);
-		} else {
-			Gtk.TreeIter iter;
-			location_tree.get_selection().get_selected(null, out iter);
-			emit_remote_selected(iter);
+		} else if (selection.selected != Gtk.INVALID_LIST_POSITION) {
+			emit_remote_selected((ServerItem) selection.get_item(selection.selected));
 		}
 	}
 
 	[GtkCallback]
 	private void on_cancel_clicked()
 	{
-		response(Gtk.ResponseType.CANCEL);
-		destroy();
+		response(1);
+		close();
 	}
 
 	[GtkCallback]
@@ -129,26 +150,17 @@ public class Abraca.ServerBrowserDialog : Gtk.Dialog
 
 	public void add_service(string name, string path)
 	{
-		Gtk.TreeIter iter;
-		location_store.append(out iter);
-		location_store.set(iter, Column.NAME, name, Column.PATH, path);
+		location_store.append(new ServerItem(name, path));
 	}
 
 	public void remove_service(string name, string path)
 	{
-		Gtk.TreeIter iter;
-
-		if (!location_store.get_iter_first(out iter))
-			return;
-
-		do {
-			unowned string entry_name, entry_path;
-			location_store.get(iter, Column.NAME, out entry_name, Column.PATH, out entry_path);
-			if (path == entry_path) {
-				location_store.remove(ref iter);
+		for (uint i = 0; i < location_store.get_n_items(); i++) {
+			if (((ServerItem) location_store.get_item(i)).path == path) {
+				location_store.remove(i);
 				break;
 			}
-		} while (location_store.iter_next(ref iter));
+		}
 	}
 
 	/* Happily attempt to interpret what Layer-8 dropped on us, aka Death-to-Layer-8 */
