@@ -20,7 +20,7 @@
 using GLib;
 
 namespace Abraca {
-	public class MedialibInfoDialog : Gtk.Dialog, Gtk.Buildable {
+	public class MedialibInfoDialog : Gtk.Window {
 		/* A node in the raw-metadata details tree: a source header (with
 		 * children) or a key/value leaf. */
 		private class DetailNode : GLib.Object {
@@ -62,51 +62,69 @@ namespace Abraca {
 		private Gtk.SpinButton tracknr_button;
 
 
-		public static MedialibInfoDialog build ()
-		{
-			var builder = new Gtk.Builder ();
-
-			try {
-				builder.add_from_resource("/org/xmms2/Abraca/ui/abraca-mediainfo.ui");
-			} catch (GLib.Error e) {
-				GLib.error(_("Could not load UI: %s"), e.message);
-			}
-
-			var instance = builder.get_object("mediainfo_dialog") as MedialibInfoDialog;
-
-			return instance;
-		}
-
-
-		public MedialibInfoDialog ()
-		{
-			ids = new GLib.List<uint>();
-		}
-
-
-		public void set_client (Client c)
+		public MedialibInfoDialog (Client c)
 		{
 			client = c;
+			ids = new GLib.List<uint>();
+
+			title = _("Info");
+			set_default_size (420, 420);
+
+			var header = new Gtk.HeaderBar ();
+			prev_button = new Gtk.Button.from_icon_name ("go-previous-symbolic") {
+				tooltip_text = _("Previous")
+			};
+			next_button = new Gtk.Button.from_icon_name ("go-next-symbolic") {
+				tooltip_text = _("Next")
+			};
+			header.pack_start (prev_button);
+			header.pack_start (next_button);
+			set_titlebar (header);
+
+			var notebook = new Gtk.Notebook ();
+
+			var grid = new Gtk.Grid () {
+				row_spacing = 7, column_spacing = 8,
+				margin_top = 10, margin_bottom = 10, margin_start = 10, margin_end = 10
+			};
+
+			song_entry = new Gtk.Entry () { hexpand = true };
+			artist_entry = new Gtk.Entry () { hexpand = true };
+			album_entry = new Gtk.Entry () { hexpand = true };
+			tracknr_button = new Gtk.SpinButton.with_range (0, 100, 1);
+			date_entry = new Gtk.Entry () { hexpand = true };
+			genre_entry = new Gtk.Entry () { hexpand = true };
+			rating_entry = new RatingEntry ();
+
+			add_row (grid, 0, _("Title:"), song_entry);
+			add_row (grid, 1, _("Artist:"), artist_entry);
+			add_row (grid, 2, _("Album:"), album_entry);
+			add_row (grid, 3, _("Track:"), tracknr_button);
+			add_row (grid, 4, _("Year:"), date_entry);
+			add_row (grid, 5, _("Genre:"), genre_entry);
+			add_row (grid, 6, _("Rating:"), rating_entry);
+
+			notebook.append_page (grid, new Gtk.Label (_("Overview")));
+
+			details_view = new Gtk.ColumnView (null);
+			setup_details_view ();
+			var scrolled = new Gtk.ScrolledWindow () {
+				child = details_view,
+				hscrollbar_policy = Gtk.PolicyType.NEVER,
+				vexpand = true
+			};
+			notebook.append_page (scrolled, new Gtk.Label (_("Details")));
+
+			set_child (notebook);
+
+			connect_widgets ();
 		}
 
 
-		public void parser_finished (Gtk.Builder builder)
+		private void add_row (Gtk.Grid grid, int row, string label, Gtk.Widget widget)
 		{
-			tracknr_button = builder.get_object("ent_tracknr") as Gtk.SpinButton;
-			date_entry = builder.get_object("ent_year") as Gtk.Entry;
-			song_entry = builder.get_object("ent_title") as Gtk.Entry;
-			album_entry = builder.get_object("ent_album") as Gtk.Entry;
-			artist_entry = builder.get_object("ent_artist") as Gtk.Entry;
-			rating_entry = builder.get_object("ent_rating") as RatingEntry;
-			genre_entry = builder.get_object("ent_genre") as Gtk.Entry;
-
-			next_button = builder.get_object("button_forward") as Gtk.Button;
-			prev_button = builder.get_object("button_prev") as Gtk.Button;
-
-			details_view = builder.get_object("treeview_details") as Gtk.ColumnView;
-			setup_details_view ();
-
-			connect_widgets ();
+			grid.attach (new Gtk.Label (label) { xalign = 0 }, 0, row, 1, 1);
+			grid.attach (widget, 1, row, 1, 1);
 		}
 
 
@@ -418,9 +436,8 @@ namespace Abraca {
 		public void info_dialog_add_id (uint mid)
 		{
 			if (info_dialog == null) {
-				info_dialog = MedialibInfoDialog.build();
+				info_dialog = new MedialibInfoDialog(client);
 				info_dialog.transient_for = parent;
-				info_dialog.set_client (client);
 				info_dialog.close_request.connect(() => {
 					info_dialog = null;
 					return false;

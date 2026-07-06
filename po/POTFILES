@@ -34,5 +34,4 @@ src/abraca-treeview.vala
 src/abraca-window.vala
 src/resources/ui/abraca-equalizer.ui
 src/resources/ui/abraca-main-menu.ui
-src/resources/ui/abraca-mediainfo.ui
 src/resources/ui/abraca-server-browser.ui
