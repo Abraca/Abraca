@@ -21,8 +21,20 @@ using GLib;
 using Gee;
 
 namespace Abraca {
+	public delegate void CoverartFunc (Gdk.Paintable paintable);
+
 	public class Client : GLib.Object {
 		public Gdk.Pixbuf default_coverart;
+
+		private Gdk.Texture _default_coverart_texture;
+		public Gdk.Texture default_coverart_texture {
+			get {
+				if (_default_coverart_texture == null)
+					_default_coverart_texture = Gdk.Texture.from_resource("/org/xmms2/Abraca/abraca-kopimi-coverart.png");
+				return _default_coverart_texture;
+			}
+		}
+
 		private void *gmain = null;
 
 		private int _current_id;
@@ -495,6 +507,29 @@ namespace Abraca {
 			playback_current_coverart(current_coverart);
 
 			return true;
+		}
+
+		/**
+		 * Retrieve and decode the front cover for a `picture_front` bindata hash,
+		 * invoking `func` with the resulting texture (or the default cover on
+		 * failure). Used by the media-info dialog to show per-track art.
+		 */
+		public void fetch_coverart (string picture_front, owned CoverartFunc func) {
+			xmms.bindata_retrieve(picture_front).notifier_set((value) => {
+				unowned uchar[] data;
+				Gdk.Paintable paintable = default_coverart_texture;
+
+				if (value.get_bin(out data)) {
+					try {
+						paintable = Gdk.Texture.from_bytes(new GLib.Bytes(data));
+					} catch (GLib.Error e) {
+						paintable = default_coverart_texture;
+					}
+				}
+
+				func(paintable);
+				return true;
+			});
 		}
 
 		public static bool collection_needs_quoting (string str) {

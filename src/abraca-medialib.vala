@@ -60,6 +60,7 @@ namespace Abraca {
 
 		private RatingEntry rating_entry;
 		private Gtk.SpinButton tracknr_button;
+		private Gtk.Picture cover_picture;
 
 
 		public MedialibInfoDialog (Client c)
@@ -84,8 +85,7 @@ namespace Abraca {
 			var notebook = new Gtk.Notebook ();
 
 			var grid = new Gtk.Grid () {
-				row_spacing = 7, column_spacing = 8,
-				margin_top = 10, margin_bottom = 10, margin_start = 10, margin_end = 10
+				row_spacing = 7, column_spacing = 8
 			};
 
 			song_entry = new Gtk.Entry () { hexpand = true };
@@ -103,8 +103,24 @@ namespace Abraca {
 			add_row (grid, 4, _("Year:"), date_entry);
 			add_row (grid, 5, _("Genre:"), genre_entry);
 			add_row (grid, 6, _("Rating:"), rating_entry);
+			grid.hexpand = true;
 
-			notebook.append_page (grid, new Gtk.Label (_("Overview")));
+			cover_picture = new Gtk.Picture () {
+				content_fit = Gtk.ContentFit.CONTAIN,
+				can_shrink = true,
+				width_request = 160,
+				height_request = 160,
+				valign = Gtk.Align.START
+			};
+			cover_picture.set_paintable (client.default_coverart_texture);
+
+			var overview = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 12) {
+				margin_top = 10, margin_bottom = 10, margin_start = 10, margin_end = 10
+			};
+			overview.append (cover_picture);
+			overview.append (grid);
+
+			notebook.append_page (overview, new Gtk.Label (_("Overview")));
 
 			details_view = new Gtk.ColumnView (null);
 			setup_details_view ();
@@ -382,6 +398,15 @@ namespace Abraca {
 			if (!updated || rating_entry.rating == itmp) {
 				rating = itmp.to_string("%i");
 				rating_entry.rating = itmp;
+			}
+
+			string picture_front;
+			if (val.dict_entry_get_string("picture_front", out picture_front)) {
+				client.fetch_coverart(picture_front, (paintable) => {
+					cover_picture.set_paintable(paintable);
+				});
+			} else {
+				cover_picture.set_paintable(client.default_coverart_texture);
 			}
 		}
 
