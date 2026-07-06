@@ -55,14 +55,18 @@ public class Abraca.ServerBrowser
 	{
 		discover_network.start();
 		discover_unix.start();
-		dialog.run();
-		discover_network.stop();
-		discover_unix.stop();
 
-		if (launcher != null) {
-			launcher.force_exit();
-			launcher = null;
-		}
+		dialog.response.connect((response) => {
+			discover_network.stop();
+			discover_unix.stop();
+
+			if (launcher != null) {
+				launcher.force_exit();
+				launcher = null;
+			}
+		});
+
+		dialog.present();
 	}
 
 	public void on_remote_selected(string name, string path)

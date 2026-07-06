@@ -17,178 +17,156 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public class Abraca.TreeView : Gtk.TreeView, SelectedRowsMixin
-{
-	private ulong event_handle_drag_begin;
-	private ulong event_handle_button_release;
+namespace Abraca {
+	public delegate void SelectedRowFunc (uint position, GLib.Object item);
+	public delegate void VoidFunc ();
 
-	private bool selectable = true;
+	/**
+	 * Common base for Abraca's ColumnView-based lists. GtkColumnView is a final
+	 * type and cannot be subclassed, so this wraps one by composition and
+	 * forwards the operations the views need, plus helpers for iterating the
+	 * selection and popping up a context menu on secondary click. GTK4's
+	 * ColumnView handles ctrl/shift/rubberband selection and drag-of-selection
+	 * natively, so the old GtkTreeView selection juggling is gone.
+	 */
+	public class SelectableView : Gtk.Widget, Gtk.Scrollable {
+		protected Gtk.ColumnView column_view;
+		protected Gtk.SelectionModel selection;
 
-	private Gtk.TreePath anchor_path;
+		private Gtk.PopoverMenu context_menu;
 
-	private int press_x;
-
-	public unowned Gtk.TreeSelection selection {
-		get {
-			return get_selection();
+		/* Gtk.Scrollable, proxied to the wrapped ColumnView so a ScrolledWindow
+		 * can drive scrolling through this wrapper. */
+		public Gtk.Adjustment hadjustment {
+			get { return (column_view != null) ? column_view.hadjustment : null; }
+			set construct { if (column_view != null) column_view.hadjustment = value; }
 		}
-	}
-
-	public TreeView()
-	{
-		button_press_event.connect(on_button_press);
-		drag_begin.connect_after(on_after_drag_begin);
-
-		selection.set_select_function((selection, model, path, is_selected) => {
-			return selectable;
-		});
-	}
-
-	private static bool is_ctrl_modified(Gdk.EventButton ev)
-	{
-		return (ev.state & Gdk.ModifierType.CONTROL_MASK) == Gdk.ModifierType.CONTROL_MASK;
-	}
-
-	private static bool is_shift_modified(Gdk.EventButton ev)
-	{
-		return (ev.state & Gdk.ModifierType.SHIFT_MASK) == Gdk.ModifierType.SHIFT_MASK;
-	}
-
-	private static void get_surface_size(Cairo.Surface surface, out int width, out int height)
-	{
-		double x1, y1, x2, y2;
-
-		var cr = new Cairo.Context(surface);
-		cr.clip_extents(out x1, out y1, out x2, out y2);
-
-		width = (int)(x2 - x1);
-		height = (int)(y2 - y1);
-	}
-
-	private Gtk.TreePath? get_path_from_event(Gdk.EventButton ev)
-	{
-		Gtk.TreePath path;
-
-		if (get_path_at_pos((int) ev.x, (int) ev.y, out path, null, null, null))
-			return path;
-
-		return null;
-	}
-
-	private void enable_gtk_selection()
-	{
-		if (event_handle_button_release != 0) {
-			disconnect(event_handle_button_release);
-			event_handle_button_release = 0;
+		public Gtk.Adjustment vadjustment {
+			get { return (column_view != null) ? column_view.vadjustment : null; }
+			set construct { if (column_view != null) column_view.vadjustment = value; }
+		}
+		public Gtk.ScrollablePolicy hscroll_policy {
+			get { return (column_view != null) ? column_view.hscroll_policy : Gtk.ScrollablePolicy.MINIMUM; }
+			set { if (column_view != null) column_view.hscroll_policy = value; }
+		}
+		public Gtk.ScrollablePolicy vscroll_policy {
+			get { return (column_view != null) ? column_view.vscroll_policy : Gtk.ScrollablePolicy.MINIMUM; }
+			set { if (column_view != null) column_view.vscroll_policy = value; }
 		}
 
-		if (event_handle_drag_begin != 0) {
-			disconnect(event_handle_drag_begin);
-			event_handle_drag_begin = 0;
+		public bool get_border (out Gtk.Border border) {
+			if (column_view != null)
+				return column_view.get_border (out border);
+			border = {};
+			return false;
 		}
 
-		selectable = true;
-	}
+		construct {
+			set_layout_manager (new Gtk.BinLayout ());
+			hexpand = true;
+			vexpand = true;
 
-	private void disable_gtk_selection()
-	{
-		if (event_handle_button_release == 0)
-			event_handle_button_release = button_release_event.connect(on_button_release);
-		selectable = false;
-	}
+			column_view = new Gtk.ColumnView (null);
+			column_view.set_parent (this);
+		}
 
-	private bool on_button_press (Gdk.EventButton ev)
-	{
+		protected void use_model (GLib.ListModel model, bool multiple)
+		{
+			if (multiple)
+				selection = new Gtk.MultiSelection (model);
+			else
+				selection = new Gtk.SingleSelection (model);
+			column_view.set_model (selection);
+		}
 
-		if (ev.button != 1)
-			return false;
+		/* Column forwarding so subclasses can keep talking in ColumnView terms. */
+		protected void append_column (Gtk.ColumnViewColumn column)
+		{
+			column_view.append_column (column);
+		}
 
-		var path = get_path_from_event(ev);
-		if (path == null)
-			return false;
+		protected void remove_column (Gtk.ColumnViewColumn column)
+		{
+			column_view.remove_column (column);
+		}
 
-		if (!is_shift_modified(ev))
-			anchor_path = path;
+		protected GLib.ListModel get_columns ()
+		{
+			return column_view.get_columns ();
+		}
 
-		if (!selection.path_is_selected(path))
-			return false;
+		public uint count_selected ()
+		{
+			return (uint) selection.get_selection ().get_size ();
+		}
 
-		disable_gtk_selection();
+		public void foreach_selected (SelectedRowFunc func)
+		{
+			var bitset = selection.get_selection ();
+			Gtk.BitsetIter iter = {};
+			uint pos;
 
-		convert_widget_to_bin_window_coords((int) ev.x, (int) ev.y, out press_x, null);
-
-		if (event_handle_drag_begin == 0)
-			event_handle_drag_begin = drag_begin.connect(on_drag_begin);
-
-		return false;
-	}
-
-	private bool on_button_release(Gdk.EventButton ev)
-	{
-		enable_gtk_selection();
-
-		var path = get_path_from_event(ev);
-
-		if (is_ctrl_modified(ev)) {
-			if (is_shift_modified(ev)) {
-				selection.select_range(anchor_path, path);
-			} else {
-				if (selection.path_is_selected(path)) {
-					selection.unselect_path(path);
-				} else {
-					selection.select_path(path);
-				}
-			}
-		} else {
-			selection.unselect_all();
-			if (is_shift_modified(ev)) {
-				selection.select_range(anchor_path, path);
-			} else {
-				selection.select_path(path);
+			if (iter.init_first (bitset, out pos)) {
+				do {
+					var item = selection.get_item (pos);
+					if (item != null)
+						func (pos, item);
+				} while (iter.next (out pos));
 			}
 		}
 
-		return false;
-	}
+		public GLib.Object? first_selected ()
+		{
+			var bitset = selection.get_selection ();
+			Gtk.BitsetIter iter = {};
+			uint pos;
 
-	private void on_drag_begin(Gdk.DragContext context)
-	{
-		enable_gtk_selection();
-	}
+			if (iter.init_first (bitset, out pos))
+				return selection.get_item (pos);
 
-	private void on_after_drag_begin (Gdk.DragContext context)
-	{
-		var pixbuf = create_rows_drag_icon();
-		Gtk.drag_set_icon_pixbuf(context, pixbuf, press_x, pixbuf.height);
-	}
-
-	private Gdk.Pixbuf create_rows_drag_icon()
-	{
-		int width, row_height;
-
-		GLib.List<Gtk.TreePath> paths = selection.get_selected_rows(null);
-
-		var surfaces = new GLib.List<Cairo.Surface>();
-		foreach (unowned Gtk.TreePath path in paths)
-			surfaces.append(create_row_drag_icon(path));
-
-		var template = surfaces.first().data;
-
-		get_surface_size(template, out width, out row_height);
-
-		/* remove bottom border for each row, but keep it for the last row */
-		var height = (row_height - 1) * selection.count_selected_rows() + 1;
-
-		var target = new Cairo.Surface.similar(template, template.get_content(), width, height);
-
-		var cr = new Cairo.Context(target);
-		cr.translate(2, 2);
-		foreach (Cairo.Surface surface in surfaces) {
-			cr.set_source_surface(surface, 0, 0);
-			cr.paint();
-			cr.translate(0, row_height - 1);
+			return null;
 		}
 
-		return Gdk.pixbuf_get_from_surface(target, 0, 0, width, height);
+		public void select_all_rows ()
+		{
+			selection.select_all ();
+		}
+
+		/**
+		 * Install a right-click context menu backed by a GMenu model. The
+		 * matching actions live in an action group the subclass installs.
+		 */
+		protected void install_context_menu (GLib.MenuModel model)
+		{
+			context_menu = new Gtk.PopoverMenu.from_model (model);
+			context_menu.set_parent (column_view);
+			context_menu.set_has_arrow (false);
+
+			var gesture = new Gtk.GestureClick ();
+			gesture.set_button (3);
+			gesture.pressed.connect ((n_press, x, y) => {
+				before_context_menu ();
+				Gdk.Rectangle rect = { (int) x, (int) y, 1, 1 };
+				context_menu.set_pointing_to (rect);
+				context_menu.popup ();
+			});
+			column_view.add_controller (gesture);
+		}
+
+		/** Overridden by subclasses to refresh action sensitivity before popup. */
+		protected virtual void before_context_menu () { }
+
+		public override void dispose ()
+		{
+			if (context_menu != null) {
+				context_menu.unparent ();
+				context_menu = null;
+			}
+			if (column_view != null) {
+				column_view.unparent ();
+				column_view = null;
+			}
+			base.dispose ();
+		}
 	}
 }

@@ -60,14 +60,13 @@ namespace Abraca {
 
 			add_button(_("Ok"), 0);
 
-			var box = get_content_area() as Gtk.Box;
-			box.pack_start(child, true, true, 0);
+			var box = get_content_area();
+			child.vexpand = true;
+			box.append(child);
 
-			response.connect((widget,response) => {
+			response.connect((response) => {
 				destroy();
 			});
-
-			show_all();
 		}
 
 
@@ -129,9 +128,10 @@ namespace Abraca {
 			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
 			_view.append_column(column);
 
-			var scrolled = new Gtk.ScrolledWindow(null, null);
-			scrolled.add(_view);
-			scrolled.set_border_width(10);
+			var scrolled = new Gtk.ScrolledWindow();
+			scrolled.set_child(_view);
+			scrolled.margin_top = scrolled.margin_bottom = 10;
+			scrolled.margin_start = scrolled.margin_end = 10;
 			scrolled.set_policy(
 				Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC
 			);

@@ -58,7 +58,7 @@ public class Abraca.Equalizer : Gtk.Dialog {
 	private static int PREAMP_INDEX = 1;
 	private static int GAIN_OFFSET = 2;
 
-	private Gee.List<Gtk.Range> ranges = new Gee.ArrayList<Gtk.Scale>();
+	private Gee.List<Gtk.Range> ranges = new Gee.ArrayList<Gtk.Range>();
 	private int band_count = 0;
 
 	private Gee.List<double?> next_scale_changes = new Gee.ArrayList<double?>();
@@ -97,8 +97,18 @@ public class Abraca.Equalizer : Gtk.Dialog {
 		ranges.add(volume_scale);
 		ranges.add(preamp_scale);
 
-		foreach (var child in box_bands.get_children())
+		for (var child = box_bands.get_first_child(); child != null; child = child.get_next_sibling())
 			ranges.add(child as Gtk.Range);
+
+		/* Defer remote updates while the user is dragging a slider. Observe in
+		 * the capture phase so the Scale's own drag gesture keeps working. */
+		foreach (var range in ranges) {
+			var click = new Gtk.GestureClick();
+			click.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
+			click.pressed.connect((n, x, y) => { defer_updates = true; });
+			click.released.connect((n, x, y) => { defer_updates = false; apply_changes(); });
+			range.add_controller(click);
+		}
 
 		for (var i=0; i < Equalizer.MAX_BANDS + 2; i++)
 			next_scale_changes.add(null);
@@ -245,21 +255,6 @@ public class Abraca.Equalizer : Gtk.Dialog {
 		               normalize(range.adjustment.value, -20.0, 20.0));
 	}
 
-	[GtkCallback]
-	private bool on_scale_pressed(Gdk.EventButton ev)
-	{
-		defer_updates = true;
-		return false;
-	}
-
-	[GtkCallback]
-	private bool on_scale_released(Gdk.EventButton ev)
-	{
-		defer_updates = false;
-		apply_changes();
-		return false;
-	}
-
 	private void apply_changes()
 	{
 
@@ -282,32 +277,26 @@ public class Abraca.Equalizer : Gtk.Dialog {
 
 		if (need_resize) {
 			for (var i = GAIN_OFFSET; i < ranges.size; i++) {
-				if (band_count <= (i - GAIN_OFFSET)) {
-					ranges.get(i).hide();
-				} else {
-					ranges.get(i).show();
-				}
+				ranges.get(i).visible = band_count > (i - GAIN_OFFSET);
 			}
 
 			if (next_band_names != null) {
 				int j = 0;
-				foreach (var child in box_labels.get_children()) {
+				for (var child = box_labels.get_first_child(); child != null; child = child.get_next_sibling()) {
 					var label = child as Gtk.Label;
 					label.use_markup = true;
 					if (j < next_band_names.length) {
 						label.set_markup("<span size=\"x-small\" color=\"#888\">%s</span>".printf(next_band_names[j]));
-						label.show();
+						label.visible = true;
 					} else {
-						label.hide();
+						label.visible = false;
 					}
 					j++;
 				}
 				next_band_names = null;
 			}
 
-
-			if (need_resize)
-				resize(400, 300);
+			need_resize = false;
 		}
 	}
 }

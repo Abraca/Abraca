@@ -20,7 +20,7 @@
 using GLib;
 
 namespace Abraca {
-	public class FilterView : Abraca.TreeView, IConfigurable {
+	public class FilterView : Abraca.SelectableView, IConfigurable {
 		/* field and order used for sorting, see sorting property */
 		public struct Sorting {
 			public unowned string field;
@@ -29,29 +29,15 @@ namespace Abraca {
 
 		private Medialib medialib;
 		private Client client;
+		private MetadataResolver resolver;
 
-		/** context menu */
-		private Gtk.Menu filter_menu;
-		private Gtk.Menu header_menu;
+		private FilterModel filter_model;
 
-		/* sensitivity conditions of filter_menu-items */
-		private GLib.List<Gtk.MenuItem>
-			filter_menu_item_when_one_selected = null;
-		private GLib.List<Gtk.MenuItem>
-			filter_menu_item_when_some_selected = null;
-		private GLib.List<Gtk.MenuItem>
-			filter_menu_item_when_none_selected = null;
-
-		/** allowed drag-n-drop variants */
-		private Gtk.TargetEntry[] _target_entries = {
-			Abraca.TargetEntry.Collection
-		};
+		private GLib.SimpleActionGroup actions;
 
 		/* properties */
 		public Sorting sorting { get; set; }
 		public Xmms.Collection collection { get; private set; }
-
-		private MetadataResolver resolver;
 
 		public FilterView (Client c, MetadataResolver r, Medialib m)
 		{
@@ -59,41 +45,30 @@ namespace Abraca {
 			client = c;
 			resolver = r;
 
-			fixed_height_mode = true;
-			enable_search = false;
-			headers_clickable = true;
+			create_actions ();
+			install_context_menu (build_context_menu ());
 
-			get_selection().set_mode(Gtk.SelectionMode.MULTIPLE);
+			column_view.activate.connect (on_activate);
 
-			create_header_menu();
-			create_context_menu();
-			get_selection().changed.connect(on_selection_changed_update_menu);
-			on_selection_changed_update_menu(get_selection());
+			var key = new Gtk.EventControllerKey ();
+			key.key_pressed.connect (on_key_pressed);
+			column_view.add_controller (key);
 
-			create_drag_n_drop();
+			notify["sorting"].connect (on_sorting_changed);
 
-			button_press_event.connect(on_button_press_event);
-			row_activated.connect(on_row_activated);
-			key_press_event.connect(on_key_press_event);
-
-			notify["sorting"].connect(on_sorting_changed);
-
-			Configurable.register(this);
+			Configurable.register (this);
 		}
 
 
 		public void get_configuration (GLib.KeyFile file)
 		{
-			FilterModel store = (FilterModel) model;
+			var columns = get_columns ();
+			var names = new string[columns.get_n_items ()];
 
-			var columns = get_columns();
-			var names = new string[columns.length()];
-			var i = 0;
+			for (uint i = 0; i < columns.get_n_items (); i++)
+				names[i] = ((Gtk.ColumnViewColumn) columns.get_item (i)).title;
 
-			foreach (var column in columns)
-				names[i++] = column.title;
-
-			file.set_string_list("filter", "columns", names);
+			file.set_string_list ("filter", "columns", names);
 		}
 
 
@@ -114,29 +89,8 @@ namespace Abraca {
 
 		private void on_sorting_changed (GLib.Object source, GLib.ParamSpec pspec)
 		{
-			if (collection != null) {
+			if (collection != null)
 				query_collection(collection);
-			} else {
-				update_sort_indicators();
-			}
-		}
-
-
-		private void on_selection_changed_update_menu (Gtk.TreeSelection s)
-		{
-			int n = s.count_selected_rows();
-
-			foreach (var i in filter_menu_item_when_none_selected) {
-				i.sensitive = (n == 0);
-			}
-
-			foreach (var i in filter_menu_item_when_one_selected) {
-				i.sensitive = (n == 1);
-			}
-
-			foreach (var i in filter_menu_item_when_some_selected) {
-				i.sensitive = (n > 0);
-			}
 		}
 
 
@@ -168,144 +122,57 @@ namespace Abraca {
 
 		public void playlist_replace_with_filter_results ()
 		{
-			Gtk.TreeIter iter;
-			uint id;
-
-			if (!model.iter_children(out iter, null)) {
-				return;
-			}
-
 			client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
-
-			do {
-				model.get(iter, FilterModel.Column.ID, out id);
-				client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
-			} while (model.iter_next(ref iter));
+			playlist_add_filter_results ();
 		}
 
 
 		public void playlist_add_filter_results ()
 		{
-			Gtk.TreeIter iter;
-			uint id;
-
-			if (!model.iter_children(out iter, null)) {
-				return;
+			for (uint i = 0; i < filter_model.store.get_n_items (); i++) {
+				var item = (FilterItem) filter_model.store.get_item (i);
+				client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, (int) item.id);
 			}
-
-			do {
-				model.get(iter, FilterModel.Column.ID, out id);
-				client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
-			} while (model.iter_next(ref iter));
 		}
 
 
 		private bool on_coll_query_ids (Xmms.Value val)
 		{
-			FilterModel store = (FilterModel) model;
-
-			/* disconnect our model while the shit hits the fan */
-			set_model(null);
-
-			store.replace_content (val);
-
-			/* reconnect the model again */
-			set_model(store);
-
-			/* set the sort indicator for the sorted column */
-			update_sort_indicators();
-
+			filter_model.replace_content (val);
 			return true;
 		}
 
 
-		private bool on_button_press_event (Gtk.Widget w, Gdk.EventButton button)
+		private bool on_key_pressed (uint keyval, uint keycode, Gdk.ModifierType state)
 		{
-			Gtk.TreePath path;
-			int x, y;
-
-			/* we're only interested in the 3rd mouse button */
-			if (button.button != 3)
+			if (keyval != Gdk.Key.Return)
 				return false;
 
-			filter_menu.popup(
-				null, null, null, button.button,
-				Gtk.get_current_event_time()
-			);
-
-			x = (int) button.x;
-			y = (int) button.y;
-
-			/* Prevent selection-handling when right-clicking on an already
-			   selected entry */
-			if (get_path_at_pos(x, y, out path, null, null, null)) {
-				var sel = get_selection();
-				if (sel.path_is_selected(path)) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-
-		private bool on_key_press_event (Gdk.EventKey e)
-		{
-			if (e.keyval != Gdk.keyval_from_name("Return")) {
-				return false;
-			}
-
-			if ((e.state & Gdk.ModifierType.CONTROL_MASK) > 0) {
+			if ((state & Gdk.ModifierType.CONTROL_MASK) > 0)
 				client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
-			}
 
-			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
-				client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, mid);
+			foreach_selected ((pos, obj) => {
+				client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, (int) ((FilterItem) obj).id);
 			});
 
 			return true;
 		}
 
 
-		private void on_row_activated (Gtk.TreeView tree, Gtk.TreePath path,
-		                               Gtk.TreeViewColumn column)
+		private void on_activate (uint position)
 		{
-			Gtk.TreeIter iter;
-			uint id;
-
-			model.get_iter(out iter, path);
-			model.get(iter, FilterModel.Column.ID, out id);
-			client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, id);
+			var item = (FilterItem) filter_model.store.get_item (position);
+			client.xmms.playlist_add_id(Xmms.ACTIVE_PLAYLIST, (int) item.id);
 		}
 
 
-		private void on_menu_select_all (Gtk.MenuItem item)
+		private void add_selected ()
 		{
-			get_selection().select_all();
-		}
-
-
-		private void on_menu_info (Gtk.MenuItem item)
-		{
-			foreach_selected_row<uint>(FilterModel.Column.ID, (idx, mid) => {
-				medialib.info_dialog_add_id(mid);
+			foreach_selected ((pos, obj) => {
+				client.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, (int) ((FilterItem) obj).id);
 			});
 		}
 
-
-		private void on_menu_add (Gtk.MenuItem item)
-		{
-			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
-				client.xmms.playlist_add_id (Xmms.ACTIVE_PLAYLIST, mid);
-			});
-		}
-
-
-		private void on_menu_replace (Gtk.MenuItem item)
-		{
-			client.xmms.playlist_clear(Xmms.ACTIVE_PLAYLIST);
-			on_menu_add(item);
-		}
 
 		private static bool should_expand (string property)
 		{
@@ -329,128 +196,172 @@ namespace Abraca {
 			}
 		}
 
-		/* Best effort width guesstimation */
-		private static int min_chars (string property)
-		{
-			switch (property) {
-			case "id":
-				return 5; // "00000"
-			case "date":
-			case "lmod":
-			case "added":
-			case "laststarted":
-				return 10; // "1970-01-01"
-			case "bitrate":
-				return 10; // "192.0 kbps"
-			case "duration":
-				return 5; // "60:00"
-			case "mime":
-				return 10; // "audio/mpeg"
-			case "size":
-				return 7; // "31337kB"
-			case "status":
-			case "timesplayed":
-				return 3; // "192"
-			case "tracknr":
-				return 4; // "23"
-			default:
-				return -1;
-			}
-		}
 
 		private void set_dynamic_columns (string[] props)
 		{
-			model = null;
+			var columns = get_columns ();
+			while (columns.get_n_items () > 0)
+				remove_column ((Gtk.ColumnViewColumn) columns.get_item (0));
 
-			foreach (var column in get_columns()) {
-				remove_column(column);
-			}
+			filter_model = new FilterModel(client, resolver, props);
+			use_model (filter_model.store, true);
 
-			int pos = 2;
-			foreach (var key in props) {
-				var cell = new Gtk.CellRendererText();
-				cell.ellipsize = Pango.EllipsizeMode.END;
-				cell.set_fixed_height_from_font(1);
-				cell.width_chars = min_chars(key) + 4; // TODO: Why 4? o_O
+			int index = 0;
+			foreach (var key in props)
+				add_column (index++, key);
 
-				var column = new Gtk.TreeViewColumn.with_attributes(
-					key, cell, "text", pos++, null
-				);
-				column.resizable = true;
-				column.reorderable = true;
-				column.sizing = Gtk.TreeViewColumnSizing.FIXED;
-				column.expand = should_expand(key);
-				column.clickable = true;
-				column.widget = new Gtk.Label(key);
-				column.widget.show();
-
-				insert_column(column, -1);
-
-				Gtk.Widget ancestor = column.widget.get_ancestor(typeof(Gtk.Button));
-
-				GLib.assert(ancestor != null);
-
-				ancestor.button_press_event.connect(on_header_clicked);
-
-				if (!column.expand) {
-					int min_width, natural_width;
-					cell.get_preferred_width(column.widget, out min_width, out natural_width);
-					column.fixed_width = natural_width;
-				}
-			}
-
-			model = new FilterModel(client, resolver, props);
-
-			if (collection != null) {
+			if (collection != null)
 				query_collection(collection);
-			} else {
-				update_sort_indicators();
-			}
 		}
 
 
-		private bool on_header_clicked (Gtk.Widget w, Gdk.EventButton e)
+		private void add_column (int index, string key)
 		{
-			switch (e.button) {
-				case 1:
-					foreach (var column in get_columns()) {
-						if (column.widget.get_ancestor(typeof(Gtk.Button)) == w) {
-							Gtk.SortType order;
-							if (sorting.field == column.title && sorting.order == Gtk.SortType.DESCENDING) {
-								order = Gtk.SortType.ASCENDING;
-							} else {
-								order = Gtk.SortType.DESCENDING;
-							}
-							sorting = { column.title, order };
-							break;
-						}
-					}
-					return true;
-				case 3:
-					foreach (var column in get_columns()) {
-						if (column.widget.get_ancestor(typeof(Gtk.Button)) == w) {
-							header_menu.tearoff_title = column.title;
-							break;
-						}
-					}
+			var factory = new Gtk.SignalListItemFactory ();
+			factory.setup.connect (li => {
+				var label = new Gtk.Label (null) {
+					xalign = 0,
+					ellipsize = Pango.EllipsizeMode.END
+				};
+				((Gtk.ListItem) li).set_child (label);
+				attach_drag_source (label);
+			});
+			factory.bind.connect (li => {
+				var item = (FilterItem) ((Gtk.ListItem) li).get_item ();
+				var label = (Gtk.Label) ((Gtk.ListItem) li).get_child ();
+				filter_model.ensure_resolved (item);
+				label.label = item.get_column (index);
+				var handler = item.updated.connect (() => {
+					label.label = item.get_column (index);
+				});
+				((Gtk.ListItem) li).set_data<ulong> ("handler", handler);
+			});
+			factory.unbind.connect (li => {
+				var item = (FilterItem) ((Gtk.ListItem) li).get_item ();
+				var handler = ((Gtk.ListItem) li).get_data<ulong> ("handler");
+				if (handler != 0)
+					item.disconnect (handler);
+			});
 
-					header_menu.popup(null, null, null, e.button, Gtk.get_current_event_time());
-					header_menu.show_all();
-					return true;
-				default:
-					return false;
-			}
+			var column = new Gtk.ColumnViewColumn (key, factory);
+			column.resizable = true;
+			column.expand = should_expand (key);
+			column.set_header_menu (build_header_menu (key));
+			append_column (column);
 		}
 
 
-		private void on_header_edit (Gtk.MenuItem item)
+		private void attach_drag_source (Gtk.Widget widget)
+		{
+			var source = new Gtk.DragSource ();
+			source.set_actions (Gdk.DragAction.MOVE);
+			source.prepare.connect ((x, y) => {
+				if (count_selected () == 0)
+					return null;
+				var list = new Xmms.Collection (Xmms.CollectionType.IDLIST);
+				foreach_selected ((pos, obj) => {
+					list.idlist_append ((int) ((FilterItem) obj).id);
+				});
+				return DragDropUtil.content_for_collection (list);
+			});
+			widget.add_controller (source);
+		}
+
+
+		private void create_actions ()
+		{
+			actions = new GLib.SimpleActionGroup ();
+
+			add_simple ("select-all", () => { select_all_rows (); });
+			add_simple ("info", () => {
+				foreach_selected ((pos, obj) => {
+					medialib.info_dialog_add_id (((FilterItem) obj).id);
+				});
+			});
+			add_simple ("add", add_selected);
+			add_simple ("replace", () => {
+				client.xmms.playlist_clear (Xmms.ACTIVE_PLAYLIST);
+				add_selected ();
+			});
+			add_simple ("edit", on_header_edit);
+			add_simple ("reset-sort", () => { sorting = Sorting (); });
+
+			add_target ("sort-asc", f => { sorting = { f, Gtk.SortType.ASCENDING }; });
+			add_target ("sort-desc", f => { sorting = { f, Gtk.SortType.DESCENDING }; });
+			add_target ("remove", on_header_remove);
+
+			insert_action_group ("fv", actions);
+		}
+
+		private void add_simple (string name, owned VoidFunc func)
+		{
+			var action = new GLib.SimpleAction (name, null);
+			action.activate.connect (p => { func (); });
+			actions.add_action (action);
+		}
+
+		private delegate void TargetFunc (string target);
+
+		private void add_target (string name, owned TargetFunc func)
+		{
+			var action = new GLib.SimpleAction (name, GLib.VariantType.STRING);
+			action.activate.connect (p => { func (p.get_string ()); });
+			actions.add_action (action);
+		}
+
+
+		private GLib.MenuModel build_context_menu ()
+		{
+			var menu = new GLib.Menu ();
+			menu.append (_("Select All"), "fv.select-all");
+
+			var info = new GLib.Menu ();
+			info.append (_("Info"), "fv.info");
+			menu.append_section (null, info);
+
+			var add = new GLib.Menu ();
+			add.append (_("Add"), "fv.add");
+			add.append (_("Replace"), "fv.replace");
+			menu.append_section (null, add);
+
+			return menu;
+		}
+
+
+		private GLib.MenuModel build_header_menu (string field)
+		{
+			var menu = new GLib.Menu ();
+
+			var sort = new GLib.Menu ();
+			append_target (sort, _("Sort Ascending"), "fv.sort-asc", field);
+			append_target (sort, _("Sort Descending"), "fv.sort-desc", field);
+			sort.append (_("Reset Sorting"), "fv.reset-sort");
+			menu.append_section (null, sort);
+
+			var cols = new GLib.Menu ();
+			cols.append (_("Edit"), "fv.edit");
+			append_target (cols, _("Remove"), "fv.remove", field);
+			menu.append_section (null, cols);
+
+			return menu;
+		}
+
+		private void append_target (GLib.Menu menu, string label, string action, string target)
+		{
+			var item = new GLib.MenuItem (label, null);
+			item.set_action_and_target_value (action, new GLib.Variant.string (target));
+			menu.append_item (item);
+		}
+
+
+		private void on_header_edit ()
 		{
 			var edit = new FilterEditor();
 
 			edit.transient_for = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
 
 			edit.column_changed.connect((editor, prop, enabled) => {
-				var columns = (model as FilterModel).dynamic_columns;
+				var columns = filter_model.dynamic_columns;
 				var i = 0;
 
 				var modified = new string[columns.length + (enabled ? 1 : -1)];
@@ -466,129 +377,27 @@ namespace Abraca {
 				set_dynamic_columns(modified);
 			});
 
-			edit.set_active((model as FilterModel).dynamic_columns);
-			edit.run();
+			edit.set_active(filter_model.dynamic_columns);
+			edit.present();
 		}
 
 
-		private void on_header_remove (Gtk.MenuItem item)
+		private void on_header_remove (string field)
 		{
-			var columns = get_columns();
-			if (columns.length() == 1)
+			var columns = get_columns ();
+			if (columns.get_n_items () <= 1)
 				return;
 
-			var modified = new string[columns.length() - 1];
+			var modified = new string[columns.get_n_items () - 1];
 			var i = 0;
 
-			var title = ((Gtk.Menu) item.parent).tearoff_title;
-			foreach (var column in columns) {
-				if (column.title == title)
-					remove_column(column);
-				else
-					modified[i++] = column.title;
+			for (uint c = 0; c < columns.get_n_items (); c++) {
+				var title = ((Gtk.ColumnViewColumn) columns.get_item (c)).title;
+				if (title != field)
+					modified[i++] = title;
 			}
 
 			set_dynamic_columns(modified);
-		}
-
-
-		private void on_header_reset_sorting (Gtk.MenuItem item)
-		{
-			sorting = Sorting();
-		}
-
-		private void create_header_menu ()
-		{
-			Gtk.MenuItem item;
-
-			header_menu = new Gtk.Menu();
-
-			item = new Gtk.MenuItem.with_label(_("Edit"));
-			item.activate.connect(on_header_edit);
-			header_menu.append(item);
-
-			item = new Gtk.MenuItem.with_label(_("Remove"));
-			item.activate.connect(on_header_remove);
-			header_menu.append(item);
-
-			header_menu.append(new Gtk.SeparatorMenuItem());
-
-			item = new Gtk.MenuItem.with_label(_("Reset sorting"));
-			item.activate.connect(on_header_reset_sorting);
-			header_menu.append(item);
-		}
-
-		private void create_context_menu ()
-		{
-			Gtk.MenuItem item;
-
-			filter_menu = new Gtk.Menu();
-
-			item = new Gtk.MenuItem.with_label(_("Select All"));
-			item.activate.connect(on_menu_select_all);
-			filter_menu_item_when_some_selected.prepend(item);
-			filter_menu.append(item);
-
-			item = new Gtk.SeparatorMenuItem();
-			filter_menu_item_when_some_selected.prepend(item);
-			filter_menu.append(item);
-
-			item = new Gtk.MenuItem.with_label(_("Info"));
-			item.activate.connect(on_menu_info);
-			filter_menu_item_when_some_selected.prepend(item);
-			filter_menu.append(item);
-
-			item = new Gtk.SeparatorMenuItem();
-			filter_menu_item_when_some_selected.prepend(item);
-			filter_menu.append(item);
-
-			item = new Gtk.MenuItem.with_label(_("Add"));
-			item.activate.connect(on_menu_add);
-			filter_menu_item_when_some_selected.prepend(item);
-			filter_menu.append(item);
-
-			item = new Gtk.MenuItem.with_label(_("Replace"));
-			item.activate.connect(on_menu_replace);
-			filter_menu_item_when_some_selected.prepend(item);
-			filter_menu.append(item);
-
-			filter_menu.show_all();
-		}
-
-
-		private void create_drag_n_drop ()
-		{
-			enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-			                         _target_entries,
-			                         Gdk.DragAction.MOVE);
-
-			drag_data_get.connect(on_drag_data_get);
-		}
-
-
-		private void update_sort_indicators ()
-		{
-			foreach (var column in get_columns()) {
-				if (column.title == sorting.field) {
-					column.sort_order = sorting.order;
-					column.sort_indicator = true;
-				} else {
-					column.sort_indicator = false;
-				}
-			}
-		}
-
-
-		private void on_drag_data_get (Gtk.Widget widget, Gdk.DragContext ctx,
-		                               Gtk.SelectionData selection_data,
-		                               uint info, uint time)
-		{
-			var list = new Xmms.Collection(Xmms.CollectionType.IDLIST);
-			foreach_selected_row<int>(FilterModel.Column.ID, (pos, mid) => {
-				list.idlist_append(mid);
-			});
-
-			DragDropUtil.send_collection(selection_data, list);
 		}
 	}
 }

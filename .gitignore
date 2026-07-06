@@ -5,5 +5,3 @@ config.log
 *.rej
 *~
 *.orig
-.waf*
-.lock-waf*

@@ -20,49 +20,45 @@
 using GLib;
 
 namespace Abraca {
-	public class PlaylistModel : Gtk.ListStore, Gtk.TreeModel {
-		/* Metadata resolve status */
-		private enum Status {
+	/** A single row in the playlist, exposed as bindable GObject properties. */
+	public class PlaylistItem : GLib.Object {
+		public enum Status {
 			UNRESOLVED,
 			RESOLVING,
 			RESOLVED
 		}
 
-		public enum Column {
-			STATUS,
-			ID,
-			POSITION_INDICATOR,
-			AVAILABLE,
-			ARTIST,
-			ALBUM,
-			GENRE,
-			INFO
+		public Status status { get; set; default = Status.UNRESOLVED; }
+		public uint id { get; construct; }
+		public string position_indicator { get; set; default = ""; }
+		public bool available { get; set; default = true; }
+		public string artist { get; set; default = ""; }
+		public string album { get; set; default = ""; }
+		public string genre { get; set; default = ""; }
+		public string info { get; set; default = "\n"; }
+
+		public PlaylistItem (uint id) {
+			Object (id: id);
 		}
+	}
 
-		/** keep track of current playlist position */
-		private Gtk.TreeRowReference _position = null;
+	public class PlaylistModel : GLib.Object {
+		/** GtkColumnView-facing list model (GLib.ListStore is final, so we wrap it) */
+		public GLib.ListStore store { get; private set; }
 
-		/** keep track of playlist position <-> medialib id */
-		private TreeRowMap playlist_map;
+		/** current playing position, or -1 */
+		private int position = -1;
+
+		/** map medialib id -> rows carrying it (a mid may appear many times) */
+		private Gee.MultiMap<uint,PlaylistItem> id_map =
+			new Gee.HashMultiMap<uint,PlaylistItem>();
 
 		private Client client;
-
-		private GLib.Type[] _types = new GLib.Type[] {
-			typeof(int),
-			typeof(uint),
-			typeof(string),
-			typeof(bool),
-			typeof(string),
-			typeof(string),
-			typeof(string),
-			typeof(string),
-			typeof(string)
-		};
 
 		private MetadataRequestor requestor;
 
 		public PlaylistModel (Client _client, MetadataResolver resolver) {
-			set_column_types(_types);
+			store = new GLib.ListStore (typeof (PlaylistItem));
 
 			string[] attributes = {
 				"status",
@@ -76,8 +72,6 @@ namespace Abraca {
 
 			requestor = resolver.register(on_resolver_complete);
 			requestor.set_attributes(attributes);
-
-			playlist_map = new TreeRowMap(this);
 
 			client = _client;
 
@@ -96,72 +90,64 @@ namespace Abraca {
 			});
 		}
 
-		/**
-		 * When GTK asks for the value of a column, check if the row
-		 * has been resolved or not, otherwise resolve it.
-		 */
-		public void get_value(Gtk.TreeIter iter, int column, out GLib.Value val) {
-			GLib.Value status;
-
-			base.get_value(iter, Column.STATUS, out status);
-			if (status.get_int() == Status.UNRESOLVED) {
-				GLib.Value mid;
-
-				base.get_value(iter, Column.ID, out mid);
-
-				set(iter, Column.STATUS, Status.RESOLVING);
-
-				requestor.resolve((int) mid.get_uint());
-			}
-
-			base.get_value(iter, column, out val);
+		private PlaylistItem? item_at (uint position) {
+			return store.get_item(position) as PlaylistItem;
 		}
 
+		/**
+		 * Lazily resolve a row's metadata the first time it becomes visible.
+		 * Called by the view when it binds a row widget.
+		 */
+		public void ensure_resolved (PlaylistItem item) {
+			if (item.status != PlaylistItem.Status.UNRESOLVED)
+				return;
+			item.status = PlaylistItem.Status.RESOLVING;
+			requestor.resolve((int) item.id);
+		}
+
+		private PlaylistItem insert_item (int pos, uint mid) {
+			var item = new PlaylistItem(mid);
+			if (pos < 0 || pos >= store.get_n_items())
+				store.append(item);
+			else
+				store.insert(pos, item);
+			id_map.set(mid, item);
+			return item;
+		}
 
 		/**
 		 * Removes the row when an entry has been removed from the playlist.
 		 */
 		private void on_playlist_remove(Client c, string playlist, int pos) {
-			Gtk.TreePath path;
-			Gtk.TreeIter iter;
-
-			if (playlist != client.current_playlist) {
+			if (playlist != client.current_playlist)
 				return;
-			}
 
-			path = new Gtk.TreePath.from_indices(pos, -1);
-			if (get_iter(out iter, path)) {
-				uint mid;
+			var item = item_at(pos);
+			if (item == null)
+				return;
 
-				get(iter, Column.ID, out mid);
-
-				playlist_map.remove_path((int) mid, path);
-				remove(ref iter);
-			}
+			id_map.remove(item.id, item);
+			store.remove(pos);
 		}
 
 
 		/**
-		 * TODO: Move row x to pos y.
+		 * Move row at pos to npos.
 		 */
 		private void on_playlist_move(Client c, string playlist, int pos, int npos) {
-			Gtk.TreeIter? niter = null;
-			Gtk.TreeIter iter;
-
-			if (playlist != client.current_playlist) {
-				return;
-			}
-
-			if (!iter_nth_child (out iter, null, pos))
+			if (playlist != client.current_playlist)
 				return;
 
-			if (!iter_nth_child (out niter, null, npos))
+			var item = item_at(pos);
+			if (item == null)
 				return;
 
-			if (pos < npos)
-				move_after (ref iter, niter);
+			/* GLib.ListStore has no move; remove and re-insert. */
+			store.remove(pos);
+			if (npos < 0 || npos >= store.get_n_items())
+				store.append(item);
 			else
-				move_before (ref iter, niter);
+				store.insert(npos, item);
 		}
 
 
@@ -170,36 +156,23 @@ namespace Abraca {
 		 * current playing entry.
 		 */
 		private void on_playlist_position(Client c, string playlist, uint pos) {
-			Gtk.TreeIter iter;
-
-			if (playlist != client.current_playlist) {
+			if (playlist != client.current_playlist)
 				return;
-			}
 
 			/* Remove the old position indicator */
-			if (_position.valid()) {
-				get_iter(out iter, _position.get_path());
-				set(iter, Column.POSITION_INDICATOR, "");
+			if (position >= 0) {
+				var old = item_at(position);
+				if (old != null)
+					old.position_indicator = "";
 			}
 
-			/* Playlist is probably empty */
-			if (pos < 0)
-				return;
+			position = (int) pos;
 
-			/* Add the new position indicator */
-			if (iter_nth_child (out iter, null, (int) pos)) {
-				Gtk.TreePath path;
-				int mid;
-
+			var item = item_at(pos);
+			if (item != null) {
 				/* Notify the Client of the current medialib id */
-				get(iter, Column.ID, out mid);
-				client.current_id = mid;
-
-				set(iter, Column.POSITION_INDICATOR, "go-next" );
-
-				path = get_path(iter);
-
-				_position = new Gtk.TreeRowReference(this, path);
+				client.current_id = (int) item.id;
+				item.position_indicator = "go-next";
 			}
 		}
 
@@ -208,18 +181,10 @@ namespace Abraca {
 		 * Insert a row when a new entry has been inserted in the playlist.
 		 */
 		private void on_playlist_insert(Client c, string playlist, uint mid, int pos) {
-			Gtk.TreeIter iter;
-
-			if (playlist != client.current_playlist) {
+			if (playlist != client.current_playlist)
 				return;
-			}
 
-			insert_with_values (out iter, pos,
-			                    Column.STATUS, Status.UNRESOLVED,
-			                    Column.ID, mid,
-			                    Column.INFO, "\n");
-
-			playlist_map.add_iter((int) mid, iter);
+			insert_item(pos, mid);
 		}
 
 
@@ -228,14 +193,10 @@ namespace Abraca {
 		 */
 		private void on_playback_status(Client c, int status) {
 			/* Notify the Client of the current medialib id */
-			if (_position.valid()) {
-				Gtk.TreeIter iter;
-				int mid;
-
-				get_iter(out iter, _position.get_path());
-				get(iter, Column.ID, out mid);
-
-				client.current_id = mid;
+			if (position >= 0) {
+				var item = item_at(position);
+				if (item != null)
+					client.current_id = (int) item.id;
 			}
 		}
 
@@ -252,18 +213,10 @@ namespace Abraca {
 
 
 		private void on_playlist_add(Client c, string playlist, uint mid) {
-			Gtk.TreeIter iter;
-
-			if (playlist != client.current_playlist) {
+			if (playlist != client.current_playlist)
 				return;
-			}
 
-			insert_with_values(out iter, -1,
-			                   Column.STATUS, Status.UNRESOLVED,
-			                   Column.ID, mid,
-			                   Column.INFO, "\n");
-
-			playlist_map.add_iter((int) mid, iter);
+			insert_item(-1, mid);
 		}
 
 
@@ -271,15 +224,9 @@ namespace Abraca {
 		 * Refresh the whole playlist.
 		 */
 		private bool on_playlist_list_entries(Xmms.Value val) {
-			Gtk.TreeIter? iter;
-
-			playlist_map.clear();
-			clear();
-
-			/* disconnect our model while the shit hits the fan */
-			/*
-			set_model(null);
-			*/
+			id_map.clear();
+			store.remove_all();
+			position = -1;
 
 			unowned Xmms.ListIter list_iter;
 			val.get_list_iter(out list_iter);
@@ -291,18 +238,8 @@ namespace Abraca {
 				if (!(list_iter.entry(out entry) && entry.get_int(out mid)))
 					continue;
 
-				insert_with_values (out iter, -1,
-				                    Column.STATUS, Status.UNRESOLVED,
-				                    Column.ID, mid,
-				                    Column.INFO, "\n");
-
-				playlist_map.add_iter(mid, iter);
+				insert_item(-1, mid);
 			}
-
-			/* reconnect the model again */
-			/*
-			set_model(ore);
-			*/
 
 			return true;
 		}
@@ -373,23 +310,13 @@ namespace Abraca {
 				}
 			}
 
-			foreach (var row in playlist_map.get_paths(mid)) {
-				Gtk.TreePath path;
-				Gtk.TreeIter? iter = null;
-
-				path = row.get_path();
-
-				if (!row.valid() || !get_iter(out iter, path)) {
-					continue;
-				}
-
-				set(iter,
-					Column.AVAILABLE, (bool)(status != 3),
-					Column.INFO, info,
-					Column.ARTIST, artist,
-					Column.ALBUM, album,
-					Column.GENRE, genre
-				);
+			foreach (var item in id_map.get((uint) mid)) {
+				item.available = (status != 3);
+				item.info = info;
+				item.artist = artist;
+				item.album = album;
+				item.genre = genre;
+				item.status = PlaylistItem.Status.RESOLVED;
 			}
 
 			return false;

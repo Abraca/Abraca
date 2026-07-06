@@ -20,50 +20,44 @@
 namespace Abraca.Icons {
 	private struct Icon {
 		unowned string name;
-		int size;
 		unowned string filename;
 	}
 
 	/**
-	 * GtkIconSize:
-	 * @GTK_ICON_SIZE_INVALID: Invalid size.
-	 * @GTK_ICON_SIZE_MENU: Size appropriate for menus (16px).
-	 * @GTK_ICON_SIZE_SMALL_TOOLBAR: Size appropriate for small toolbars (16px).
-	 * @GTK_ICON_SIZE_LARGE_TOOLBAR: Size appropriate for large toolbars (24px)
-	 * @GTK_ICON_SIZE_BUTTON: Size appropriate for buttons (16px)
-	 * @GTK_ICON_SIZE_DND: Size appropriate for drag and drop (32px)
-	 * @GTK_ICON_SIZE_DIALOG: Size appropriate for dialogs (48px)
-	 *
-	 * Built-in stock icon sizes.
+	 * Abraca's bundled icons, keyed by logical name. GTK4 removed the
+	 * builtin-icon registry (Gtk.IconTheme.add_builtin_icon), so these are
+	 * loaded straight from the compiled-in GResource on demand.
 	 */
-	private const int[] STOCK_SIZES = { -1, 16, 16, 24, 16, 32, 48 };
-
 	private const Icon[] STOCK_ICONS = {
-		{ "abraca-icon",       32, "abraca-32.png"             },
-		{ "abraca-equalizer",  24, "abraca-equalizer.png"      },
-		{ "abraca-collection", 24, "abraca-collection-24.png"  },
-		{ "abraca-collection", 16, "abraca-collection-16.png"  },
-		{ "abraca-playlist",   24, "abraca-playlist-24.png"    },
-		{ "abraca-playlist",   16, "abraca-playlist-16.png"    },
-		{ "abraca-rated",      16, "abraca-rating-rated.png"   },
-		{ "abraca-unrated",    16, "abraca-rating-unrated.png" },
-		{ "abraca-favorite",   16, "abraca-favorite.png"       }
+		{ "abraca-icon",       "abraca-32.png"             },
+		{ "abraca-equalizer",  "abraca-equalizer.png"      },
+		{ "abraca-collection", "abraca-collection-24.png"  },
+		{ "abraca-playlist",   "abraca-playlist-24.png"    },
+		{ "abraca-rated",      "abraca-rating-rated.png"   },
+		{ "abraca-unrated",    "abraca-rating-unrated.png" },
+		{ "abraca-favorite",   "abraca-favorite.png"       }
 	};
 
-	public static void initialize() throws GLib.Error {
-		for (var i = 0; i < STOCK_ICONS.length; i++) {
-			var pixbuf = new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/%s".printf(STOCK_ICONS[i].filename));
-			Gtk.IconTheme.add_builtin_icon(STOCK_ICONS[i].name, STOCK_ICONS[i].size, pixbuf);
+	private static unowned string filename_for(string name)
+	{
+		foreach (unowned var icon in STOCK_ICONS) {
+			if (icon.name == name)
+				return icon.filename;
+		}
+		GLib.error("Unknown icon '%s'. Programming error.", name);
+	}
+
+	public static Gdk.Pixbuf by_name(string name)
+	{
+		try {
+			return new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/%s".printf(filename_for(name)));
+		} catch (GLib.Error e) {
+			GLib.error("Could not load icon '%s': %s", name, e.message);
 		}
 	}
 
-	public static Gdk.Pixbuf by_name(string name, Gtk.IconSize size)
+	public static Gdk.Texture texture_by_name(string name)
 	{
-		try {
-			var theme = Gtk.IconTheme.get_default();
-			return theme.load_icon(name, STOCK_SIZES[size], Gtk.IconLookupFlags.GENERIC_FALLBACK);
-		} catch (GLib.Error e) {
-			GLib.error("Could not load icon. Programming error.");
-		}
+		return Gdk.Texture.for_pixbuf(by_name(name));
 	}
 }

@@ -60,7 +60,7 @@ public class Abraca.ServerBrowserDialog : Gtk.Dialog
 	}
 
 	[GtkCallback]
-	private void on_location_row_activated(Gtk.TreeView view, Gtk.TreePath path, Gtk.TreeViewColumn colunm)
+	private void on_location_row_activated(Gtk.TreeView view, Gtk.TreePath path, Gtk.TreeViewColumn? colunm)
 	{
 		Gtk.TreeIter iter;
 		location_store.get_iter(out iter, path);

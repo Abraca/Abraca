@@ -17,8 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public class Abraca.Application : Gtk.Application {
+public class Abraca.Application : Adw.Application {
 	private Window window;
+
+	/* Held so the browser (and its in-flight async discovery) outlives the
+	 * dialog closing; otherwise a late async callback derefs a freed instance. */
+	private ServerBrowser server_browser;
 
 	private const ActionEntry[] actions = {
 		{ "about", on_menu_about },
@@ -33,23 +37,20 @@ public class Abraca.Application : Gtk.Application {
 
 	private void on_menu_about ()
 	{
-		try {
-			var builder = new Gtk.Builder();
+		var about = new Adw.AboutWindow () {
+			transient_for = window,
+			application_name = "Abraca",
+			application_icon = "org.xmms2.abraca",
+			version = Build.Config.VERSION,
+			website = "https://github.com/Abraca/Abraca",
+			copyright = "© 2007-2020 Abraca Team",
+			license_type = Gtk.License.GPL_2_0,
+			developers = About.developers,
+			artists = About.artists,
+			translator_credits = string.joinv ("\n", About.translators)
+		};
 
-			builder.add_from_resource("/org/xmms2/Abraca/ui/abraca-about.ui");
-
-			var about = builder.get_object("abraca_about") as Gtk.AboutDialog;
-
-			about.set_logo(new Gdk.Pixbuf.from_resource("/org/xmms2/Abraca/abraca-192.png"));
-			about.version = Build.Config.VERSION;
-
-			about.transient_for = window;
-
-			about.run();
-			about.hide();
-		} catch (GLib.Error e) {
-			GLib.error("About dialog could not be shown. (%s)", e.message);
-		}
+		about.present ();
 	}
 
 	private void on_menu_quit ()
@@ -72,7 +73,6 @@ public class Abraca.Application : Gtk.Application {
 		try {
 			builder.add_from_resource("/org/xmms2/Abraca/ui/abraca-main-menu.ui");
 
-			app_menu = builder.get_object ("app-menu") as MenuModel;
 			var menu = builder.get_object("win-menu") as MenuModel;
 
 			window = new Window(this, client, menu);
@@ -80,16 +80,16 @@ public class Abraca.Application : Gtk.Application {
 			Configurable.load();
 
 			var provider = new Gtk.CssProvider();
-			provider.load_from_file(GLib.File.new_for_uri("resource:///org/xmms2/Abraca/ui/style.css"));
+			provider.load_from_resource("/org/xmms2/Abraca/ui/style.css");
 
-			Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), provider,
-			                                         Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+			Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), provider,
+			                                          Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-			window.show_all ();
+			window.present ();
 
 			GLib.Idle.add(() => {
-				var sb = new ServerBrowser(window, client);
-				sb.run();
+				server_browser = new ServerBrowser(window, client);
+				server_browser.run();
 				return false;
 			});
 		} catch (GLib.Error e) {
@@ -106,23 +106,6 @@ public class Abraca.Application : Gtk.Application {
 
 	public static int main (string[] args)
 	{
-		var context = new OptionContext (_("- Abraca, an XMMS2 client."));
-		context.add_group (Gtk.get_option_group (false));
-
-		try {
-			context.parse (ref args);
-		} catch (GLib.OptionError err) {
-			var help = context.get_help (true, null);
-			GLib.print ("%s\n%s", err.message, help);
-			Posix.exit (1);
-		}
-
-		try {
-			Abraca.Icons.initialize();
-		} catch (GLib.Error e) {
-			GLib.error(e.message);
-		}
-
 		GLib.Environment.set_application_name("Abraca");
 
 		GLib.Intl.textdomain(Build.Config.APPNAME);
@@ -131,6 +114,6 @@ public class Abraca.Application : Gtk.Application {
 
 		var app = new Abraca.Application();
 
-		return app.run();
+		return app.run(args);
 	}
 }

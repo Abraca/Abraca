@@ -36,22 +36,26 @@ public class Abraca.TimeSlider : Gtk.Scale {
 		client.playback_playtime.connect(on_playback_playtime);
 		client.playback_current_info.connect(on_playback_current_info);
 
-		button_press_event.connect(on_button_press_event);
-		button_release_event.connect(on_button_release_event);
+		/* Observe presses/releases in the capture phase so the Scale's own
+		 * drag gesture keeps working; we only track the seeking state and
+		 * commit the seek once the user lets go. */
+		var click = new Gtk.GestureClick ();
+		click.set_propagation_phase (Gtk.PropagationPhase.CAPTURE);
+		click.pressed.connect (on_pressed);
+		click.released.connect (on_released);
+		add_controller (click);
 	}
 
-	protected bool on_button_press_event (Gdk.EventButton ev)
+	private void on_pressed (int n_press, double x, double y)
 	{
 		is_seeking = true;
-		return false;
 	}
 
-	protected bool on_button_release_event (Gdk.EventButton ev)
+	private void on_released (int n_press, double x, double y)
 	{
 		var position_msec = (uint)(duration_msec * get_value());
 		client.xmms.playback_seek_ms(position_msec, Xmms.PlaybackSeekMode.SET);
 		is_seeking = false;
-		return false;
 	}
 
 	private void on_playback_current_info (Xmms.Value current_info)

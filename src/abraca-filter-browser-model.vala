@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public class Abraca.FilterBrowserModel : Gtk.ListStore, Gtk.TreeModel {
+public class Abraca.FilterBrowserModel : GLib.Object {
 	private Client client;
 
 	public string field {
@@ -28,14 +28,13 @@ public class Abraca.FilterBrowserModel : Gtk.ListStore, Gtk.TreeModel {
 		set; get; default = Xmms.Collection.universe();
 	}
 
-	public signal void selection_changed (Xmms.Collection selection);
-
-	private GLib.Type[] types = new GLib.Type[] { typeof(string) };
+	/** distinct values for `field`, matching the current filter */
+	public Gtk.StringList store {
+		get; construct;
+	}
 
 	public FilterBrowserModel (Client client, string field) {
-		Object (field: field);
-
-		set_column_types(types);
+		Object (field: field, store: new Gtk.StringList(null));
 
 		this.client = client;
 
@@ -52,7 +51,7 @@ public class Abraca.FilterBrowserModel : Gtk.ListStore, Gtk.TreeModel {
 	private bool on_coll_query_infos(Xmms.Value values) {
 		unowned Xmms.ListIter iter;
 
-		clear();
+		store.splice(0, store.get_n_items(), null);
 
 		if (values.is_error()) {
 			unowned string error = "unknown";
@@ -63,16 +62,13 @@ public class Abraca.FilterBrowserModel : Gtk.ListStore, Gtk.TreeModel {
 
 		values.get_list_iter(out iter);
 		for (iter.first(); iter.valid(); iter.next()) {
-			Gtk.TreeIter? tree_iter;
 			unowned string value;
 			Xmms.Value entry;
 
 			iter.entry(out entry);
 
-			entry.dict_entry_get_string(field, out value);
-
-			append(out tree_iter);
-			set(tree_iter, 0, value);
+			if (entry.dict_entry_get_string(field, out value))
+				store.append(value);
 		}
 
 		return false;

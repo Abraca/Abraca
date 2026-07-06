@@ -20,73 +20,65 @@
 using GLib;
 
 namespace Abraca {
-	public class CollectionsModel : Gtk.TreeStore, Gtk.TreeModel {
+	/** A node in the collections tree: either a root header or a leaf entry. */
+	public class CollectionNode : GLib.Object {
+		public CollectionsModel.CollectionType node_type { get; set; }
+		public string name { get; set; }
+		public bool is_root { get; construct; }
+		public bool is_current { get; set; default = false; }
+
+		/** child store for roots; null for leaves (not expandable) */
+		public GLib.ListStore? children { get; construct; }
+
+		public CollectionNode (CollectionsModel.CollectionType type, string name,
+		                       bool is_root, GLib.ListStore? children)
+		{
+			Object (is_root: is_root, children: children);
+			this.node_type = type;
+			this.name = name;
+		}
+	}
+
+	public class CollectionsModel : GLib.Object {
 		public enum CollectionType {
 			Invalid = 0,
 			Collection,
 			Playlist
 		}
 
-		public enum Column {
-			Type = 0,
-			Icon,
-			Style,
-			Weight,
-			Name,
-			Total
-		}
+		public Gtk.TreeListModel tree_model { get; construct; }
 
-		private Gtk.TreeIter temporary_playlist_iter;
+		private GLib.ListStore roots;
+		private CollectionNode collection_root;
+		private CollectionNode playlist_root;
 
-		/* TODO: Is this required? */
+		private CollectionNode? temporary_playlist = null;
+
 		public bool has_temporary_playlist {
-			get; private set; default = false;
+			get { return temporary_playlist != null; }
 		}
-
-		private Gtk.TreeIter _playlist_iter;
-		private Gtk.TreeIter _collection_iter;
-
-		public Gdk.Pixbuf playlist_pixbuf { get; construct set; }
-		public Gdk.Pixbuf collection_pixbuf { get; construct set; }
 
 		/* Emited after 1..* collections has been added. */
 		public signal void collection_loaded (CollectionType type);
 
 		private Client client;
 
-		public CollectionsModel (Gdk.Pixbuf coll, Gdk.Pixbuf pls, Client c)
+		public CollectionsModel (Client c)
 		{
-			Object(playlist_pixbuf: coll, collection_pixbuf: pls);
-
 			client = c;
 
-			set_column_types(new GLib.Type[5] {
-				typeof(int),
-				typeof(Gdk.Pixbuf),
-				typeof(int),
-				typeof(int),
-				typeof(string)
+			collection_root = new CollectionNode (CollectionType.Collection, _("Collections"),
+			                                      true, new GLib.ListStore (typeof (CollectionNode)));
+			playlist_root = new CollectionNode (CollectionType.Playlist, _("Playlists"),
+			                                    true, new GLib.ListStore (typeof (CollectionNode)));
+
+			roots = new GLib.ListStore (typeof (CollectionNode));
+			roots.append (collection_root);
+			roots.append (playlist_root);
+
+			_tree_model = new Gtk.TreeListModel (roots, false, true, (item) => {
+				return ((CollectionNode) item).children;
 			});
-
-			append(out _collection_iter, null);
-			set(_collection_iter,
-				Column.Type, CollectionType.Invalid,
-				Column.Icon, null,
-				Column.Style, Pango.Style.NORMAL,
-				Column.Weight, Pango.Weight.BOLD,
-				Column.Name, _("Collections")
-			);
-
-			append(out _playlist_iter, null);
-			set(_playlist_iter,
-				Column.Type, CollectionType.Invalid,
-				Column.Icon, null,
-				Column.Style, Pango.Style.NORMAL,
-				Column.Weight, Pango.Weight.BOLD,
-				Column.Name, _("Playlists")
-			);
-
-			set_sort_column_id(Column.Name,0);
 
 			client.playlist_loaded.connect(on_playlist_loaded);
 			client.collection_add.connect(on_collection_add);
@@ -95,44 +87,20 @@ namespace Abraca {
 			client.connection_state_changed.connect(query_collections);
 		}
 
-
-		/**
-		 * Check wether a path is of, or is descendant of some type.
-		 */
-		public bool path_is_type (Gtk.TreePath path, CollectionType t)
+		private unowned GLib.ListStore store_for (CollectionType type)
 		{
-			Gtk.TreeIter iter;
-			Gtk.TreePath cmp;
-
-			if (t == CollectionType.Collection) {
-				iter = _collection_iter;
-			} else {
-				iter = _playlist_iter;
-			}
-
-			cmp = get_path(iter);
-
-			return path.compare(cmp) == 0 || path.is_descendant(cmp);
+			return (type == CollectionType.Collection)
+				? collection_root.children : playlist_root.children;
 		}
 
-
-		/**
-		 * Check wether a path is a descendant of some type.
-		 */
-		public bool path_is_child_of_type (Gtk.TreePath path, CollectionType t)
+		private CollectionNode? find_child (GLib.ListStore store, string name)
 		{
-			Gtk.TreeIter iter;
-			Gtk.TreePath cmp;
-
-			if (t == CollectionType.Collection) {
-				iter = _collection_iter;
-			} else {
-				iter = _playlist_iter;
+			for (uint i = 0; i < store.get_n_items (); i++) {
+				var node = (CollectionNode) store.get_item (i);
+				if (node.name == name)
+					return node;
 			}
-
-			cmp = get_path(iter);
-
-			return path.is_descendant(cmp);
+			return null;
 		}
 
 
@@ -142,15 +110,9 @@ namespace Abraca {
 		 */
 		public void append_temporary_playlist ()
 		{
-			append(out temporary_playlist_iter, _playlist_iter);
-
-			set(temporary_playlist_iter,
-				Column.Type, CollectionType.Playlist,
-				Column.Icon, playlist_pixbuf,
-				Column.Name, get_new_playlist_name()
-			);
-
-			has_temporary_playlist = true;
+			temporary_playlist = new CollectionNode (CollectionType.Playlist,
+			                                         get_new_playlist_name (), false, null);
+			playlist_root.children.append (temporary_playlist);
 		}
 
 
@@ -159,8 +121,12 @@ namespace Abraca {
 		 */
 		public void remove_temporary_playlist ()
 		{
-			remove(ref temporary_playlist_iter);
-			has_temporary_playlist = false;
+			if (temporary_playlist == null)
+				return;
+			uint pos;
+			if (playlist_root.children.find (temporary_playlist, out pos))
+				playlist_root.children.remove (pos);
+			temporary_playlist = null;
 		}
 
 
@@ -170,12 +136,9 @@ namespace Abraca {
 		 */
 		public string realize_temporary_playlist ()
 		{
-			string name = get_new_playlist_name();
-
-			client.xmms.playlist_create(name);
-
-			has_temporary_playlist = false;
-
+			string name = get_new_playlist_name ();
+			client.xmms.playlist_create (name);
+			temporary_playlist = null;
 			return name;
 		}
 
@@ -186,43 +149,26 @@ namespace Abraca {
 		 */
 		private string get_new_playlist_name ()
 		{
-			Gtk.TreeIter iter;
 			int current, highest = -1;
 
-			iter_children(out iter, _playlist_iter);
-			do {
-				string[] parts;
-				string name;
-
-				get(iter, Column.Name, out name);
-
-				if (name == null) {
-					continue;
-				}
-
-				parts = name.split("-", 2);
+			var store = playlist_root.children;
+			for (uint i = 0; i < store.get_n_items (); i++) {
+				var node = (CollectionNode) store.get_item (i);
+				var parts = node.name.split ("-", 2);
 				if (parts[0] == _("New Playlist")) {
-					if (parts[1] != null) {
-						current = int.parse(parts[1]);
-					} else {
-						current = 0;
-					}
-
-					if (current > highest) {
+					current = (parts[1] != null) ? int.parse (parts[1]) : 0;
+					if (current > highest)
 						highest = current;
-					}
 				}
-			} while (iter_next(ref iter));
+			}
 
-			if (!has_temporary_playlist) {
+			if (!has_temporary_playlist)
 				highest++;
-			}
 
-			if (highest > 0) {
-				return _("New Playlist") + highest.to_string("-%i");
-			} else {
+			if (highest > 0)
+				return _("New Playlist") + highest.to_string ("-%i");
+			else
 				return _("New Playlist");
-			}
 		}
 
 
@@ -248,31 +194,14 @@ namespace Abraca {
 		 */
 		private bool on_list_collections (Xmms.Value val, CollectionType type)
 		{
-			Gtk.TreeIter child, parent;
-			unowned Gdk.Pixbuf pixbuf;
-
-			if (type == CollectionType.Collection) {
-				parent = _collection_iter;
-				pixbuf = collection_pixbuf;
-			} else {
-				parent = _playlist_iter;
-				pixbuf = playlist_pixbuf;
-			}
-
-			while (iter_children(out child, parent)) {
-				remove(ref child);
-			}
-
-			int pos = iter_n_children(parent);
+			var store = store_for (type);
+			store.remove_all ();
 
 			unowned Xmms.ListIter list_iter;
 			val.get_list_iter(out list_iter);
 
 			for (list_iter.first(); list_iter.valid(); list_iter.next()) {
-				Pango.Weight weight = Pango.Weight.NORMAL;
-				Pango.Style style = Pango.Style.NORMAL;
 				unowned Xmms.Value entry;
-				Gtk.TreeIter iter;
 				string? name = null;
 
 				if (!(list_iter.entry(out entry) && entry.get_string (out name)))
@@ -282,21 +211,11 @@ namespace Abraca {
 				if (name[0] == '_')
 					continue;
 
-				if (type == CollectionType.Playlist) {
-					if (name == client.current_playlist) {
-						style = Pango.Style.ITALIC;
-						weight = Pango.Weight.BOLD;
-					}
-				}
+				var node = new CollectionNode (type, name, false, null);
+				if (type == CollectionType.Playlist && name == client.current_playlist)
+					node.is_current = true;
 
-				insert_with_values(
-					out iter, parent, pos++,
-					CollectionsModel.Column.Type, type,
-					CollectionsModel.Column.Icon, pixbuf,
-					CollectionsModel.Column.Style, style,
-					CollectionsModel.Column.Weight, weight,
-					CollectionsModel.Column.Name, name
-				);
+				store.append (node);
 			}
 
 			collection_loaded(type);
@@ -306,34 +225,14 @@ namespace Abraca {
 
 
 		/**
-		 * When a playlist is loaded, mark it as bold, and other as normal.
+		 * When a playlist is loaded, mark it as current, and others as normal.
 		 */
 		private void on_playlist_loaded (Client c, string name)
 		{
-			Gtk.TreeIter iter;
-
-			if (iter_children(out iter, _playlist_iter)) {
-				do {
-					string current;
-					int style;
-
-					get(iter, Column.Name, out current,
-					    Column.Style, out style);
-
-					if (style != Pango.Style.NORMAL) {
-						set(iter,
-							Column.Style, Pango.Style.NORMAL,
-						    Column.Weight, Pango.Weight.NORMAL
-						);
-					}
-
-					if (current == name) {
-						set(iter,
-							Column.Style, Pango.Style.ITALIC,
-						    Column.Weight, Pango.Weight.BOLD
-						);
-					}
-				} while (iter_next(ref iter));
+			var store = playlist_root.children;
+			for (uint i = 0; i < store.get_n_items (); i++) {
+				var node = (CollectionNode) store.get_item (i);
+				node.is_current = (node.name == name);
 			}
 		}
 
@@ -343,31 +242,13 @@ namespace Abraca {
 		 */
 		private void on_collection_add (Client c, string name, string ns)
 		{
-			Gtk.TreeIter iter, parent;
-			unowned Gdk.Pixbuf pixbuf;
-			CollectionType type;
-
-			if (name[0] == '_') {
+			if (name[0] == '_')
 				return;
-			}
 
-			if (ns == Xmms.COLLECTION_NS_PLAYLISTS) {
-				parent = _playlist_iter;
-				type = CollectionType.Playlist;
-				pixbuf = playlist_pixbuf;
-			} else {
-				parent = _collection_iter;
-				type = CollectionType.Collection;
-				pixbuf = collection_pixbuf;
-			}
+			CollectionType type = (ns == Xmms.COLLECTION_NS_PLAYLISTS)
+				? CollectionType.Playlist : CollectionType.Collection;
 
-			append(out iter, parent);
-
-			set(iter,
-				Column.Type, type,
-				Column.Icon, pixbuf,
-				Column.Name, name
-			);
+			store_for (type).append (new CollectionNode (type, name, false, null));
 
 			collection_loaded(type);
 		}
@@ -379,40 +260,22 @@ namespace Abraca {
 		private void on_collection_rename (Client c, string name,
 		                                   string newname, string ns)
 		{
-			Gtk.TreeIter iter, parent;
-
 			/* check for any current or future invisible collections */
 			if (name[0] == '_') {
-				if (newname[0] == '_') {
-					return;
-				} else {
+				if (newname[0] != '_')
 					on_collection_add(c, newname, ns);
-				}
 				return;
-			} else {
-				if (newname[0] == '_') {
-					on_collection_remove(c, name, ns);
-					return;
-				}
+			} else if (newname[0] == '_') {
+				on_collection_remove(c, name, ns);
+				return;
 			}
 
+			CollectionType type = (ns == Xmms.COLLECTION_NS_PLAYLISTS)
+				? CollectionType.Playlist : CollectionType.Collection;
 
-			if (ns == Xmms.COLLECTION_NS_PLAYLISTS) {
-				parent = _playlist_iter;
-			} else {
-				parent = _collection_iter;
-			}
-
-			iter_children(out iter, parent);
-			do {
-				string current;
-
-				get(iter, Column.Name, out current);
-				if (name == current) {
-					set(iter, Column.Name, newname);
-					break;
-				}
-			} while (iter_next(ref iter));
+			var node = find_child (store_for (type), name);
+			if (node != null)
+				node.name = newname;
 		}
 
 
@@ -421,24 +284,16 @@ namespace Abraca {
 		 */
 		private void on_collection_remove (Client c, string name, string ns)
 		{
-			Gtk.TreeIter iter, parent;
+			CollectionType type = (ns == Xmms.COLLECTION_NS_PLAYLISTS)
+				? CollectionType.Playlist : CollectionType.Collection;
 
-			if (ns == Xmms.COLLECTION_NS_PLAYLISTS) {
-				parent = _playlist_iter;
-			} else {
-				parent = _collection_iter;
+			var store = store_for (type);
+			var node = find_child (store, name);
+			if (node != null) {
+				uint pos;
+				if (store.find (node, out pos))
+					store.remove (pos);
 			}
-
-			iter_children(out iter, parent);
-			do {
-				string current;
-
-				get(iter, Column.Name, out current);
-				if (name == current) {
-					remove(ref iter);
-					break;
-				}
-			} while (iter_next(ref iter));
 		}
 	}
 }

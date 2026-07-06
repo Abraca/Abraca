@@ -96,12 +96,13 @@ namespace Abraca {
 				_("Ok"), Gtk.ResponseType.OK
 			);
 
-			dialog.resize (300, 200);
+			dialog.set_default_size (300, 200);
 
 			var table = new Gtk.Grid();
 			table.row_spacing = 7;
 			table.column_spacing = 5;
-			table.border_width = 5;
+			table.margin_top = table.margin_bottom = 5;
+			table.margin_start = table.margin_end = 5;
 			table.hexpand = true;
 			table.valign = Gtk.Align.START;
 
@@ -121,29 +122,26 @@ namespace Abraca {
 
 				entries[i] = new Gtk.Entry();
 				entries[i].text = values[i];
-				entries[i].expand = true;
+				entries[i].hexpand = true;
 				table.attach(entries[i], 1, i, 1, 1);
 			}
 
-			var box = dialog.get_content_area () as Gtk.Box;
-			box.pack_start(table, true, true, 0);
+			var box = dialog.get_content_area ();
+			box.append(table);
 
-			dialog.show_all();
+			dialog.response.connect((response_id) => {
+				if (response_id == Gtk.ResponseType.OK) {
+					sorting_artist = entries[0].text;
+					sorting_album = entries[1].text;
+					sorting_title = entries[2].text;
+					sorting_year = entries[3].text;
+					sorting_path = entries[4].text;
+					sorting_custom = entries[5].text;
+				}
+				dialog.destroy();
+			});
 
-			var response_id = dialog.run();
-
-			if (response_id == Gtk.ResponseType.OK) {
-				var i = 0;
-
-				sorting_artist = entries[i++].text;
-				sorting_album = entries[i++].text;
-				sorting_title = entries[i++].text;
-				sorting_year = entries[i++].text;
-				sorting_path = entries[i++].text;
-				sorting_custom = entries[i++].text;
-			}
-
-			dialog.close();
+			dialog.present();
 		}
 	}
 }

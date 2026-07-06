@@ -7,6 +7,8 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 	/* TODO: this is a hack, remove me */
 	private FilterView treeview;
 
+	private Gtk.Entry entry;
+
 	public FilterSearchBox (Client client, Config config, FilterView tv)
 	{
 		Object (has_entry: true, entry_text_column: 0);
@@ -15,14 +17,17 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 
 		model = new Gtk.ListStore.newv({ typeof(string) });
 
-		var entry = get_child() as Gtk.Entry;
+		entry = get_child() as Gtk.Entry;
 		entry.primary_icon_name = "edit-find";
 		entry.secondary_icon_name = "edit-clear";
 		entry.secondary_icon_activatable = true;
 
 		entry.changed.connect(on_filter_entry_changed);
 		entry.icon_release.connect(on_filter_entry_clear);
-		entry.focus_out_event.connect(on_filter_entry_focus_out_event);
+
+		var focus = new Gtk.EventControllerFocus();
+		focus.leave.connect(on_entry_focus_leave);
+		entry.add_controller(focus);
 
 		var completion = new Gtk.EntryCompletion();
 		completion.set_text_column(0);
@@ -88,7 +93,7 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 	}
 
 
-	private void on_filter_entry_clear (Gtk.Entry entry, Gtk.EntryIconPosition pos, Gdk.Event ev)
+	private void on_filter_entry_clear (Gtk.EntryIconPosition pos)
 	{
 		if (pos == Gtk.EntryIconPosition.PRIMARY)
 			return;
@@ -99,7 +104,7 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 
 	private void on_filter_entry_changed (Gtk.Editable widget)
 	{
-		Gdk.RGBA? color = null;
+		bool invalid = false;
 		Xmms.Collection coll;
 
 		var entry = widget as Gtk.Entry;
@@ -114,12 +119,14 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 					timer = GLib.Timeout.add(450, on_collection_query_timeout);
 				}
 			} else {
-				color = Gdk.RGBA();
-				color.parse("#ff6666");
+				invalid = true;
 			}
 		}
 
-		entry.override_background_color(Gtk.StateFlags.NORMAL, color);
+		if (invalid)
+			entry.add_css_class("error");
+		else
+			entry.remove_css_class("error");
 	}
 
 
@@ -158,15 +165,13 @@ public class Abraca.FilterSearchBox : Gtk.ComboBox, Searchable {
 	}
 
 
-	private bool on_filter_entry_focus_out_event (Gtk.Widget w, Gdk.EventFocus e)
+	private void on_entry_focus_leave ()
 	{
-		if (unsaved_query != null && unsaved_query == (w as Gtk.Entry).text) {
+		if (unsaved_query != null && unsaved_query == entry.text) {
 			filter_save(unsaved_query);
 		}
 
 		unsaved_query = null;
-
-		return false;
 	}
 
 

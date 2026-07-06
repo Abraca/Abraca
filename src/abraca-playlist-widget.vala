@@ -1,15 +1,29 @@
-public class Abraca.PlaylistWidget : Gtk.ScrolledWindow {
+/* GtkScrolledWindow is final in GTK4, so wrap it rather than subclass. */
+public class Abraca.PlaylistWidget : Gtk.Widget {
+	private Gtk.ScrolledWindow scrolled;
+
 	public PlaylistWidget (Client client, MetadataResolver resolver, Config config, Medialib medialib, Searchable search)
 	{
-		hscrollbar_policy = Gtk.PolicyType.AUTOMATIC;
-		vscrollbar_policy = Gtk.PolicyType.AUTOMATIC;
+		set_layout_manager (new Gtk.BinLayout ());
+		hexpand = true;
+		vexpand = true;
 
-		shadow_type = Gtk.ShadowType.IN;
+		scrolled = new Gtk.ScrolledWindow ();
+		scrolled.hscrollbar_policy = Gtk.PolicyType.AUTOMATIC;
+		scrolled.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC;
 
 		var model = new PlaylistModel(client, resolver);
+		scrolled.set_child(new PlaylistView(model, client, medialib, config, search));
 
-		add(new PlaylistView(model, client, medialib, config, search));
+		scrolled.set_parent (this);
+	}
 
-		show_all ();
+	public override void dispose ()
+	{
+		if (scrolled != null) {
+			scrolled.unparent ();
+			scrolled = null;
+		}
+		base.dispose ();
 	}
 }

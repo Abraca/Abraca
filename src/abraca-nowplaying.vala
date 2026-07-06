@@ -19,12 +19,17 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 
 		coverart = client.current_coverart;
 
-		events |= Gdk.EventMask.BUTTON_RELEASE_MASK;
-		events |= Gdk.EventMask.BUTTON_PRESS_MASK;
-		events |= Gdk.EventMask.KEY_PRESS_MASK;
-		events |= Gdk.EventMask.KEY_RELEASE_MASK;
-
 		can_focus = true;
+
+		var key = new Gtk.EventControllerKey ();
+		key.key_pressed.connect (on_key_pressed);
+		add_controller (key);
+
+		var click = new Gtk.GestureClick ();
+		click.released.connect ((n_press, x, y) => { hide_now_playing (); });
+		add_controller (click);
+
+		set_draw_func (on_draw);
 	}
 
 	private void on_playback_current_info(Xmms.Value val)
@@ -41,19 +46,42 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 		queue_draw();
 	}
 
-	private static bool match_event (string accel, Gdk.EventKey ev)
+	private static bool match_event (string accel, uint keyval, Gdk.ModifierType state)
 	{
 		Gdk.ModifierType type;
 		uint key;
 
 		Gtk.accelerator_parse(accel, out key, out type);
 
-		return ev.keyval == key && (ev.state & type) > 0;
+		return keyval == key && (state & type) > 0;
 	}
 
-	public override bool key_press_event (Gdk.EventKey ev)
+	private static bool is_modifier_key (uint keyval)
 	{
-		if (match_event("<Primary>p", ev)) {
+		switch (keyval) {
+			case Gdk.Key.Shift_L:
+			case Gdk.Key.Shift_R:
+			case Gdk.Key.Control_L:
+			case Gdk.Key.Control_R:
+			case Gdk.Key.Alt_L:
+			case Gdk.Key.Alt_R:
+			case Gdk.Key.Meta_L:
+			case Gdk.Key.Meta_R:
+			case Gdk.Key.Super_L:
+			case Gdk.Key.Super_R:
+			case Gdk.Key.Hyper_L:
+			case Gdk.Key.Hyper_R:
+			case Gdk.Key.Caps_Lock:
+			case Gdk.Key.Num_Lock:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	private bool on_key_pressed (uint keyval, uint keycode, Gdk.ModifierType state)
+	{
+		if (match_event("<Primary>p", keyval, state)) {
 			if (client.current_playback_status == Xmms.PlaybackStatus.PLAY) {
 				client.xmms.playback_pause();
 			} else {
@@ -62,30 +90,24 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 			return true;
 		}
 
-		if (match_event("<Primary>Left", ev)) {
+		if (match_event("<Primary>Left", keyval, state)) {
 			client.xmms.playlist_set_next_rel(-1);
 			client.xmms.playback_tickle();
 			return true;
 		}
 
-		if (match_event("<Primary>Right", ev)) {
+		if (match_event("<Primary>Right", keyval, state)) {
 			client.xmms.playlist_set_next_rel(1);
 			client.xmms.playback_tickle();
 			return true;
 		}
 
-		if (ev.is_modifier == 0) {
+		if (!is_modifier_key (keyval)) {
 			hide_now_playing();
 			return true;
 		}
 
 		return false;
-	}
-
-	public override bool button_release_event (Gdk.EventButton ev)
-	{
-		hide_now_playing();
-		return true;
 	}
 
 	private Pango.Layout get_pango_layout (Cairo.Context cr, double text_size, int text_width = -1)
@@ -161,11 +183,8 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 		cr.fill();
 	}
 
-	public override bool draw (Cairo.Context cr)
+	private void on_draw (Gtk.DrawingArea area, Cairo.Context cr, int width, int height)
 	{
-		var width = get_allocated_width();
-		var height = get_allocated_height();
-
 		cr.set_source_rgb(0, 0, 0);
 		cr.rectangle(0, 0, width, height);
 		cr.fill();
@@ -174,7 +193,5 @@ public class Abraca.NowPlaying : Gtk.DrawingArea
 
 		if (coverart != null)
 			draw_coverart (cr, width, height);
-
-		return false;
 	}
 }

@@ -17,80 +17,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public enum Abraca.TargetInfo {
-	PLAYLIST_ENTRIES,
-	COLLECTION,
-	URI,
-	INTERNET,
-}
+/*
+ * GTK4 drag-and-drop. Unlike the GTK3 GtkTargetEntry/GtkSelectionData world,
+ * all of Abraca's drags are in-process, so we carry the live Xmms values inside
+ * small GObject wrappers and hand them to Gdk.ContentProvider.for_value(). The
+ * matching Gtk.DropTarget is configured for these GTypes and receives the very
+ * same objects back. External URI drops arrive as a Gdk.FileList / string.
+ */
 
-public abstract class Abraca.TargetEntry {
-	public const Gtk.TargetEntry PlaylistEntries = {
-		"application/x-xmmsclient-playlist-row", 0, TargetInfo.PLAYLIST_ENTRIES
-	};
+namespace Abraca {
+	/** A set of playlist positions being reordered within the playlist. */
+	public class PlaylistEntriesTransfer : GLib.Object {
+		/* Xmms.Value list of int positions. */
+		public Xmms.Value positions { get; construct; }
 
-	public const Gtk.TargetEntry Collection = {
-		"application/x-xmmsclient-collection", 0, TargetInfo.COLLECTION
-	};
-
-	public const Gtk.TargetEntry UriList = {
-		"text/uri-list", 0, TargetInfo.URI
-	};
-
-	public const Gtk.TargetEntry Internet = {
-		"_NETSCAPE_URL", 0, TargetInfo.INTERNET
-	};
-}
-
-public abstract class Abraca.DragDropUtil {
-	private static unowned uchar[] get_selection_data(Gtk.SelectionData selection_data)
-	{
-		unowned uchar[] data = selection_data.get_data();
-		data.length = selection_data.get_length();
-		return data;
+		public PlaylistEntriesTransfer (Xmms.Value positions)
+		{
+			Object (positions: positions);
+		}
 	}
 
-	public static Xmms.Value receive_playlist_entries(Gtk.SelectionData selection_data)
-	{
-		unowned uchar[] data = get_selection_data(selection_data);
-		return new Xmms.Value.from_bin(data).deserialize();
+	/** A collection (idlist or reference) being dragged. */
+	public class CollectionTransfer : GLib.Object {
+		public Xmms.Collection collection { get; construct; }
+
+		public CollectionTransfer (Xmms.Collection collection)
+		{
+			Object (collection: collection);
+		}
 	}
 
-	public static Xmms.Collection receive_collection(Gtk.SelectionData selection_data)
-	{
-		Xmms.Collection collection;
+	namespace DragDropUtil {
+		public static Gdk.ContentProvider content_for_playlist_entries (Xmms.Value positions)
+		{
+			var payload = new PlaylistEntriesTransfer (positions);
+			var value = GLib.Value (typeof (PlaylistEntriesTransfer));
+			value.set_object (payload);
+			return new Gdk.ContentProvider.for_value (value);
+		}
 
-		unowned uchar[] data = get_selection_data(selection_data);
-		var value = new Xmms.Value.from_bin(data).deserialize();
-
-		value.get_coll(out collection);
-
-		return collection;
-	}
-
-	public static void send_playlist_entries(Gtk.SelectionData selection_data, Xmms.Value value)
-	{
-		unowned uchar[] data;
-
-		var bin = value.serialize();
-		bin.get_bin(out data);
-
-		var atom = Gdk.Atom.intern_static_string(Abraca.TargetEntry.PlaylistEntries.target);
-		selection_data.set(atom, 8, data);
-	}
-
-	public static void send_collection(Gtk.SelectionData selection_data, Xmms.Collection collection)
-	{
-		unowned uchar[] data;
-
-#if XMMS_API_COLLECTIONS_TWO_DOT_ZERO
-		var bin = collection.serialize();
-#else
-		var bin = new Xmms.Value.from_coll(collection).serialize();
-#endif
-		bin.get_bin(out data);
-
-		var atom = Gdk.Atom.intern_static_string(Abraca.TargetEntry.Collection.target);
-		selection_data.set(atom, 8, data);
+		public static Gdk.ContentProvider content_for_collection (Xmms.Collection collection)
+		{
+			var payload = new CollectionTransfer (collection);
+			var value = GLib.Value (typeof (CollectionTransfer));
+			value.set_object (payload);
+			return new Gdk.ContentProvider.for_value (value);
+		}
 	}
 }

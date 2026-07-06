@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/org/xmms2/Abraca">
-    <file preprocess="to-pixdata" compressed="true">abraca-16.png</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-32.png</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-128.png</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-192.png</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-collection-16.png</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-collection-24.png</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-equalizer.png</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-favorite.png</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-playlist-16.png</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-playlist-24.png</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-rating-rated.png</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-rating-unrated.png</file>
+    <file compressed="true">abraca-16.png</file>
+    <file compressed="true">abraca-32.png</file>
+    <file compressed="true">abraca-128.png</file>
+    <file compressed="true">abraca-192.png</file>
+    <file compressed="true">abraca-collection-16.png</file>
+    <file compressed="true">abraca-collection-24.png</file>
+    <file compressed="true">abraca-equalizer.png</file>
+    <file compressed="true">abraca-favorite.png</file>
+    <file compressed="true">abraca-playlist-16.png</file>
+    <file compressed="true">abraca-playlist-24.png</file>
+    <file compressed="true">abraca-rating-rated.png</file>
+    <file compressed="true">abraca-rating-unrated.png</file>
     <file preprocess="xml-stripblanks" compressed="true">abraca.svg</file>
-    <file preprocess="to-pixdata" compressed="true">abraca-kopimi-coverart.png</file>
+    <file compressed="true">abraca-kopimi-coverart.png</file>
   </gresource>
 </gresources>

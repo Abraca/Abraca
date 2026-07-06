@@ -17,8 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-public class Abraca.FilterBrowserView : Abraca.TreeView {
+public class Abraca.FilterBrowserView : Abraca.SelectableView {
 	private FilterBrowserView previous;
+	private FilterBrowserModel browser_model;
 
 	public Xmms.Collection filter { get; private set; }
 
@@ -26,53 +27,55 @@ public class Abraca.FilterBrowserView : Abraca.TreeView {
 
 	public FilterBrowserView(FilterBrowserModel model, FilterBrowserView? previous = null) {
 		this.previous = previous;
-		set_model(model);
+		this.browser_model = model;
 
-		var selection = get_selection();
-		selection.set_mode(Gtk.SelectionMode.MULTIPLE);
-		selection.changed.connect(on_selection_changed);
+		use_model(model.store, true);
 
-		enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-		                         { Abraca.TargetEntry.Collection },
-		                         Gdk.DragAction.MOVE);
+		create_column();
 
-		query_tooltip.connect(on_query_tooltip);
-		drag_data_get.connect(on_drag_data_get);
+		selection.selection_changed.connect((pos, n) => { on_selection_changed(); });
 
 		if (previous != null) {
 			previous.notify["filter"].connect((s,p) => {
-				GLib.debug("setting model filter for %s", ((FilterBrowserModel) model).field);
-
-				((FilterBrowserModel) model).filter = previous.filter;
-				on_selection_changed(selection);
+				GLib.debug("setting model filter for %s", browser_model.field);
+				browser_model.filter = previous.filter;
+				on_selection_changed();
 			});
 		}
 	}
 
-	private void on_drag_data_get(Gdk.DragContext ctx, Gtk.SelectionData selection_data, uint info, uint time)
+	private void create_column()
 	{
-		DragDropUtil.send_collection(selection_data, filter);
+		var factory = new Gtk.SignalListItemFactory();
+		factory.setup.connect(li => {
+			var label = new Gtk.Label(null) {
+				xalign = 0,
+				ellipsize = Pango.EllipsizeMode.END
+			};
+			((Gtk.ListItem) li).set_child(label);
+
+			var source = new Gtk.DragSource();
+			source.set_actions(Gdk.DragAction.COPY);
+			source.prepare.connect((x, y) => {
+				if (filter == null)
+					return null;
+				return DragDropUtil.content_for_collection(filter);
+			});
+			label.add_controller(source);
+		});
+		factory.bind.connect(li => {
+			var so = (Gtk.StringObject) ((Gtk.ListItem) li).get_item();
+			var label = (Gtk.Label) ((Gtk.ListItem) li).get_child();
+			label.label = so.string;
+			label.tooltip_text = so.string;
+		});
+
+		var column = new Gtk.ColumnViewColumn(browser_model.field, factory);
+		column.expand = true;
+		append_column(column);
 	}
 
-	private bool on_query_tooltip(int x, int y, bool keyboard_mode, Gtk.Tooltip tooltip)
-	{
-		Gtk.TreeIter iter;
-		Gtk.TreePath path;
-		string text;
-
-		if (!get_tooltip_context(ref x, ref y, keyboard_mode, null, out path, out iter))
-			return false;
-
-		model.get(iter, tooltip_column, out text);
-
-		tooltip.set_markup(GLib.Markup.escape_text(text));
-
-		set_tooltip_row(tooltip, path);
-
-		return true;
-	}
-
-	private void on_selection_changed(Gtk.TreeSelection selection)
+	private void on_selection_changed()
 	{
 		var intersection = new Xmms.Collection(Xmms.CollectionType.INTERSECTION);
 		if (previous != null && previous.filter != null) {
@@ -81,9 +84,13 @@ public class Abraca.FilterBrowserView : Abraca.TreeView {
 			intersection.add_operand(Xmms.Collection.universe());
 		}
 
-		var entries = get_selected_rows<string>(0);
+		var entries = new Gee.ArrayList<string>();
+		foreach_selected((pos, obj) => {
+			entries.add(((Gtk.StringObject) obj).string);
+		});
+
 		if (entries.size > 0) {
-			var field = ((FilterBrowserModel) model).field;
+			var field = browser_model.field;
 			var union = new Xmms.Collection(Xmms.CollectionType.UNION);
 			foreach (var entry in entries) {
 				var match = new Xmms.Collection(Xmms.CollectionType.MATCH);
@@ -148,34 +155,22 @@ public class Abraca.FilterBrowserView : Abraca.TreeView {
 public class Abraca.FilterBrowser : Gtk.Box {
 	private static FilterBrowserView add_treeview (FilterBrowserModel model, FilterBrowserView? previous = null)
 	{
-		var view = new FilterBrowserView (model, previous);
-		view.set_model (model);
-
-		var renderer = new Gtk.CellRendererText();
-		renderer.ellipsize = Pango.EllipsizeMode.END;
-
-		var column = new Gtk.TreeViewColumn.with_attributes (
-			model.field, renderer, "text", 0, null
-		);
-		column.sizing = Gtk.TreeViewColumnSizing.FIXED;
-		view.append_column (column);
-		view.tooltip_column = 0;
-		view.fixed_height_mode = true;
-
-		return view;
+		return new FilterBrowserView (model, previous);
 	}
 
 	private static void add_scroll (Gtk.Box container, Gtk.Widget widget)
 	{
-		var scrolled = new Gtk.ScrolledWindow(null, null);
+		var scrolled = new Gtk.ScrolledWindow();
 		scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
-		scrolled.set_shadow_type(Gtk.ShadowType.IN);
-		scrolled.add(widget);
-		container.pack_start(scrolled, true, true, 2);
+		scrolled.hexpand = true;
+		scrolled.set_child(widget);
+		container.append(scrolled);
 	}
 
 	public FilterBrowser (Client client, Config config, Searchable searchable)
 	{
+		Object (orientation: Gtk.Orientation.HORIZONTAL, spacing: 2);
+
 		var properties = new string[] { "publisher", "artist", "album" };
 
 		FilterBrowserView previous = null;

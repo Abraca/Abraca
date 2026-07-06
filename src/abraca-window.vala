@@ -18,10 +18,7 @@
  */
 
 namespace Abraca {
-	public class Window : Gtk.ApplicationWindow, IConfigurable {
-		private static Gtk.Image PLAYBACK_PAUSE_IMAGE = new Gtk.Image.from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.BUTTON);
-		private static Gtk.Image PLAYBACK_PLAY_IMAGE = new Gtk.Image.from_icon_name("media-playback-start-symbolic", Gtk.IconSize.BUTTON);
-
+	public class Window : Adw.ApplicationWindow, IConfigurable {
 		private Client client;
 		private Config config;
 		private Gtk.Paned main_hpaned;
@@ -33,6 +30,9 @@ namespace Abraca {
 		private Gtk.Dialog equalizer_dialog;
 		private Gtk.Button playback_toggle_btn;
 		private Gtk.Label playback_label;
+
+		/* Held so a late async discovery callback can't deref a freed browser. */
+		private ServerBrowser server_browser;
 
 		private const ActionEntry[] actions = {
 			{ "connect", on_menu_connect },
@@ -59,22 +59,18 @@ namespace Abraca {
 
 			add_action_entries (actions, this);
 
-			set_hide_titlebar_when_maximized(true);
+			app.set_accels_for_action ("win.playback-skip-backward", { "<Primary>Left" });
+			app.set_accels_for_action ("win.playback-toggle", { "<Primary>p" });
+			app.set_accels_for_action ("win.playback-skip-forward", { "<Primary>Right" });
 
-			var accel_group = new Gtk.AccelGroup();
-
-			main_ui = create_widgets(client, accel_group, menu);
+			main_ui = create_widgets(client, menu);
 
 			now_playing = new NowPlaying(client);
 			now_playing.hide_now_playing.connect (on_unfullscreen);
 
-			add(main_ui);
+			set_content(main_ui);
 
-			try {
-				set_icon(new Gdk.Pixbuf.from_resource ("/org/xmms2/Abraca/abraca-192.png"));
-			} catch (GLib.Error e) {
-				GLib.assert_not_reached ();
-			}
+			set_icon_name ("org.xmms2.abraca");
 
 			Configurable.register(this);
 
@@ -82,7 +78,7 @@ namespace Abraca {
 			client.playback_status.connect(on_playback_status_change);
 			client.playback_current_info.connect(on_playback_current_info);
 
-			delete_event.connect(() => {
+			close_request.connect(() => {
 				Configurable.save();
 				return false;
 			});
@@ -90,20 +86,15 @@ namespace Abraca {
 
 		public void on_fullscreen ()
 		{
-			remove(main_ui);
-			show_menubar = false;
-			add(now_playing);
+			set_content(now_playing);
 			now_playing.grab_focus();
 			fullscreen();
-			now_playing.show();
 		}
 
 		public void on_unfullscreen ()
 		{
-			remove(now_playing);
-			show_menubar = true;
 			unfullscreen();
-			add(main_ui);
+			set_content(main_ui);
 		}
 
 		private void on_config_changed (Client c, string key, string value, bool initial)
@@ -129,26 +120,12 @@ namespace Abraca {
 		public void set_configuration (GLib.KeyFile file)
 			throws GLib.KeyFileError
 		{
-			int xpos, ypos, width, height, pos;
+			int width, height;
 
-			gravity = (Gdk.Gravity) get_key(file, "main_win", "gravity", 0);
+			width = get_key(file, "main_win", "width", 800);
+			height = get_key(file, "main_win", "height", 600);
 
-			var root = Gdk.get_default_root_window();
-
-			width = get_key(file, "main_win", "width", root.get_width() * 0.8);
-			height = get_key(file, "main_win", "height", root.get_height() * 0.8);
-
-			resize(width, height);
-
-			get_position(out xpos, out ypos);
-
-			xpos = get_key(file, "main_win", "x", -1);
-			ypos = get_key(file, "main_win", "y", -1);
-
-			if (xpos < 0 || ypos < 0)
-				set_position(Gtk.WindowPosition.CENTER);
-			else
-				move(xpos, ypos);
+			set_default_size(width, height);
 
 			main_hpaned.position = get_key(file, "panes", "pos1", width * 0.1);
 			right_hpaned.position = get_key(file, "panes", "pos2", width * 0.6);
@@ -156,93 +133,78 @@ namespace Abraca {
 
 		public void get_configuration (GLib.KeyFile file)
 		{
-			int xpos, ypos, width, height;
-
-			file.set_integer("main_win", "gravity", gravity);
-
-			get_position(out xpos, out ypos);
-
-			file.set_integer("main_win", "x", xpos);
-			file.set_integer("main_win", "y", ypos);
-
-			get_size(out width, out height);
-
-			file.set_integer("main_win", "width", width);
-			file.set_integer("main_win", "height", height);
+			file.set_integer("main_win", "width", get_width());
+			file.set_integer("main_win", "height", get_height());
 
 			file.set_integer("panes", "pos1", main_hpaned.position);
 			file.set_integer("panes", "pos2", right_hpaned.position);
 		}
 
-		private static Gtk.Button create_button(string icon_name, string action, string accel, Gtk.AccelGroup accel_group)
+		private Gtk.Button create_button(string icon_name, string action, string accel)
 		{
 			Gdk.ModifierType modifier;
 			uint key;
 
 			var button = new Gtk.Button();
-			button.image = new Gtk.Image.from_icon_name(icon_name, Gtk.IconSize.BUTTON);
-			button.always_show_image = true;
+			button.set_icon_name(icon_name);
 			button.action_name = action;
 
 			Gtk.accelerator_parse(accel, out key, out modifier);
-			button.add_accelerator("activate", accel_group, key, modifier, 0);
 			button.set_tooltip_text(Gtk.accelerator_get_label(key, modifier));
 
 			return button;
 		}
 
-		private Gtk.Widget create_widgets (Client client, Gtk.AccelGroup accel_group, GLib.MenuModel menu_model)
+		private Gtk.Widget create_widgets (Client client, GLib.MenuModel menu_model)
 		{
 			config = new Config ();
 
 			var playback_btns = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
-			playback_btns.get_style_context().add_class("linked");
+			playback_btns.add_css_class("linked");
 
 			var playback_backward_btn = create_button("media-skip-backward-symbolic", "win.playback-skip-backward",
-			                                          "<Primary>Left", accel_group);
-			playback_btns.pack_start(playback_backward_btn);
+			                                          "<Primary>Left");
+			playback_btns.append(playback_backward_btn);
 			playback_backward_btn.width_request = 42;
 
 			playback_toggle_btn = create_button("media-playback-start-symbolic", "win.playback-toggle",
-			                                    "<Primary>p", accel_group);
-			playback_btns.pack_start(playback_toggle_btn);
+			                                    "<Primary>p");
+			playback_btns.append(playback_toggle_btn);
 			playback_toggle_btn.width_request = 60;
 
 			var playback_forward_btn = create_button("media-skip-forward-symbolic", "win.playback-skip-forward",
-			                                         "<Primary>Right", accel_group);
-			playback_btns.pack_start(playback_forward_btn);
+			                                         "<Primary>Right");
+			playback_btns.append(playback_forward_btn);
 			playback_forward_btn.width_request = 42;
 
 			playback_label = new Gtk.Label("Abraca");
-			playback_label.get_style_context().add_class("abraca-playback-label");
+			playback_label.use_markup = true;
+			playback_label.add_css_class("abraca-playback-label");
 
-			var headerbar = new Gtk.HeaderBar();
-			headerbar.show_close_button = true;
-			headerbar.custom_title = playback_label;
+			var headerbar = new Adw.HeaderBar();
+			headerbar.set_title_widget(playback_label);
 			headerbar.pack_start(playback_btns);
 
 			playback_label.activate_link.connect(on_playback_label_link_activated);
 
 			var menu = new Gtk.MenuButton();
-			menu.image = new Gtk.Image.from_icon_name("emblem-system-symbolic", Gtk.IconSize.BUTTON);
+			menu.set_icon_name("open-menu-symbolic");
 			menu.menu_model = menu_model;
 			headerbar.pack_end(menu);
 
-			set_titlebar(headerbar);
-
 			var vbox = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+			vbox.append(headerbar);
 
 			var position = new TimeSlider(client);
-			position.margin_top = headerbar.spacing;
-			position.margin_left = headerbar.spacing * 2;
-			position.margin_right = headerbar.spacing * 2;
-			position.margin_bottom = headerbar.spacing;
+			position.margin_top = 6;
+			position.margin_start = 12;
+			position.margin_end = 12;
+			position.margin_bottom = 6;
 
-			vbox.pack_start(position, false, false, 0);
+			vbox.append(position);
 
-			var scrolled = new Gtk.ScrolledWindow (null, null);
+			var scrolled = new Gtk.ScrolledWindow ();
 			scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
-			scrolled.set_shadow_type (Gtk.ShadowType.IN);
 
 			right_hpaned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
 			right_hpaned.position = 430;
@@ -252,23 +214,27 @@ namespace Abraca {
 
 			var medialib = new Medialib (this, client);
 
-			var filter = new FilterWidget (client, resolver, config, medialib, accel_group);
+			var filter = new FilterWidget (client, resolver, config, medialib);
 			search = filter.get_searchable ();
 
 			var playlist = new PlaylistWidget (client, resolver, config, medialib, search);
 
-			right_hpaned.pack1(filter, true, true);
-			right_hpaned.pack2(playlist, false, true);
+			right_hpaned.set_start_child(filter);
+			right_hpaned.set_resize_start_child(true);
+			right_hpaned.set_end_child(playlist);
+			right_hpaned.set_resize_end_child(false);
 
 			var collections = new CollectionsView (client, search);
-			scrolled.add (collections);
+			scrolled.set_child (collections);
 
 			main_hpaned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
 			main_hpaned.position = 135;
 			main_hpaned.position_set = true;
 			main_hpaned.sensitive = false;
-			main_hpaned.pack1 (scrolled, false, true);
-			main_hpaned.pack2 (right_hpaned, true, true);
+			main_hpaned.set_start_child (scrolled);
+			main_hpaned.set_resize_start_child (false);
+			main_hpaned.set_end_child (right_hpaned);
+			main_hpaned.set_resize_end_child (true);
 
 			main_hpaned.vexpand = true;
 			main_hpaned.valign = Gtk.Align.FILL;
@@ -277,14 +243,11 @@ namespace Abraca {
 				main_hpaned.sensitive = (state == Client.ConnectionState.Connected);
 			});
 
-			vbox.pack_start(main_hpaned);//, true, true, 0);
+			vbox.append(main_hpaned);
 			vbox.vexpand = true;
 			vbox.valign = Gtk.Align.FILL;
 
-			add_accel_group(accel_group);
-
 			equalizer_dialog = new Equalizer(client);
-			equalizer_dialog.window_position = Gtk.WindowPosition.CENTER_ON_PARENT;
 			equalizer_dialog.transient_for = this;
 
 			return vbox;
@@ -293,8 +256,8 @@ namespace Abraca {
 		private void on_menu_connect(GLib.SimpleAction action, GLib.Variant? state)
 		{
 			GLib.Idle.add(() => {
-				var browser = new ServerBrowser(this, client);
-				browser.run();
+				server_browser = new ServerBrowser(this, client);
+				server_browser.run();
 				return false;
 			});
 		}
@@ -362,19 +325,17 @@ namespace Abraca {
 
 		private void on_open_equalizer(GLib.SimpleAction action, GLib.Variant? state)
 		{
-			equalizer_dialog.show_all ();
-			equalizer_dialog.run ();
-			equalizer_dialog.hide ();
+			equalizer_dialog.present ();
 		}
 
 		private void on_playback_status_change (Client c, int status)
 		{
 			switch (status) {
 			case Xmms.PlaybackStatus.PLAY:
-				playback_toggle_btn.image = PLAYBACK_PAUSE_IMAGE;
+				playback_toggle_btn.set_icon_name("media-playback-pause-symbolic");
 				break;
 			default:
-				playback_toggle_btn.image = PLAYBACK_PLAY_IMAGE;
+				playback_toggle_btn.set_icon_name("media-playback-start-symbolic");
 				break;
 			}
 		}

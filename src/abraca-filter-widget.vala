@@ -22,38 +22,50 @@ public interface Abraca.Searchable : GLib.Object {
 	public abstract void search (string query);
 }
 
-public class Abraca.FilterWidget : Gtk.Paned {
+/* GtkPaned is final in GTK4, so wrap it rather than subclass. */
+public class Abraca.FilterWidget : Gtk.Widget {
 	private FilterSearchBox searchbox;
+	private Gtk.Paned paned;
 
-	public FilterWidget (Client client, MetadataResolver resolver, Config config, Medialib medialib,  Gtk.AccelGroup group)
+	public FilterWidget (Client client, MetadataResolver resolver, Config config, Medialib medialib)
 	{
-		Object (orientation: Gtk.Orientation.VERTICAL, position: 200);
-		var scrolled = new Gtk.ScrolledWindow(null, null);
+		set_layout_manager (new Gtk.BinLayout ());
+		hexpand = true;
+		vexpand = true;
 
+		paned = new Gtk.Paned (Gtk.Orientation.VERTICAL) { position = 200 };
+
+		var scrolled = new Gtk.ScrolledWindow();
 		scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
 		                    Gtk.PolicyType.AUTOMATIC);
-
-		scrolled.set_shadow_type(Gtk.ShadowType.IN);
+		scrolled.vexpand = true;
 
 		var treeview = new FilterView(client, resolver, medialib);
-		scrolled.add(treeview);
-
-		Gdk.ModifierType accel_type;
-		uint accel_key;
-
-		Gtk.accelerator_parse("<Primary>l", out accel_key, out accel_type);
+		scrolled.set_child(treeview);
 
 		searchbox = new FilterSearchBox (client, config, treeview);
-		searchbox.add_accelerator("grab-focus", group, accel_key, accel_type, 0);
 
 		var browser = new FilterBrowser (client, config, searchbox);
 
 		var vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
-		vbox.pack_start(searchbox, false, false, 2);
-		vbox.pack_start(scrolled, true, true, 0);
+		vbox.append(searchbox);
+		vbox.append(scrolled);
 
-		pack1 (browser, true, true);
-		pack2 (vbox, true, true);
+		paned.set_start_child (browser);
+		paned.set_resize_start_child (true);
+		paned.set_end_child (vbox);
+		paned.set_resize_end_child (true);
+
+		paned.set_parent (this);
+	}
+
+	public override void dispose ()
+	{
+		if (paned != null) {
+			paned.unparent ();
+			paned = null;
+		}
+		base.dispose ();
 	}
 
 	/** TODO: remove this hack */
