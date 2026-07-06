@@ -18,9 +18,9 @@
  */
 
 namespace Abraca {
-	public class RatingEntry : Gtk.DrawingArea, Gtk.Buildable {
-		private static Gdk.Pixbuf unrated_icon = Abraca.Icons.by_name("abraca-unrated");
-		private static Gdk.Pixbuf rated_icon = Abraca.Icons.by_name("abraca-rated");
+	public class RatingEntry : Gtk.Widget, Gtk.Buildable {
+		private static Gdk.Texture unrated_icon = Abraca.Icons.texture_by_name("abraca-unrated");
+		private static Gdk.Texture rated_icon = Abraca.Icons.texture_by_name("abraca-rated");
 
 		private int? volatile_rating = null;
 
@@ -41,21 +41,19 @@ namespace Abraca {
 			click.pressed.connect (on_pressed);
 			add_controller (click);
 
-			set_draw_func (on_draw);
-
 			update_size_request();
 		}
 
 
 		public void update_size_request ()
 		{
-			set_size_request(rated_icon.width * (max_rating - min_rating + 1), rated_icon.height);
+			set_size_request(rated_icon.get_width() * (max_rating - min_rating + 1), rated_icon.get_height());
 		}
 
 
 		private void on_motion (double x, double y)
 		{
-			var val = (x / (double) rated_icon.width) + 0.75;
+			var val = (x / (double) rated_icon.get_width()) + 0.75;
 			var tmp = (int) Math.fmin (max_rating, Math.fmax (min_rating, val));
 
 			if (volatile_rating == null || tmp != volatile_rating) {
@@ -84,17 +82,16 @@ namespace Abraca {
 		}
 
 
-		private void on_draw (Gtk.DrawingArea area, Cairo.Context cr, int width, int height)
+		public override void snapshot (Gtk.Snapshot snapshot)
 		{
 			var value = (volatile_rating == null) ? rating : volatile_rating;
+			var w = rated_icon.get_width ();
 
 			for (var i = min_rating; i < max_rating; i++) {
-				if (i < (value - min_rating)) {
-					Gdk.cairo_set_source_pixbuf (cr, rated_icon, i * rated_icon.width, 0);
-				} else {
-					Gdk.cairo_set_source_pixbuf (cr, unrated_icon, i * rated_icon.width, 0);
-				}
-				cr.paint ();
+				var icon = (i < (value - min_rating)) ? rated_icon : unrated_icon;
+				Graphene.Rect rect = {};
+				rect.init (i * w, 0, icon.get_width (), icon.get_height ());
+				snapshot.append_texture (icon, rect);
 			}
 		}
 	}

@@ -96,7 +96,7 @@ public class Abraca.EqualizerModel : GLib.Object {
 
 	private Gee.List<double?> unapplied_changes;
 	private uint updater_source = 0;
-	private GLib.TimeVal updater_timestamp;
+	private int64 updater_timestamp;
 
 	private Client client;
 
@@ -172,8 +172,7 @@ public class Abraca.EqualizerModel : GLib.Object {
 
 	private void throttle_changes()
 	{
-		updater_timestamp = GLib.TimeVal ();
-		updater_timestamp.add (GRACE_PERIOD_USEC);
+		updater_timestamp = GLib.get_monotonic_time () + GRACE_PERIOD_USEC;
 
 		if (updater_source == 0)
 			updater_source = GLib.Timeout.add (GRACE_PERIOD_USEC / (2 * 1000), apply_changes);
@@ -181,12 +180,7 @@ public class Abraca.EqualizerModel : GLib.Object {
 
 	private bool apply_changes()
 	{
-		var now = GLib.TimeVal ();
-
-		var d_sec = now.tv_sec - updater_timestamp.tv_sec;
-		var d_usec = now.tv_usec - updater_timestamp.tv_usec;
-
-		if (!(d_sec > 0 || (d_sec == 0 && d_usec > 0)))
+		if (GLib.get_monotonic_time () < updater_timestamp)
 			return true;
 
 		if (unapplied_changes[VOLUME_INDEX] != null) {

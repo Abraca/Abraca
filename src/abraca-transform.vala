@@ -125,8 +125,8 @@ namespace Abraca {
 				return false;
 			}
 
-			var now = TimeVal();
-			var today_start = now.tv_sec - (now.tv_sec % (60 * 60 * 24));
+			var now_sec = GLib.get_real_time() / 1000000;
+			var today_start = now_sec - (now_sec % (60 * 60 * 24));
 			var yesterday_start = today_start - (60 * 60 * 24);
 
 			if (today_start < timestamp) {

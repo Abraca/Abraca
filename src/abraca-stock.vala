@@ -58,6 +58,6 @@ namespace Abraca.Icons {
 
 	public static Gdk.Texture texture_by_name(string name)
 	{
-		return Gdk.Texture.for_pixbuf(by_name(name));
+		return Gdk.Texture.from_resource("/org/xmms2/Abraca/%s".printf(filename_for(name)));
 	}
 }

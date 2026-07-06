@@ -358,8 +358,6 @@ namespace Abraca {
 		{
 			var edit = new FilterEditor();
 
-			edit.transient_for = get_ancestor (typeof(Gtk.Window)) as Gtk.Window;
-
 			edit.column_changed.connect((editor, prop, enabled) => {
 				var columns = filter_model.dynamic_columns;
 				var i = 0;
@@ -378,7 +376,7 @@ namespace Abraca {
 			});
 
 			edit.set_active(filter_model.dynamic_columns);
-			edit.present();
+			edit.present(this);
 		}
 
 

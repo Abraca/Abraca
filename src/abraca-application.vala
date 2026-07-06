@@ -31,14 +31,13 @@ public class Abraca.Application : Adw.Application {
 
 	public Application()
 	{
-		Object(application_id: "org.xmms2.abraca", flags: ApplicationFlags.FLAGS_NONE);
+		Object(application_id: "org.xmms2.abraca", flags: ApplicationFlags.DEFAULT_FLAGS);
 		add_action_entries (actions, this);
 	}
 
 	private void on_menu_about ()
 	{
-		var about = new Adw.AboutWindow () {
-			transient_for = window,
+		var about = new Adw.AboutDialog () {
 			application_name = "Abraca",
 			application_icon = "org.xmms2.abraca",
 			version = Build.Config.VERSION,
@@ -50,7 +49,7 @@ public class Abraca.Application : Adw.Application {
 			translator_credits = string.joinv ("\n", About.translators)
 		};
 
-		about.present ();
+		about.present (window);
 	}
 
 	private void on_menu_quit ()

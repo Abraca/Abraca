@@ -19,152 +19,91 @@
 using GLib;
 
 namespace Abraca {
-	public class FilterEditor : Gtk.Dialog {
+	public class FilterEditor : Adw.Dialog {
 		public signal void column_changed (string property, bool enabled);
 
-		public enum Column {
-			ACTIVE,
-			NAME,
+		private class PropertyItem : GLib.Object {
+			public string name { get; construct; }
+			public bool active { get; set; default = false; }
+			public PropertyItem (string name) { Object (name: name); }
 		}
 
 		private const string[] _properties = {
-			"id",
-			"added",
-			"album",
-			"artist",
-			"bitrate",
-			"comment",
-			"date",
-			"duration",
-			"genre",
-			"laststarted",
-			"lmod",
-			"mime",
-			"size",
-			"status",
-			"timesplayed",
-			"title",
-			"tracknr",
-			"url"
+			"id", "added", "album", "artist", "bitrate", "comment", "date",
+			"duration", "genre", "laststarted", "lmod", "mime", "size",
+			"status", "timesplayed", "title", "tracknr", "url"
 		};
 
-		private Gtk.TreeView _view;
+		private GLib.ListStore store;
 
 		public FilterEditor ()
 		{
-			set_size_request(310, 310);
-
 			title = _("Select Columns");
+			content_width = 260;
+			content_height = 360;
 
-			var child = create_child();
+			store = new GLib.ListStore (typeof (PropertyItem));
+			foreach (unowned string prop in _properties)
+				store.append (new PropertyItem (prop));
 
-			add_button(_("Ok"), 0);
-
-			var box = get_content_area();
-			child.vexpand = true;
-			box.append(child);
-
-			response.connect((response) => {
-				destroy();
+			var factory = new Gtk.SignalListItemFactory ();
+			factory.setup.connect (li => {
+				((Gtk.ListItem) li).set_child (new Gtk.CheckButton ());
 			});
+			factory.bind.connect (li => {
+				var item = (PropertyItem) ((Gtk.ListItem) li).get_item ();
+				var check = (Gtk.CheckButton) ((Gtk.ListItem) li).get_child ();
+				check.label = item.name;
+				check.active = item.active;
+				var handler = check.toggled.connect (() => {
+					on_toggled (item, check);
+				});
+				((Gtk.ListItem) li).set_data<ulong> ("handler", handler);
+			});
+			factory.unbind.connect (li => {
+				var check = (Gtk.CheckButton) ((Gtk.ListItem) li).get_child ();
+				var handler = ((Gtk.ListItem) li).get_data<ulong> ("handler");
+				if (handler != 0)
+					check.disconnect (handler);
+			});
+
+			var view = new Gtk.ColumnView (new Gtk.NoSelection (store));
+			view.append_column (new Gtk.ColumnViewColumn (null, factory));
+
+			var scrolled = new Gtk.ScrolledWindow () {
+				hscrollbar_policy = Gtk.PolicyType.NEVER,
+				vexpand = true,
+				child = view
+			};
+
+			set_child (scrolled);
 		}
 
+		private int count_active ()
+		{
+			int n = 0;
+			for (uint i = 0; i < store.get_n_items (); i++)
+				if (((PropertyItem) store.get_item (i)).active)
+					n++;
+			return n;
+		}
+
+		private void on_toggled (PropertyItem item, Gtk.CheckButton check)
+		{
+			/* Never let the last active column be turned off. */
+			if (!check.active && count_active () <= 1) {
+				check.active = true;
+				return;
+			}
+			item.active = check.active;
+			column_changed (item.name, item.active);
+		}
 
 		public void set_active (string[] active)
 		{
-			Gtk.TreeIter iter;
-
-			var model = _view.model as Gtk.ListStore;
-
-			model.get_iter_first(out iter);
-			do {
-				unowned string prop;
-
-				model.get(iter, Column.NAME, out prop);
-
-				foreach (unowned string active_prop in active) {
-					if (prop == active_prop) {
-						model.set(iter, Column.ACTIVE, true);
-						break;
-					}
-				}
-			} while (_view.model.iter_next(ref iter));
-		}
-
-
-		private Gtk.Widget create_child ()
-		{
-			Gtk.TreeViewColumn column;
-
-			var model = new Gtk.ListStore(2, typeof(bool), typeof(string));
-
-			foreach (unowned string prop in _properties) {
-				Gtk.TreeIter iter;
-
-				model.append(out iter);
-				model.set(iter, Column.ACTIVE, false, Column.NAME, prop);
-			}
-
-			_view = new Gtk.TreeView();
-			_view.headers_visible = false;
-			_view.model = model;
-
-			var renderer = new Gtk.CellRendererToggle();
-			renderer.toggled.connect(on_entry_toggled);
-
-			column = new Gtk.TreeViewColumn.with_attributes(
-				"column", renderer, "active", Column.ACTIVE
-			);
-			column.resizable = false;
-			column.fixed_width = 30;
-			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
-			_view.append_column(column);
-
-			column = new Gtk.TreeViewColumn.with_attributes(
-				"column", new Gtk.CellRendererText(), "text", Column.NAME, null
-			);
-			column.resizable = false;
-			column.fixed_width = 120;
-			column.sizing = Gtk.TreeViewColumnSizing.FIXED;
-			_view.append_column(column);
-
-			var scrolled = new Gtk.ScrolledWindow();
-			scrolled.set_child(_view);
-			scrolled.margin_top = scrolled.margin_bottom = 10;
-			scrolled.margin_start = scrolled.margin_end = 10;
-			scrolled.set_policy(
-				Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC
-			);
-
-			return scrolled;
-		}
-
-
-		private void on_entry_toggled (Gtk.CellRendererToggle renderer, string updated)
-		{
-			Gtk.TreeIter iter;
-			unowned string property;
-			bool state;
-			int n_active = 0;
-
-			var store = _view.model as Gtk.ListStore;
-
-			store.get_iter_first(out iter);
-			do {
-				store.get(iter, Column.ACTIVE, out state);
-				if (state) {
-					n_active++;
-				}
-			} while (store.iter_next(ref iter));
-
-			var path = new Gtk.TreePath.from_string(updated);
-			store.get_iter(out iter, path);
-			store.get(iter, Column.ACTIVE, out state, Column.NAME, out property);
-
-			state = !state;
-			if (n_active > 1 || state) {
-				store.set(iter, Column.ACTIVE, state);
-				column_changed(property, state);
+			for (uint i = 0; i < store.get_n_items (); i++) {
+				var item = (PropertyItem) store.get_item (i);
+				item.active = (item.name in active);
 			}
 		}
 	}

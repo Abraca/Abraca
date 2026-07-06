@@ -89,20 +89,11 @@ namespace Abraca {
 
 		public void show_sorting_dialog (Gtk.Window parent)
 		{
-			var dialog = new Gtk.Dialog.with_buttons(
-				_("Configure Sorting"), parent,
-				Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.MODAL,
-				_("Cancel"), Gtk.ResponseType.CANCEL,
-				_("Ok"), Gtk.ResponseType.OK
-			);
-
-			dialog.set_default_size (300, 200);
+			var dialog = new Adw.AlertDialog(_("Configure Sorting"), null);
 
 			var table = new Gtk.Grid();
 			table.row_spacing = 7;
 			table.column_spacing = 5;
-			table.margin_top = table.margin_bottom = 5;
-			table.margin_start = table.margin_end = 5;
 			table.hexpand = true;
 			table.valign = Gtk.Align.START;
 
@@ -126,11 +117,15 @@ namespace Abraca {
 				table.attach(entries[i], 1, i, 1, 1);
 			}
 
-			var box = dialog.get_content_area ();
-			box.append(table);
+			dialog.set_extra_child(table);
+
+			dialog.add_response("cancel", _("Cancel"));
+			dialog.add_response("save", _("Ok"));
+			dialog.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED);
+			dialog.set_default_response("save");
 
 			dialog.response.connect((response_id) => {
-				if (response_id == Gtk.ResponseType.OK) {
+				if (response_id == "save") {
 					sorting_artist = entries[0].text;
 					sorting_album = entries[1].text;
 					sorting_title = entries[2].text;
@@ -138,10 +133,9 @@ namespace Abraca {
 					sorting_path = entries[4].text;
 					sorting_custom = entries[5].text;
 				}
-				dialog.destroy();
 			});
 
-			dialog.present();
+			dialog.present(parent);
 		}
 	}
 }
