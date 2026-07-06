@@ -21,6 +21,17 @@ using GLib;
 
 namespace Abraca {
 	public class MedialibInfoDialog : Gtk.Dialog, Gtk.Buildable {
+		/* A node in the raw-metadata details tree: a source header (with
+		 * children) or a key/value leaf. */
+		private class DetailNode : GLib.Object {
+			public string key { get; construct; }
+			public string val { get; construct; }
+			public GLib.ListStore? children { get; construct; }
+			public DetailNode (string key, string val, GLib.ListStore? children) {
+				Object (key: key, val: val, children: children);
+			}
+		}
+
 		private Client client;
 
 		private GLib.List<uint> ids;
@@ -35,7 +46,8 @@ namespace Abraca {
 		private string date;
 		private string rating;
 
-		private Gtk.TreeStore store;
+		private GLib.ListStore detail_roots;
+		private Gtk.ColumnView details_view;
 
 		private Gtk.Button prev_button;
 		private Gtk.Button next_button;
@@ -48,23 +60,6 @@ namespace Abraca {
 
 		private RatingEntry rating_entry;
 		private Gtk.SpinButton tracknr_button;
-		private Gtk.ComboBox genre_combo_box_entry;
-
-		private const string[] genres = { "Acid Jazz", "Acid Punk", "Acid",
-			"Alternative Rock", "Alternative", "Ambient", "Bass", "Blues",
-			"Cabaret", "Christian Rap", "Classic Rock", "Classical",
-			"Comedy", "Country", "Cult", "Dance", "Darkwave", "Death Metal",
-			"Disco", "Dream", "Electronic", "Ethnic", "Euro-Techno",
-			"Eurodance", "Folk", "Funk", "Fusion", "Game", "Gangsta", "Gospel",
-			"Gothic", "Grunge", "Hard Rock", "Hip-Hop", "House", "Industrial",
-			"Instrumental Pop", "Instrumental Rock", "Instrumental", "Jazz",
-			"Jazz&Funk", "Jungle", "Lo-Fi", "Meditative", "Metal", "Musical",
-			"Native US", "New Age", "New Wave", "Noise", "Oldies", "Other",
-			"Polka", "Pop", "Pop-Folk", "Pop/Funk", "Pranks", "Psychedelic",
-			"Punk", "R&B", "Rap", "Rave", "Reggae", "Retro", "Rock & Roll",
-			"Rock", "Showtunes", "Ska", "Soul", "Sound Clip", "Soundtrack",
-			"Southern Rock", "Space", "Techno", "Techno-Industrial", "Top 40",
-			"Trailer", "Trance", "Tribal", "Trip-Hop", "Vocal"};
 
 
 		public static MedialibInfoDialog build ()
@@ -97,30 +92,58 @@ namespace Abraca {
 
 		public void parser_finished (Gtk.Builder builder)
 		{
-			genre_combo_box_entry = builder.get_object("ent_genre") as Gtk.ComboBox;
-
-			var genre_model = builder.get_object ("genre_model") as Gtk.ListStore;
-
-			foreach (var g in genres) {
-				Gtk.TreeIter iter;
-				genre_model.append (out iter);
-				genre_model.set(iter, 0, g);
-			}
-
-			store = builder.get_object("details_model") as Gtk.TreeStore;
-
 			tracknr_button = builder.get_object("ent_tracknr") as Gtk.SpinButton;
 			date_entry = builder.get_object("ent_year") as Gtk.Entry;
 			song_entry = builder.get_object("ent_title") as Gtk.Entry;
 			album_entry = builder.get_object("ent_album") as Gtk.Entry;
 			artist_entry = builder.get_object("ent_artist") as Gtk.Entry;
 			rating_entry = builder.get_object("ent_rating") as RatingEntry;
-			genre_entry = genre_combo_box_entry.get_child() as Gtk.Entry;
+			genre_entry = builder.get_object("ent_genre") as Gtk.Entry;
 
 			next_button = builder.get_object("button_forward") as Gtk.Button;
 			prev_button = builder.get_object("button_prev") as Gtk.Button;
 
+			details_view = builder.get_object("treeview_details") as Gtk.ColumnView;
+			setup_details_view ();
+
 			connect_widgets ();
+		}
+
+
+		private void setup_details_view ()
+		{
+			detail_roots = new GLib.ListStore (typeof (DetailNode));
+
+			var tree = new Gtk.TreeListModel (detail_roots, false, false, (item) => {
+				return ((DetailNode) item).children;
+			});
+			details_view.set_model (new Gtk.NoSelection (tree));
+
+			var key_factory = new Gtk.SignalListItemFactory ();
+			key_factory.setup.connect (li => {
+				var expander = new Gtk.TreeExpander ();
+				expander.set_child (new Gtk.Label (null) { xalign = 0 });
+				((Gtk.ListItem) li).set_child (expander);
+			});
+			key_factory.bind.connect (li => {
+				var row = (Gtk.TreeListRow) ((Gtk.ListItem) li).get_item ();
+				var node = (DetailNode) row.get_item ();
+				var expander = (Gtk.TreeExpander) ((Gtk.ListItem) li).get_child ();
+				expander.set_list_row (row);
+				((Gtk.Label) expander.get_child ()).label = node.key;
+			});
+			details_view.append_column (new Gtk.ColumnViewColumn (_("Key"), key_factory) { expand = true });
+
+			var val_factory = new Gtk.SignalListItemFactory ();
+			val_factory.setup.connect (li => {
+				((Gtk.ListItem) li).set_child (new Gtk.Label (null) { xalign = 0 });
+			});
+			val_factory.bind.connect (li => {
+				var row = (Gtk.TreeListRow) ((Gtk.ListItem) li).get_item ();
+				var node = (DetailNode) row.get_item ();
+				((Gtk.Label) ((Gtk.ListItem) li).get_child ()).label = node.val;
+			});
+			details_view.append_column (new Gtk.ColumnViewColumn (_("Value"), val_factory) { expand = true });
 		}
 
 
@@ -219,7 +242,7 @@ namespace Abraca {
 		private bool on_medialib_get_info (Xmms.Value val)
 		{
 			show_overview(val);
-			store.clear();
+			detail_roots.remove_all();
 			val.dict_foreach(dict_foreach);
 			return true;
 		}
@@ -345,11 +368,21 @@ namespace Abraca {
 		}
 
 
-		/* TODO: refactor me */
+		private DetailNode source_node (string source)
+		{
+			for (uint i = 0; i < detail_roots.get_n_items (); i++) {
+				var node = (DetailNode) detail_roots.get_item (i);
+				if (node.key == source)
+					return node;
+			}
+			var node = new DetailNode (source, "", new GLib.ListStore (typeof (DetailNode)));
+			detail_roots.append (node);
+			return node;
+		}
+
 		private void dict_foreach (string key, Xmms.Value val)
 		{
-			string? val_str, parent_source = null;
-			Gtk.TreeIter parent, iter;
+			string val_str;
 
 			unowned Xmms.DictIter dict_iter;
 			val.get_dict_iter(out dict_iter);
@@ -358,130 +391,15 @@ namespace Abraca {
 				Xmms.Value entry;
 				unowned string source;
 
-				if (!dict_iter.pair(out source, out entry)) {
+				if (!dict_iter.pair(out source, out entry))
 					continue;
-				}
-
-				/* looking for parent iter */
-				if (store.iter_children(out parent, null)) {
-					do {
-						store.get(parent, 0, out parent_source);
-						if (source == parent_source)
-							break;
-					} while (store.iter_next(ref parent)) ;
-				}
-
-				if (source != parent_source) {
-					store.append(out parent, null);
-					store.set(parent, 0, source);
-				}
 
 				Transform.normalize_value (entry, key, out val_str);
-
-				store.append(out iter, parent);
-				store.set(iter, 0, (string) key, 1, val_str);
+				source_node (source).children.append (new DetailNode (key, val_str, null));
 			}
 		}
 	}
 
-
-	public class MedialibAddUrlDialog : Gtk.Dialog, IConfigurable {
-		public Gtk.Entry entry;
-		private Gtk.ListStore urls;
-
-		public MedialibAddUrlDialog ()
-		{
-			set_default_response(Gtk.ResponseType.OK);
-			set_default_size(300, 74);
-
-			destroy_with_parent = true;
-			modal = true;
-			title = _("Add URL");
-
-			urls = new Gtk.ListStore.newv({ typeof(string) });
-
-			add_button(_("Cancel"), Gtk.ResponseType.CANCEL);
-			add_button(_("Ok"), Gtk.ResponseType.OK);
-
-			var combo = new Gtk.ComboBoxText.with_entry();
-			var comp = new Gtk.EntryCompletion();
-
-			comp.model = urls;
-			comp.set_text_column(0);
-			entry = (Gtk.Entry) combo.get_child ();
-			entry.set_completion(comp);
-			entry.activates_default = true;
-
-			var vbox = get_content_area ();
-			combo.hexpand = true;
-			vbox.append(combo);
-
-			response.connect(on_response);
-
-			Configurable.register(this);
-		}
-
-
-		private void save_url (string url)
-		{
-			Gtk.TreeIter iter;
-			string current;
-
-			if (urls.iter_children(out iter, null)) {
-				do {
-					urls.get(iter, 0, out current);
-					if (current == url) {
-						urls.remove(ref iter);
-						break;
-					}
-				} while (urls.iter_next(ref iter));
-			}
-			urls.insert_with_values(out iter, 0, 0, url);
-		}
-
-
-		private void on_response (int response) {
-			if(response == Gtk.ResponseType.OK && entry.get_text() != "") {
-				save_url(entry.get_text());
-			}
-			Configurable.unregister(this);
-		}
-
-
-		public void set_configuration (GLib.KeyFile file)
-			throws GLib.KeyFileError
-		{
-			if (file.has_group("add_dialog")) {
-				if (file.has_key("add_dialog", "urls")) {
-					string[] list = file.get_string_list("add_dialog", "urls");
-					Gtk.TreeIter iter;
-
-					urls.clear();
-					for (int i = 0; i < list.length; i++) {
-						urls.insert_with_values(out iter, i, 0, list[i]);
-					}
-				}
-			}
-		}
-
-
-		public void get_configuration (GLib.KeyFile file)
-		{
-			Gtk.TreeIter iter;
-			string current;
-			string[] list = new string[25];
-			int i = 0;
-
-			if (urls.iter_children(out iter, null)) {
-				do {
-					urls.get(iter, 0, out current);
-					list[i++] = current;
-				} while (urls.iter_next(ref iter) && i < 25);
-			}
-
-			file.set_string_list("add_dialog", "urls", list);
-		}
-	}
 
 	public class Medialib : GLib.Object {
 		public MedialibInfoDialog info_dialog;
@@ -515,16 +433,22 @@ namespace Abraca {
 
 		public static void create_add_url_dialog (Gtk.Window parent, Client client)
 		{
-			var dialog = new MedialibAddUrlDialog();
-			dialog.transient_for = parent;
+			var dialog = new Adw.AlertDialog(_("Add URL"), null);
 
-			dialog.response.connect((response) => {
-				if (response == Gtk.ResponseType.OK && dialog.entry.get_text() != "")
-					client.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, dialog.entry.get_text());
-				dialog.destroy();
+			var entry = new Gtk.Entry() { hexpand = true };
+			dialog.set_extra_child(entry);
+
+			dialog.add_response("cancel", _("Cancel"));
+			dialog.add_response("add", _("Ok"));
+			dialog.set_response_appearance("add", Adw.ResponseAppearance.SUGGESTED);
+			dialog.set_default_response("add");
+
+			dialog.response.connect((resp) => {
+				if (resp == "add" && entry.text != "")
+					client.xmms.playlist_add_url(Xmms.ACTIVE_PLAYLIST, entry.text);
 			});
 
-			dialog.present();
+			dialog.present(parent);
 		}
 
 
