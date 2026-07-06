@@ -44,3 +44,7 @@
 .abraca-playback-label:active {
 	color: @theme_selected_bg_color;
 }
+
+.abraca-header-cover {
+	border-radius: 4px;
+}

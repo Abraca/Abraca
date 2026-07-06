@@ -48,6 +48,9 @@ namespace Abraca {
 
 		public signal void playback_current_info (Xmms.Value value);
 		public signal void playback_current_coverart (Gdk.Pixbuf? value);
+		/* Same current cover, as a paintable for GtkPicture consumers. */
+		public signal void playback_current_coverart_paintable (Gdk.Paintable paintable);
+		public Gdk.Paintable current_coverart_paintable { get; private set; }
 
 		public signal void connection_state_changed (ConnectionState state);
 
@@ -115,6 +118,12 @@ namespace Abraca {
 				GLib.error (e.message);
 			}
 			current_coverart = default_coverart;
+			current_coverart_paintable = default_coverart_texture;
+		}
+
+		private void set_coverart_paintable (Gdk.Paintable paintable) {
+			current_coverart_paintable = paintable;
+			playback_current_coverart_paintable (paintable);
 		}
 
 		public bool try_connect(string? path = null) {
@@ -480,6 +489,7 @@ namespace Abraca {
 			} else if (current_coverart != default_coverart) {
 				current_coverart = default_coverart;
 				playback_current_coverart(current_coverart);
+				set_coverart_paintable(default_coverart_texture);
 			}
 
 			playback_current_info(metadata);
@@ -501,8 +511,14 @@ namespace Abraca {
 		private bool on_playback_current_coverart(Xmms.Value value) {
 			unowned uchar[] data;
 
-			if (value.get_bin(out data))
+			if (value.get_bin(out data)) {
 				current_coverart = coverart_from_bindata(data);
+				try {
+					set_coverart_paintable(Gdk.Texture.from_bytes(new GLib.Bytes(data)));
+				} catch (GLib.Error e) {
+					set_coverart_paintable(default_coverart_texture);
+				}
+			}
 
 			playback_current_coverart(current_coverart);
 

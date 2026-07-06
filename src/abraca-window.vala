@@ -181,8 +181,27 @@ namespace Abraca {
 			playback_label.use_markup = true;
 			playback_label.add_css_class("abraca-playback-label");
 
+			var header_cover = new Gtk.Picture() {
+				content_fit = Gtk.ContentFit.CONTAIN,
+				can_shrink = true,
+				width_request = 28,
+				height_request = 28,
+				valign = Gtk.Align.CENTER
+			};
+			header_cover.add_css_class("abraca-header-cover");
+			header_cover.set_paintable(client.current_coverart_paintable);
+			client.playback_current_coverart_paintable.connect((paintable) => {
+				header_cover.set_paintable(paintable);
+			});
+
+			var title_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 8) {
+				valign = Gtk.Align.CENTER
+			};
+			title_box.append(header_cover);
+			title_box.append(playback_label);
+
 			var headerbar = new Adw.HeaderBar();
-			headerbar.set_title_widget(playback_label);
+			headerbar.set_title_widget(title_box);
 			headerbar.pack_start(playback_btns);
 
 			playback_label.activate_link.connect(on_playback_label_link_activated);
