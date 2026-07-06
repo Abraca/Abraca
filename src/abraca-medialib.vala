@@ -275,6 +275,9 @@ namespace Abraca {
 
 		private bool on_medialib_get_info (Xmms.Value val)
 		{
+			if (val.is_error())
+				return true;
+
 			show_overview(val);
 			detail_roots.remove_all();
 			val.dict_foreach(dict_foreach);

@@ -515,15 +515,19 @@ namespace Abraca {
 		 * failure). Used by the media-info dialog to show per-track art.
 		 */
 		public void fetch_coverart (string picture_front, owned CoverartFunc func) {
-			xmms.bindata_retrieve(picture_front).notifier_set((value) => {
+			/* Capture the fallback now; use notifier_set_full so the closure
+			 * (and the captured `func`) is retained until the async reply. */
+			Gdk.Paintable fallback = default_coverart_texture;
+
+			xmms.bindata_retrieve(picture_front).notifier_set_full((value) => {
 				unowned uchar[] data;
-				Gdk.Paintable paintable = default_coverart_texture;
+				Gdk.Paintable paintable = fallback;
 
 				if (value.get_bin(out data)) {
 					try {
 						paintable = Gdk.Texture.from_bytes(new GLib.Bytes(data));
 					} catch (GLib.Error e) {
-						paintable = default_coverart_texture;
+						paintable = fallback;
 					}
 				}
 
