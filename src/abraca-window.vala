@@ -27,7 +27,7 @@ namespace Abraca {
 		private NowPlaying now_playing;
 		private MetadataResolver resolver;
 		private Searchable search;
-		private Gtk.Dialog equalizer_dialog;
+		private Equalizer equalizer_dialog;
 		private Gtk.Button playback_toggle_btn;
 		private Gtk.Label playback_label;
 

@@ -18,7 +18,10 @@
  */
 
 [GtkTemplate(ui = "/org/xmms2/Abraca/ui/abraca-equalizer.ui")]
-public class Abraca.Equalizer : Gtk.Dialog {
+public class Abraca.Equalizer : Gtk.Window {
+	/* The band-selector values, indexed to match the dropdown positions. */
+	private const string[] BAND_IDS = { "disabled", "legacy", "10", "15", "25", "31" };
+
 	private const string[] BAND_NAMES_10_LEGACY = {
 		"60Hz", "170Hz", "310Hz", "600Hz", "1kHz", "3kHz", "6kHz", "12kHz", "14kHz", "16kHz"
 	};
@@ -72,7 +75,7 @@ public class Abraca.Equalizer : Gtk.Dialog {
 	private Client client;
 
 	[GtkChild]
-	private Gtk.ComboBox combobox_bands;
+	private Gtk.DropDown combobox_bands;
 
 	[GtkChild]
 	private Gtk.Range volume_scale;
@@ -88,8 +91,6 @@ public class Abraca.Equalizer : Gtk.Dialog {
 
 	public Equalizer(Client c)
 	{
-		Object(use_header_bar: 1);
-
 		client = c;
 
 		model = new EqualizerModel(client);
@@ -172,26 +173,26 @@ public class Abraca.Equalizer : Gtk.Dialog {
 		switch (mode) {
 		case EqualizerMode.LEGACY:
 			next_band_names = BAND_NAMES_10_LEGACY;
-			combobox_bands.set_active(1);
+			combobox_bands.selected = 1;
 			break;
 		case EqualizerMode.BANDS_10:
 			next_band_names = BAND_NAMES_10;
-			combobox_bands.set_active(2);
+			combobox_bands.selected = 2;
 			break;
 		case EqualizerMode.BANDS_15:
 			next_band_names = BAND_NAMES_15;
-			combobox_bands.set_active(3);
+			combobox_bands.selected = 3;
 			break;
 		case EqualizerMode.BANDS_25:
 			next_band_names = BAND_NAMES_25;
-			combobox_bands.set_active(4);
+			combobox_bands.selected = 4;
 			break;
 		case EqualizerMode.BANDS_31:
 			next_band_names = BAND_NAMES_31;
-			combobox_bands.set_active(5);
+			combobox_bands.selected = 5;
 			break;
 		default:
-			combobox_bands.set_active(0);
+			combobox_bands.selected = 0;
 			break;
 		}
 
@@ -207,15 +208,12 @@ public class Abraca.Equalizer : Gtk.Dialog {
 	}
 
 	[GtkCallback]
-	private void on_combobox_changed(Gtk.ComboBox combobox)
+	private void on_combobox_changed(GLib.Object object, GLib.ParamSpec pspec)
 	{
-		Gtk.TreeIter iter;
-		unowned string value;
-
-		if (!combobox_bands.get_active_iter(out iter))
+		if (combobox_bands.selected >= BAND_IDS.length)
 			return;
 
-		combobox_bands.model.get(iter, combobox_bands.id_column, out value);
+		unowned string value = BAND_IDS[combobox_bands.selected];
 
 		if (value == "disabled") {
 			client.xmms.config_set_value("equalizer.enabled", "0");

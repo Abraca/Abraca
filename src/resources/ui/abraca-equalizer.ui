@@ -198,55 +198,27 @@
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
-  <object class="GtkListStore" id="liststore_bands">
-    <columns>
-      <column type="gchararray" />
-      <column type="gchararray" />
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Disabled</col>
-        <col id="1" translatable="yes">disabled</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">10 (legacy)</col>
-        <col id="1" translatable="yes">legacy</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">10</col>
-        <col id="1" translatable="yes">10</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">15</col>
-        <col id="1" translatable="yes">15</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">25</col>
-        <col id="1" translatable="yes">25</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">31</col>
-        <col id="1" translatable="yes">31</col>
-      </row>
-    </data>
-  </object>
-  <template class="AbracaEqualizer" parent="GtkDialog">
+  <template class="AbracaEqualizer" parent="GtkWindow">
     <property name="width_request">400</property>
     <property name="height_request">300</property>
     <property name="title">Equalizer</property>
-    <child internal-child="headerbar">
+    <property name="titlebar">
       <object class="GtkHeaderBar" id="dialog-header_bar">
         <child>
-          <object class="GtkComboBox" id="combobox_bands">
-            <property name="model">liststore_bands</property>
-            <property name="id_column">1</property>
-            <signal name="changed" handler="on_combobox_changed" swapped="no" />
-            <child>
-              <object class="GtkCellRendererText" id="cellrenderertext1" />
-              <attributes>
-                <attribute name="text">0</attribute>
-              </attributes>
-            </child>
+          <object class="GtkDropDown" id="combobox_bands">
+            <property name="model">
+              <object class="GtkStringList">
+                <items>
+                  <item translatable="yes">Disabled</item>
+                  <item translatable="yes">10 (legacy)</item>
+                  <item translatable="yes">10</item>
+                  <item translatable="yes">15</item>
+                  <item translatable="yes">25</item>
+                  <item translatable="yes">31</item>
+                </items>
+              </object>
+            </property>
+            <signal name="notify::selected" handler="on_combobox_changed" swapped="no"/>
           </object>
         </child>
         <child>
@@ -257,8 +229,8 @@
           </object>
         </child>
       </object>
-    </child>
-    <child internal-child="content_area">
+    </property>
+    <property name="child">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
@@ -833,7 +805,7 @@
           </object>
         </child>
       </object>
-    </child>
+    </property>
   </template>
   <object class="GtkSizeGroup" id="sizegroup2">
     <widgets>
